@@ -156,7 +156,7 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
                     <IconComponent name="dot" size={3} />
                     <p className={styles.createdAt}>{timeAgo(post.createdAt)}</p>
                   </div>
-                  <Link href={`/users/${post.author?.id}`}>
+                  <Link href={`/users/profile/${post.author?.url}`}>
                     <p className={styles.author}>{post.author?.name}</p>
                   </Link>
                 </div>
@@ -228,7 +228,7 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
               {post.type !== "NOTICE" && (
                 <>
                   <IconComponent name="dot" size={3} />
-                  <Link href={`/users/${post.author?.id}`}>
+                  <Link href={`/users/profile/${post.author?.url}`}>
                     <p className={styles.author}>{post.author?.name}</p>
                   </Link>
                 </>
@@ -245,7 +245,7 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
             </div>
           )}
           {post.type !== "NOTICE" && cardCase !== "saved-posts" && post.author && !isMobile && (
-            <Link href={`/users/${post.author.id}`}>
+            <Link href={`/users/profile/${post.author.url}`}>
               <p className={styles.author}>{post.author.name}</p>
             </Link>
           )}

@@ -1,4 +1,4 @@
-import { getSSRUserInfo, MetaUserInfoResponse } from "@/api/users/getId";
+import { getSSRUserInfoByUrl, MetaUserInfoResponse } from "@/api/users/getId";
 import { useMyData } from "@/api/users/getMe";
 import ProfilePage from "@/components/ProfilePage/ProfilePage";
 import { serviceUrl } from "@/constants/serviceurl";
@@ -10,23 +10,24 @@ import { useEffect } from "react";
 
 type Props = {
   data: MetaUserInfoResponse;
+  url: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params as { id: string };
+  const { url } = context.params as { url: string };
 
   try {
-    const data = await getSSRUserInfo(id);
-
+    const data = await getSSRUserInfoByUrl(url);
     return {
-      props: { data },
+      props: { data, url },
     };
   } catch (error) {
+    console.error("Error fetching user data:", error); // Log the error for debugging
     return { notFound: true };
   }
 };
 
-export default function Profile({ data }: Props) {
+export default function Profile({ data, url }: Props) {
   const router = useRouter();
   const { data: myData } = useMyData();
   const { restoreScrollPosition } = useScrollRestoration("profile-scroll");
@@ -38,14 +39,10 @@ export default function Profile({ data }: Props) {
     }
   }, []);
 
-  const { id } = router.query;
-  const loggedInUserId = myData?.id;
-  const isMyProfile = id === loggedInUserId;
+  const loggedInUserUrl = myData?.url; // Be sure this is the correct field
+  const isMyProfile = url === loggedInUserUrl;
 
-  if (!id) {
-    return null;
-  }
-
+  // url is guaranteed to be a string here due to getServerSideProps
   return (
     <>
       <Head>
@@ -62,7 +59,7 @@ export default function Profile({ data }: Props) {
         <meta name="twitter:description" content={data.description ?? ""} />
         <meta name="twitter:image" content={data.image ?? "/image/grimity_default.png"} />
       </Head>
-      <ProfilePage isMyProfile={isMyProfile} id={id as string} />
+      <ProfilePage isMyProfile={isMyProfile} id={data.id} url={url} />
     </>
   );
 }

@@ -23,7 +23,7 @@ const sortOptions: { value: SortOption; label: string }[] = [
 
 const PAGE_SIZE = 12;
 
-export default function ProfilePage({ isMyProfile, id }: ProfilePageProps) {
+export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) {
   const [sortBy, setSortBy] = useState<SortOption>("latest");
   const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
   const feedsTabRef = useRef<HTMLDivElement>(null);
@@ -156,7 +156,7 @@ export default function ProfilePage({ isMyProfile, id }: ProfilePageProps) {
   return (
     <div className={styles.container}>
       <div className={styles.center}>
-        <Profile isMyProfile={isMyProfile} id={id} />
+        <Profile isMyProfile={isMyProfile} id={id} url={url} />
         <div className={styles.bar}>
           <div
             ref={feedsTabRef}

@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 
 export interface PopularResponse {
   id: string;
+  url: string;
   name: string;
   image: string;
   description?: string;

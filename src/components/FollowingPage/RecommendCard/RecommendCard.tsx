@@ -13,6 +13,7 @@ import { authState } from "@/states/authState";
 
 export default function RecommendCard({
   id,
+  url,
   name,
   image,
   description,
@@ -47,7 +48,7 @@ export default function RecommendCard({
 
   return (
     <div className={styles.container}>
-      <Link href={`/users/${id}`}>
+      <Link href={`/users/profile/${url}`}>
         <div className={styles.imageWrapper}>
           <div className={styles.imageContainer}>
             {thumbnails[0] ? (
@@ -126,7 +127,7 @@ export default function RecommendCard({
         </div>
       </Link>
       <div className={styles.profileWrapper}>
-        <Link href={`/users/${id}`}>
+        <Link href={`/users/profile/${url}`}>
           <div className={styles.profileLeft}>
             {image !== "https://image.grimity.com/null" ? (
               <Image

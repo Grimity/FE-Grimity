@@ -8,7 +8,7 @@ export interface AllCardProps {
     commentCount: number;
     viewCount: number;
     createdAt: string;
-    author?: { name: string; id: string };
+    author?: { name: string; id: string; url: string };
   };
   case: "saved-posts" | "my-posts" | "board";
   hasChip?: boolean;

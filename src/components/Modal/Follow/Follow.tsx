@@ -110,8 +110,8 @@ export default function Follow({ initialTab }: FollowProps) {
     };
   }, [activeTab, hasNextPage, isFetching, isFetchingData]);
 
-  const handleClickUser = (id: string) => {
-    route.push(`/users/${id}`);
+  const handleClickUser = (url: string) => {
+    route.push(`/users/profile/${url}`);
     setModal({ isOpen: false, type: null, data: null });
   };
 

@@ -15,6 +15,7 @@ export interface DetailsResponse {
   tags: string[];
   author: {
     id: string;
+    url: string;
     name: string;
     image: string;
     followerCount: number;

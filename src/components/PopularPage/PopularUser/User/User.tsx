@@ -10,6 +10,7 @@ import { deleteFollow } from "@/api/users/deleteIdFollow";
 
 export default function User({
   id,
+  url,
   name,
   image,
   followerCount: initialFollowerCount,
@@ -42,7 +43,7 @@ export default function User({
 
   return (
     <div className={styles.container}>
-      <Link href={`/users/${id}`}>
+      <Link href={`/users/profile/${url}`}>
         <div className={styles.imageWrapper}>
           {thumbnails[0] ? (
             <img
@@ -85,7 +86,7 @@ export default function User({
         </div>
       </Link>
       <div className={styles.profileWrapper}>
-        <Link href={`/users/${id}`}>
+        <Link href={`/users/profile/${url}`}>
           <div className={styles.profileLeft}>
             {image !== "https://image.grimity.com/null" ? (
               <Image

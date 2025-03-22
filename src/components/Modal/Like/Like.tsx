@@ -15,8 +15,8 @@ export default function Like() {
   const isMobile = useRecoilValue(isMobileState);
   useIsMobile();
 
-  const handleClickUser = (id: string) => {
-    route.push(`/users/${id}`);
+  const handleClickUser = (url: string) => {
+    route.push(`/users/profile/${url}`);
     setModal({ isOpen: false, type: null, data: null });
   };
 
