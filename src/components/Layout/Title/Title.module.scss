@@ -16,12 +16,24 @@
     margin-bottom: 16px;
   }
 
+  .subtitleContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .titleContainer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   .title {
     @include Title4;
     color: $gray80;
 
     @include Size("mobile") {
-      @include Sub2;
+      @include Sub1;
     }
 
     @include Size("tablet") {
@@ -29,17 +41,22 @@
     }
   }
 
+  .subtitle {
+    @include Body1;
+    color: $gray60;
+  }
+
   .btn {
-    @include Sub2;
+    @include Body1;
     color: $gray60;
     cursor: pointer;
 
     @include Size("mobile") {
-      @include Sub4;
+      @include Label2;
     }
 
     @include Size("tablet") {
-      @include Sub4;
+      @include Label2;
     }
   }
 }
