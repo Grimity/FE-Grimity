@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import Loader from "@/components/Layout/Loader/Loader";
 import Button from "@/components/Button/Button";
 import Link from "next/link";
-import IconComponent from "@/components/Asset/Icon";
+import Pagination from "@/components/Pagination/Pagination";
 
 export default function SavedPosts() {
   const router = useRouter();
@@ -17,9 +17,11 @@ export default function SavedPosts() {
     page: currentPage,
   });
   const { pathname } = useRouter();
+
   useEffect(() => {
     refetch();
   }, [pathname]);
+
   const posts = data?.posts || [];
   const totalPages = Math.ceil((data?.totalCount || 1) / 10);
 
@@ -29,17 +31,6 @@ export default function SavedPosts() {
       pathname: router.pathname,
       query: { ...router.query, page },
     });
-  };
-
-  const getPageRange = (currentPage: number, totalPages: number) => {
-    let start = Math.max(1, currentPage - 4);
-    let end = Math.min(start + 9, totalPages);
-
-    if (end === totalPages) {
-      start = Math.max(1, end - 9);
-    }
-
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
   useEffect(() => {
@@ -70,33 +61,11 @@ export default function SavedPosts() {
         )}
       </section>
       {posts.length > 0 && (
-        <section
-          className={`${styles.pagination} ${posts.length === 0 ? styles.paginationDisabled : ""}`}
-        >
-          <button
-            className={styles.paginationArrow}
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <IconComponent name="paginationLeft" size={24} />
-          </button>
-          {getPageRange(currentPage, totalPages).map((pageNum) => (
-            <button
-              key={pageNum}
-              className={currentPage === pageNum ? styles.active : ""}
-              onClick={() => handlePageChange(pageNum)}
-            >
-              {pageNum}
-            </button>
-          ))}
-          <button
-            className={styles.paginationArrow}
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <IconComponent name="paginationRight" size={24} />
-          </button>
-        </section>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       )}
     </>
   );
