@@ -1,0 +1,91 @@
+@import "@/styles/globals.scss";
+
+.container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1000;
+  background-color: $gray70;
+  color: $gray0;
+  padding: 7px 10px;
+  border-radius: 6px;
+  @include Cap2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+
+  &.up {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
+  }
+
+  &.down {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+  }
+
+  &.left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 10px;
+  }
+
+  &.right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 10px;
+  }
+}
+
+.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+
+  .up & {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 13px solid $gray70;
+  }
+
+  .down & {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 13px solid $gray70;
+  }
+
+  .left & {
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 13px solid $gray70;
+  }
+
+  .right & {
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 13px solid $gray70;
+  }
+}
+
+.closeButton {
+  cursor: pointer;
+}
