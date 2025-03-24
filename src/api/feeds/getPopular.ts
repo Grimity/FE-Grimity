@@ -13,6 +13,7 @@ export interface PopularFeed {
     id: string;
     name: string;
     image: string;
+    url: string;
   };
 }
 
@@ -50,6 +51,7 @@ export async function getPopularFeed({ pageParam = null }): Promise<PopularFeedR
 export function usePopularFeed() {
   return useInfiniteQuery<PopularFeedResponse>("PopularFeed", getPopularFeed, {
     getNextPageParam: (lastPage) => {
+      // sourcery skip: simplify-ternary
       return lastPage.nextCursor ? lastPage.nextCursor : undefined;
     },
     refetchOnMount: false,

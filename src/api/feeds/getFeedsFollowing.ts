@@ -23,6 +23,7 @@ export interface FollowingFeeds {
     id: string;
     name: string;
     image: string;
+    url: string;
   };
   isLike: boolean;
   isSave: boolean;

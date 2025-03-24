@@ -15,8 +15,8 @@ export default function Like() {
   const isMobile = useRecoilValue(isMobileState);
   useIsMobile();
 
-  const handleClickUser = (id: string) => {
-    route.push(`/users/${id}`);
+  const handleClickUser = (url: string) => {
+    route.push(`${url}`);
     setModal({ isOpen: false, type: null, data: null });
   };
 
@@ -58,12 +58,12 @@ export default function Like() {
                   />
                 )}
                 {like.description !== "" ? (
-                  <div className={styles.nameDescription} onClick={() => handleClickUser(like.id)}>
+                  <div className={styles.nameDescription} onClick={() => handleClickUser(like.url)}>
                     <p className={styles.name}>{like.name}</p>
                     <p className={styles.description}>{like.description}</p>
                   </div>
                 ) : (
-                  <div className={styles.nameContainer} onClick={() => handleClickUser(like.id)}>
+                  <div className={styles.nameContainer} onClick={() => handleClickUser(like.url)}>
                     <p className={styles.name}>{like.name}</p>
                   </div>
                 )}

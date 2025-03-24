@@ -9,6 +9,7 @@ export interface UserSearchRequest {
 }
 
 export interface UserSearch {
+  url: string;
   id: string;
   name: string;
   image: string;

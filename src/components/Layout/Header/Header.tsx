@@ -39,7 +39,7 @@ export default function Header() {
   const isTablet = useRecoilValue(isTabletState);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-  const isUserPage = router.pathname.startsWith("/users/[id]");
+  const isUserPage = router.pathname.startsWith("/users/[url]");
   const isPostPage = ["/board", "/board/write", "/posts/[id]", "/posts/[id]/edit"].includes(
     router.pathname,
   );
@@ -368,7 +368,7 @@ export default function Header() {
                   </div>
                   {isDropdownOpen && (
                     <div className={styles.dropdown} ref={dropdownRef}>
-                      <Link href={`/users/${myData.id}`}>
+                      <Link href={`/${myData.url}`}>
                         <div
                           className={styles.dropdownItem}
                           onClick={() => {
@@ -556,7 +556,7 @@ export default function Header() {
                       <div className={styles.mobileProfile}>
                         <div className={styles.bar} />
                         <div className={styles.profileSubmenu}>
-                          <Link href={`/users/${myData.id}`} className={styles.mobileMyInfo}>
+                          <Link href={`/${myData.url}`} className={styles.mobileMyInfo}>
                             {myData.image !== "https://image.grimity.com/null" ? (
                               <Image
                                 src={myData.image}

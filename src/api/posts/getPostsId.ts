@@ -15,6 +15,7 @@ export interface PostsDetailsResponse {
   author: {
     id: string;
     name: string;
+    url: string;
   };
   isLike: boolean;
   isSave: boolean;

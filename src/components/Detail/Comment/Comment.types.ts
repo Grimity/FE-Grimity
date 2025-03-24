@@ -10,6 +10,7 @@ export interface CommentProps {
 
 export interface CommentWriter {
   id: string;
+  url: string;
   name: string;
   image: string;
 }

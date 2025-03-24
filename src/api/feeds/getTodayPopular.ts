@@ -12,6 +12,7 @@ export interface TodayFeedPopularResponse {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

@@ -10,5 +10,6 @@ export interface SearchCardProps {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }

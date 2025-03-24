@@ -15,6 +15,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function SearchProfile({
   id,
+  url,
   name,
   image,
   description,
@@ -52,7 +53,7 @@ export default function SearchProfile({
 
   return (
     <div className={styles.container}>
-      <Link href={`/users/${id}`}>
+      <Link href={`/${url}`}>
         <div className={styles.cover}>
           {backgroundImage !== "https://image.grimity.com/null" ? (
             <img
@@ -84,7 +85,7 @@ export default function SearchProfile({
         </div>
       </Link>
       <div className={styles.profile}>
-        <Link href={`/users/${id}`}>
+        <Link href={`/${url}`}>
           {image !== "https://image.grimity.com/null" ? (
             <Image
               src={image}
@@ -110,7 +111,7 @@ export default function SearchProfile({
         <div className={styles.infoContainer}>
           <div className={styles.spaceBetween}>
             <div className={styles.nameCount}>
-              <Link href={`/users/${id}`}>
+              <Link href={`/${url}`}>
                 <p className={styles.name}>{name}</p>
               </Link>
               <div className={styles.follower}>

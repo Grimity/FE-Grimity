@@ -20,6 +20,7 @@ export interface PostSearch {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

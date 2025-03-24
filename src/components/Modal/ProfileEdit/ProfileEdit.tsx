@@ -8,23 +8,29 @@ import IconComponent from "@/components/Asset/Icon";
 import Button from "@/components/Button/Button";
 import { useToast } from "@/hooks/useToast";
 import { useMyData } from "@/api/users/getMe";
-import { MyInfoRequest, putMyInfo } from "@/api/users/putMe";
+import { MyInfoRequest, UpdateProfileConflictResponse, putMyInfo } from "@/api/users/putMe";
 import { AxiosError } from "axios";
 import Loader from "@/components/Layout/Loader/Loader";
 import router from "next/router";
 import { isMobileState } from "@/states/isMobileState";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { isValidProfileIdFormat, isForbiddenProfileId } from "@/utils/isValidProfileId";
+import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 
 export default function ProfileEdit() {
   const { data: myData, isLoading, refetch } = useMyData();
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [profileId, setProfileId] = useState<string>("");
+  const [profileIdError, setProfileIdError] = useState<string>("");
   const [links, setLinks] = useState<{ linkName: string; link: string }[]>([
     { linkName: "", link: "" },
   ]);
   const [isError, setIsError] = useState(false);
   const [, setModal] = useRecoilState(modalState);
+  const { restoreScrollPosition } = useScrollRestoration("profileEdit-scroll");
+
   const { showToast } = useToast();
   const isMobile = useRecoilValue(isMobileState);
   useIsMobile();
@@ -33,7 +39,12 @@ export default function ProfileEdit() {
     if (myData) {
       setName(myData.name?.replace(/\s+$/, "") || "");
       setDescription(myData.description || "");
+      setProfileId(myData.url || "");
       setLinks(myData.links?.length ? myData.links : [{ linkName: "", link: "" }]);
+    }
+    if (sessionStorage.getItem("profileEdit-scroll") !== null) {
+      restoreScrollPosition();
+      sessionStorage.removeItem("profileEdit-scroll");
     }
   }, [myData]);
 
@@ -45,11 +56,17 @@ export default function ProfileEdit() {
       router.reload();
       setNameError("");
     },
-    onError: (error: AxiosError) => {
-      showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
+    onError: (error: AxiosError<UpdateProfileConflictResponse>) => {
       if (error.response?.status === 409) {
         setIsError(true);
-        setNameError("닉네임이 이미 존재합니다.");
+        const message = error.response?.data?.message;
+        if (message === "NAME") {
+          setNameError("이미 사용 중인 닉네임입니다.");
+        } else if (message === "URL") {
+          setProfileIdError("이미 사용 중인 프로필 URL입니다.");
+        } else {
+          showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
+        }
       }
     },
   });
@@ -59,6 +76,14 @@ export default function ProfileEdit() {
     setName(inputValue);
     if (nameError) {
       setNameError("");
+    }
+  };
+
+  const handleProfileIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value.trim();
+    setProfileId(inputValue);
+    if (profileIdError) {
+      setProfileIdError("");
     }
   };
 
@@ -80,7 +105,10 @@ export default function ProfileEdit() {
 
   const handleSave = () => {
     setNameError("");
+    setProfileIdError("");
+
     const nameWithoutTrailingSpace = name?.replace(/\s+$/, "") || "";
+    const profileIdTrimmed = profileId.trim();
 
     if (!nameWithoutTrailingSpace) {
       setNameError("닉네임을 입력해주세요.");
@@ -92,6 +120,21 @@ export default function ProfileEdit() {
       return;
     }
 
+    if (!profileIdTrimmed) {
+      setProfileIdError("프로필 URL을 입력해주세요.");
+      return;
+    }
+
+    if (!isValidProfileIdFormat(profileIdTrimmed)) {
+      setProfileIdError("숫자, 영문(소문자), 언더바(_)만 입력 가능합니다.");
+      return;
+    }
+
+    if (isForbiddenProfileId(profileIdTrimmed)) {
+      setProfileIdError("사용할 수 없는 ID입니다.");
+      return;
+    }
+
     const filteredLinks = links.filter(
       (link) => link.linkName.trim() !== "" || link.link.trim() !== "",
     );
@@ -100,6 +143,7 @@ export default function ProfileEdit() {
       name: nameWithoutTrailingSpace,
       description,
       links: filteredLinks,
+      url: profileIdTrimmed,
     };
 
     mutation.mutate(updatedInfo);
@@ -148,6 +192,16 @@ export default function ProfileEdit() {
               )}
             </div>
           </div>
+          <TextField
+            label="그리미티 URL"
+            placeholder="url을 입력해주세요."
+            maxLength={20}
+            value={profileId}
+            onChange={handleProfileIdChange}
+            isError={!!profileIdError}
+            errorMessage={profileIdError}
+            prefix="www.grimity.com/"
+          />
           <div className={styles.linkContainer}>
             <label className={styles.label}>외부 링크</label>
             {links.map((link, index) => (
@@ -187,7 +241,7 @@ export default function ProfileEdit() {
           size="l"
           type="filled-primary"
           onClick={handleSave}
-          disabled={name.trim().length < 2 || mutation.isLoading}
+          disabled={name.trim().length < 2 || mutation.isLoading || !!profileIdError}
         >
           변경 내용 저장
         </Button>

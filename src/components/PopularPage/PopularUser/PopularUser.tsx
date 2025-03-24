@@ -69,6 +69,7 @@ export default function PopularUser() {
             <SwiperSlide key={user.tagName} className={styles.slide}>
               <User
                 id={user.id}
+                url={user.url}
                 name={user.name}
                 image={user.image}
                 followerCount={user.followerCount}
@@ -84,6 +85,7 @@ export default function PopularUser() {
             <div key={user.tagName} className={styles.slide}>
               <User
                 id={user.id}
+                url={user.url}
                 name={user.name}
                 image={user.image}
                 followerCount={user.followerCount}

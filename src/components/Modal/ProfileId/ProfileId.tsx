@@ -24,7 +24,7 @@ export default function ProfileId() {
           provider: modal.data.provider,
           providerAccessToken: modal.data.accessToken,
           name: modal.data.nickname,
-          id: profileId.trim(),
+          url: profileId.trim(),
         });
         return response.data;
       } catch (error: any) {

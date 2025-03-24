@@ -108,6 +108,7 @@ export default function FollowingPage() {
                 <RecommendCard
                   key={user.id}
                   id={user.id}
+                  url={user.url}
                   name={user.name}
                   image={user.image}
                   description={user.description}
@@ -135,6 +136,7 @@ export default function FollowingPage() {
                 <RecommendCard
                   key={user.id}
                   id={user.id}
+                  url={user.url}
                   name={user.name}
                   image={user.image}
                   description={user.description}

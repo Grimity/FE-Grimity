@@ -11,6 +11,7 @@ export interface TagsSearchResponse {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

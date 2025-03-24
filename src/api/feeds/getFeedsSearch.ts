@@ -20,6 +20,7 @@ export interface FeedSearch {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

@@ -17,6 +17,7 @@ export interface FeedsLatest {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

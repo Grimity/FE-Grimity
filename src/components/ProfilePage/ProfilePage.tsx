@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useUserData } from "@/api/users/getId";
+// import { useUserData } from "@/api/users/getId";
+import { useUserDataByUrl } from "@/api/users/getId";
 import { useUserFeeds } from "@/api/users/getIdFeeds";
 import { useUserPosts } from "@/api/users/getIdPosts";
 import Profile from "./Profile/Profile";
@@ -24,12 +25,12 @@ const sortOptions: { value: SortOption; label: string }[] = [
 
 const PAGE_SIZE = 12;
 
-export default function ProfilePage({ isMyProfile, id }: ProfilePageProps) {
+export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) {
   const [sortBy, setSortBy] = useState<SortOption>("latest");
   const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
   const feedsTabRef = useRef<HTMLDivElement>(null);
   const postsTabRef = useRef<HTMLDivElement>(null);
-  const { data: userData } = useUserData(id);
+  const { data: userData } = useUserDataByUrl(url);
   const loadMoreRef = useRef(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
@@ -148,7 +149,7 @@ export default function ProfilePage({ isMyProfile, id }: ProfilePageProps) {
   return (
     <div className={styles.container}>
       <div className={styles.center}>
-        <Profile isMyProfile={isMyProfile} id={id} />
+        <Profile isMyProfile={isMyProfile} id={id} url={url} />
         <div className={styles.bar}>
           <div
             ref={feedsTabRef}

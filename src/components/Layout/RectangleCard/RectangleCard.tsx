@@ -76,7 +76,7 @@ export default function RectangleCard({
                   </div>
                 </div>
                 {author && (
-                  <Link href={`/users/${author.id}`}>
+                  <Link href={`/${author.url}`}>
                     <div className={styles.profile}>
                       {author.image !== "https://image.grimity.com/null" ? (
                         <Image
@@ -111,7 +111,7 @@ export default function RectangleCard({
                 <h3 className={styles.title}>{title}</h3>
               </Link>
               {author && (
-                <Link href={`/users/${author.id}`}>
+                <Link href={`/${author.url}`}>
                   <div className={styles.profile}>
                     {author.image !== "https://image.grimity.com/null" ? (
                       <Image

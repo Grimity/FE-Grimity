@@ -11,7 +11,6 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 16px;
   padding: 16px 20px;
   background-color: $gray10;
   border-radius: 12px;
@@ -70,4 +69,14 @@
 .error {
   color: $negative;
   @include Cap2;
+}
+
+.inputWithPrefix {
+  color: $gray80;
+  padding-left: 2px;
+}
+
+.prefix {
+  color: $gray60;
+  white-space: nowrap;
 }

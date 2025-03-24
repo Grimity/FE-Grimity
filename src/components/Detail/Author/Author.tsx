@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/useToast";
 import Link from "next/link";
 import { AuthorProps } from "./Author.types";
 import { useUserData } from "@/api/users/getId";
+import { useUserDataByUrl } from "@/api/users/getId";
 import Button from "@/components/Button/Button";
 import { useUserForDetail } from "@/api/users/getIdFeeds";
 import SquareCard from "@/components/Layout/SquareCard/SquareCard";
@@ -17,8 +18,9 @@ import Loader from "@/components/Layout/Loader/Loader";
 import { isMobileState } from "@/states/isMobileState";
 import { useRouter } from "next/router";
 
-export default function Author({ authorId, feedId }: AuthorProps) {
+export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
   const { data: userData } = useUserData(authorId);
+  const { data: userDataByUrl } = useUserDataByUrl(authorUrl);
   const { isLoggedIn, user_id } = useRecoilValue(authState);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
@@ -75,7 +77,7 @@ export default function Author({ authorId, feedId }: AuthorProps) {
         <>
           <div className={styles.spaceBetween}>
             <div className={styles.profileContainer}>
-              <Link href={`/users/${authorId}`}>
+              <Link href={`/${authorUrl}`}>
                 <div className={styles.profileLeft}>
                   {userData.image !== "https://image.grimity.com/null" ? (
                     <Image
@@ -130,7 +132,7 @@ export default function Author({ authorId, feedId }: AuthorProps) {
                 ))}
             </div>
             {!isMobile && (
-              <Link href={`/users/${authorId}`}>
+              <Link href={`/${authorUrl}`}>
                 <p className={styles.seeMore}>작품 더보기</p>
               </Link>
             )}

@@ -6,6 +6,7 @@ export interface SquareCardProps {
   author?: {
     id: string;
     name: string;
+    url: string;
   };
   likeCount: number;
   viewCount: number;

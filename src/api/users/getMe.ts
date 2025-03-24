@@ -14,6 +14,7 @@ export interface MyInfoResponse {
   links: { linkName: string; link: string }[];
   createdAt: string;
   hasNotification: boolean;
+  url: string;
 }
 
 export async function getMyInfo(): Promise<MyInfoResponse> {

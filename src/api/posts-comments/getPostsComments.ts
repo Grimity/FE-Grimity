@@ -6,6 +6,7 @@ export interface PostsCommentsRequest {
 }
 
 export interface PostsCommentWriter {
+  url: string;
   id: string;
   name: string;
 }
@@ -20,6 +21,7 @@ export interface PostsChildComment {
   mentionedUser?: {
     id: string;
     name: string;
+    url: string;
   };
   isLike: boolean;
 }

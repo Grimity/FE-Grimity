@@ -7,6 +7,7 @@ export interface FeedsLikeRequest {
 
 export interface FeedsLikeResponse {
   id: string;
+  url: string;
   name: string;
   image: string;
   description: string;

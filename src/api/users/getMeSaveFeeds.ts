@@ -18,6 +18,7 @@ export interface MySaveListFeed {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

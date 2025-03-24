@@ -39,7 +39,11 @@ export default function Comment({
   const [, setModal] = useRecoilState(modalState);
   const queryClient = useQueryClient();
   const [replyText, setReplyText] = useState("");
-  const [mentionedUser, setMentionedUser] = useState<{ id: string; name: string } | null>(null);
+  const [mentionedUser, setMentionedUser] = useState<{
+    id: string;
+    name: string;
+    url: string;
+  } | null>(null);
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [isReplyToChild, setIsReplyToChild] = useState(false);
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -103,7 +107,10 @@ export default function Comment({
     setReplyText(e.target.value);
   };
 
-  const handleParentReply = (commentId: string, writer: { id: string; name: string }) => {
+  const handleParentReply = (
+    commentId: string,
+    writer: { id: string; name: string; url: string },
+  ) => {
     if (activeParentReplyId === commentId) {
       setActiveParentReplyId(null);
       setMentionedUser(null);
@@ -124,7 +131,7 @@ export default function Comment({
   const handleChildReply = (
     commentId: string,
     parentId: string,
-    writer: { id: string; name: string },
+    writer: { id: string; name: string; url: string },
   ) => {
     if (activeChildReplyId === commentId) {
       setActiveChildReplyId(null);
@@ -266,7 +273,7 @@ export default function Comment({
         {childComments.map((reply) => (
           <div key={reply.id} className={`${styles.comment} ${styles.nestedComment}`}>
             <div className={styles.commentBox}>
-              <Link href={`/users/${reply.writer.id}`}>
+              <Link href={`/${reply.writer.url}`}>
                 {reply.writer.image !== "https://image.grimity.com/null" ? (
                   <Image
                     src={reply.writer.image}
@@ -293,7 +300,7 @@ export default function Comment({
                 <div className={styles.writerReply}>
                   <div className={styles.writerLeft}>
                     <div className={styles.writerCreatedAt}>
-                      <Link href={`/users/${reply.writer.id}`}>
+                      <Link href={`/{reply.writer.url}`}>
                         <div className={styles.writerName}>{reply.writer.name}</div>
                       </Link>
                       {reply.writer.id === feedWriterId && (
@@ -327,6 +334,7 @@ export default function Comment({
                           handleChildReply(reply.id, parentId, {
                             id: reply.writer.id,
                             name: reply.writer.name,
+                            url: reply.writer.url,
                           })
                         }
                         className={styles.replyBtn}
@@ -378,7 +386,7 @@ export default function Comment({
     return (
       <div key={comment.id} className={styles.comment}>
         <div className={styles.commentBox}>
-          <Link href={`/users/${comment.writer.id}`}>
+          <Link href={`/${comment.writer.url}`}>
             {comment.writer.image !== "https://image.grimity.com/null" ? (
               <Image
                 src={comment.writer.image}
@@ -405,7 +413,7 @@ export default function Comment({
             <div className={styles.writerReply}>
               <div className={styles.writerLeft}>
                 <div className={styles.writerCreatedAt}>
-                  <Link href={`/users/${comment.writer.id}`}>
+                  <Link href={`/${comment.writer.url}`}>
                     <div className={styles.writerName}>
                       {comment.writer.name}
                       {comment.writer.id === feedWriterId && (
@@ -436,6 +444,7 @@ export default function Comment({
                       handleParentReply(comment.id, {
                         id: comment.writer.id,
                         name: comment.writer.name,
+                        url: comment.writer.url,
                       })
                     }
                     className={styles.replyBtn}

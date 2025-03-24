@@ -4,6 +4,7 @@ export interface RectangleCardProps {
   content: string;
   thumbnail: string;
   author?: {
+    url: string;
     id: string;
     name: string;
     image: string;

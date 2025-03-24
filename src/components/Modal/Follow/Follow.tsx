@@ -110,8 +110,8 @@ export default function Follow({ initialTab }: FollowProps) {
     };
   }, [activeTab, hasNextPage, isFetching, isFetchingData]);
 
-  const handleClickUser = (id: string) => {
-    route.push(`/users/${id}`);
+  const handleClickUser = (url: string) => {
+    route.push(`${url}`);
     setModal({ isOpen: false, type: null, data: null });
   };
 
@@ -169,7 +169,7 @@ export default function Follow({ initialTab }: FollowProps) {
                     width={isMobile ? 40 : 50}
                     height={isMobile ? 40 : 50}
                     quality={50}
-                    onClick={() => handleClickUser(follow.id)}
+                    onClick={() => handleClickUser(follow.url)}
                     className={styles.image}
                     alt={`${activeTab === "follower" ? "팔로워" : "팔로잉"} 프로필 이미지`}
                     unoptimized
@@ -180,7 +180,7 @@ export default function Follow({ initialTab }: FollowProps) {
                     width={isMobile ? 40 : 50}
                     height={isMobile ? 40 : 50}
                     quality={50}
-                    onClick={() => handleClickUser(follow.id)}
+                    onClick={() => handleClickUser(follow.url)}
                     className={styles.image}
                     alt={`${activeTab === "follower" ? "팔로워" : "팔로잉"} 프로필 이미지`}
                     unoptimized
@@ -189,7 +189,7 @@ export default function Follow({ initialTab }: FollowProps) {
                 {follow.description !== "" ? (
                   <div
                     className={styles.nameDescription}
-                    onClick={() => handleClickUser(follow.id)}
+                    onClick={() => handleClickUser(follow.url)}
                   >
                     <p className={styles.name}>{follow.name}</p>
                     <p className={styles.description}>{follow.description}</p>

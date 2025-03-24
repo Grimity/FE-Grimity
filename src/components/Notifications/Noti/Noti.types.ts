@@ -1,7 +1,7 @@
-import { NotificationsResponse } from "@/api/notifications/getNotifications";
+import { NotificationResponse } from "@grimity/dto";
 
 export interface NotiProps {
-  notification: NotificationsResponse;
+  notification: NotificationResponse;
   onClose: () => void;
   onRefetch: () => void;
 }

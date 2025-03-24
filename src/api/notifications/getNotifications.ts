@@ -1,23 +1,16 @@
 import { useQuery } from "react-query";
-import { NotificationData } from "@grimity/shared-types";
+import { NotificationResponse } from "@grimity/dto";
 import axiosInstance from "@/constants/baseurl";
 
-export interface NotificationsResponse {
-  id: string;
-  createdAt: string;
-  isRead: boolean;
-  data: NotificationData;
-}
-
-export async function getNotifications(): Promise<NotificationsResponse[]> {
+export async function getNotifications(): Promise<NotificationResponse[]> {
   const response = await axiosInstance.get("/notifications");
-  return response.data as NotificationsResponse[];
+  return response.data as NotificationResponse[];
 }
 
 export function useGetNotifications() {
   const accessToken = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
-  return useQuery<NotificationsResponse[]>("getNotifications", getNotifications, {
+  return useQuery<NotificationResponse[]>("getNotifications", getNotifications, {
     enabled: Boolean(accessToken),
   });
 }

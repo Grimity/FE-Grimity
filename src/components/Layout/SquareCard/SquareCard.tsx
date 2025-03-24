@@ -64,7 +64,7 @@ export default function SquareCard({
             {createdAt ? (
               <p className={styles.createdAt}>{timeAgo(createdAt)}</p>
             ) : (
-              <Link href={`/users/${author?.id}`}>
+              <Link href={`/${author?.url}`}>
                 <p className={styles.author}>{author?.name}</p>
               </Link>
             )}

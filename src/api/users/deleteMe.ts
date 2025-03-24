@@ -1,12 +1,19 @@
 import axiosInstance from "@/constants/baseurl";
 
 export async function deleteMe(): Promise<Response> {
-  const response = await axiosInstance.delete("/users/me");
+  try {
+    const response = await axiosInstance.delete("/users/me", {
+      headers: {
+        "is-delete-account": "true",
+      },
+    });
 
-  if (response.status === 200) {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     localStorage.removeItem("user_id");
-  }
 
-  return response.data;
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 }

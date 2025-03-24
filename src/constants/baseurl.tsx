@@ -27,9 +27,19 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.config.headers["is-delete-account"] === "true") {
+      return response;
+    }
+    return response;
+  },
+
   async (error) => {
     const originalRequest = error.config;
+
+    if (originalRequest.headers["is-delete-account"] === "true") {
+      return Promise.reject(error);
+    }
 
     if (error.response?.status === 401) {
       const refreshToken = localStorage.getItem("refresh_token");

@@ -12,6 +12,7 @@ import { useRecoilValue } from "recoil";
 import { isTabletState } from "@/states/isMobileState";
 import axiosInstance from "@/constants/baseurl";
 
+// TODO: 여기는 npm type 공유해놓은게 인식이 안되서 잠깐 보류
 export default function Noti({ notification, onClose, onRefetch }: NotiProps) {
   const { showToast } = useToast();
   const router = useRouter();
@@ -75,7 +76,7 @@ export default function Noti({ notification, onClose, onRefetch }: NotiProps) {
   const renderId = () => {
     switch (notification.data.type) {
       case "FOLLOW":
-        return `/users/${notification.data.actor.id}`;
+        return `${notification.data.actor.url}`;
       case "FEED_LIKE":
       case "FEED_COMMENT":
       case "FEED_REPLY":

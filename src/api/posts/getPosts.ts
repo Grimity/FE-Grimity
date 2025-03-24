@@ -20,6 +20,7 @@ export interface PostsLatest {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

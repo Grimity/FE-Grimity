@@ -13,6 +13,7 @@ export interface TodayPopularPostsResponse {
   author: {
     id: string;
     name: string;
+    url: string;
   };
 }
 

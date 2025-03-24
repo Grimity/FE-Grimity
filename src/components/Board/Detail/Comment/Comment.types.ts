@@ -9,6 +9,7 @@ export interface PostCommentProps {
 export interface PostCommentWriter {
   id: string;
   name: string;
+  url: string;
 }
 
 export interface PostComment {

@@ -1,4 +1,4 @@
-import { getSSRUserInfo, MetaUserInfoResponse } from "@/api/users/getId";
+import { getSSRUserInfoByUrl, MetaUserInfoResponse } from "@/api/users/getId";
 import { useMyData } from "@/api/users/getMe";
 import ProfilePage from "@/components/ProfilePage/ProfilePage";
 import { serviceUrl } from "@/constants/serviceurl";
@@ -13,15 +13,15 @@ type Props = {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params as { id: string };
+  const { url } = context.params as { url: string };
 
   try {
-    const data = await getSSRUserInfo(id);
-
+    const data = await getSSRUserInfoByUrl(url);
     return {
-      props: { data },
+      props: { data, url },
     };
   } catch (error) {
+    console.error("Error fetching user data:", error); // Log the error for debugging
     return { notFound: true };
   }
 };
@@ -38,14 +38,10 @@ export default function Profile({ data }: Props) {
     }
   }, []);
 
-  const { id } = router.query;
-  const loggedInUserId = myData?.id;
-  const isMyProfile = id === loggedInUserId;
+  const loggedInUserUrl = myData?.url; // Be sure this is the correct field
+  const isMyProfile = data.url === loggedInUserUrl;
 
-  if (!id) {
-    return null;
-  }
-
+  // url is guaranteed to be a string here due to getServerSideProps
   return (
     <>
       <Head>
@@ -55,14 +51,14 @@ export default function Profile({ data }: Props) {
         <meta property="og:title" content={`${data.name} - 그리미티`} />
         <meta property="og:description" content={`${data.description} | grimity |`} />
         <meta property="og:image" content={data.image ?? "/image/grimity_default.png"} />
-        <meta property="og:url" content={`${serviceUrl}users/${data.id}`} />
+        <meta property="og:url" content={`${serviceUrl}/${data.url}`} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${data.name}의 프로필 - 그리미티`} />
         <meta name="twitter:description" content={data.description ?? ""} />
         <meta name="twitter:image" content={data.image ?? "/image/grimity_default.png"} />
       </Head>
-      <ProfilePage isMyProfile={isMyProfile} id={id as string} />
+      <ProfilePage isMyProfile={isMyProfile} id={data.id} url={data.url} />
     </>
   );
 }

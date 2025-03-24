@@ -67,7 +67,7 @@ export default function SearchCard({
           <h3 className={styles.title}>{title}</h3>
         </Link>
         <div className={styles.profileContainer}>
-          <Link href={`/users/${author?.id}`}>
+          <Link href={`/${author?.url}`}>
             <p className={styles.author}>{author?.name}</p>
           </Link>
           <IconComponent name="dot" size={3} />

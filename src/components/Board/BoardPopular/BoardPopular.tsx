@@ -47,7 +47,9 @@ export default function BoardPopular({ isDetail, isMobileMain }: BoardPopularPro
       )}
       {currentPageData && currentPageData.length > 0 ? (
         <div className={isDetail ? styles.cardListDetail : styles.cardList}>
-          {currentPageData?.map((post) => <PopularCard key={post.id} post={post} />)}
+          {currentPageData?.map((post) => (
+            <PopularCard key={post.id} post={post} />
+          ))}
         </div>
       ) : (
         <p className={styles.noResult}>아직 등록된 글이 없어요</p>

@@ -213,7 +213,7 @@ export default function Detail({ id }: DetailProps) {
           <>
             <section className={styles.header}>
               <div className={styles.profileLeft}>
-                <Link href={`/users/${details.author.id}`}>
+                <Link href={`/${details.author.url}`}>
                   {details.author.image !== "https://image.grimity.com/null" ? (
                     <Image
                       src={details.author.image}
@@ -239,7 +239,7 @@ export default function Detail({ id }: DetailProps) {
                   )}
                 </Link>
                 <div className={styles.authorInfo}>
-                  <Link href={`/users/${details.author.id}`}>
+                  <Link href={`/${details.author.url}`}>
                     <p className={styles.authorName}>{details.author.name}</p>
                   </Link>
                   <div className={styles.stats}>
@@ -443,7 +443,7 @@ export default function Detail({ id }: DetailProps) {
             <Comment feedId={id} feedWriterId={details.author.id} />
             <div className={styles.bar} />
             <div className={styles.cards}>
-              <Author authorId={details.author.id} feedId={id} />
+              <Author authorId={details.author.id} feedId={id} authorUrl={details.author.url} />
               {details.tags.length > 0 && <Similar tagNames={details.tags.join(",")} />}
               <NewFeed isDetail />
             </div>

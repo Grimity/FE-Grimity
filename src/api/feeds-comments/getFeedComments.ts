@@ -18,6 +18,7 @@ export interface FeedsCommentsResponse {
     childCommentCount: number;
     writer: {
       id: string;
+      url: string;
       name: string;
       image: string;
     };
@@ -77,6 +78,7 @@ export interface FeedsChildComment {
   likeCount: number;
   isLike: boolean;
   writer: {
+    url: any;
     id: string;
     name: string;
     image: string;

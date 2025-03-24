@@ -2,7 +2,11 @@ import styles from "./TextField.module.scss";
 import { TextFieldProps } from "./TextField.types";
 import { forwardRef } from "react";
 
-const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+interface ExtendedTextFieldProps extends TextFieldProps {
+  prefix?: string;
+}
+
+const TextField = forwardRef<HTMLInputElement, ExtendedTextFieldProps>(
   (
     {
       placeholder,
@@ -15,6 +19,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       onKeyDown,
       onFocus,
       isReply,
+      prefix,
     },
     ref,
   ) => {
@@ -42,9 +47,10 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             isError && styles.error
           }`}
         >
+          {prefix && <span className={styles.prefix}>{prefix}</span>}
           <input
             ref={ref}
-            className={styles.input}
+            className={`${styles.input} ${prefix ? styles.inputWithPrefix : ""}`}
             type="text"
             placeholder={placeholder}
             value={value}

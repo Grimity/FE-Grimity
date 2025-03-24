@@ -5,7 +5,8 @@ import Image from "next/image";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ProfileProps } from "./Profile.types";
-import { useUserData } from "@/api/users/getId";
+// import { useUserData } from "@/api/users/getId";
+import { useUserDataByUrl } from "@/api/users/getId";
 import { deleteFollow } from "@/api/users/deleteIdFollow";
 import { putFollow } from "@/api/users/putIdFollow";
 import { useToast } from "@/hooks/useToast";
@@ -24,11 +25,14 @@ import { isMobileState, isTabletState } from "@/states/isMobileState";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { deleteMe } from "@/api/users/deleteMe";
 
-export default function Profile({ isMyProfile, id }: ProfileProps) {
+export default function Profile({ isMyProfile, id, url }: ProfileProps) {
   const { isLoggedIn, user_id } = useRecoilValue(authState);
+  const [, setAuth] = useRecoilState(authState);
   const [, setModal] = useRecoilState(modalState);
+  // TODO
   const { data: myData, refetch } = useMyData();
-  const { data: userData, refetch: refetchUserData } = useUserData(id);
+  // const { data: userData, refetch: refetchUserData } = useUserData(id);
+  const { data: userData, refetch: refetchUserData } = useUserDataByUrl(url);
   const [profileImage, setProfileImage] = useState<string>("");
   const [coverImage, setCoverImage] = useState<string>("");
   const { showToast } = useToast();
@@ -42,14 +46,14 @@ export default function Profile({ isMyProfile, id }: ProfileProps) {
   }, [pathname]);
 
   useEffect(() => {
-    if (id === myData?.id) {
+    if (url === myData?.url) {
       setProfileImage(myData.image || "/image/default.svg");
       setCoverImage(myData.backgroundImage || "/image/default-cover.png");
-    } else if (id === userData?.id) {
+    } else if (url === userData?.id) {
       setProfileImage(userData.image || "/image/default.svg");
       setCoverImage(userData.backgroundImage || "/image/default-cover.png");
     }
-  }, [id, myData, userData]);
+  }, [url, myData, userData]);
 
   useEffect(() => {
     setProfileImage(userData?.image || "/image/default.svg");
@@ -74,12 +78,11 @@ export default function Profile({ isMyProfile, id }: ProfileProps) {
   };
 
   const handleOpenEditModal = () => {
-    // if (isMobile) {
-    //   setModal({ isOpen: true, type: "PROFILE-EDIT", data: null, isFill: true });
-    // } else {
-    //   setModal({ isOpen: true, type: "PROFILE-EDIT", data: null });
-    // }
-    showToast("현재 수정 중인 기능으로 비활성화 되었습니다.", "error");
+    if (isMobile) {
+      setModal({ isOpen: true, type: "PROFILE-EDIT", data: null, isFill: true });
+    } else {
+      setModal({ isOpen: true, type: "PROFILE-EDIT", data: null });
+    }
   };
 
   const ImageMutation = useMutation((imageName: string) => putProfileImage(imageName));
@@ -309,6 +312,11 @@ export default function Profile({ isMyProfile, id }: ProfileProps) {
           onClick: async () => {
             try {
               await deleteMe();
+              setAuth({
+                access_token: "",
+                isLoggedIn: false,
+                user_id: "",
+              });
               showToast("회원 탈퇴 되었습니다.", "success");
               router.push("/");
             } catch (err) {

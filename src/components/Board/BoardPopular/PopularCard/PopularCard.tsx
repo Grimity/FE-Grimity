@@ -32,7 +32,7 @@ export default function PopularCard({ post }: PopularCardProps) {
       </Link>
       {!isMobile ? (
         <div className={styles.footer}>
-          <Link href={`/users/${post.author.id}`}>
+          <Link href={`${post.author.url}`}>
             <p className={styles.author}>{post.author.name}</p>
           </Link>
           <p className={styles.date}>{timeAgo(post.createdAt)}</p>
@@ -63,7 +63,7 @@ export default function PopularCard({ post }: PopularCardProps) {
           </div>
           <p className={styles.date}>{timeAgo(post.createdAt)}</p>
           <IconComponent name="dot" size={3} />
-          <Link href={`/users/${post.author.id}`}>
+          <Link href={`${post.author.url}`}>
             <p className={styles.author}>{post.author.name}</p>
           </Link>
         </div>
