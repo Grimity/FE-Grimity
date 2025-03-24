@@ -140,59 +140,6 @@
     display: flex;
     justify-content: flex-end;
   }
-
-  .paginationDetail {
-    margin-top: 40px;
-  }
-
-  .pagination {
-    margin-top: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    @include Drag;
-
-    @include Size("mobile") {
-      margin-top: 28px;
-      gap: 4px;
-    }
-
-    button {
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: $gray0;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      @include Label2;
-      color: $gray70;
-
-      &:hover {
-        background-color: $gray10;
-      }
-    }
-
-    .paginationArrow {
-      background-color: transparent;
-      border: none;
-
-      &:hover {
-        background-color: $gray10;
-      }
-
-      &:disabled {
-        display: none;
-      }
-    }
-
-    .active {
-      background-color: $gray20;
-    }
-  }
 }
 
 .noResults {
