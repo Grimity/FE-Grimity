@@ -2,15 +2,15 @@
 
 .toast {
   width: max-content;
-  color: $gray70;
+  color: $gray0;
   @include Title5;
-  background: $gray0;
+  background: rgba(53, 54, 63, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 16px;
   padding: 16px 24px;
-  border-radius: 12px;
+  border-radius: 16px;
   transition: opacity 0.5s ease-in-out;
   opacity: 1;
   position: fixed;
@@ -22,30 +22,12 @@
   @include Size("mobile") {
     padding: 12px 18px 12px 12px;
     gap: 12px;
-    border-radius: 50px;
     @include Sub4;
   }
 
   @include Size("tablet") {
     padding: 14px 20px 14px 14px;
     gap: 14px;
-    border-radius: 50px;
     @include Sub4;
-  }
-
-  &.success {
-    border: 1px solid $secandary1;
-  }
-
-  &.error {
-    border: 1px solid $negative;
-  }
-
-  &.warning {
-    border: 1px solid $cautionary;
-  }
-
-  &.information {
-    border: 1px solid $primary4;
   }
 }

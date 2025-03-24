@@ -12,13 +12,13 @@
   display: flex;
   align-items: center;
   padding: 16px 20px;
-  background-color: $gray10;
+  background-color: $gray5;
   border-radius: 12px;
   border: 1px solid $gray30;
   @include Label2;
 
   &:focus-within {
-    border: 1px solid $secandary1;
+    border: 1px solid $primary4;
     background-color: $gray0;
   }
 }
@@ -45,11 +45,11 @@
 .input {
   width: 100%;
   @include Label2;
-  color: $gray80;
+  color: $gray70;
   border: none;
   outline: none;
   padding: 0;
-  background-color: $gray10;
+  background-color: $gray5;
 
   &:focus-within {
     background-color: $gray0;

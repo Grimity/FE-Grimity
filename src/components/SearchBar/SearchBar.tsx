@@ -49,7 +49,7 @@ export default function SearchBar({ searchValue, setSearchValue, onSearch }: Sea
       </div>
       {searchValue && (
         <div onClick={handleClear}>
-          <IconComponent name="searchDelete" size={24} padding={8} isBtn />
+          <IconComponent name="xCircle" size={24} padding={8} isBtn />
         </div>
       )}
     </div>

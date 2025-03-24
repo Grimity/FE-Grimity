@@ -7,27 +7,8 @@ export default function Toast() {
 
   if (!toast.isShow) return null;
 
-  let borderColor = "";
-
-  switch (toast.type) {
-    case "success":
-      borderColor = styles.success;
-      break;
-    case "error":
-      borderColor = styles.error;
-      break;
-    case "warning":
-      borderColor = styles.warning;
-      break;
-    case "information":
-      borderColor = styles.information;
-      break;
-    default:
-      borderColor = "";
-  }
-
   return (
-    <div className={`${styles.toast} ${borderColor}`}>
+    <div className={`${styles.toast} `}>
       <IconComponent name={toast.type} size={30} />
       {toast.message}
     </div>

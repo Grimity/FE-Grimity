@@ -107,7 +107,7 @@
       height: 120px;
       padding: 16px 20px;
       border-radius: 12px;
-      background-color: $gray10;
+      background-color: $gray5;
       border: 1px solid $gray30;
       position: relative;
       overflow-y: auto;
@@ -129,7 +129,7 @@
         border: none;
         outline: none;
         padding: 0;
-        background-color: $gray10;
+        background-color: $gray5;
         resize: none;
 
         &:focus-within {
