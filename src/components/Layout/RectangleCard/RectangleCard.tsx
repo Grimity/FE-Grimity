@@ -5,7 +5,6 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import Image from "next/image";
 import { RectangleCardProps } from "./RectangleCard.types";
 import Link from "next/link";
-import { timeAgo } from "@/utils/timeAgo";
 import { useRecoilValue } from "recoil";
 import { authState } from "@/states/authState";
 import { deleteLike, putLike } from "@/api/feeds/putDeleteFeedsLike";
@@ -19,7 +18,6 @@ export default function RectangleCard({
   author,
   likeCount: initialLikeCount,
   commentCount,
-  createdAt,
   isLike: initialIsLike,
 }: RectangleCardProps) {
   const { isLoggedIn } = useRecoilValue(authState);
@@ -47,7 +45,13 @@ export default function RectangleCard({
           <div className={styles.imageContainer}>
             {isLoggedIn && (
               <div className={styles.likeBtn} onClick={handleLikeClick}>
-                <IconComponent name={isLiked ? "cardLikeOn" : "cardLikeOff"} isBtn size={24} />
+                <IconComponent
+                  name="likeCount"
+                  isBtn
+                  color={isLiked ? "red" : "gray"}
+                  strokeColor={isLiked ? "red" : "cardLikeStroke"}
+                  size={24}
+                />
               </div>
             )}
             <Link href={`/feeds/${id}`}>
@@ -62,47 +66,46 @@ export default function RectangleCard({
               <p className={styles.content}>{content}</p>
               <div className={styles.profileContainer}>
                 <div className={styles.informationContainer}>
-                  <p className={styles.createdAt}>{timeAgo(createdAt)}</p>
+                  {author && (
+                    <Link href={`/${author.url}`}>
+                      <div className={styles.profile}>
+                        {author.image !== "https://image.grimity.com/null" ? (
+                          <Image
+                            src={author.image}
+                            alt={author.name}
+                            width={16}
+                            height={16}
+                            quality={50}
+                            className={styles.profileImage}
+                            unoptimized
+                          />
+                        ) : (
+                          <Image
+                            src="/image/default.svg"
+                            width={16}
+                            height={16}
+                            quality={50}
+                            alt="프로필 이미지"
+                            className={styles.profileImage}
+                            unoptimized
+                          />
+                        )}
+                        <p className={styles.author}>{author.name}</p>
+                      </div>
+                    </Link>
+                  )}
                   <IconComponent name="cardDot" size={2} />
                   <div className={styles.countContainer}>
                     <div className={styles.likeContainer}>
-                      <IconComponent name="likeCount" size={16} />
+                      <IconComponent name="likeCount" size={16} color="gray40" />
                       <p className={styles.count}>{formatCurrency(likeCount)}</p>
                     </div>
                     <div className={styles.likeContainer}>
-                      <IconComponent name="commentCount" size={16} />
+                      <IconComponent name="commentCount" size={16} color="gray40" />
                       <p className={styles.count}>{formatCurrency(commentCount)}</p>
                     </div>
                   </div>
                 </div>
-                {author && (
-                  <Link href={`/${author.url}`}>
-                    <div className={styles.profile}>
-                      {author.image !== "https://image.grimity.com/null" ? (
-                        <Image
-                          src={author.image}
-                          alt={author.name}
-                          width={24}
-                          height={24}
-                          quality={50}
-                          className={styles.profileImage}
-                          unoptimized
-                        />
-                      ) : (
-                        <Image
-                          src="/image/default.svg"
-                          width={24}
-                          height={24}
-                          quality={50}
-                          alt="프로필 이미지"
-                          className={styles.profileImage}
-                          unoptimized
-                        />
-                      )}
-                      <p className={styles.author}>{author.name}</p>
-                    </div>
-                  </Link>
-                )}
               </div>
             </div>
           ) : (
@@ -117,8 +120,8 @@ export default function RectangleCard({
                       <Image
                         src={author.image}
                         alt={author.name}
-                        width={24}
-                        height={24}
+                        width={16}
+                        height={16}
                         quality={50}
                         className={styles.profileImage}
                         unoptimized
@@ -126,8 +129,8 @@ export default function RectangleCard({
                     ) : (
                       <Image
                         src="/image/default.svg"
-                        width={24}
-                        height={24}
+                        width={16}
+                        height={16}
                         quality={50}
                         alt="프로필 이미지"
                         className={styles.profileImage}
@@ -146,7 +149,13 @@ export default function RectangleCard({
           <div className={styles.imageContainer}>
             {isLoggedIn && (
               <div className={styles.likeBtn} onClick={handleLikeClick}>
-                <IconComponent name={isLiked ? "cardLikeOn" : "cardLikeOff"} isBtn size={24} />
+                <IconComponent
+                  name="likeCount"
+                  isBtn
+                  color={isLiked ? "red" : "gray"}
+                  strokeColor={isLiked ? "red" : "cardLikeStroke"}
+                  size={24}
+                />
               </div>
             )}
             <Link href={`/feeds/${id}`}>
@@ -167,8 +176,8 @@ export default function RectangleCard({
                   <Image
                     src={author.image}
                     alt={author.name}
-                    width={24}
-                    height={24}
+                    width={16}
+                    height={16}
                     quality={50}
                     className={styles.profileImage}
                     unoptimized
@@ -176,8 +185,8 @@ export default function RectangleCard({
                 ) : (
                   <Image
                     src="/image/default.svg"
-                    width={24}
-                    height={24}
+                    width={16}
+                    height={16}
                     alt="프로필 이미지"
                     quality={50}
                     className={styles.profileImage}

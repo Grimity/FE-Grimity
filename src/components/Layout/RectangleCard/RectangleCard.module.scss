@@ -3,17 +3,18 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
   width: 100%;
 
   .imageContainer {
     aspect-ratio: 4 / 3;
-    border-radius: 12px;
+    border-radius: 8px;
     object-fit: cover;
     overflow: hidden;
     position: relative;
     cursor: pointer;
     @include Drag;
+    border: 1px solid $gray30;
 
     .image {
       object-fit: cover;
@@ -80,9 +81,8 @@
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
-      @include Body1;
+      @include Label2;
       min-height: 24px;
-      margin-top: 4px;
     }
 
     .countContainer {
@@ -98,10 +98,8 @@
       @include Drag;
 
       .count {
-        @include MEDIUM;
-        font-size: 12px;
-        line-height: 12px;
-        color: $gray50;
+        @include Cap2;
+        color: $gray40;
       }
     }
   }
@@ -109,7 +107,7 @@
   .profile {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 
     .profileImage {
       object-fit: cover;
@@ -120,7 +118,7 @@
     }
 
     .author {
-      @include Label1;
+      @include Cap1;
       color: $gray60;
       overflow: hidden;
       text-overflow: ellipsis;

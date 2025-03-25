@@ -43,7 +43,13 @@ export default function SquareCard({
       <div className={`${styles.imageContainer} ${isSame && styles.isSame}`}>
         {isLoggedIn && !cards && (
           <div className={styles.likeBtn} onClick={handleLikeClick}>
-            <IconComponent name={isLiked ? "cardLikeOn" : "cardLikeOff"} isBtn size={24} />
+            <IconComponent
+              name="likeCount"
+              isBtn
+              color={isLiked ? "red" : "gray"}
+              strokeColor={isLiked ? "red" : "cardLikeStroke"}
+              size={24}
+            />
           </div>
         )}
         {hasMultipleImages && (
@@ -70,11 +76,11 @@ export default function SquareCard({
             )}
             <IconComponent name="dot" size={3} />
             <div className={styles.likeContainer}>
-              <IconComponent name="likeCount" size={16} />
+              <IconComponent name="likeCount" size={16} color="gray40" />
               <p className={styles.count}>{formatCurrency(currentLikeCount)}</p>
             </div>
             <div className={styles.likeContainer}>
-              <IconComponent name="viewCount" size={16} />
+              <IconComponent name="viewCount" size={16} color="gray40" />
               <p className={styles.count}>{formatCurrency(viewCount)}</p>
             </div>
           </div>
