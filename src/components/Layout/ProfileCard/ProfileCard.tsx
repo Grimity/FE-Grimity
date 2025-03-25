@@ -36,15 +36,15 @@ export default function ProfileCard({
         <div className={styles.profileContainer}>
           <div className={styles.countContainer}>
             <div className={styles.likeContainer}>
-              <IconComponent name="likeCount" size={16} />
+              <IconComponent name="likeCount" size={16} color="gray40" />
               <p className={styles.count}>{formatCurrency(likeCount)}</p>
             </div>
             <div className={styles.likeContainer}>
-              <IconComponent name="commentCount" size={16} />
+              <IconComponent name="commentCount" size={16} color="gray40" />
               <p className={styles.count}>{formatCurrency(commentCount)}</p>
             </div>
             <div className={styles.likeContainer}>
-              <IconComponent name="viewCount" size={16} />
+              <IconComponent name="viewCount" size={16} color="gray40" />
               <p className={styles.count}>{formatCurrency(viewCount)}</p>
             </div>
           </div>

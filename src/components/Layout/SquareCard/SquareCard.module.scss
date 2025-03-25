@@ -4,7 +4,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
   width: 100%;
 
   .imageContainer.isSame::after {
@@ -21,11 +21,12 @@
   .imageContainer {
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
     @include Drag;
+    border: 1px solid $gray30;
 
     .image {
       object-fit: cover;
@@ -77,8 +78,8 @@
       gap: 8px;
 
       .author {
-        @include Label1;
-        color: $gray50;
+        @include Cap1;
+        color: $gray60;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
@@ -87,15 +88,15 @@
       }
 
       .createdAt {
-        @include Label1;
-        color: $gray50;
+        @include Label2;
+        color: $gray60;
         @include Drag;
       }
 
       .countContainer {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         @include Drag;
 
         .likeContainer {
@@ -104,8 +105,8 @@
           gap: 2px;
 
           .count {
-            @include Label2;
-            color: $gray50;
+            @include Cap2;
+            color: $gray40;
           }
         }
       }

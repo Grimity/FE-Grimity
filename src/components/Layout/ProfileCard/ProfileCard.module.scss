@@ -3,7 +3,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
   width: 100%;
 
   @include Size("mobile") {
@@ -13,11 +13,12 @@
   .imageContainer {
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
     @include Drag;
+    border: 1px solid $gray30;
 
     .overlapIcon {
       position: absolute;
@@ -71,8 +72,8 @@
       justify-content: space-between;
 
       .author {
-        @include Label1;
-        color: $gray40;
+        @include Label2;
+        color: $gray60;
         @include Drag;
 
         @include Size("mobile") {
@@ -93,7 +94,7 @@
 
         .count {
           @include Cap2;
-          color: $gray60;
+          color: $gray40;
 
           @include Size("mobile") {
             @include Cap2;
