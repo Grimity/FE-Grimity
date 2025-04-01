@@ -3,7 +3,6 @@ import styles from "./AllCard.module.scss";
 import Chip from "@/components/Chip/Chip";
 import { timeAgo } from "@/utils/timeAgo";
 import { AllCardProps } from "./AllCard.types";
-import striptags from "striptags";
 import Link from "next/link";
 import { deletePostsSave, putPostsSave } from "@/api/posts/putDeletePostsIdSave";
 import { useState } from "react";
@@ -35,12 +34,6 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
   useIsMobile();
   const [, setModal] = useRecoilState(modalState);
   const { showToast } = useToast();
-  let plainTextContent = striptags(post.content);
-  plainTextContent = plainTextContent
-    .replace(/&nbsp;|&lt;|&gt;|&amp;|&quot;|&#39;/g, "")
-    .replace(/&ldquo;/g, "“")
-    .replace(/&rdquo;/g, "”")
-    .trim();
   const [isSaved, setIsSaved] = useState(true);
   const router = useRouter();
 
@@ -125,7 +118,7 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
                 </div>
               )}
             </div>
-            <p className={styles.content}>{plainTextContent}</p>
+            <p className={styles.content}>{post.content}</p>
           </div>
         </Link>
         <div className={styles.rightContainer}>

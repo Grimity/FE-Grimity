@@ -1,6 +1,5 @@
 import { PostResponse } from "@/api/posts/getTodayPopular";
 import styles from "./PopularCard.module.scss";
-import striptags from "striptags";
 import { timeAgo } from "@/utils/timeAgo";
 import IconComponent from "@/components/Asset/Icon";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -14,12 +13,6 @@ interface PopularCardProps {
 }
 
 export default function PopularCard({ post }: PopularCardProps) {
-  let plainTextContent = striptags(post.content);
-  plainTextContent = plainTextContent
-    .replace(/&nbsp;|&lt;|&gt;|&amp;|&quot;|&#39;/g, "")
-    .replace(/&ldquo;/g, "“")
-    .replace(/&rdquo;/g, "”")
-    .trim();
   const isMobile = useRecoilValue(isMobileState);
 
   useIsMobile();
@@ -28,7 +21,7 @@ export default function PopularCard({ post }: PopularCardProps) {
     <div className={styles.container}>
       <Link href={`/posts/${post.id}`}>
         <h3 className={styles.title}>{post.title}</h3>
-        <p className={styles.content}>{plainTextContent}</p>
+        <p className={styles.content}>{post.content}</p>
       </Link>
       {!isMobile ? (
         <div className={styles.footer}>
