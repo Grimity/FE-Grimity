@@ -9,6 +9,10 @@
   position: relative;
   padding-top: 30px;
 
+  @include Size("tablet") {
+    max-width: 480px;
+  }
+
   @include Size("mobile") {
     padding-top: 16px;
   }
