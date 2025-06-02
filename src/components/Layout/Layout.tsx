@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from "react";
-import styles from "./Layout.module.scss";
-import Header from "./Header/Header";
-import Sidebar from "./Sidebar/Sidebar";
-import { LayoutProps } from "./Layout.types";
-import IconComponent from "../Asset/Icon";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useEffect, useState } from "react";
+
 import { useDeviceStore } from "@/states/deviceStore";
+
+import IconComponent from "@/components/Asset/Icon";
+import Header from "@/components/Layout/Header/Header";
+import Sidebar from "@/components/Layout/Sidebar/Sidebar";
+
+import { useIsMobile } from "@/hooks/useIsMobile";
+
+import { LayoutProps } from "@/components/Layout/Layout.types";
+
+import styles from "@/components/Layout/Layout.module.scss";
 
 export default function Layout({ children }: LayoutProps) {
   const [isScrollAbove, setIsScrollAbove] = useState(false);
