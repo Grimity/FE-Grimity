@@ -1,10 +1,14 @@
-import { useFeedsLatest } from "@/api/feeds/getFeedsLatest";
-import SquareCard from "../SquareCard/SquareCard";
-import Title from "../Title/Title";
-import styles from "./NewFeed.module.scss";
 import { useEffect, useRef } from "react";
-import { NewFeedProps } from "./NewFeed.types";
 import { useRouter } from "next/router";
+
+import { useFeedsLatest } from "@/api/feeds/getFeedsLatest";
+
+import SquareCard from "@/components/Layout/SquareCard/SquareCard";
+import Title from "@/components/Layout/Title/Title";
+
+import { NewFeedProps } from "@/components/Layout/NewFeed/NewFeed.types";
+
+import styles from "@/components/Layout/NewFeed/NewFeed.module.scss";
 
 export default function NewFeed({ isDetail = false }: NewFeedProps) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useFeedsLatest({

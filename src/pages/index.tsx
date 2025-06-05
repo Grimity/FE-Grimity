@@ -37,33 +37,24 @@ export default function Home() {
     <>
       <InitialPageMeta title={OGTitle} url={OGUrl} />
       <div className={styles.container}>
-        {isMobile ? (
-          <>
-            <section className={styles.MobileSection}>
-              <Banner />
-              <Ranking />
-              <section className={styles.BoardSection}>
-                <MainBoard type="ALL" />
-              </section>
-              <NewFeed />
-            </section>
-            <Link href="/write">
-              <div className={styles.uploadButton} role="button" tabIndex={0}>
-                <IconComponent name="mobileUpload" size={32} isBtn />
-              </div>
-            </Link>
-          </>
-        ) : (
+        <>
           <section className={styles.FeedSection}>
             <Banner />
             <Ranking />
             <section className={styles.BoardSection}>
               <MainBoard type="ALL" />
-              <MainBoard type="NOTICE" />
+              {!isMobile && <MainBoard type="NOTICE" />}
             </section>
             <NewFeed />
           </section>
-        )}
+          {isMobile && (
+            <Link href="/write">
+              <div className={styles.uploadButton} role="button" tabIndex={0}>
+                <IconComponent name="mobileUpload" size={32} isBtn />
+              </div>
+            </Link>
+          )}
+        </>
       </div>
     </>
   );

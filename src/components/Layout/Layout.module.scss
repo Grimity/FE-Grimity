@@ -8,6 +8,8 @@
   grid-template-areas:
     "header header"
     "sidebar main";
+  grid-template-rows: 60px 1fr;
+  grid-template-columns: 258px 1fr;
   position: relative;
 
   @include Size("tablet") {
@@ -23,7 +25,6 @@
 
   .children {
     grid-area: main;
-    margin: 0 auto;
   }
 
   .topButton {

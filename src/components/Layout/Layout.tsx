@@ -42,19 +42,17 @@ export default function Layout({ children }: LayoutProps) {
     <div className={styles.layout}>
       <Header />
       <Sidebar />
-      <div className={styles.children}>
-        {children}
-        {!isMobile && !isTablet && (
-          <div
-            className={`${styles.topButton} ${isScrollAbove && styles.show}`}
-            onClick={scrollToTop}
-            role="button"
-            tabIndex={0}
-          >
-            <IconComponent name="up" size={28} isBtn />
-          </div>
-        )}
-      </div>
+      <div className={styles.children}>{children}</div>
+      {!isMobile && !isTablet && (
+        <div
+          className={`${styles.topButton} ${isScrollAbove && styles.show}`}
+          onClick={scrollToTop}
+          role="button"
+          tabIndex={0}
+        >
+          <IconComponent name="up" size={28} isBtn />
+        </div>
+      )}
     </div>
   );
 }
