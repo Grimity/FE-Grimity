@@ -4,12 +4,22 @@
 .layout {
   width: 100%;
   min-height: 100vh;
-  height: 100%;
   display: grid;
   grid-template-areas:
     "header header"
     "sidebar main";
   position: relative;
+
+  @include Size("tablet") {
+    grid-template-columns: 80px 1fr;
+  }
+
+  @include Size("mobile") {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "main";
+  }
 
   .children {
     grid-area: main;

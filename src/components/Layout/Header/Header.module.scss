@@ -12,7 +12,7 @@
   background: $gray0;
   border-bottom: 1px solid $gray30;
   align-items: center;
-  z-index: 2;
+  z-index: 100;
 
   @include Drag;
 
