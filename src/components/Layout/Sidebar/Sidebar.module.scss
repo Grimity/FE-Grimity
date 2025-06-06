@@ -1,8 +1,7 @@
 @use "@/styles/globals.scss" as *;
 
 .container {
-  grid-area: sidebar;
-  position: sticky;
+  position: fixed;
   top: 60px;
   height: calc(100vh - 60px);
   max-width: 258px;
@@ -13,6 +12,14 @@
   border-right: 1px solid $gray30;
   display: flex;
   z-index: 1;
+
+  @include Size("tablet") {
+    padding: 0 10px;
+  }
+
+  @include Size("mobile") {
+    display: none;
+  }
 
   & > :first-child {
     margin-top: 16px;

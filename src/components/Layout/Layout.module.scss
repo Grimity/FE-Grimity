@@ -4,27 +4,18 @@
 .layout {
   width: 100%;
   min-height: 100vh;
-  display: grid;
-  grid-template-areas:
-    "header header"
-    "sidebar main";
-  grid-template-rows: 60px 1fr;
-  grid-template-columns: 258px 1fr;
   position: relative;
 
-  @include Size("tablet") {
-    grid-template-columns: 80px 1fr;
-  }
-
-  @include Size("mobile") {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "header"
-      "main";
-  }
-
   .children {
-    grid-area: main;
+    margin-left: 258px;
+
+    @include Size("tablet") {
+      margin-left: 80px;
+    }
+
+    @include Size("mobile") {
+      margin-left: 0;
+    }
   }
 
   .topButton {
