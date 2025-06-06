@@ -2,23 +2,24 @@
 @use "@/styles/globals.scss" as *;
 
 .container {
-  width: calc(100% - 200px);
+  min-width: 0;
+  flex-shrink: 1;
+  width: 100%;
   max-width: 1462px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-self: flex-start;
-  padding: 24px 0 80px;
+  padding: 24px 32px 80px;
 
   @include Size("tablet") {
-    width: calc(100% - 64px);
     max-width: 880px;
-    padding: 30px 0 80px;
+    padding-top: 16px;
   }
 
   @include Size("mobile") {
-    width: calc(100% - 32px);
+    padding: 30px 16px 80px;
   }
 
   .FeedSection {

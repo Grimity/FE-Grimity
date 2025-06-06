@@ -9,18 +9,21 @@
   align-items: center;
 
   .center {
-    width: 100%;
+    width: calc(100% - 382px);
     height: 100%;
     display: flex;
     gap: 48px;
-    max-width: 1280px; // TODO: 전체적인 간격 조정 필요
+    max-width: 1280px;
     padding-top: 60px;
+    padding-bottom: 144px;
 
     @include Size("mobile") {
+      width: calc(100% - 32px);
       padding-top: 16px;
     }
 
     @include Size("tablet") {
+      width: calc(100% - 32px);
       padding-top: 16px;
     }
   }

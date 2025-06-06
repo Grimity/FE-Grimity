@@ -27,7 +27,15 @@
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 1;
+  z-index: 3;
+
+  @include Size("mobile") {
+    display: none;
+  }
+
+  @include Size("tablet") {
+    display: none;
+  }
 
   &:disabled {
     cursor: not-allowed;
@@ -41,10 +49,10 @@
   }
 }
 .navButton.left {
-  left: -30px;
+  left: -25px;
 }
 .navButton.right {
-  right: -30px;
+  right: -25px;
 }
 
 .cardsContainer {

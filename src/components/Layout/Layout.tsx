@@ -41,8 +41,13 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className={styles.layout}>
       <Header />
-      <Sidebar />
-      <div className={styles.children}>{children}</div>
+
+      <div className={styles.container}>
+        <div className={styles.children}>
+          <Sidebar />
+          {children}
+        </div>
+      </div>
       {!isMobile && !isTablet && (
         <div
           className={`${styles.topButton} ${isScrollAbove && styles.show}`}

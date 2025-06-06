@@ -1,12 +1,9 @@
 import { useRouter } from "next/router";
 
 import { useAuthStore } from "@/states/authStore";
-import { useDeviceStore } from "@/states/deviceStore";
 
 import SidebarItem, { BaseIconName } from "@/components/Layout/Sidebar/SidebarItem/SidebarItem";
 import FooterSection from "@/components/Layout/FooterSection/FooterSection";
-
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 import { MENU_ITEMS } from "@/constants/menu";
 import { PATH_ROUTES } from "@/constants/routes";
@@ -16,8 +13,6 @@ import styles from "@/components/Layout/Sidebar/Sidebar.module.scss";
 const Sidebar = () => {
   const { isLoggedIn } = useAuthStore((state) => state);
   const router = useRouter();
-  const { isMobile } = useDeviceStore((state) => state);
-  useIsMobile();
 
   const menuItems = isLoggedIn
     ? [...MENU_ITEMS, { icon: "following", label: "팔로잉", route: PATH_ROUTES.FOLLOWING }]
@@ -37,27 +32,23 @@ const Sidebar = () => {
   };
 
   return (
-    <>
-      {!isMobile && (
-        <nav className={styles.container}>
-          <div className={styles.menu}>
-            {menuItems.map((item, index) => (
-              <SidebarItem
-                key={index}
-                icon={item.icon as BaseIconName}
-                label={item.label}
-                onClick={() => handleItemClick(item.route)}
-                isActive={isItemActive(item.route)}
-              />
-            ))}
-          </div>
+    <nav className={styles.container}>
+      <div className={styles.menu}>
+        {menuItems.map((item, index) => (
+          <SidebarItem
+            key={index}
+            icon={item.icon as BaseIconName}
+            label={item.label}
+            onClick={() => handleItemClick(item.route)}
+            isActive={isItemActive(item.route)}
+          />
+        ))}
+      </div>
 
-          <div className={styles.footer}>
-            <FooterSection />
-          </div>
-        </nav>
-      )}
-    </>
+      <div className={styles.footer}>
+        <FooterSection />
+      </div>
+    </nav>
   );
 };
 
