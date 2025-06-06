@@ -3,37 +3,28 @@
 
 .layout {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-self: center;
   min-height: 100vh;
-  height: 100%;
-  padding: 0 0 0 254px;
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  grid-template-rows: 60px 1fr;
+  grid-template-columns: 258px 1fr;
+  position: relative;
 
   @include Size("tablet") {
-    padding: 0 0 0 80px;
+    grid-template-columns: 80px 1fr;
   }
 
   @include Size("mobile") {
-    padding: 0 16px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "main";
   }
 
   .children {
-    width: 100%;
-    max-width: 1462px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 60px auto 80px;
-    padding: 0 30px;
-
-    @include Size("tablet") {
-      padding: 0 16px;
-    }
-
-    @include Size("mobile") {
-      padding: 0;
-    }
+    grid-area: main;
   }
 
   .topButton {

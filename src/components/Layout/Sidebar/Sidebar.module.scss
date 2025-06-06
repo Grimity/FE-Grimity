@@ -1,23 +1,18 @@
 @use "@/styles/globals.scss" as *;
 
 .container {
-  position: fixed;
-  display: flex;
+  grid-area: sidebar;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
   max-width: 258px;
-  max-height: 100vh;
   flex-direction: column;
   align-items: flex-start;
-  top: 0;
-  left: 0;
-  margin-top: 60px;
   padding: 0 12px;
-  height: 100vh;
   background-color: $gray0;
   border-right: 1px solid $gray30;
-  z-index: 1000;
   display: flex;
-  flex-direction: column;
-  z-index: 1000;
+  z-index: 1;
 
   & > :first-child {
     margin-top: 16px;
@@ -30,13 +25,6 @@
   }
 
   .footer {
-    margin-bottom: 80px;
     width: 100%;
-
-    @include Size("tablet") {
-      max-width: 80px;
-      justify-content: flex-start;
-      align-items: center;
-    }
   }
 }

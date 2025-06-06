@@ -2,41 +2,33 @@
 @use "@/styles/globals.scss" as *;
 
 .container {
-  width: 100%;
+  width: calc(100% - 200px);
   max-width: 1462px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-self: flex-start;
-  gap: 50px;
-  padding-top: 16px;
+  padding: 24px 0 80px;
 
   @include Size("tablet") {
-    gap: 0;
+    width: calc(100% - 64px);
+    max-width: 880px;
+    padding: 30px 0 80px;
   }
 
   @include Size("mobile") {
-    justify-content: flex-start;
-    gap: 0;
-  }
-
-  .bar {
-    width: 100%;
-    height: 1px;
-    background: $gray30;
+    width: calc(100% - 32px);
   }
 
   .FeedSection {
     flex: 2;
     display: flex;
     flex-direction: column;
-    gap: 48px;
+    gap: 72px;
 
-    .Banner {
-      width: 100%;
-      max-width: 100%;
-      height: auto;
+    @include Size("mobile") {
+      gap: 40px;
     }
   }
 
@@ -45,22 +37,6 @@
     display: flex;
     flex-direction: row;
     gap: 30px;
-  }
-
-  .MobileSection {
-    display: none;
-
-    @include Size("mobile") {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    @include Size("tablet") {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
   }
 
   .uploadButton {
