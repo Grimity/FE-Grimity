@@ -245,6 +245,8 @@ $min-breakpoints: (
   "tablet": 768px,
 );
 
+$header-height: 60px;
+
 @mixin Size($device) {
   @media (min-width: map.get($min-breakpoints, $device)) and (max-width: map.get($max-breakpoints, $device)) {
     @content;

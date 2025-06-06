@@ -2,6 +2,8 @@
 @use "@/styles/globals.scss" as *;
 
 .container {
+  min-width: 0;
+  flex-shrink: 1;
   width: 100%;
   max-width: 1462px;
   margin: 0 auto;

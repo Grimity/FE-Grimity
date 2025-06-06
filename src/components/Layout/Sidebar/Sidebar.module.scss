@@ -1,9 +1,9 @@
 @use "@/styles/globals.scss" as *;
 
 .container {
-  position: fixed;
-  top: 60px;
-  height: calc(100vh - 60px);
+  position: sticky;
+  top: $header-height;
+  height: calc(100vh - $header-height);
   max-width: 258px;
   flex-direction: column;
   align-items: flex-start;

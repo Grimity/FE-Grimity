@@ -6,16 +6,15 @@
   min-height: 100vh;
   position: relative;
 
+  .container {
+    position: relative;
+    top: $header-height;
+    display: flex;
+    flex-direction: column;
+  }
+
   .children {
-    margin-left: 258px;
-
-    @include Size("tablet") {
-      margin-left: 80px;
-    }
-
-    @include Size("mobile") {
-      margin-left: 0;
-    }
+    display: flex;
   }
 
   .topButton {
