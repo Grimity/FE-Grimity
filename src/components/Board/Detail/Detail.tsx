@@ -31,6 +31,8 @@ import { getTypeLabel } from "@/components/Board/BoardAll/AllCard/AllCard";
 import { PostDetailProps } from "@/components/Board/Detail/Detail.types";
 
 import styles from "@/components/Board/Detail/Detail.module.scss";
+import { PATH_ROUTES } from "@/constants/routes";
+import Icon from "@/components/Asset/IconTemp";
 
 export default function PostDetail({ id }: PostDetailProps) {
   const router = useRouter();
@@ -299,12 +301,8 @@ export default function PostDetail({ id }: PostDetailProps) {
 
         <section className={styles.uploadBtn}>
           {isLoggedIn && (
-            <Link href="/board/write">
-              <Button
-                size="m"
-                type="outlined-assistive"
-                leftIcon={<IconComponent name="detailWrite" size={16} />}
-              >
+            <Link href={PATH_ROUTES.BOARD_WRITE}>
+              <Button type="outlined-assistive" leftIcon={<Icon icon="detailWrite" size="xl" />}>
                 글쓰기
               </Button>
             </Link>

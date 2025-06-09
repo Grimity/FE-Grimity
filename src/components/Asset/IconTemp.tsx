@@ -3,7 +3,7 @@ import styles from "@/components/Asset/IconTemp.module.scss";
 
 interface IconProps {
   icon: IconList;
-  size?: "sm" | "md" | "lg" | "xl" | "2xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
   className?: string;
 }
 

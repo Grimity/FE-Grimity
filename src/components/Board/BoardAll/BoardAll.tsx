@@ -15,6 +15,8 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import Loader from "@/components/Layout/Loader/Loader";
 import { usePostSearch } from "@/api/posts/getPostsSearch";
+import Icon from "@/components/Asset/IconTemp";
+import { PATH_ROUTES } from "@/constants/routes";
 
 type SortOption = "combined" | "name";
 
@@ -197,11 +199,11 @@ export default function BoardAll({ isDetail, hasChip }: BoardAllProps) {
               trigger={
                 <button className={styles.dropdownBtn}>
                   {sortOptions.find((option) => option.value === searchBy)?.label || "제목+내용"}
-                  {isDropdownOpen ? (
-                    <IconComponent name="arrowUp" size={20} isBtn />
-                  ) : (
-                    <IconComponent name="arrowDown" size={20} isBtn />
-                  )}
+                  <Icon
+                    icon="chevronDown"
+                    size="sm"
+                    className={`${styles.chevron} ${isDropdownOpen ? styles.rotate : ""}`}
+                  />
                 </button>
               }
             />
@@ -214,9 +216,9 @@ export default function BoardAll({ isDetail, hasChip }: BoardAllProps) {
               onChange={(e) => setKeyword(e.target.value)}
               onKeyDown={handleSearchKeyDown}
             />
-            <div onClick={handleSearch}>
-              <IconComponent name="searchGray" size={24} padding={8} isBtn />
-            </div>
+            <button onClick={handleSearch} className={styles.searchBtn}>
+              <Icon icon="search" size="2xl" className={styles.searchIcon} />
+            </button>
           </div>
         </div>
       )}
@@ -259,11 +261,11 @@ export default function BoardAll({ isDetail, hasChip }: BoardAllProps) {
                     <button className={styles.dropdownBtn}>
                       {sortOptions.find((option) => option.value === searchBy)?.label ||
                         "제목+내용"}
-                      {isDropdownOpen ? (
-                        <IconComponent name="arrowUp" size={20} isBtn />
-                      ) : (
-                        <IconComponent name="arrowDown" size={20} isBtn />
-                      )}
+                      <Icon
+                        icon="chevronDown"
+                        size="sm"
+                        className={`${styles.chevron} ${isDropdownOpen ? styles.rotate : ""}`}
+                      />
                     </button>
                   }
                 />
@@ -276,9 +278,9 @@ export default function BoardAll({ isDetail, hasChip }: BoardAllProps) {
                   onChange={(e) => setKeyword(e.target.value)}
                   onKeyDown={handleSearchKeyDown}
                 />
-                <div onClick={handleSearch}>
-                  <IconComponent name="searchGray" size={20} padding={8} isBtn />
-                </div>
+                <button onClick={handleSearch} className={styles.searchBtn}>
+                  <Icon icon="search" size="2xl" className={styles.searchIcon} />
+                </button>
               </div>
             </div>
           )}
@@ -290,44 +292,42 @@ export default function BoardAll({ isDetail, hasChip }: BoardAllProps) {
         ))}
       </section>
       {posts.length === 0 && <div className={styles.noResults}>검색 결과가 없어요</div>}
-      {!isMobile && isLoggedIn && !isDetail && (
-        <section className={styles.uploadBtn}>
-          <Link href="/board/write">
-            <Button
-              size="l"
-              type="outlined-assistive"
-              leftIcon={<IconComponent name="writePost" size={20} />}
+
+      <div className={styles.paginationContainer}>
+        <section className={`${styles.pagination} ${isDetail ? styles.paginationDetail : ""}`}>
+          <button
+            className={styles.paginationArrow}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <IconComponent name="paginationLeft" size={24} />
+          </button>
+          {getPageRange(currentPage, totalPages).map((pageNum) => (
+            <button
+              key={pageNum}
+              className={currentPage === pageNum ? styles.active : ""}
+              onClick={() => handlePageChange(pageNum)}
             >
+              {pageNum}
+            </button>
+          ))}
+          <button
+            className={styles.paginationArrow}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || posts.length === 0}
+          >
+            <IconComponent name="paginationRight" size={24} />
+          </button>
+        </section>
+
+        {!isMobile && isLoggedIn && !isDetail && (
+          <Link href={PATH_ROUTES.BOARD_WRITE} className={styles.uploadBtn}>
+            <Button type="outlined-assistive" leftIcon={<Icon icon="detailWrite" size="2xl" />}>
               글쓰기
             </Button>
           </Link>
-        </section>
-      )}
-      <section className={`${styles.pagination} ${isDetail ? styles.paginationDetail : ""}`}>
-        <button
-          className={styles.paginationArrow}
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <IconComponent name="paginationLeft" size={24} />
-        </button>
-        {getPageRange(currentPage, totalPages).map((pageNum) => (
-          <button
-            key={pageNum}
-            className={currentPage === pageNum ? styles.active : ""}
-            onClick={() => handlePageChange(pageNum)}
-          >
-            {pageNum}
-          </button>
-        ))}
-        <button
-          className={styles.paginationArrow}
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages || posts.length === 0}
-        >
-          <IconComponent name="paginationRight" size={24} />
-        </button>
-      </section>
+        )}
+      </div>
     </div>
   );
 }

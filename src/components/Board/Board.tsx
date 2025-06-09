@@ -3,7 +3,8 @@ import BoardAll from "./BoardAll/BoardAll";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import Link from "next/link";
-import IconComponent from "../Asset/Icon";
+import { PATH_ROUTES } from "@/constants/routes";
+import Icon from "@/components/Asset/IconTemp";
 
 export default function Board() {
   const isMobile = useDeviceStore((state) => state.isMobile);
@@ -16,10 +17,10 @@ export default function Board() {
       <div className={styles.center}>
         <BoardAll hasChip={true} />
         {(isMobile || isTablet) && (
-          <Link href="/board/write">
-            <div className={styles.uploadButton} role="button" tabIndex={0}>
-              <IconComponent name="mobileUpload" size={32} isBtn />
-            </div>
+          <Link href={PATH_ROUTES.BOARD_WRITE}>
+            <button className={styles.uploadButton} tabIndex={0}>
+              <Icon icon="plus" size="3xl" />
+            </button>
           </Link>
         )}
       </div>

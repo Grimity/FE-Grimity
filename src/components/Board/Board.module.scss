@@ -7,18 +7,27 @@
   flex-direction: column;
   align-items: center;
   padding-top: 60px;
+  padding-bottom: 80px;
+  padding-left: 32px;
+  padding-right: 32px;
 
   @include Size("mobile") {
-    padding-top: 24px;
+    padding: 16px;
   }
 
   @include Size("tablet") {
     padding-top: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .center {
-    max-width: 980px;
+    max-width: $max-width-content;
     width: 100%;
+
+    @include Size("tablet") {
+      max-width: 100%;
+    }
   }
 
   .uploadButton {
@@ -26,6 +35,8 @@
     bottom: 30px;
     right: 16px;
     background-color: $primary4;
+    border: none;
+    color: $gray0;
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -34,14 +45,12 @@
     align-items: center;
     transition: opacity 0.3s;
     z-index: 1000;
+    cursor: pointer;
+
     @include Drag;
 
     &:hover {
       background-color: color.adjust($primary4, $lightness: 10%);
     }
-  }
-
-  .uploadButton.slide {
-    bottom: 40px;
   }
 }

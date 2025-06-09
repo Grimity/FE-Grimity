@@ -6,10 +6,6 @@
   display: flex;
   flex-direction: column;
 
-  @include Size("mobile") {
-    margin-bottom: 70px;
-  }
-
   .header {
     height: 60px;
     display: flex;
@@ -94,10 +90,21 @@
       }
     }
 
+    .chevron {
+      transition: transform 0.3s ease;
+      color: $gray60;
+      stroke: $gray60;
+
+      &.rotate {
+        transform: rotate(180deg);
+      }
+    }
+
     .searchbarContainer {
       width: 250px;
       height: 40px;
       padding-left: 16px;
+      padding-right: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -122,6 +129,18 @@
           color: $gray50;
         }
       }
+
+      .searchBtn {
+        border: none;
+        background: none;
+        cursor: pointer;
+        outline: none;
+        padding: 0;
+      }
+
+      .searchIcon {
+        color: $gray50;
+      }
     }
   }
 
@@ -133,23 +152,28 @@
   }
 
   .uploadBtn {
-    width: 120px;
-    margin-top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
+    position: absolute;
+    right: 0;
   }
 
-  .paginationDetail {
-    margin-top: 40px;
+  .paginationContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+    position: relative;
+
+    @include Size("mobile") {
+      margin-top: 40px;
+    }
   }
 
   .pagination {
-    margin-top: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
+
     @include Drag;
 
     @include Size("mobile") {
@@ -158,8 +182,8 @@
     }
 
     button {
-      width: 24px;
-      height: 24px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;

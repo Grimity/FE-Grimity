@@ -247,6 +247,9 @@ $min-breakpoints: (
 
 $header-height: 60px;
 
+$max-width-container: 1280px;
+$max-width-content: 780px;
+
 @mixin Size($device) {
   @media (min-width: map.get($min-breakpoints, $device)) and (max-width: map.get($max-breakpoints, $device)) {
     @content;
