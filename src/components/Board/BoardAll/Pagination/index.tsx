@@ -68,7 +68,7 @@ export default function Pagination({
 
       {!isMobile && isLoggedIn && !isDetail && (
         <Link href={PATH_ROUTES.BOARD_WRITE} className={styles.uploadBtn}>
-          <Button type="outlined-assistive" leftIcon={<Icon icon="detailWrite" size="2xl" />}>
+          <Button type="outlined-assistive" leftIcon={<Icon icon="detailWrite" />}>
             글쓰기
           </Button>
         </Link>
