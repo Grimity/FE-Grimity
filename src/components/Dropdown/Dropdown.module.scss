@@ -5,15 +5,12 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-}
-
-.trigger {
   position: relative;
 }
 
 .menu {
   position: absolute;
-  top: 50px;
+  top: 100%;
   left: 0px;
   padding: 6px 0;
   background-color: $gray0;
@@ -39,9 +36,8 @@
 
 .mobileMenu {
   @extend .menu;
-  top: 40px;
+  top: 100%;
   right: 0;
-  left: auto;
 }
 
 .topMenu {

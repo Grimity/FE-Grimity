@@ -37,9 +37,7 @@ export default function Dropdown({
 
   return (
     <div className={styles.container} ref={dropdownRef}>
-      <div onClick={() => toggleDropdown(!isOpen)} className={styles.trigger}>
-        {trigger}
-      </div>
+      <div onClick={() => toggleDropdown(!isOpen)}>{trigger}</div>
       {isOpen && (
         <ul
           className={
