@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { PostResponse, usePostsLatest, usePostsNotices } from "@/api/posts/getPosts";
 import { usePostSearch } from "@/api/posts/getPostsSearch";
 import { useToast } from "@/hooks/useToast";
-import { SortOption, POSTS_PER_PAGE } from "../constants";
+import { SortOption, POSTS_PER_PAGE } from "@/components/Board/BoardAll/constants";
 
 interface UseBoardAllProps {
   isDetail?: boolean;
@@ -152,7 +152,6 @@ export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
   return {
     searchBy,
     posts,
-    totalCount,
     keyword,
     setKeyword,
 

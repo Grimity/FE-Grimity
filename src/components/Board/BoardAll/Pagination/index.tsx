@@ -1,9 +1,12 @@
 import Link from "next/link";
-import styles from "../BoardAll.module.scss";
+
 import IconComponent from "@/components/Asset/Icon";
 import Button from "@/components/Button/Button";
 import Icon from "@/components/Asset/IconTemp";
+
 import { PATH_ROUTES } from "@/constants/routes";
+
+import styles from "@/components/Board/BoardAll/Pagination/Pagination.module.scss";
 
 interface PaginationProps {
   currentPage: number;
@@ -37,7 +40,7 @@ export default function Pagination({
 
   return (
     <div className={styles.paginationContainer}>
-      <section className={`${styles.pagination} ${isDetail ? styles.paginationDetail : ""}`}>
+      <section className={styles.pagination}>
         <button
           className={styles.paginationArrow}
           onClick={() => onPageChange(currentPage - 1)}

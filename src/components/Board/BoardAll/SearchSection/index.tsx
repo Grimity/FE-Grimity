@@ -1,8 +1,11 @@
 import { useState } from "react";
-import styles from "../BoardAll.module.scss";
+
 import Dropdown from "@/components/Dropdown/Dropdown";
 import Icon from "@/components/Asset/IconTemp";
-import { SortOption, SORT_OPTIONS } from "../constants";
+
+import { SortOption, SORT_OPTIONS } from "@/components/Board/BoardAll/constants";
+
+import styles from "@/components/Board/BoardAll/SearchSection/SearchSection.module.scss";
 
 interface SearchSectionProps {
   searchBy: SortOption;

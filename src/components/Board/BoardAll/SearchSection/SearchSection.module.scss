@@ -1,0 +1,100 @@
+@use "@/styles/globals.scss" as *;
+@use "sass:color";
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  @include Drag;
+
+  @include Size("mobile") {
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .dropdown {
+    position: relative;
+    flex-shrink: 0;
+
+    .dropdownBtn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      outline: none;
+      border: none;
+      cursor: pointer;
+      @include Drag;
+      border: 1px solid $gray30;
+      color: $gray70;
+      background-color: $gray0;
+      padding: 10px 12px 10px 16px;
+      border-radius: 12px;
+      @include Label1;
+      line-height: 20px;
+      height: 40px;
+
+      &:hover {
+        background-color: color.adjust($gray0, $lightness: 4%);
+      }
+
+      &:active {
+        background-color: color.adjust($gray0, $lightness: 8%);
+      }
+    }
+  }
+
+  .chevron {
+    transition: transform 0.3s ease;
+    color: $gray60;
+    stroke: $gray60;
+
+    &.rotate {
+      transform: rotate(180deg);
+    }
+  }
+
+  .searchbarContainer {
+    width: 250px;
+    height: 40px;
+    padding-left: 16px;
+    padding-right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-radius: 12px;
+    border: 1px solid $gray30;
+    background-color: $gray10;
+
+    @include Size("mobile") {
+      width: 100%;
+    }
+
+    .input {
+      width: 100%;
+      color: $gray70;
+      @include Label2;
+      background: none;
+      border: none;
+      outline: none;
+
+      &::placeholder {
+        color: $gray50;
+      }
+    }
+
+    .searchBtn {
+      border: none;
+      background: none;
+      cursor: pointer;
+      outline: none;
+      padding: 0;
+    }
+
+    .searchIcon {
+      color: $gray50;
+    }
+  }
+}

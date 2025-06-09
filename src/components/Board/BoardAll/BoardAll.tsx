@@ -1,15 +1,19 @@
-import styles from "./BoardAll.module.scss";
-import Title from "@/components/Layout/Title/Title";
-import AllCard from "./AllCard/AllCard";
 import { useAuthStore } from "@/states/authStore";
 import { useDeviceStore } from "@/states/deviceStore";
-import { BoardAllProps } from "./BoardAll.types";
-import { useIsMobile } from "@/hooks/useIsMobile";
+
+import Title from "@/components/Layout/Title/Title";
+import AllCard from "@/components/Board/BoardAll/AllCard/AllCard";
 import Loader from "@/components/Layout/Loader/Loader";
-import { useBoardAll } from "./hooks/useBoardAll";
-import SearchSection from "./components/SearchSection";
-import TabNavigation from "./components/TabNavigation";
-import Pagination from "./components/Pagination";
+import SearchSection from "@/components/Board/BoardAll/SearchSection";
+import TabNavigation from "@/components/Board/BoardAll/TabNavigation";
+import Pagination from "@/components/Board/BoardAll/Pagination";
+
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { useBoardAll } from "@/components/Board/BoardAll/hooks/useBoardAll";
+
+import { BoardAllProps } from "@/components/Board/BoardAll/BoardAll.types";
+
+import styles from "@/components/Board/BoardAll/BoardAll.module.scss";
 
 export default function BoardAll({ isDetail, hasChip }: BoardAllProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);

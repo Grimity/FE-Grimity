@@ -1,5 +1,6 @@
-import styles from "../BoardAll.module.scss";
 import IconComponent from "@/components/Asset/Icon";
+
+import styles from "@/components/Board/BoardAll/TabNavigation/TabNavigation.module.scss";
 
 interface TabNavigationProps {
   currentType: string;

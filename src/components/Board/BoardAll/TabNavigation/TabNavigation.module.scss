@@ -1,0 +1,21 @@
+@use "@/styles/globals.scss" as *;
+
+.types {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .type {
+    border: none;
+    background: none;
+    @include Sub4;
+    color: $gray60;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .active {
+    @extend .type;
+    color: $secandary1;
+  }
+}
