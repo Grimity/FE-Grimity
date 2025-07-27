@@ -38,7 +38,7 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
   const setUserId = useAuthStore((state) => state.setUserId);
   const { isMobile } = useDeviceStore();
 
-  const isNavPage = ["/", "/ranking", "/board", "/following"].includes(router.pathname);
+  const isNavPage = ["/", "/ranking", "/board", "/following", "/direct"].includes(router.pathname);
 
   const navItems = [
     { name: "홈", path: "/" },
@@ -48,6 +48,7 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
 
   if (isLoggedIn) {
     navItems.push({ name: "팔로잉", path: "/following" });
+    navItems.push({ name: "DM", path: "/direct" });
   }
 
   const handleNavClick = (item: { name: string; path: string }) => {

@@ -6,6 +6,7 @@ const PATH_ROUTES = {
   FOLLOWING: "/following",
   FEEDS: "/feeds",
   POST: "/posts",
+  DIRECT: "/direct",
 } as const;
 
 export { PATH_ROUTES };
