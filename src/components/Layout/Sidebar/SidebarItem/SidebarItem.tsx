@@ -1,11 +1,9 @@
-import Icon from "@/components/Asset/IconTemp";
+import Icon, { IconList } from "@/components/Asset/IconTemp";
 
 import styles from "@/components/Layout/Sidebar/SidebarItem/SidebarItem.module.scss";
 
-type BaseIconName = "home" | "ranking" | "board" | "following";
-
 interface SidebarItemProps {
-  icon: BaseIconName;
+  icon: IconList;
   label: string;
   onClick: () => void;
   isActive: boolean;
@@ -23,4 +21,3 @@ const SidebarItem = ({ icon, label, onClick, isActive }: SidebarItemProps) => {
 };
 
 export default SidebarItem;
-export type { BaseIconName };

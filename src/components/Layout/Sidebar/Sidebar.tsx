@@ -2,11 +2,13 @@ import { useRouter } from "next/router";
 
 import { useAuthStore } from "@/states/authStore";
 
-import SidebarItem, { BaseIconName } from "@/components/Layout/Sidebar/SidebarItem/SidebarItem";
+import SidebarItem from "@/components/Layout/Sidebar/SidebarItem/SidebarItem";
 import FooterSection from "@/components/Layout/FooterSection/FooterSection";
 
-import { MENU_ITEMS } from "@/constants/menu";
+import { MENU_ITEMS, MenuItem } from "@/constants/menu";
 import { PATH_ROUTES } from "@/constants/routes";
+
+import type { IconList } from "@/components/Asset/IconTemp";
 
 import styles from "@/components/Layout/Sidebar/Sidebar.module.scss";
 
@@ -14,9 +16,12 @@ const Sidebar = () => {
   const { isLoggedIn } = useAuthStore((state) => state);
   const router = useRouter();
 
-  const menuItems = isLoggedIn
-    ? [...MENU_ITEMS, { icon: "following", label: "팔로잉", route: PATH_ROUTES.FOLLOWING }]
-    : MENU_ITEMS;
+  const menuItems: MenuItem[] = MENU_ITEMS.filter((item) => {
+    if (item.isLogin) {
+      return isLoggedIn;
+    }
+    return true;
+  });
 
   const handleItemClick = (route: string) => {
     router.push(route);
@@ -37,7 +42,7 @@ const Sidebar = () => {
         {menuItems.map((item, index) => (
           <SidebarItem
             key={index}
-            icon={item.icon as BaseIconName}
+            icon={item.icon}
             label={item.label}
             onClick={() => handleItemClick(item.route)}
             isActive={isItemActive(item.route)}
