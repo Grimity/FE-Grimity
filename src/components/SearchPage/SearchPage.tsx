@@ -92,6 +92,7 @@ export default function SearchPage() {
         <section className={styles.searchBarSection}>
           <SearchBar
             searchValue={searchValue}
+            placeholder="그림, 작가, 관련 작품을 검색해보세요"
             setSearchValue={setSearchValue}
             onSearch={(value) => setSearchKeyword(value)}
           />

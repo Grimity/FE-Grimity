@@ -8,6 +8,7 @@
   border-radius: 50px;
   outline: none;
   border: none;
+  cursor: pointer;
   @include Drag;
 }
 
@@ -64,4 +65,9 @@
   align-items: center;
   justify-content: center;
   line-height: 0;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

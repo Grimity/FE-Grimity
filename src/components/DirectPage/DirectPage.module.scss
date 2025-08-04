@@ -1,0 +1,58 @@
+@use "@/styles/globals.scss" as *;
+
+.container {
+  max-width: 460px;
+  width: 100%;
+  padding: 24px 30px;
+
+  box-shadow: inset -1px 0 0 $gray30;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  @include Title3;
+}
+
+.empty {
+  height: 100%;
+  margin-top: 80px;
+  text-align: center;
+}
+
+.emptyText {
+  @include Sub4;
+  color: $gray60;
+}
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+}
+
+.buttonList {
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.editButton {
+  margin-left: auto;
+}
+
+.editButton {
+  &:active {
+    background-color: $gray10;
+  }
+}

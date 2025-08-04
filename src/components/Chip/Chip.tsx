@@ -8,13 +8,15 @@ export default function Chip({
   unselected = false,
   leftIcon,
   rightIcon,
+  className,
+  disabled = false,
 }: ChipProps) {
-  const className = `${styles.chip} ${styles[type]} ${styles[size]} ${
+  const classNames = `${styles.chip} ${styles[type]} ${styles[size]} ${
     unselected ? styles.unselected : ""
-  }`;
+  } ${className} ${disabled ? styles.disabled : ""}`;
 
   return (
-    <div className={className}>
+    <div className={classNames} aria-disabled={disabled}>
       {leftIcon && <div className={styles.icon}>{leftIcon}</div>}
       {children}
       {rightIcon && <div className={styles.icon}>{rightIcon}</div>}
