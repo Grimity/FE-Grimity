@@ -15,4 +15,6 @@ export interface ChipProps {
   unselected?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  disabled?: boolean;
+  className?: string;
 }

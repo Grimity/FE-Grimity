@@ -5,8 +5,6 @@ import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 
 import { useRankings } from "@/api/feeds/getRankings";
 
-import { useDeviceStore } from "@/states/deviceStore";
-
 import SquareCard from "@/components/Layout/SquareCard/SquareCard";
 import Title from "@/components/Layout/Title/Title";
 import IconComponent from "@/components/Asset/Icon";
