@@ -13,6 +13,8 @@ export const isForbiddenProfileId = (profileId: string): boolean => {
     "posts",
     "feeds",
     "mypage",
+    "ranking",
+    "direct",
   ];
   return forbiddenIds.includes(profileId);
 };
