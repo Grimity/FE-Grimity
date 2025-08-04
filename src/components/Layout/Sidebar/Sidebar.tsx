@@ -8,8 +8,6 @@ import FooterSection from "@/components/Layout/FooterSection/FooterSection";
 import { MENU_ITEMS, MenuItem } from "@/constants/menu";
 import { PATH_ROUTES } from "@/constants/routes";
 
-import type { IconList } from "@/components/Asset/IconTemp";
-
 import styles from "@/components/Layout/Sidebar/Sidebar.module.scss";
 
 const Sidebar = () => {
