@@ -4,7 +4,12 @@ import styles from "./SearchBar.module.scss";
 import { SearchBarProps } from "./SearchBar.types";
 import { useToast } from "@/hooks/useToast";
 
-export default function SearchBar({ searchValue, setSearchValue, onSearch }: SearchBarProps) {
+export default function SearchBar({
+  searchValue,
+  placeholder,
+  setSearchValue,
+  onSearch,
+}: SearchBarProps) {
   const router = useRouter();
   const { tab } = router.query;
   const { showToast } = useToast();
@@ -40,7 +45,7 @@ export default function SearchBar({ searchValue, setSearchValue, onSearch }: Sea
         <IconComponent name="searchGray" size={24} padding={8} />
         <input
           type="text"
-          placeholder="그림, 작가, 관련 작품을 검색해보세요"
+          placeholder={placeholder}
           className={styles.input}
           value={searchValue}
           onChange={handleInputChange}
