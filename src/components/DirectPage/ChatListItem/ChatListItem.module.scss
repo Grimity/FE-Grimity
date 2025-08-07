@@ -1,0 +1,108 @@
+.chatItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+
+  &.edit {
+    gap: 16px;
+  }
+}
+
+.avatar {
+  flex-shrink: 0; // 너비가 줄어들지 않도록
+}
+
+.avatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.chatDetails {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden; // 내부 요소가 넘치는 것을 방지
+}
+
+.topRow,
+.bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.username {
+  font-weight: 500;
+  font-size: 14px;
+  color: #1a1a1a;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #999;
+  flex-shrink: 0; // 너비가 줄어들지 않도록
+  padding-left: 8px; // 사용자 이름과 최소 간격 확보
+}
+
+.lastMessage {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notificationBadge {
+  background-color: #ff3b30;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customCheckbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #e3e3e3;
+  border-radius: 4px; // 다시 사각형 모양으로
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+}
+
+.customCheckbox:checked {
+  background-color: #34c759; // 녹색 배경
+  border-color: #34c759;
+}
+
+.customCheckbox:checked::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
