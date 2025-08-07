@@ -1,0 +1,17 @@
+@use "@/styles/globals.scss" as *;
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.title {
+  @include Title3;
+  color: $gray80;
+}
+
+.searchBarWrapper {
+  width: 100%; /* 검색창이 부모 요소의 전체 너비를 차지하도록 설정 */
+}
