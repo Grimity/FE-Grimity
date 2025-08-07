@@ -1,74 +1,142 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/router";
+import styles from "./DirectPage.module.scss";
+import DMHeader from "./DMHeader/DMHeader";
+import DMControls from "./DMControls/DMControls";
+import ChatList from "./ChatList/ChatList";
 
-import SearchBar from "@/components/SearchBar/SearchBar";
+// 실제로는 types 디렉토리나 별도의 파일로 분리하는 것이 좋습니다.
+export interface TempChat {
+  id: number;
+  username: string;
+  lastMessage: string;
+  avatar: string;
+  timestamp: string;
+  unreadCount: number;
+}
 
-import styles from "@/components/DirectPage/DirectPage.module.scss";
-import Button from "@/components/Button/Button";
-import Icon from "@/components/Asset/IconTemp";
-import Chip from "@/components/Chip/Chip";
+// 수정된 임시 채팅 목록 데이터
+const tempChatListData: TempChat[] = [
+  {
+    id: 1,
+    username: "으아아케이크",
+    lastMessage: "우와 진짜 잘 그리셨어요~!! ㅎㅎㅎㅎㅎ 길면...",
+    avatar: "/image/default-cover.png",
+    timestamp: "1시간 전",
+    unreadCount: 12,
+  },
+  {
+    id: 2,
+    username: "네모네모",
+    lastMessage: "네모네모님이 이미지를 보냈어요",
+    avatar: "/image/default.svg",
+    timestamp: "1시간 전",
+    unreadCount: 100,
+  }, // 99+ 테스트
+  {
+    id: 3,
+    username: "아메리카노",
+    lastMessage: "감사합니다",
+    avatar: "/image/default.svg",
+    timestamp: "3일 전",
+    unreadCount: 0,
+  },
+  {
+    id: 4,
+    username: "워녕녕",
+    lastMessage: "ㄱㅅ해요",
+    avatar: "/image/default.svg",
+    timestamp: "3일 전",
+    unreadCount: 0,
+  },
+  {
+    id: 5,
+    username: "fefefefefifififi",
+    lastMessage: "ㅋㅋㅋㅋㅋ",
+    avatar: "/image/default.svg",
+    timestamp: "3일 전",
+    unreadCount: 0,
+  },
+];
 
 const DirectPage = () => {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
-  const [chatList, setChatList] = useState<[]>([]);
+  const [chatList, setChatList] = useState<TempChat[]>(tempChatListData);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedChatIds, setSelectedChatIds] = useState<number[]>([]);
 
-  const handleSearch = (value: string) => {
+  const isAllSelected = chatList.length > 0 && selectedChatIds.length === chatList.length;
+
+  useEffect(() => {
+    if (!isEditMode) {
+      setSelectedChatIds([]);
+    }
+  }, [isEditMode]);
+
+  const handleSearch = useCallback((value: string) => {
     console.log(value);
-  };
+  }, []);
 
-  const handleEditMode = () => {
+  const handleEditMode = useCallback(() => {
     setIsEditMode(true);
-  };
+  }, []);
 
-  const handleCloseEditMode = () => {
+  const handleCloseEditMode = useCallback(() => {
     setIsEditMode(false);
-  };
+  }, []);
+
+  const handleChatClick = useCallback(
+    (chatId: number) => {
+      if (isEditMode) {
+        handleToggleSelect(chatId);
+        return;
+      }
+      router.push(`/direct/${chatId}`);
+    },
+    [isEditMode, router],
+  );
+
+  const handleToggleSelect = useCallback((chatId: number) => {
+    setSelectedChatIds((prev) =>
+      prev.includes(chatId) ? prev.filter((id) => id !== chatId) : [...prev, chatId],
+    );
+  }, []);
+
+  const handleSelectAll = useCallback(() => {
+    if (isAllSelected) {
+      setSelectedChatIds([]);
+    } else {
+      setSelectedChatIds(chatList.map((chat) => chat.id));
+    }
+  }, [isAllSelected, chatList]);
 
   return (
     <section className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>DM</h1>
-        <SearchBar
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          placeholder="작가 이름을 검색해 보세요"
-          onSearch={handleSearch}
-        />
-      </div>
+      <DMHeader searchValue={searchValue} setSearchValue={setSearchValue} onSearch={handleSearch} />
 
-      {false ? (
+      {chatList.length === 0 ? (
         <div className={styles.empty}>
           <p className={styles.emptyText}>아직 주고 받은 메세지가 없어요</p>
         </div>
       ) : (
         <div className={styles.chatContainer}>
-          <div className={styles.buttonList}>
-            {isEditMode ? (
-              <>
-                <button className={styles.button} type="button">
-                  <Chip type="outlined-assistive" size="s" disabled>
-                    채팅 나가기
-                  </Chip>
-                </button>
-                <button className={styles.button} type="button" onClick={handleCloseEditMode}>
-                  <Chip type="filled-assistive" leftIcon={<Icon icon="close" />} size="s">
-                    취소
-                  </Chip>
-                </button>
-              </>
-            ) : (
-              <button className={styles.button} type="button" onClick={handleEditMode}>
-                <Chip
-                  className={styles.editButton}
-                  type="outlined-assistive"
-                  leftIcon={<Icon icon="setting" />}
-                  size="s"
-                >
-                  편집
-                </Chip>
-              </button>
-            )}
-          </div>
+          <DMControls
+            isEditMode={isEditMode}
+            isAllSelected={isAllSelected}
+            selectedChatIds={selectedChatIds}
+            onEditMode={handleEditMode}
+            onCloseEditMode={handleCloseEditMode}
+            onSelectAll={handleSelectAll}
+          />
+
+          <ChatList
+            chatList={chatList}
+            isEditMode={isEditMode}
+            selectedChatIds={selectedChatIds}
+            onChatClick={handleChatClick}
+            onToggleSelect={handleToggleSelect}
+          />
         </div>
       )}
     </section>
