@@ -78,31 +78,34 @@
   justify-content: center;
 }
 
+.hiddenCheckbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
 .customCheckbox {
+  position: relative;
   appearance: none;
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
-  border: 1.5px solid #e3e3e3;
-  border-radius: 4px; // 다시 사각형 모양으로
-  background-color: #fff;
+  background-image: url("/icon/checkbox.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   cursor: pointer;
-  position: relative;
 }
 
-.customCheckbox:checked {
-  background-color: #34c759; // 녹색 배경
-  border-color: #34c759;
-}
-
-.customCheckbox:checked::before {
+.hiddenCheckbox:checked + .customCheckbox::before {
   content: "";
   position: absolute;
-  left: 6px;
-  top: 3px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  width: 100%;
+  height: 100%;
+  background-image: url("/icon/checkedbox.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }

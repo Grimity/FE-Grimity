@@ -21,41 +21,41 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  font-size: 0.9em;
+  @include Label2;
+  color: $gray70;
+}
+
+.hiddenCheckbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
 .customCheckbox {
-  appearance: none;
-  -webkit-appearance: none;
+  position: relative;
+  display: inline-block;
   width: 20px;
   height: 20px;
-  border: 1.5px solid $gray30;
-  border-radius: 4px;
-  background-color: $gray0;
+  background-image: url("/icon/checkbox.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   cursor: pointer;
-  display: inline-block;
-  position: relative;
-  vertical-align: middle;
 }
 
-.customCheckbox:checked {
-  background-color: $secandary1;
-  border-color: $secandary1;
-}
-
-.customCheckbox:checked::before {
+.hiddenCheckbox:checked + .customCheckbox::before {
   content: "";
   position: absolute;
-  left: 6px;
-  top: 3px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  width: 100%;
+  height: 100%;
+  background-image: url("/icon/checkedbox.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-// Chip 컴포넌트 자체를 스타일링하는 대신, 감싸는 버튼에 클래스를 부여하여 제어
 .button {
   background: none;
   border: none;

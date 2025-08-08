@@ -21,10 +21,11 @@ const ChatListItem = React.memo(
           <label className={styles.checkboxWrapper} onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
-              className={styles.customCheckbox}
+              className={styles.hiddenCheckbox}
               checked={isSelected}
               onChange={() => onToggleSelect(chat.id)}
             />
+            <span className={styles.customCheckbox}></span>
           </label>
         )}
         <div className={styles.avatar}>
