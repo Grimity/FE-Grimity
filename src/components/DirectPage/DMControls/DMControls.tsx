@@ -26,10 +26,11 @@ const DMControls = ({
           <label className={styles.selectAll}>
             <input
               type="checkbox"
-              className={styles.customCheckbox}
+              className={styles.hiddenCheckbox}
               checked={isAllSelected}
               onChange={onSelectAll}
             />
+            <span className={styles.customCheckbox}></span>
             전체 선택
           </label>
           <div className={styles.editButtons}>
