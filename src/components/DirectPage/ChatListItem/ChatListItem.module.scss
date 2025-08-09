@@ -1,11 +1,18 @@
+@use "@/styles/globals.scss" as *;
+
 .chatItem {
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  padding: 8px 30px;
 
   &:hover {
-    background-color: #f9f9f9;
+    background-color: $gray10;
+  }
+
+  &:active {
+    background-color: $gray20;
   }
 
   &.edit {
@@ -18,8 +25,8 @@
 }
 
 .avatar img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
@@ -33,7 +40,12 @@
   overflow: hidden; // 내부 요소가 넘치는 것을 방지
 }
 
-.topRow,
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .bottomRow {
   display: flex;
   justify-content: space-between;
@@ -41,35 +53,31 @@
 }
 
 .username {
-  font-weight: 500;
-  font-size: 14px;
-  color: #1a1a1a;
+  @include Label2;
+  color: $gray60;
 }
 
 .timestamp {
-  font-size: 12px;
-  color: #999;
+  @include Cap2;
+  color: $gray50;
   flex-shrink: 0; // 너비가 줄어들지 않도록
-  padding-left: 8px; // 사용자 이름과 최소 간격 확보
 }
 
 .lastMessage {
-  font-size: 14px;
-  color: #666;
+  @include Label2;
+  color: $gray70;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .notificationBadge {
-  background-color: #ff3b30;
-  color: white;
-  font-size: 12px;
-  font-weight: 500;
+  background-color: $red;
+  color: $gray0;
+  @include Cap1;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: 12px;
   flex-shrink: 0;
-  margin-left: 8px;
 }
 
 .checkboxWrapper {
