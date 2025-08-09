@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
-import styles from "./DirectPage.module.scss";
+
 import DMHeader from "./DMHeader/DMHeader";
 import DMControls from "./DMControls/DMControls";
 import ChatList from "./ChatList/ChatList";
 
-// 실제로는 types 디렉토리나 별도의 파일로 분리하는 것이 좋습니다.
+import styles from "./DirectPage.module.scss";
+
 export interface TempChat {
   id: number;
   username: string;
@@ -15,12 +16,12 @@ export interface TempChat {
   unreadCount: number;
 }
 
-// 수정된 임시 채팅 목록 데이터
 const tempChatListData: TempChat[] = [
   {
     id: 1,
     username: "으아아케이크",
-    lastMessage: "우와 진짜 잘 그리셨어요~!! ㅎㅎㅎㅎㅎ 길면...",
+    lastMessage:
+      "우와 진짜 잘 그리셨어요~!! ㅎㅎㅎㅎㅎ 길면 ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면 길면 ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면",
     avatar: "/image/default-cover.png",
     timestamp: "1시간 전",
     unreadCount: 12,
