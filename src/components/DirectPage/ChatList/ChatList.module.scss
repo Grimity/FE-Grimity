@@ -2,9 +2,9 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  overflow-y: auto; // 내용이 많아지면 스크롤
-  flex-grow: 1; // 남은 공간을 모두 차지하도록
+  overflow-y: auto;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 2px;
 }

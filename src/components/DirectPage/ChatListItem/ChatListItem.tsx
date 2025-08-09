@@ -1,6 +1,8 @@
 import React from "react";
+
+import { TempChat } from "../DirectPage";
+
 import styles from "./ChatListItem.module.scss";
-import { TempChat } from "../DirectPage"; // DirectPage에서 export한 타입을 가져옴
 
 interface ChatListItemProps {
   chat: TempChat;
@@ -29,7 +31,7 @@ const ChatListItem = React.memo(
           </label>
         )}
         <div className={styles.avatar}>
-          <img src={chat.avatar} alt={`${chat.username} 프로필`} width={48} height={48} />
+          <img src={chat.avatar} alt={`${chat.username} 프로필`} width={40} height={40} />
         </div>
         <div className={styles.chatDetails}>
           <div className={styles.topRow}>
@@ -38,13 +40,13 @@ const ChatListItem = React.memo(
           </div>
           <div className={styles.bottomRow}>
             <p className={styles.lastMessage}>{chat.lastMessage}</p>
-            {chat.unreadCount > 0 && (
-              <span className={styles.notificationBadge}>
-                {chat.unreadCount > 99 ? "99+" : chat.unreadCount}
-              </span>
-            )}
           </div>
         </div>
+        {chat.unreadCount > 0 && (
+          <span className={styles.notificationBadge}>
+            {chat.unreadCount > 99 ? "99+" : chat.unreadCount}
+          </span>
+        )}
       </li>
     );
   },
