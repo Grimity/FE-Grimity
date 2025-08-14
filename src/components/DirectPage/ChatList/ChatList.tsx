@@ -1,14 +1,15 @@
-import styles from "./ChatList.module.scss";
 import ChatListItem from "../ChatListItem/ChatListItem";
 
-import { TempChat } from "../DirectPage";
+import type { ChatResponse } from "@grimity/dto";
+
+import styles from "./ChatList.module.scss";
 
 interface ChatListProps {
-  chatList: TempChat[];
+  chatList: ChatResponse[];
   isEditMode: boolean;
-  selectedChatIds: number[];
-  onChatClick: (chatId: number) => void;
-  onToggleSelect: (chatId: number) => void;
+  selectedChatIds: string[];
+  onChatClick: (chatId: string) => void;
+  onToggleSelect: (chatId: string) => void;
 }
 
 const ChatList = ({

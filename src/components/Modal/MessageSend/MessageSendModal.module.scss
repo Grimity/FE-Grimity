@@ -1,0 +1,150 @@
+@use "@/styles/globals.scss" as *;
+
+.modal {
+  background: $gray0;
+  border-radius: 12px;
+  width: 500px;
+  max-height: 760px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 30px 32px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  @include Title3;
+  color: $gray70;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $gray70;
+
+  &:hover {
+    color: $gray80;
+  }
+}
+
+.searchSection {
+  margin-bottom: 24px;
+}
+
+.userList {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.deliveryIcon {
+  border-radius: 30px;
+  width: 32px;
+  height: 32px;
+  opacity: 0;
+  visibility: hidden;
+  background-color: $gray30;
+  color: $gray70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+
+  &:hover {
+    .deliveryIcon {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+.userAvatar {
+  flex-shrink: 0;
+
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.userInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.nickname {
+  @include Sub4;
+  color: $gray80;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.url {
+  @include Label2;
+  color: $gray60;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px;
+
+  p {
+    @include Sub4;
+    color: $gray50;
+  }
+
+  svg {
+    animation: spin 1s linear infinite;
+  }
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px;
+  text-align: center;
+
+  p {
+    @include Sub4;
+    color: $gray50;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
