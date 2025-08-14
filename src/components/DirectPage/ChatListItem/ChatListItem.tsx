@@ -1,19 +1,38 @@
 import React from "react";
 
-import { TempChat } from "../DirectPage";
+import { formatDistanceToNow, differenceInDays, format } from "date-fns";
+import { ko } from "date-fns/locale";
+
+import type { ChatResponse } from "@grimity/dto";
 
 import styles from "./ChatListItem.module.scss";
 
 interface ChatListItemProps {
-  chat: TempChat;
+  chat: ChatResponse;
   isEditMode: boolean;
   isSelected: boolean;
-  onChatClick: (chatId: number) => void;
-  onToggleSelect: (chatId: number) => void;
+  onChatClick: (chatId: string) => void;
+  onToggleSelect: (chatId: string) => void;
 }
 
 const ChatListItem = React.memo(
   ({ chat, isEditMode, isSelected, onChatClick, onToggleSelect }: ChatListItemProps) => {
+    const formatTimestamp = (date?: Date): string => {
+      if (!date) return "";
+
+      const dateTime = new Date(date);
+      const daysAgo = differenceInDays(new Date(), dateTime);
+
+      if (daysAgo >= 7) {
+        return format(dateTime, "MM월 dd일", { locale: ko });
+      }
+
+      return formatDistanceToNow(dateTime, {
+        addSuffix: true,
+        locale: ko,
+      });
+    };
+
     return (
       <li
         className={`${styles.chatItem} ${isEditMode ? styles.edit : ""}`}
@@ -31,15 +50,20 @@ const ChatListItem = React.memo(
           </label>
         )}
         <div className={styles.avatar}>
-          <img src={chat.avatar} alt={`${chat.username} 프로필`} width={40} height={40} />
+          <img
+            src={chat.opponentUser.image || "/image/default.svg"}
+            alt={`${chat.opponentUser.name} 프로필`}
+            width={40}
+            height={40}
+          />
         </div>
         <div className={styles.chatDetails}>
           <div className={styles.topRow}>
-            <span className={styles.username}>{chat.username}</span>
-            <span className={styles.timestamp}>{chat.timestamp}</span>
+            <span className={styles.username}>{chat.opponentUser.name}</span>
+            <span className={styles.timestamp}>{formatTimestamp(chat.lastMessage?.createdAt)}</span>
           </div>
           <div className={styles.bottomRow}>
-            <p className={styles.lastMessage}>{chat.lastMessage}</p>
+            <p className={styles.lastMessage}>{chat.lastMessage?.content}</p>
           </div>
         </div>
         {chat.unreadCount > 0 && (

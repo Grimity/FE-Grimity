@@ -5,7 +5,7 @@ import styles from "./DMControls.module.scss";
 interface DMControlsProps {
   isEditMode: boolean;
   isAllSelected: boolean;
-  selectedChatIds: number[];
+  selectedChatIds: string[];
   onEditMode: () => void;
   onCloseEditMode: () => void;
   onSelectAll: () => void;
