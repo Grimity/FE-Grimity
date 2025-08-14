@@ -20,10 +20,26 @@
 .empty {
   margin-top: 50px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
 .emptyText {
   @include Sub4;
   color: $gray60;
+  text-align: center;
+}
+
+.loading {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    @include Sub4;
+    color: $gray60;
+  }
 }

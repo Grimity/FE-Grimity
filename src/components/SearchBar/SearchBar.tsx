@@ -17,7 +17,7 @@ export default function SearchBar({
   const handleClear = () => {
     setSearchValue("");
     router.push("");
-    onSearch("");
+    onSearch?.("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -31,7 +31,7 @@ export default function SearchBar({
         return;
       }
       router.push(`?tab=${currentTab}&keyword=${trimmedKeyword}`, undefined, { shallow: true });
-      onSearch(trimmedKeyword);
+      onSearch?.(trimmedKeyword);
     }
   };
 

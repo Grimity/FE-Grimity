@@ -5,67 +5,22 @@ import DMHeader from "./DMHeader/DMHeader";
 import DMControls from "./DMControls/DMControls";
 import ChatList from "./ChatList/ChatList";
 
+import { useGetChats } from "@/api/chats/getChats";
+
 import styles from "./DirectPage.module.scss";
-
-export interface TempChat {
-  id: number;
-  username: string;
-  lastMessage: string;
-  avatar: string;
-  timestamp: string;
-  unreadCount: number;
-}
-
-const tempChatListData: TempChat[] = [
-  {
-    id: 1,
-    username: "으아아케이크",
-    lastMessage:
-      "우와 진짜 잘 그리셨어요~!! ㅎㅎㅎㅎㅎ 길면 ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면 길면 ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면ㅎㅎㅎㅎㅎ 길면",
-    avatar: "/image/default-cover.png",
-    timestamp: "1시간 전",
-    unreadCount: 12,
-  },
-  {
-    id: 2,
-    username: "네모네모",
-    lastMessage: "네모네모님이 이미지를 보냈어요",
-    avatar: "/image/default.svg",
-    timestamp: "1시간 전",
-    unreadCount: 100,
-  }, // 99+ 테스트
-  {
-    id: 3,
-    username: "아메리카노",
-    lastMessage: "감사합니다",
-    avatar: "/image/default.svg",
-    timestamp: "3일 전",
-    unreadCount: 0,
-  },
-  {
-    id: 4,
-    username: "워녕녕",
-    lastMessage: "ㄱㅅ해요",
-    avatar: "/image/default.svg",
-    timestamp: "3일 전",
-    unreadCount: 0,
-  },
-  {
-    id: 5,
-    username: "fefefefefifififi",
-    lastMessage: "ㅋㅋㅋㅋㅋ",
-    avatar: "/image/default.svg",
-    timestamp: "3일 전",
-    unreadCount: 0,
-  },
-];
 
 const DirectPage = () => {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
-  const [chatList, setChatList] = useState<TempChat[]>(tempChatListData);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedChatIds, setSelectedChatIds] = useState<number[]>([]);
+  const [selectedChatIds, setSelectedChatIds] = useState<string[]>([]);
+
+  // API에서 채팅 목록 가져오기
+  const { data: chatsData, isLoading } = useGetChats({
+    size: 50,
+  });
+
+  const chatList = chatsData?.chats || [];
 
   const isAllSelected = chatList.length > 0 && selectedChatIds.length === chatList.length;
 
@@ -88,7 +43,7 @@ const DirectPage = () => {
   }, []);
 
   const handleChatClick = useCallback(
-    (chatId: number) => {
+    (chatId: string) => {
       if (isEditMode) {
         handleToggleSelect(chatId);
         return;
@@ -98,7 +53,7 @@ const DirectPage = () => {
     [isEditMode, router],
   );
 
-  const handleToggleSelect = useCallback((chatId: number) => {
+  const handleToggleSelect = useCallback((chatId: string) => {
     setSelectedChatIds((prev) =>
       prev.includes(chatId) ? prev.filter((id) => id !== chatId) : [...prev, chatId],
     );
@@ -111,6 +66,21 @@ const DirectPage = () => {
       setSelectedChatIds(chatList.map((chat) => chat.id));
     }
   }, [isAllSelected, chatList]);
+
+  if (isLoading) {
+    return (
+      <section className={styles.container}>
+        <DMHeader
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+          onSearch={handleSearch}
+        />
+        <div className={styles.loading}>
+          <p>채팅 목록을 불러오는 중...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.container}>
