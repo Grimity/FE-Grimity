@@ -5,18 +5,28 @@ import { ko } from "date-fns/locale";
 
 import type { ChatResponse } from "@grimity/dto";
 
+import { highlightSearchKeyword } from "@/utils/highlightText";
+
 import styles from "./ChatListItem.module.scss";
 
 interface ChatListItemProps {
   chat: ChatResponse;
   isEditMode: boolean;
   isSelected: boolean;
+  searchKeyword?: string;
   onChatClick: (chatId: string) => void;
   onToggleSelect: (chatId: string) => void;
 }
 
 const ChatListItem = React.memo(
-  ({ chat, isEditMode, isSelected, onChatClick, onToggleSelect }: ChatListItemProps) => {
+  ({
+    chat,
+    isEditMode,
+    isSelected,
+    searchKeyword,
+    onChatClick,
+    onToggleSelect,
+  }: ChatListItemProps) => {
     const formatTimestamp = (date?: Date): string => {
       if (!date) return "";
 
@@ -59,11 +69,21 @@ const ChatListItem = React.memo(
         </div>
         <div className={styles.chatDetails}>
           <div className={styles.topRow}>
-            <span className={styles.username}>{chat.opponentUser.name}</span>
+            <span className={styles.username}>
+              {highlightSearchKeyword(chat.opponentUser.name, searchKeyword, styles.highlighted)}
+            </span>
             <span className={styles.timestamp}>{formatTimestamp(chat.lastMessage?.createdAt)}</span>
           </div>
           <div className={styles.bottomRow}>
-            <p className={styles.lastMessage}>{chat.lastMessage?.content}</p>
+            <p className={styles.lastMessage}>
+              {chat.lastMessage?.content
+                ? highlightSearchKeyword(
+                    chat.lastMessage.content,
+                    searchKeyword,
+                    styles.highlighted,
+                  )
+                : ""}
+            </p>
           </div>
         </div>
         {chat.unreadCount > 0 && (

@@ -7,11 +7,26 @@
   gap: 16px;
   padding: 24px 30px 0;
 }
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  color: $gray80;
+  cursor: pointer;
+}
+
 .title {
   @include Title3;
   color: $gray80;
-}
-
-.searchBarWrapper {
-  width: 100%;
 }
