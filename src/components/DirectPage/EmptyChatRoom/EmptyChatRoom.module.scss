@@ -1,6 +1,7 @@
 @use "@/styles/globals.scss" as *;
 
 .emptyChatRoom {
+  width: 100%;
   flex-grow: 1;
   display: flex;
   justify-content: center;
