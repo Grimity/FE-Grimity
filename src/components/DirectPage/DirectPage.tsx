@@ -22,7 +22,6 @@ const DirectPage = () => {
 
   const chatList = chatsData?.chats || [];
 
-  console.log(chatsData);
   const isAllSelected = chatList.length > 0 && selectedChatIds.length === chatList.length;
 
   useEffect(() => {
