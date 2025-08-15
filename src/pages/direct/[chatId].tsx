@@ -9,9 +9,9 @@ import ChatRoom from "@/components/ChatRoom/ChatRoom";
 const DirectChatPage = () => {
   const router = useRouter();
   const { chatId } = router.query;
-  const { isMobile } = useDeviceStore();
+  const { isMobile, isTablet } = useDeviceStore();
 
-  if (isMobile) {
+  if (isMobile || isTablet) {
     return (
       <AuthLayout>
         <ChatRoom chatId={chatId} />
