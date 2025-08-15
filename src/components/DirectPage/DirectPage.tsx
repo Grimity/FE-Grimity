@@ -80,7 +80,7 @@ const DirectPage = () => {
 
   return (
     <section className={styles.container}>
-      <DMHeader onSearch={handleSearch} />
+      <DMHeader searchKeyword={searchValue} onSearch={handleSearch} />
 
       {chatList.length === 0 ? (
         <div className={styles.empty}>
@@ -101,6 +101,7 @@ const DirectPage = () => {
             chatList={chatList}
             isEditMode={isEditMode}
             selectedChatIds={selectedChatIds}
+            searchKeyword={searchValue}
             onChatClick={handleChatClick}
             onToggleSelect={handleToggleSelect}
           />
