@@ -11,17 +11,18 @@ import styles from "./DirectPage.module.scss";
 
 const DirectPage = () => {
   const router = useRouter();
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState<string>();
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedChatIds, setSelectedChatIds] = useState<string[]>([]);
 
-  // API에서 채팅 목록 가져오기
   const { data: chatsData, isLoading } = useGetChats({
-    size: 50,
+    keyword: searchValue,
+    size: 20,
   });
 
   const chatList = chatsData?.chats || [];
 
+  console.log(chatsData);
   const isAllSelected = chatList.length > 0 && selectedChatIds.length === chatList.length;
 
   useEffect(() => {
@@ -30,8 +31,8 @@ const DirectPage = () => {
     }
   }, [isEditMode]);
 
-  const handleSearch = useCallback((value: string) => {
-    console.log(value);
+  const handleSearch = useCallback((value?: string) => {
+    setSearchValue(value);
   }, []);
 
   const handleEditMode = useCallback(() => {
@@ -70,11 +71,7 @@ const DirectPage = () => {
   if (isLoading) {
     return (
       <section className={styles.container}>
-        <DMHeader
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          onSearch={handleSearch}
-        />
+        <DMHeader onSearch={handleSearch} />
         <div className={styles.loading}>
           <p>채팅 목록을 불러오는 중...</p>
         </div>
@@ -84,7 +81,7 @@ const DirectPage = () => {
 
   return (
     <section className={styles.container}>
-      <DMHeader searchValue={searchValue} setSearchValue={setSearchValue} onSearch={handleSearch} />
+      <DMHeader onSearch={handleSearch} />
 
       {chatList.length === 0 ? (
         <div className={styles.empty}>

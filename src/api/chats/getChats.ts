@@ -1,13 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 
 import axiosInstance from "@/constants/baseurl";
 
 import type { ChatsResponse, GetChatsRequest } from "@grimity/dto";
 
 export const getChats = async (request: GetChatsRequest) => {
-  return await axiosInstance.get<GetChatsRequest, ChatsResponse>("/chats", {
-    params: request,
-  });
+  const response = await axiosInstance.get<GetChatsRequest, AxiosResponse<ChatsResponse>>(
+    "/chats",
+    {
+      params: request,
+    },
+  );
+
+  return response.data;
 };
 
 export const useGetChats = (request: GetChatsRequest) => {
