@@ -1,6 +1,7 @@
 import Icon from "@/components/Asset/IconTemp";
 import Chip from "@/components/Chip/Chip";
 import styles from "./DMControls.module.scss";
+import { usePostChatsBatchDelete } from "@/api/chats/postChatsBatchDelete";
 
 interface DMControlsProps {
   isEditMode: boolean;
@@ -19,6 +20,14 @@ const DMControls = ({
   onCloseEditMode,
   onSelectAll,
 }: DMControlsProps) => {
+  const { mutate: leaveChat } = usePostChatsBatchDelete();
+
+  const handleLeaveChat = () => {
+    leaveChat({
+      ids: selectedChatIds,
+    });
+  };
+
   return (
     <div className={`${styles.buttonList} ${!isEditMode ? styles.justifyEnd : ""}`}>
       {isEditMode ? (
@@ -34,7 +43,12 @@ const DMControls = ({
             전체 선택
           </label>
           <div className={styles.editButtons}>
-            <button className={styles.button} type="button" disabled={selectedChatIds.length === 0}>
+            <button
+              className={styles.button}
+              type="button"
+              disabled={selectedChatIds.length === 0}
+              onClick={handleLeaveChat}
+            >
               <Chip type="outlined-assistive" size="s" disabled={selectedChatIds.length === 0}>
                 채팅 나가기
               </Chip>
