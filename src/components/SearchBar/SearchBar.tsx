@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import IconComponent from "../Asset/Icon";
 import styles from "./SearchBar.module.scss";
 import { SearchBarProps } from "./SearchBar.types";
@@ -9,28 +8,24 @@ export default function SearchBar({
   placeholder,
   setSearchValue,
   onSearch,
+  onClear,
 }: SearchBarProps) {
-  const router = useRouter();
-  const { tab } = router.query;
   const { showToast } = useToast();
 
   const handleClear = () => {
     setSearchValue("");
-    router.push("");
-    onSearch?.("");
+    onClear?.();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
 
     if (e.key === "Enter") {
-      const currentTab = tab === "author" ? "author" : tab === "board" ? "board" : "feed";
       const trimmedKeyword = searchValue.trim();
       if (trimmedKeyword.length < 2) {
         showToast("두 글자 이상 입력해주세요.", "warning");
         return;
       }
-      router.push(`?tab=${currentTab}&keyword=${trimmedKeyword}`, undefined, { shallow: true });
       onSearch?.(trimmedKeyword);
     }
   };

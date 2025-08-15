@@ -3,4 +3,5 @@ export interface SearchBarProps {
   placeholder?: string;
   setSearchValue: (value: string) => void;
   onSearch?: (value: string) => void;
+  onClear?: () => void;
 }
