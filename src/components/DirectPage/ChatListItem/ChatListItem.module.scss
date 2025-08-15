@@ -117,3 +117,8 @@
   background-repeat: no-repeat;
   background-position: center;
 }
+
+.highlighted {
+  color: $secandary1;
+  @include Label2;
+}
