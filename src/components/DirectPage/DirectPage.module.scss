@@ -3,10 +3,18 @@
 .container {
   display: flex;
   flex-direction: column;
-  max-width: 460px;
   width: 100%;
+  max-width: 460px;
   gap: 30px;
   box-shadow: inset -1px 0 0 $gray30;
+
+  @include Size("mobile") {
+    max-width: 100%;
+  }
+
+  @include Size("tablet") {
+    max-width: 100%;
+  }
 }
 
 .chatContainer {

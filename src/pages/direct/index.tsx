@@ -5,12 +5,12 @@ import EmptyChatRoom from "@/components/DirectPage/EmptyChatRoom/EmptyChatRoom";
 import { useDeviceStore } from "@/states/deviceStore";
 
 const Direct = () => {
-  const { isMobile } = useDeviceStore();
+  const { isMobile, isTablet } = useDeviceStore();
 
   return (
     <AuthLayout>
       <DirectPage />
-      {!isMobile && <EmptyChatRoom />}
+      {!isMobile && !isTablet && <EmptyChatRoom />}
     </AuthLayout>
   );
 };
