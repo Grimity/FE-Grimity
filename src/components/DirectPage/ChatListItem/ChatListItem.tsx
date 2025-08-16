@@ -1,11 +1,10 @@
 import React from "react";
 
+import Highlighter from "react-highlight-words";
 import { formatDistanceToNow, differenceInDays, format } from "date-fns";
 import { ko } from "date-fns/locale";
 
 import type { ChatResponse } from "@grimity/dto";
-
-import { highlightSearchKeyword } from "@/utils/highlightText";
 
 import styles from "./ChatListItem.module.scss";
 
@@ -70,19 +69,33 @@ const ChatListItem = React.memo(
         <div className={styles.chatDetails}>
           <div className={styles.topRow}>
             <span className={styles.username}>
-              {highlightSearchKeyword(chat.opponentUser.name, searchKeyword, styles.highlighted)}
+              <Highlighter
+                highlightClassName={styles.highlighted}
+                searchWords={[searchKeyword || ""]}
+                autoEscape
+                textToHighlight={chat.opponentUser.name}
+                highlightStyle={{
+                  backgroundColor: "transparent",
+                  color: "#2bc466",
+                }}
+              />
             </span>
             <span className={styles.timestamp}>{formatTimestamp(chat.lastMessage?.createdAt)}</span>
           </div>
           <div className={styles.bottomRow}>
             <p className={styles.lastMessage}>
-              {chat.lastMessage?.content
-                ? highlightSearchKeyword(
-                    chat.lastMessage.content,
-                    searchKeyword,
-                    styles.highlighted,
-                  )
-                : ""}
+              {chat.lastMessage?.content && (
+                <Highlighter
+                  highlightClassName={styles.highlighted}
+                  searchWords={[searchKeyword || ""]}
+                  autoEscape
+                  textToHighlight={chat.lastMessage.content}
+                  highlightStyle={{
+                    backgroundColor: "transparent",
+                    color: "#2bc466",
+                  }}
+                />
+              )}
             </p>
           </div>
         </div>
