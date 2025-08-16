@@ -25,9 +25,13 @@ const DMControls = ({
 }: DMControlsProps) => {
   const { openModal } = useModal();
 
+  const disabled = selectedChatIds.length === 0;
+
   const handleShowLeaveModal = () => {
-    if (selectedChatIds.length === 0) return;
-    openModal((close) => <ChatLeave selectedChatIds={selectedChatIds} close={close} />);
+    if (disabled) return;
+    openModal((close) => <ChatLeave selectedChatIds={selectedChatIds} close={close} />, {
+      className: styles.leaveModal,
+    });
   };
 
   return (
@@ -46,17 +50,27 @@ const DMControls = ({
           </label>
           <div className={styles.editButtons}>
             <button
-              className={styles.button}
+              className={styles.leaveChatButton}
               type="button"
-              disabled={selectedChatIds.length === 0}
+              disabled={disabled}
               onClick={handleShowLeaveModal}
             >
-              <Chip type="outlined-assistive" size="s" disabled={selectedChatIds.length === 0}>
+              <Chip
+                className={`${styles.leaveChatChip} ${disabled && styles.disabled}`}
+                type="outlined-assistive"
+                size="s"
+                disabled={disabled}
+              >
                 채팅 나가기
               </Chip>
             </button>
-            <button className={styles.button} type="button" onClick={onCloseEditMode}>
-              <Chip type="filled-assistive" leftIcon={<Icon icon="close" />} size="s">
+            <button className={styles.cancelButton} type="button" onClick={onCloseEditMode}>
+              <Chip
+                className={styles.cancelChip}
+                type="filled-assistive"
+                leftIcon={<Icon icon="close" />}
+                size="s"
+              >
                 취소
               </Chip>
             </button>
