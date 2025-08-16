@@ -18,6 +18,16 @@
   &.edit {
     gap: 16px;
   }
+
+  @include Size("mobile") {
+    padding-left: 25px;
+    padding-right: 16px;
+  }
+
+  @include Size("tablet") {
+    padding-left: 25px;
+    padding-right: 16px;
+  }
 }
 
 .avatar {
