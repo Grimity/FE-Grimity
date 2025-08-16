@@ -1,0 +1,53 @@
+@use "@/styles/globals.scss" as *;
+
+.comfirmModal {
+  background: $gray0;
+  padding: 40px 32px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  justify-content: space-between;
+  width: 404px;
+  min-height: 200px;
+
+  @include Size("mobile") {
+    width: 100%;
+    margin: 0 16px 64px;
+    padding: 40px 20px 20px;
+  }
+
+  .titleContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    .title {
+      @include Title3;
+      color: $gray70;
+      text-align: center;
+    }
+
+    .subtitle {
+      @include Sub4;
+      color: $gray60;
+      text-align: center;
+    }
+
+    @include Size("mobile") {
+      gap: 8px;
+
+      .title {
+        @include Title5;
+      }
+    }
+  }
+
+  .btnsContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+}
