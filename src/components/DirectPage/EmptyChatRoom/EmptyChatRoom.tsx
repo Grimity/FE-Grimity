@@ -1,14 +1,15 @@
 import Button from "@/components/Button/Button";
 import MessageSendModal from "@/components/Modal/MessageSend/MessageSendModal";
-import { useNewModalStore } from "@/states/modalStore";
+
+import { useModal } from "@/hooks/useModal";
 
 import styles from "./EmptyChatRoom.module.scss";
 
 const EmptyChatRoom = () => {
-  const { openModal } = useNewModalStore();
+  const { openModal } = useModal();
 
   const handleNewMessage = () => {
-    openModal("message-send", (close) => <MessageSendModal onClose={close} />);
+    openModal((close) => <MessageSendModal onClose={close} />);
   };
 
   return (
