@@ -4,8 +4,12 @@ import { useRouter } from "next/router";
 import DMHeader from "./DMHeader/DMHeader";
 import DMControls from "./DMControls/DMControls";
 import ChatList from "./ChatList/ChatList";
+import Button from "@/components/Button/Button";
+import MessageSendModal from "@/components/Modal/MessageSend/MessageSendModal";
 
 import { useGetChats } from "@/api/chats/getChats";
+
+import { useModal } from "@/hooks/useModal";
 
 import styles from "./DirectPage.module.scss";
 
@@ -14,6 +18,8 @@ const DirectPage = () => {
   const [searchValue, setSearchValue] = useState<string>();
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedChatIds, setSelectedChatIds] = useState<string[]>([]);
+
+  const { openModal } = useModal();
 
   const { data: chatsData, isLoading } = useGetChats({
     keyword: searchValue,
@@ -67,6 +73,10 @@ const DirectPage = () => {
     }
   }, [isAllSelected, chatList]);
 
+  const handleNewMessage = () => {
+    openModal((close) => <MessageSendModal onClose={close} />);
+  };
+
   if (isLoading) {
     return (
       <section className={styles.container}>
@@ -85,6 +95,14 @@ const DirectPage = () => {
       {chatList.length === 0 ? (
         <div className={styles.empty}>
           <p className={styles.emptyText}>아직 주고 받은 메세지가 없어요</p>
+          <Button
+            type="filled-primary"
+            size="m"
+            className={styles.emptyButton}
+            onClick={handleNewMessage}
+          >
+            새 메시지 보내기
+          </Button>
         </div>
       ) : (
         <div className={styles.chatContainer}>
