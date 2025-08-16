@@ -10,7 +10,7 @@
 
   @include Size("mobile") {
     max-width: 100%;
-    gap: 16px;
+    gap: 24px;
     box-shadow: none;
   }
 
@@ -27,6 +27,34 @@
   flex-grow: 1;
   overflow: hidden;
   gap: 20px;
+
+  @include Size("mobile") {
+    gap: 16px;
+  }
+
+  @include Size("tablet") {
+    gap: 16px;
+  }
+}
+
+.controls {
+  @include Size("mobile") {
+    display: none;
+  }
+
+  @include Size("tablet") {
+    display: none;
+  }
+}
+
+.editModeControls {
+  @include Size("mobile") {
+    display: block;
+  }
+
+  @include Size("tablet") {
+    display: block;
+  }
 }
 
 .empty {
@@ -63,14 +91,14 @@
 }
 
 .emptyButton {
-  display: none;
+  display: block;
 
   @include Size("mobile") {
-    display: block;
+    display: none;
   }
 
   @include Size("tablet") {
-    display: block;
+    display: none;
   }
 }
 

@@ -80,7 +80,13 @@ const DirectPage = () => {
   if (isLoading) {
     return (
       <section className={styles.container}>
-        <DMHeader onSearch={handleSearch} />
+        <DMHeader
+          isEditMode={isEditMode}
+          onSearch={handleSearch}
+          onEditMode={handleEditMode}
+          onNewMessage={handleNewMessage}
+          onCloseEditMode={handleCloseEditMode}
+        />
         <div className={styles.loading}>
           <p>채팅 목록을 불러오는 중...</p>
         </div>
@@ -90,7 +96,14 @@ const DirectPage = () => {
 
   return (
     <section className={styles.container}>
-      <DMHeader searchKeyword={searchValue} onSearch={handleSearch} />
+      <DMHeader
+        isEditMode={isEditMode}
+        searchKeyword={searchValue}
+        onSearch={handleSearch}
+        onEditMode={handleEditMode}
+        onNewMessage={handleNewMessage}
+        onCloseEditMode={handleCloseEditMode}
+      />
 
       {chatList.length === 0 ? (
         <div className={styles.empty}>
@@ -106,14 +119,16 @@ const DirectPage = () => {
         </div>
       ) : (
         <div className={styles.chatContainer}>
-          <DMControls
-            isEditMode={isEditMode}
-            isAllSelected={isAllSelected}
-            selectedChatIds={selectedChatIds}
-            onEditMode={handleEditMode}
-            onCloseEditMode={handleCloseEditMode}
-            onSelectAll={handleSelectAll}
-          />
+          <div className={`${styles.controls} ${isEditMode ? styles.editModeControls : ""}`}>
+            <DMControls
+              isEditMode={isEditMode}
+              isAllSelected={isAllSelected}
+              selectedChatIds={selectedChatIds}
+              onEditMode={handleEditMode}
+              onCloseEditMode={handleCloseEditMode}
+              onSelectAll={handleSelectAll}
+            />
+          </div>
 
           <ChatList
             chatList={chatList}
