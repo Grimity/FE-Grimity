@@ -6,12 +6,21 @@
   align-items: flex-start;
   gap: 16px;
   padding: 24px 30px 0;
+
+  @include Size("mobile") {
+    padding: 16px 16px 0;
+  }
+
+  @include Size("tablet") {
+    padding: 16px 16px 0;
+  }
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .searchContainer {
@@ -42,5 +51,19 @@
 
   @include Size("tablet") {
     @include Title4;
+  }
+}
+
+.headerButtons {
+  display: none;
+  align-items: center;
+  gap: 8px;
+
+  @include Size("mobile") {
+    display: flex;
+  }
+
+  @include Size("tablet") {
+    display: flex;
   }
 }
