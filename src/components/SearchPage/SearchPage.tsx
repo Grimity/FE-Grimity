@@ -99,13 +99,15 @@ export default function SearchPage() {
     <div className={styles.container}>
       <div className={styles.center}>
         <section className={styles.searchBarSection}>
-          <SearchBar
-            searchValue={searchValue}
-            placeholder="그림, 작가, 관련 작품을 검색해보세요"
-            setSearchValue={setSearchValue}
-            onSearch={handleSearch}
-            onClear={handleClear}
-          />
+          <div className={styles.searchBarContainer}>
+            <SearchBar
+              searchValue={searchValue}
+              placeholder="그림, 작가, 관련 작품을 검색해보세요"
+              setSearchValue={setSearchValue}
+              onSearch={handleSearch}
+              onClear={handleClear}
+            />
+          </div>
           <div className={styles.recommend}>
             <p className={styles.recommendMessage}>추천 태그</p>
             {renderChips()}
