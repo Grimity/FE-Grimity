@@ -1,7 +1,10 @@
 import Icon from "@/components/Asset/IconTemp";
 import Chip from "@/components/Chip/Chip";
+import ChatLeave from "@/components/Modal/ChatLeave/ChatLeave";
+
+import { useModal } from "@/hooks/useModal";
+
 import styles from "./DMControls.module.scss";
-import { usePostChatsBatchDelete } from "@/api/chats/postChatsBatchDelete";
 
 interface DMControlsProps {
   isEditMode: boolean;
@@ -20,12 +23,11 @@ const DMControls = ({
   onCloseEditMode,
   onSelectAll,
 }: DMControlsProps) => {
-  const { mutate: leaveChat } = usePostChatsBatchDelete();
+  const { openModal } = useModal();
 
-  const handleLeaveChat = () => {
-    leaveChat({
-      ids: selectedChatIds,
-    });
+  const handleShowLeaveModal = () => {
+    if (selectedChatIds.length === 0) return;
+    openModal((close) => <ChatLeave selectedChatIds={selectedChatIds} close={close} />);
   };
 
   return (
@@ -47,7 +49,7 @@ const DMControls = ({
               className={styles.button}
               type="button"
               disabled={selectedChatIds.length === 0}
-              onClick={handleLeaveChat}
+              onClick={handleShowLeaveModal}
             >
               <Chip type="outlined-assistive" size="s" disabled={selectedChatIds.length === 0}>
                 채팅 나가기
