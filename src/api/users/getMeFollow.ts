@@ -6,6 +6,7 @@ import { MyFollowersResponse, MyFollowingsResponse } from "@grimity/dto";
 export interface MyFollowerRequest {
   size?: number;
   cursor?: string;
+  keyword?: string;
 }
 
 export async function getMyFollower({
@@ -48,10 +49,16 @@ export function useMyFollower({ size }: MyFollowerRequest) {
 export async function getMyFollowing({
   size,
   cursor,
+  keyword,
 }: MyFollowerRequest): Promise<MyFollowingsResponse> {
   try {
+    const params: Record<string, any> = { size, cursor };
+    if (keyword) {
+      params.keyword = keyword;
+    }
+    
     const response = await axiosInstance.get("/me/followings", {
-      params: { size, cursor },
+      params,
     });
 
     return response.data;
@@ -61,12 +68,13 @@ export async function getMyFollowing({
   }
 }
 
-export function useMyFollowing({ size }: MyFollowerRequest) {
+export function useMyFollowing({ size, keyword }: MyFollowerRequest) {
   const accessToken = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
   return useInfiniteQuery<MyFollowingsResponse>({
     queryKey: ["myFollowings"],
-    queryFn: ({ pageParam }) => getMyFollowing({ size, cursor: pageParam as string | undefined }),
+    queryFn: ({ pageParam }) =>
+      getMyFollowing({ size, cursor: pageParam as string | undefined, keyword }),
     initialPageParam: undefined,
     enabled: Boolean(accessToken),
     getNextPageParam: (lastPage) => {
