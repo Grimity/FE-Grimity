@@ -47,6 +47,12 @@
   overflow-y: auto;
 }
 
+.userListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .deliveryIcon {
   border-radius: 30px;
   width: 32px;
