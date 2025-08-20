@@ -18,6 +18,7 @@
   }
 
   .topButton {
+    visibility: hidden;
     position: fixed;
     bottom: 40px;
     right: 40px;
@@ -52,5 +53,6 @@
   .topButton.show {
     opacity: 1;
     z-index: 1000;
+    visibility: visible;
   }
 }
