@@ -1,63 +1,183 @@
+@use "@/styles/globals.scss" as *;
+
 .container {
   width: 100%;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  height: 100%;
 }
 
 .header {
-  padding: 16px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 24px;
+  border-bottom: 1px solid $gray30;
   display: flex;
   align-items: center;
+  background-color: $gray0;
+  justify-content: space-between;
 }
 
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .username {
-  font-weight: bold;
+  @include Sub4;
+  color: $gray80;
+}
+
+.hashtag {
+  @include Label2;
+  color: $gray60;
+}
+
+.headerButtons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iconButton {
+  border: none;
+  background-color: transparent;
+  color: $gray50;
+  cursor: pointer;
+  padding: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .messagesContainer {
   flex-grow: 1;
-  padding: 16px;
+  padding: 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  background-color: $gray0;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+  margin-bottom: 8px;
+}
+
+.messageContent {
+  background-color: white;
+  padding: 12px 16px;
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  line-height: 1.4;
+  color: #2c3e50;
+  word-wrap: break-word;
 }
 
 .footer {
-  padding: 16px;
-  border-top: 1px solid #e0e0e0;
+  padding: 8px 20px 20px;
+  background-color: $gray0;
+}
+
+.inputContainer {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+
+  padding: 7px 8px 7px 16px;
+  background-color: $gray10;
+  border: 1px solid $gray30;
+  border-radius: 12px;
+
+  &:focus-within {
+    background-color: $gray0;
+
+    .sendButton {
+      visibility: visible;
+    }
+  }
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cameraButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: $gray60;
+  padding: 0;
+  width: 28px;
+  height: 28px;
 }
 
 .input {
   flex-grow: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 16px;
+  padding: 3px 0;
+  @include Body1;
+  color: $gray70;
+  outline: none;
+  border: none;
+  background-color: inherit;
+
+  &::placeholder {
+    color: $gray50;
+  }
 }
 
 .sendButton {
-  padding: 8px 16px;
-  border: none;
-  background-color: #333;
-  color: white;
-  border-radius: 16px;
+  visibility: hidden;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin-right: 10px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.removeButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
   cursor: pointer;
+  color: $gray0;
+  padding: 4px;
+  border: none;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
 }
