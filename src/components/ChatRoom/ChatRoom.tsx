@@ -23,6 +23,7 @@ interface ChatRoomProps {
 }
 
 const ChatRoom = ({ chatId }: ChatRoomProps) => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -102,17 +103,31 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   // }, [roomId, connect, setCurrentChatId, initializeChatRoom, setupSocketListeners, joinRoom, leaveRoom]);
 
   const handleSendMessage = useCallback(async () => {
-    if (!message.trim() || !socket || !roomId || isSending) return;
+    if (!message.trim() || !roomId || isSending) return;
 
     setIsSending(true);
 
     try {
-      socket.emit("sendMessage", {
-        chatId: roomId,
-        content: message.trim(),
-        images: [],
-      });
+      if (socket) {
+        socket.emit("sendMessage", {
+          chatId: roomId,
+          content: message.trim(),
+          images: [],
+        });
+      }
 
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: "1",
+          chatId: roomId,
+          userId: user_id,
+          content: message.trim(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          user: { id: "1", nickname: "호두마루" },
+        },
+      ]);
       setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -223,12 +238,14 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       </header>
 
       <div className={styles.messagesContainer}>
-        {currentRoom?.messages &&
-          currentRoom.messages.map((msg) => (
-            <div key={msg.id} className={styles.message}>
-              <span className={styles.messageContent}>{msg.content}</span>
-            </div>
-          ))}
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`${styles.message} ${msg.userId === user_id ? styles.myMessage : ""}`}
+          >
+            <span className={styles.messageContent}>{msg.content}</span>
+          </div>
+        ))}
 
         <div ref={messagesEndRef} />
       </div>
