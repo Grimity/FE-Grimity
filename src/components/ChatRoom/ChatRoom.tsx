@@ -196,6 +196,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
+      if (e.nativeEvent.isComposing) return;
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSendMessage();
