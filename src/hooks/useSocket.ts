@@ -32,14 +32,6 @@ export const useSocket = ({
     return socketManager.isSocketConnected();
   }, []);
 
-  const joinRoom = useCallback((roomId: string) => {
-    socketManager.joinRoom(roomId);
-  }, []);
-
-  const leaveRoom = useCallback((roomId: string) => {
-    socketManager.leaveRoom(roomId);
-  }, []);
-
   useEffect(() => {
     if (autoConnect && access_token) {
       connect();
@@ -57,7 +49,5 @@ export const useSocket = ({
     disconnect,
     getSocket,
     isConnected,
-    joinRoom,
-    leaveRoom,
   };
 };
