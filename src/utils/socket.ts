@@ -47,6 +47,10 @@ class SocketManager {
   isSocketConnected(): boolean {
     return this.isConnected && this.socket?.connected === true;
   }
+
+  getSocketId(): string | null {
+    return this.socket?.id || null;
+  }
 }
 
 export const socketManager = new SocketManager();

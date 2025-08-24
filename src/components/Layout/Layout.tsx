@@ -5,6 +5,8 @@ import { useMyData } from "@/api/users/getMe";
 
 import { useAuthStore } from "@/states/authStore";
 
+import { useSocket } from "@/hooks/useSocket";
+
 import IconComponent from "@/components/Asset/Icon";
 import Header from "@/components/Layout/Header/Header";
 import Sidebar from "@/components/Layout/Sidebar/Sidebar";
@@ -23,8 +25,11 @@ export default function Layout({ children }: LayoutProps) {
 
   const { isMobile, isTablet } = useDeviceStore();
 
-  const { setIsLoggedIn, setAccessToken, setUserId, setIsAuthReady } = useAuthStore();
+  const { isLoggedIn, setIsLoggedIn, setAccessToken, setUserId, setIsAuthReady, access_token } =
+    useAuthStore();
   const { refetch: fetchMyData } = useMyData();
+
+  const { connect, disconnect } = useSocket({ autoConnect: false });
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -63,6 +68,15 @@ export default function Layout({ children }: LayoutProps) {
 
     initializeAuth();
   }, []);
+
+  // 글로벌 소켓 연결 관리
+  useEffect(() => {
+    if (isLoggedIn && access_token) {
+      connect();
+    } else {
+      disconnect();
+    }
+  }, [isLoggedIn, access_token, connect, disconnect]);
 
   // 스크롤 위치 감지
   useEffect(() => {
