@@ -1,0 +1,56 @@
+@use "@/styles/globals.scss" as *;
+
+.header {
+  padding: 8px 24px;
+  border-bottom: 1px solid $gray30;
+  display: flex;
+  align-items: center;
+  background-color: $gray0;
+  justify-content: space-between;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    border-radius: 50%;
+  }
+}
+
+.username {
+  @include Sub4;
+  color: $gray80;
+}
+
+.hashtag {
+  @include Label2;
+  color: $gray60;
+}
+
+.headerButtons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iconButton {
+  border: none;
+  background-color: transparent;
+  color: $gray50;
+  cursor: pointer;
+  padding: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
