@@ -6,6 +6,8 @@ import { FreeMode } from "swiper/modules";
 import { Socket } from "socket.io-client";
 
 import { useGetChatMessages, getChatMessages } from "@/api/chat-messages/getChatMessages";
+import { usePutChatJoin } from "@/api/chats/putChatJoin";
+import { usePutChatLeave } from "@/api/chats/putChatLeave";
 
 import { useSocket } from "@/hooks/useSocket";
 import { useToast } from "@/hooks/useToast";
@@ -30,8 +32,9 @@ interface ChatRoomProps {
 const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [images, setImages] = useState<{ name: string; originalName: string }[]>([]);
+  
+  const joinedSocketIdRef = useRef<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,7 +44,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     { enabled: !!chatId && typeof chatId === "string" },
   );
 
-  const { connect } = useSocket();
+  const { getSocketId, getSocket } = useSocket({ autoConnect: false });
   const { user_id } = useAuthStore();
   const {
     chatRooms,
@@ -57,6 +60,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   } = useChatStore();
   const { showToast } = useToast();
 
+  const { mutate: joinChat } = usePutChatJoin();
+  const { mutate: leaveChat } = usePutChatLeave();
+
   const roomId = chatId;
   const currentRoom = roomId ? chatRooms[roomId] : null;
 
@@ -69,23 +75,20 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       if (!roomId) return;
 
       socketInstance.on("newChatMessage", (newMessage: ChatMessage) => {
-        addMessage(roomId, newMessage);
+        if (newMessage.chatId === roomId) {
+          addMessage(roomId, newMessage);
+        }
       });
 
-      socketInstance.on("deleteChat", (messageId: string) => {
-        removeMessage(roomId, messageId);
-      });
-
-      socketInstance.on("error", (error) => {
-        console.error("Socket error:", error);
+      socketInstance.on("deleteChat", (data: { messageId: string; chatId: string }) => {
+        if (data.chatId === roomId) {
+          removeMessage(roomId, data.messageId);
+        }
       });
 
       return () => {
-        socketInstance.off("newMessage");
-        socketInstance.off("messageDeleted");
-        socketInstance.off("onlineUsers");
-        socketInstance.off("typing");
-        socketInstance.off("error");
+        socketInstance.off("newChatMessage");
+        socketInstance.off("deleteChat");
       };
     },
     [roomId, addMessage, removeMessage],
@@ -105,20 +108,50 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   useEffect(() => {
     if (!roomId) return;
 
-    const socketInstance = connect();
-    setSocket(socketInstance);
+    const socketInstance = getSocket();
+    if (!socketInstance) {
+      console.warn("Global socket not connected yet");
+      return;
+    }
 
     setCurrentChatId(roomId);
     initializeChatRoom(roomId);
 
     const cleanup = setupSocketListeners(socketInstance);
 
+    const socketId = getSocketId();
+    if (socketId) {
+      joinedSocketIdRef.current = socketId;
+      joinChat(
+        { chatId: roomId, socketId },
+        {
+          onError: (error) => {
+            joinedSocketIdRef.current = null;
+            console.error("Failed to join chat:", error);
+            showToast("채팅방 입장에 실패했습니다.", "error");
+          },
+        }
+      );
+    }
+
     return () => {
       if (cleanup) cleanup();
 
+      if (joinedSocketIdRef.current) {
+        leaveChat(
+          { chatId: roomId, socketId: joinedSocketIdRef.current },
+          {
+            onError: (error) => {
+              console.error("Failed to leave chat:", error);
+            },
+          }
+        );
+        joinedSocketIdRef.current = null;
+      }
+
       setCurrentChatId(null);
     };
-  }, [roomId, connect, setCurrentChatId, initializeChatRoom, setupSocketListeners]);
+  }, [roomId, getSocket, setCurrentChatId, initializeChatRoom, setupSocketListeners, getSocketId, joinChat, leaveChat, showToast]);
 
   const handleSendMessage = useCallback(async () => {
     if (!message.trim() || !roomId || isSending) return;
@@ -126,8 +159,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     setIsSending(true);
 
     try {
-      if (socket) {
-        socket.emit("sendMessage", {
+      const socketInstance = getSocket();
+      if (socketInstance) {
+        socketInstance.emit("sendMessage", {
           chatId: roomId,
           content: message.trim(),
           images: [],
@@ -151,13 +185,13 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     } finally {
       setIsSending(false);
     }
-  }, [message, socket, roomId, isSending]);
+  }, [message, getSocket, roomId, isSending, user_id, addMessage]);
 
   const handleTyping = useCallback(
     (value: string) => {
       setMessage(value);
     },
-    [socket, roomId],
+    [],
   );
 
   const handleKeyPress = useCallback(

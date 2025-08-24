@@ -32,9 +32,15 @@ export const useSocket = ({
     return socketManager.isSocketConnected();
   }, []);
 
+  const getSocketId = useCallback((): string | null => {
+    return socketManager.getSocketId();
+  }, []);
+
   useEffect(() => {
     if (autoConnect && access_token) {
       connect();
+    } else if (autoConnect && !access_token) {
+      disconnect();
     }
 
     return () => {
@@ -49,5 +55,6 @@ export const useSocket = ({
     disconnect,
     getSocket,
     isConnected,
+    getSocketId,
   };
 };
