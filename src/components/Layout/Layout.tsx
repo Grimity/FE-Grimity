@@ -5,6 +5,7 @@ import { useMyData } from "@/api/users/getMe";
 
 import { useDeviceStore } from "@/states/deviceStore";
 import { useAuthStore } from "@/states/authStore";
+import { useChatStore } from "@/states/chatStore";
 
 import { useSocket } from "@/hooks/useSocket";
 
@@ -31,8 +32,9 @@ export default function Layout({ children }: LayoutProps) {
   const { isLoggedIn, setIsLoggedIn, setAccessToken, setUserId, setIsAuthReady, access_token } =
     useAuthStore();
   const { refetch: fetchMyData } = useMyData();
+  const { currentChatId, setHasUnreadMessages } = useChatStore();
 
-  const { connect, disconnect } = useSocket({ autoConnect: false });
+  const { connect, disconnect, getSocket } = useSocket({ autoConnect: false });
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -80,6 +82,27 @@ export default function Layout({ children }: LayoutProps) {
       disconnect();
     }
   }, [isLoggedIn, access_token, connect, disconnect]);
+
+  // 전역 메시지 알림 처리
+  useEffect(() => {
+    if (!isLoggedIn || !access_token) return;
+
+    const socketInstance = getSocket();
+    if (!socketInstance) return;
+
+    const handleNewChatMessage = (newMessage: any) => {
+      // 현재 보고 있는 채팅방의 메시지가 아닌 경우에만 알림 표시
+      if (newMessage.chatId !== currentChatId) {
+        setHasUnreadMessages(true);
+      }
+    };
+
+    socketInstance.on("newChatMessage", handleNewChatMessage);
+
+    return () => {
+      socketInstance.off("newChatMessage", handleNewChatMessage);
+    };
+  }, [isLoggedIn, access_token, getSocket, currentChatId, setHasUnreadMessages]);
 
   // 스크롤 위치 감지
   useEffect(() => {

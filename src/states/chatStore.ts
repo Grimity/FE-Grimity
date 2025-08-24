@@ -5,8 +5,11 @@ import { ChatMessage, OnlineUser, ChatRoomState } from "@/types/socket.types";
 interface ChatStore {
   chatRooms: Record<string, ChatRoomState>;
   currentChatId: string | null;
+  hasUnreadMessages: boolean;
 
   setCurrentChatId: (chatId: string | null) => void;
+  setHasUnreadMessages: (hasUnread: boolean) => void;
+  markAsRead: () => void;
   addMessage: (chatId: string, message: ChatMessage) => void;
   updateMessage: (chatId: string, messageId: string, updatedMessage: Partial<ChatMessage>) => void;
   removeMessage: (chatId: string, messageId: string) => void;
@@ -27,8 +30,11 @@ interface ChatStore {
 export const useChatStore = create<ChatStore>((set) => ({
   chatRooms: {},
   currentChatId: null,
+  hasUnreadMessages: false,
 
   setCurrentChatId: (chatId) => set({ currentChatId: chatId }),
+  setHasUnreadMessages: (hasUnread) => set({ hasUnreadMessages: hasUnread }),
+  markAsRead: () => set({ hasUnreadMessages: false }),
 
   addMessage: (chatId, message) =>
     set((state) => ({

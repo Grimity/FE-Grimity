@@ -28,8 +28,17 @@ const Sidebar = () => {
   const isItemActive = (route: string) => {
     const currentPath = router.pathname;
 
+    if (route === "/" && currentPath === "/") return true;
+
+    if (route === PATH_ROUTES.DIRECT && currentPath.startsWith("/direct")) return true;
+
+    if (
+      route === PATH_ROUTES.BOARD &&
+      (currentPath === "/board" || currentPath.startsWith("/posts/"))
+    )
+      return true;
+
     if (currentPath === route) return true;
-    if (route === PATH_ROUTES.BOARD && currentPath.startsWith("/posts/")) return true;
 
     return false;
   };

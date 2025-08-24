@@ -1,5 +1,7 @@
 import Icon, { IconList } from "@/components/Asset/IconTemp";
 
+import { useChatStore } from "@/states/chatStore";
+
 import styles from "@/components/Layout/Sidebar/SidebarItem/SidebarItem.module.scss";
 
 interface SidebarItemProps {
@@ -10,11 +12,14 @@ interface SidebarItemProps {
 }
 
 const SidebarItem = ({ icon, label, onClick, isActive }: SidebarItemProps) => {
+  const { hasUnreadMessages } = useChatStore();
+  const showBadge = icon === "direct" && hasUnreadMessages;
+
   return (
     <div className={`${styles.sidebarItem} ${isActive ? styles.active : ""}`} onClick={onClick}>
       <div className={styles.wrapper}>
         <Icon icon={icon} size="lg" className={styles.icon} />
-        <span className={styles.label}>{label}</span>
+        <span className={`${styles.label} ${showBadge ? styles.badge : ""}`}>{label}</span>
       </div>
     </div>
   );
