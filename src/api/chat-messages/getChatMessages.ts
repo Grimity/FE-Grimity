@@ -42,12 +42,17 @@ export const getChatMessages = async (params: GetChatMessagesParams): Promise<Ch
   return response.data;
 };
 
-export const useGetChatMessages = (params: GetChatMessagesParams) => {
+export const useGetChatMessages = (
+  params: GetChatMessagesParams,
+  options?: { enabled?: boolean }
+) => {
   return useInfiniteQuery({
     queryKey: ["chatMessages", params],
-    queryFn: ({ pageParam }) => getChatMessages({ ...params, cursor: pageParam }),
+    queryFn: ({ pageParam }) =>
+      getChatMessages({ ...params, ...(pageParam.length && { cursor: pageParam }) }),
     initialPageParam: "",
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     getPreviousPageParam: (firstPage) => firstPage.nextCursor,
+    enabled: options?.enabled,
   });
 };

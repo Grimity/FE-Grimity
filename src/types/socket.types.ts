@@ -64,4 +64,7 @@ export interface ChatRoomState {
   messages: ChatMessage[];
   onlineUsers: OnlineUser[];
   typingUsers: TypingState[];
+  hasNextPage?: boolean;
+  nextCursor?: string | null;
+  isLoadingMore?: boolean;
 }

@@ -5,6 +5,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
 import { Socket } from "socket.io-client";
 
+import { useGetChatMessages, getChatMessages } from "@/api/chat-messages/getChatMessages";
+
 import { useSocket } from "@/hooks/useSocket";
 import { useToast } from "@/hooks/useToast";
 
@@ -13,17 +15,19 @@ import { useAuthStore } from "@/states/authStore";
 
 import Icon from "@/components/Asset/IconTemp";
 import Button from "@/components/Button/Button";
+import ChatRoomHeader from "@/components/ChatRoom/Header/Header";
 
 import type { ChatMessage } from "@/types/socket.types";
+
+import { convertApiMessageToChatMessage } from "@/utils/messageConverter";
 
 import styles from "./ChatRoom.module.scss";
 
 interface ChatRoomProps {
-  chatId: string | string[] | undefined;
+  chatId: string;
 }
 
 const ChatRoom = ({ chatId }: ChatRoomProps) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -32,7 +36,12 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // const { connect, joinRoom, leaveRoom } = useSocket();
+  const { data: initialChatData } = useGetChatMessages(
+    { chatId, size: 20 },
+    { enabled: !!chatId && typeof chatId === "string" },
+  );
+
+  const { connect } = useSocket();
   const { user_id } = useAuthStore();
   const {
     chatRooms,
@@ -40,67 +49,76 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     initializeChatRoom,
     addMessage,
     removeMessage,
-    setOnlineUsers,
-    setTyping,
+    initializeWithMessages,
+    setIsLoadingMore,
+    addOlderMessages,
+    setNextCursor,
+    setHasNextPage,
   } = useChatStore();
   const { showToast } = useToast();
 
-  const roomId = Array.isArray(chatId) ? chatId[0] : chatId;
+  const roomId = chatId;
   const currentRoom = roomId ? chatRooms[roomId] : null;
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  // const setupSocketListeners = useCallback(
-  //   (socketInstance: Socket) => {
-  //     if (!roomId) return;
+  const setupSocketListeners = useCallback(
+    (socketInstance: Socket) => {
+      if (!roomId) return;
 
-  //     socketInstance.on("newMessage", (newMessage: ChatMessage) => {
-  //       addMessage(roomId, newMessage);
-  //     });
+      socketInstance.on("newChatMessage", (newMessage: ChatMessage) => {
+        addMessage(roomId, newMessage);
+      });
 
-  //     socketInstance.on("messageDeleted", (messageId: string) => {
-  //       removeMessage(roomId, messageId);
-  //     });
+      socketInstance.on("deleteChat", (messageId: string) => {
+        removeMessage(roomId, messageId);
+      });
 
-  //     socketInstance.on("onlineUsers", (users) => {
-  //       setOnlineUsers(roomId, users);
-  //     });
+      socketInstance.on("error", (error) => {
+        console.error("Socket error:", error);
+      });
 
-  //     socketInstance.on("error", (error) => {
-  //       console.error("Socket error:", error);
-  //     });
+      return () => {
+        socketInstance.off("newMessage");
+        socketInstance.off("messageDeleted");
+        socketInstance.off("onlineUsers");
+        socketInstance.off("typing");
+        socketInstance.off("error");
+      };
+    },
+    [roomId, addMessage, removeMessage],
+  );
 
-  //     return () => {
-  //       socketInstance.off("newMessage");
-  //       socketInstance.off("messageDeleted");
-  //       socketInstance.off("onlineUsers");
-  //       socketInstance.off("typing");
-  //       socketInstance.off("error");
-  //     };
-  //   },
-  //   [roomId, addMessage, removeMessage, setOnlineUsers, setTyping, user_id],
-  // );
+  useEffect(() => {
+    if (initialChatData?.pages?.[0] && roomId) {
+      const firstPage = initialChatData.pages[0];
+      const convertedMessages = firstPage.messages.map((msg) =>
+        convertApiMessageToChatMessage(msg, roomId),
+      );
 
-  // useEffect(() => {
-  //   if (!roomId) return;
+      initializeWithMessages(roomId, convertedMessages.reverse(), firstPage.nextCursor);
+    }
+  }, [initialChatData, roomId, initializeWithMessages]);
 
-  //   const socketInstance = connect();
-  //   setSocket(socketInstance);
+  useEffect(() => {
+    if (!roomId) return;
 
-  //   setCurrentChatId(roomId);
-  //   initializeChatRoom(roomId);
-  //   joinRoom(roomId);
+    const socketInstance = connect();
+    setSocket(socketInstance);
 
-  //   const cleanup = setupSocketListeners(socketInstance);
+    setCurrentChatId(roomId);
+    initializeChatRoom(roomId);
 
-  //   return () => {
-  //     if (cleanup) cleanup();
-  //     leaveRoom(roomId);
-  //     setCurrentChatId(null);
-  //   };
-  // }, [roomId, connect, setCurrentChatId, initializeChatRoom, setupSocketListeners, joinRoom, leaveRoom]);
+    const cleanup = setupSocketListeners(socketInstance);
+
+    return () => {
+      if (cleanup) cleanup();
+
+      setCurrentChatId(null);
+    };
+  }, [roomId, connect, setCurrentChatId, initializeChatRoom, setupSocketListeners]);
 
   const handleSendMessage = useCallback(async () => {
     if (!message.trim() || !roomId || isSending) return;
@@ -116,18 +134,17 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         });
       }
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: "1",
-          chatId: roomId,
-          userId: user_id,
-          content: message.trim(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          user: { id: "1", nickname: "호두마루" },
-        },
-      ]);
+      const tempMessage: ChatMessage = {
+        id: Date.now().toString(),
+        chatId: roomId,
+        userId: user_id,
+        content: message.trim(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        user: { id: user_id, nickname: "임시 사용자" },
+      };
+
+      addMessage(roomId, tempMessage);
       setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -151,6 +168,54 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       }
     },
     [handleSendMessage],
+  );
+
+  const loadMoreMessages = useCallback(async () => {
+    if (!roomId || !currentRoom?.hasNextPage || currentRoom?.isLoadingMore) return;
+
+    setIsLoadingMore(roomId, true);
+
+    try {
+      const response = await getChatMessages({
+        chatId: roomId,
+        size: 20,
+        cursor: currentRoom.nextCursor || undefined,
+      });
+
+      const convertedMessages = response.messages.map((msg) =>
+        convertApiMessageToChatMessage(msg, roomId),
+      );
+
+      addOlderMessages(roomId, convertedMessages.reverse());
+      setNextCursor(roomId, response.nextCursor);
+      setHasNextPage(roomId, !!response.nextCursor);
+    } catch (error) {
+      console.error("Failed to load more messages:", error);
+      showToast("메시지를 불러오는데 실패했습니다.", "error");
+    } finally {
+      setIsLoadingMore(roomId, false);
+    }
+  }, [
+    roomId,
+    currentRoom?.hasNextPage,
+    currentRoom?.isLoadingMore,
+    currentRoom?.nextCursor,
+    setIsLoadingMore,
+    addOlderMessages,
+    setNextCursor,
+    setHasNextPage,
+    showToast,
+  ]);
+
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const { scrollTop } = e.currentTarget;
+
+      if (scrollTop === 0 && currentRoom?.hasNextPage && !currentRoom?.isLoadingMore) {
+        loadMoreMessages();
+      }
+    },
+    [currentRoom?.hasNextPage, currentRoom?.isLoadingMore, loadMoreMessages],
   );
 
   const handleClickFiile = () => {
@@ -205,40 +270,18 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     };
   }, []);
 
-  if (!roomId) {
-    return <div>Invalid chat ID</div>;
-  }
-
   return (
     <section className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.userInfo}>
-          <div className={styles.avatar}>
-            <Image
-              src={currentRoom?.onlineUsers?.[0]?.profileImage || "/image/default.svg"}
-              alt="프로필 이미지"
-              width={40}
-              height={40}
-            />
-          </div>
-          <div>
-            <p className={styles.username}>호두마루</p>
-            <p className={styles.hashtag}>@username</p>
-          </div>
-        </div>
+      <ChatRoomHeader chatId={chatId} />
 
-        <div className={styles.headerButtons}>
-          <button type="button" className={styles.iconButton} aria-label="불편 신고">
-            <Icon icon="complaint" size="xl" />
-          </button>
-          <button type="button" className={styles.iconButton} aria-label="채팅방 나가기">
-            <Icon icon="exit" size="xl" />
-          </button>
-        </div>
-      </header>
+      <div className={styles.messagesContainer} onScroll={handleScroll}>
+        {currentRoom?.isLoadingMore && (
+          <div className={styles.loadingContainer}>
+            <span className={styles.loadingText}>메시지를 불러오는 중...</span>
+          </div>
+        )}
 
-      <div className={styles.messagesContainer}>
-        {messages.map((msg) => (
+        {currentRoom?.messages?.map((msg) => (
           <div
             key={msg.id}
             className={`${styles.message} ${msg.userId === user_id ? styles.myMessage : ""}`}
