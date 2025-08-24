@@ -1,15 +1,26 @@
-import Image from "next/image";
+import { useGetChatsUser } from "@/api/chats/getChatsUser";
+
+import Icon from "@/components/Asset/IconTemp";
+import ChatLeave from "@/components/Modal/ChatLeave/ChatLeave";
+
+import { useModal } from "@/hooks/useModal";
 
 import styles from "./Header.module.scss";
-import { useGetChatsUser } from "@/api/chats/getChatsUser";
-import Icon from "@/components/Asset/IconTemp";
 
 interface ChatRoomHeaderProps {
   chatId: string;
 }
 
 const ChatRoomHeader = ({ chatId }: ChatRoomHeaderProps) => {
+  const { openModal } = useModal();
+
   const { data: userData } = useGetChatsUser({ chatId });
+
+  const handleShowLeaveModal = () => {
+    openModal((close) => <ChatLeave selectedChatIds={[chatId]} close={close} />, {
+      className: styles.leaveModal,
+    });
+  };
 
   return (
     <header className={styles.header}>
@@ -32,7 +43,12 @@ const ChatRoomHeader = ({ chatId }: ChatRoomHeaderProps) => {
         <button type="button" className={styles.iconButton} aria-label="불편 신고">
           <Icon icon="complaint" size="xl" />
         </button>
-        <button type="button" className={styles.iconButton} aria-label="채팅방 나가기">
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label="채팅방 나가기"
+          onClick={handleShowLeaveModal}
+        >
           <Icon icon="exit" size="xl" />
         </button>
       </div>
