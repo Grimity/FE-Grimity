@@ -11,6 +11,10 @@ const DirectChatPage = () => {
   const { chatId } = router.query;
   const { isMobile, isTablet } = useDeviceStore();
 
+  if (!chatId || Array.isArray(chatId)) {
+    return null;
+  }
+
   if (isMobile || isTablet) {
     return (
       <AuthLayout>

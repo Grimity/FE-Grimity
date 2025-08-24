@@ -12,16 +12,16 @@ interface ChatStore {
   removeMessage: (chatId: string, messageId: string) => void;
   setMessages: (chatId: string, messages: ChatMessage[]) => void;
   addMessages: (chatId: string, messages: ChatMessage[]) => void;
-
-  setOnlineUsers: (chatId: string, users: OnlineUser[]) => void;
-  addOnlineUser: (chatId: string, user: OnlineUser) => void;
-  removeOnlineUser: (chatId: string, userId: string) => void;
-
-  setTyping: (chatId: string, userId: string, nickname: string, isTyping: boolean) => void;
-  clearTyping: (chatId: string, userId: string) => void;
+  addOlderMessages: (chatId: string, messages: ChatMessage[]) => void;
+  initializeWithMessages: (chatId: string, messages: ChatMessage[], nextCursor?: string | null) => void;
 
   initializeChatRoom: (chatId: string) => void;
   clearChatRoom: (chatId: string) => void;
+  
+  // Pagination state
+  setHasNextPage: (chatId: string, hasNext: boolean) => void;
+  setNextCursor: (chatId: string, cursor: string | null) => void;
+  setIsLoadingMore: (chatId: string, isLoading: boolean) => void;
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -88,84 +88,27 @@ export const useChatStore = create<ChatStore>((set) => ({
       },
     })),
 
-  setOnlineUsers: (chatId, users) =>
+  addOlderMessages: (chatId, messages) =>
     set((state) => ({
       chatRooms: {
         ...state.chatRooms,
         [chatId]: {
           ...state.chatRooms[chatId],
-          onlineUsers: users,
+          messages: [...messages, ...(state.chatRooms[chatId]?.messages || [])],
         },
       },
     })),
 
-  addOnlineUser: (chatId, user) =>
-    set((state) => {
-      const currentUsers = state.chatRooms[chatId]?.onlineUsers || [];
-      const userExists = currentUsers.some((u) => u.userId === user.userId);
-
-      if (userExists) return state;
-
-      return {
-        chatRooms: {
-          ...state.chatRooms,
-          [chatId]: {
-            ...state.chatRooms[chatId],
-            onlineUsers: [...currentUsers, user],
-          },
-        },
-      };
-    }),
-
-  removeOnlineUser: (chatId, userId) =>
+  initializeWithMessages: (chatId, messages, nextCursor = null) =>
     set((state) => ({
       chatRooms: {
         ...state.chatRooms,
         [chatId]: {
           ...state.chatRooms[chatId],
-          onlineUsers:
-            state.chatRooms[chatId]?.onlineUsers.filter((user) => user.userId !== userId) || [],
-        },
-      },
-    })),
-
-  setTyping: (chatId, userId, nickname, isTyping) =>
-    set((state) => {
-      const currentTyping = state.chatRooms[chatId]?.typingUsers || [];
-      const existingIndex = currentTyping.findIndex((t) => t.userId === userId);
-
-      let newTypingUsers;
-      if (isTyping) {
-        if (existingIndex >= 0) {
-          newTypingUsers = currentTyping.map((t, i) =>
-            i === existingIndex ? { ...t, isTyping: true } : t,
-          );
-        } else {
-          newTypingUsers = [...currentTyping, { userId, nickname, isTyping: true }];
-        }
-      } else {
-        newTypingUsers = currentTyping.filter((t) => t.userId !== userId);
-      }
-
-      return {
-        chatRooms: {
-          ...state.chatRooms,
-          [chatId]: {
-            ...state.chatRooms[chatId],
-            typingUsers: newTypingUsers,
-          },
-        },
-      };
-    }),
-
-  clearTyping: (chatId, userId) =>
-    set((state) => ({
-      chatRooms: {
-        ...state.chatRooms,
-        [chatId]: {
-          ...state.chatRooms[chatId],
-          typingUsers:
-            state.chatRooms[chatId]?.typingUsers.filter((t) => t.userId !== userId) || [],
+          messages,
+          nextCursor,
+          hasNextPage: !!nextCursor,
+          isLoadingMore: false,
         },
       },
     })),
@@ -178,6 +121,9 @@ export const useChatStore = create<ChatStore>((set) => ({
           messages: [],
           onlineUsers: [],
           typingUsers: [],
+          hasNextPage: true,
+          nextCursor: null,
+          isLoadingMore: false,
         },
       },
     })),
@@ -187,4 +133,37 @@ export const useChatStore = create<ChatStore>((set) => ({
       const { [chatId]: _, ...restChatRooms } = state.chatRooms;
       return { chatRooms: restChatRooms };
     }),
+
+  setHasNextPage: (chatId, hasNext) =>
+    set((state) => ({
+      chatRooms: {
+        ...state.chatRooms,
+        [chatId]: {
+          ...state.chatRooms[chatId],
+          hasNextPage: hasNext,
+        },
+      },
+    })),
+
+  setNextCursor: (chatId, cursor) =>
+    set((state) => ({
+      chatRooms: {
+        ...state.chatRooms,
+        [chatId]: {
+          ...state.chatRooms[chatId],
+          nextCursor: cursor,
+        },
+      },
+    })),
+
+  setIsLoadingMore: (chatId, isLoading) =>
+    set((state) => ({
+      chatRooms: {
+        ...state.chatRooms,
+        [chatId]: {
+          ...state.chatRooms[chatId],
+          isLoadingMore: isLoading,
+        },
+      },
+    })),
 }));

@@ -9,13 +9,11 @@ class SocketManager {
       return this.socket;
     }
 
-    const socketOptions = {
+    this.socket = io(serverUrl, {
       transports: ["websocket"],
-      auth: token ? { token } : undefined,
+      auth: token ? { accessToken: token } : undefined,
       autoConnect: true,
-    };
-
-    this.socket = io(serverUrl, socketOptions);
+    });
 
     this.socket.on("connect", () => {
       this.isConnected = true;
@@ -48,18 +46,6 @@ class SocketManager {
 
   isSocketConnected(): boolean {
     return this.isConnected && this.socket?.connected === true;
-  }
-
-  joinRoom(roomId: string): void {
-    if (this.socket && this.isConnected) {
-      this.socket.emit("joinRoom", roomId);
-    }
-  }
-
-  leaveRoom(roomId: string): void {
-    if (this.socket && this.isConnected) {
-      this.socket.emit("leaveRoom", roomId);
-    }
   }
 }
 
