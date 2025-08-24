@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 
+import { useChatStore } from "@/states/chatStore";
+
 import DMHeader from "./DMHeader/DMHeader";
 import DMControls from "./DMControls/DMControls";
 import ChatList from "./ChatList/ChatList";
@@ -20,6 +22,7 @@ const DirectPage = () => {
   const [selectedChatIds, setSelectedChatIds] = useState<string[]>([]);
 
   const { openModal } = useModal();
+  const { markAsRead } = useChatStore();
 
   const { data: chatsData, isLoading } = useGetChats({
     keyword: searchValue,
@@ -35,6 +38,10 @@ const DirectPage = () => {
       setSelectedChatIds([]);
     }
   }, [isEditMode]);
+
+  useEffect(() => {
+    markAsRead();
+  }, [markAsRead]);
 
   const handleSearch = useCallback((value?: string) => {
     setSearchValue(value);

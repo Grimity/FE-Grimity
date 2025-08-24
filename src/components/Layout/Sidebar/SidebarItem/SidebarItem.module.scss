@@ -61,3 +61,18 @@
     margin-top: 12px;
   }
 }
+
+.badge {
+  position: relative;
+
+  &:after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background-color: $red;
+    border-radius: 30px;
+    position: absolute;
+    top: 0;
+    right: -8px;
+  }
+}
