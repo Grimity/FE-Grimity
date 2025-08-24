@@ -8,6 +8,7 @@ import { Socket } from "socket.io-client";
 import { useGetChatMessages, getChatMessages } from "@/api/chat-messages/getChatMessages";
 import { usePutChatJoin } from "@/api/chats/putChatJoin";
 import { usePutChatLeave } from "@/api/chats/putChatLeave";
+import { usePostChatMessage } from "@/api/chat-messages/postChatMessage";
 
 import { useSocket } from "@/hooks/useSocket";
 import { useToast } from "@/hooks/useToast";
@@ -33,7 +34,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [images, setImages] = useState<{ name: string; originalName: string }[]>([]);
-  
+
   const joinedSocketIdRef = useRef<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -43,6 +44,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     { chatId, size: 20 },
     { enabled: !!chatId && typeof chatId === "string" },
   );
+  const { mutate: postChatMessage } = usePostChatMessage();
 
   const { getSocketId, getSocket } = useSocket({ autoConnect: false });
   const { user_id } = useAuthStore();
@@ -70,89 +72,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  const setupSocketListeners = useCallback(
-    (socketInstance: Socket) => {
-      if (!roomId) return;
-
-      socketInstance.on("newChatMessage", (newMessage: ChatMessage) => {
-        if (newMessage.chatId === roomId) {
-          addMessage(roomId, newMessage);
-        }
-      });
-
-      socketInstance.on("deleteChat", (data: { messageId: string; chatId: string }) => {
-        if (data.chatId === roomId) {
-          removeMessage(roomId, data.messageId);
-        }
-      });
-
-      return () => {
-        socketInstance.off("newChatMessage");
-        socketInstance.off("deleteChat");
-      };
-    },
-    [roomId, addMessage, removeMessage],
-  );
-
-  useEffect(() => {
-    if (initialChatData?.pages?.[0] && roomId) {
-      const firstPage = initialChatData.pages[0];
-      const convertedMessages = firstPage.messages.map((msg) =>
-        convertApiMessageToChatMessage(msg, roomId),
-      );
-
-      initializeWithMessages(roomId, convertedMessages.reverse(), firstPage.nextCursor);
-    }
-  }, [initialChatData, roomId, initializeWithMessages]);
-
-  useEffect(() => {
-    if (!roomId) return;
-
-    const socketInstance = getSocket();
-    if (!socketInstance) {
-      console.warn("Global socket not connected yet");
-      return;
-    }
-
-    setCurrentChatId(roomId);
-    initializeChatRoom(roomId);
-
-    const cleanup = setupSocketListeners(socketInstance);
-
-    const socketId = getSocketId();
-    if (socketId) {
-      joinedSocketIdRef.current = socketId;
-      joinChat(
-        { chatId: roomId, socketId },
-        {
-          onError: (error) => {
-            joinedSocketIdRef.current = null;
-            console.error("Failed to join chat:", error);
-            showToast("채팅방 입장에 실패했습니다.", "error");
-          },
-        }
-      );
-    }
-
-    return () => {
-      if (cleanup) cleanup();
-
-      if (joinedSocketIdRef.current) {
-        leaveChat(
-          { chatId: roomId, socketId: joinedSocketIdRef.current },
-          {
-            onError: (error) => {
-              console.error("Failed to leave chat:", error);
-            },
-          }
-        );
-        joinedSocketIdRef.current = null;
-      }
-
-      setCurrentChatId(null);
-    };
-  }, [roomId, getSocket, setCurrentChatId, initializeChatRoom, setupSocketListeners, getSocketId, joinChat, leaveChat, showToast]);
-
   const handleSendMessage = useCallback(async () => {
     if (!message.trim() || !roomId || isSending) return;
 
@@ -168,7 +87,13 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         });
       }
 
-      const tempMessage: ChatMessage = {
+      postChatMessage({
+        chatId: roomId,
+        content: message.trim(),
+        images: images.map((image) => image.name),
+      });
+
+      addMessage(roomId, {
         id: Date.now().toString(),
         chatId: roomId,
         userId: user_id,
@@ -176,9 +101,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         user: { id: user_id, nickname: "임시 사용자" },
-      };
+        images: images.map((image) => image.name),
+      });
 
-      addMessage(roomId, tempMessage);
       setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -187,12 +112,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     }
   }, [message, getSocket, roomId, isSending, user_id, addMessage]);
 
-  const handleTyping = useCallback(
-    (value: string) => {
-      setMessage(value);
-    },
-    [],
-  );
+  const handleTyping = useCallback((value: string) => {
+    setMessage(value);
+  }, []);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -291,7 +213,101 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     });
   };
 
+  const setupSocketListeners = useCallback(
+    (socketInstance: Socket) => {
+      if (!roomId) return;
+
+      socketInstance.on("newChatMessage", (newMessage: ChatMessage) => {
+        if (newMessage.chatId === roomId) {
+          addMessage(roomId, newMessage);
+        }
+      });
+
+      socketInstance.on("deleteChat", (data: { messageId: string; chatId: string }) => {
+        if (data.chatId === roomId) {
+          removeMessage(roomId, data.messageId);
+        }
+      });
+
+      return () => {
+        socketInstance.off("newChatMessage");
+        socketInstance.off("deleteChat");
+      };
+    },
+    [roomId, addMessage, removeMessage],
+  );
+
   useEffect(() => {
+    if (initialChatData?.pages?.[0] && roomId) {
+      const firstPage = initialChatData.pages[0];
+      const convertedMessages = firstPage.messages.map((msg) =>
+        convertApiMessageToChatMessage(msg, roomId),
+      );
+
+      initializeWithMessages(roomId, convertedMessages.reverse(), firstPage.nextCursor);
+    }
+  }, [initialChatData, roomId, initializeWithMessages]);
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    const socketInstance = getSocket();
+    if (!socketInstance) {
+      console.warn("Global socket not connected yet");
+      return;
+    }
+
+    setCurrentChatId(roomId);
+    initializeChatRoom(roomId);
+
+    const cleanup = setupSocketListeners(socketInstance);
+
+    const socketId = getSocketId();
+    if (socketId) {
+      joinedSocketIdRef.current = socketId;
+      joinChat(
+        { chatId: roomId, socketId },
+        {
+          onError: (error) => {
+            joinedSocketIdRef.current = null;
+            console.error("Failed to join chat:", error);
+            showToast("채팅방 입장에 실패했습니다.", "error");
+          },
+        },
+      );
+    }
+
+    return () => {
+      if (cleanup) cleanup();
+
+      if (joinedSocketIdRef.current) {
+        leaveChat(
+          { chatId: roomId, socketId: joinedSocketIdRef.current },
+          {
+            onError: (error) => {
+              console.error("Failed to leave chat:", error);
+            },
+          },
+        );
+        joinedSocketIdRef.current = null;
+      }
+
+      setCurrentChatId(null);
+    };
+  }, [
+    roomId,
+    getSocket,
+    setCurrentChatId,
+    initializeChatRoom,
+    setupSocketListeners,
+    getSocketId,
+    joinChat,
+    leaveChat,
+    showToast,
+  ]);
+
+  useEffect(() => {
+    console.log("messages", currentRoom?.messages);
     scrollToBottom();
   }, [currentRoom?.messages, scrollToBottom]);
 
