@@ -65,15 +65,14 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const { mutate: joinChat } = usePutChatJoin();
   const { mutate: leaveChat } = usePutChatLeave();
 
-  const roomId = chatId;
-  const currentRoom = roomId ? chatRooms[roomId] : null;
+  const currentRoom = chatRooms[chatId];
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   const handleSendMessage = useCallback(async () => {
-    if (!message.trim() || !roomId || isSending) return;
+    if (!message.trim() || !chatId || isSending) return;
 
     setIsSending(true);
 
@@ -81,21 +80,21 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       const socketInstance = getSocket();
       if (socketInstance) {
         socketInstance.emit("sendMessage", {
-          chatId: roomId,
+          chatId,
           content: message.trim(),
           images: [],
         });
       }
 
       postChatMessage({
-        chatId: roomId,
+        chatId,
         content: message.trim(),
         images: images.map((image) => image.name),
       });
 
-      addMessage(roomId, {
+      addMessage(chatId, {
         id: Date.now().toString(),
-        chatId: roomId,
+        chatId,
         userId: user_id,
         content: message.trim(),
         createdAt: new Date().toISOString(),
@@ -110,7 +109,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     } finally {
       setIsSending(false);
     }
-  }, [message, getSocket, roomId, isSending, user_id, addMessage]);
+  }, [message, getSocket, chatId, isSending, user_id, addMessage]);
 
   const handleTyping = useCallback((value: string) => {
     setMessage(value);
@@ -128,32 +127,32 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   );
 
   const loadMoreMessages = useCallback(async () => {
-    if (!roomId || !currentRoom?.hasNextPage || currentRoom?.isLoadingMore) return;
+    if (!currentRoom.hasNextPage || currentRoom.isLoadingMore) return;
 
-    setIsLoadingMore(roomId, true);
+    setIsLoadingMore(chatId, true);
 
     try {
       const response = await getChatMessages({
-        chatId: roomId,
+        chatId,
         size: 20,
         cursor: currentRoom.nextCursor || undefined,
       });
 
       const convertedMessages = response.messages.map((msg) =>
-        convertApiMessageToChatMessage(msg, roomId),
+        convertApiMessageToChatMessage(msg, chatId),
       );
 
-      addOlderMessages(roomId, convertedMessages.reverse());
-      setNextCursor(roomId, response.nextCursor);
-      setHasNextPage(roomId, !!response.nextCursor);
+      addOlderMessages(chatId, convertedMessages.reverse());
+      setNextCursor(chatId, response.nextCursor);
+      setHasNextPage(chatId, !!response.nextCursor);
     } catch (error) {
       console.error("Failed to load more messages:", error);
       showToast("메시지를 불러오는데 실패했습니다.", "error");
     } finally {
-      setIsLoadingMore(roomId, false);
+      setIsLoadingMore(chatId, false);
     }
   }, [
-    roomId,
+    chatId,
     currentRoom?.hasNextPage,
     currentRoom?.isLoadingMore,
     currentRoom?.nextCursor,
@@ -215,17 +214,15 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const setupSocketListeners = useCallback(
     (socketInstance: Socket) => {
-      if (!roomId) return;
-
       socketInstance.on("newChatMessage", (newMessage: ChatMessage) => {
-        if (newMessage.chatId === roomId) {
-          addMessage(roomId, newMessage);
+        if (newMessage.chatId === chatId) {
+          addMessage(chatId, newMessage);
         }
       });
 
       socketInstance.on("deleteChat", (data: { messageId: string; chatId: string }) => {
-        if (data.chatId === roomId) {
-          removeMessage(roomId, data.messageId);
+        if (data.chatId === chatId) {
+          removeMessage(chatId, data.messageId);
         }
       });
 
@@ -234,31 +231,29 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         socketInstance.off("deleteChat");
       };
     },
-    [roomId, addMessage, removeMessage],
+    [chatId, addMessage, removeMessage],
   );
 
   useEffect(() => {
-    if (initialChatData?.pages?.[0] && roomId) {
+    if (initialChatData?.pages.length) {
       const firstPage = initialChatData.pages[0];
       const convertedMessages = firstPage.messages.map((msg) =>
-        convertApiMessageToChatMessage(msg, roomId),
+        convertApiMessageToChatMessage(msg, chatId),
       );
 
-      initializeWithMessages(roomId, convertedMessages.reverse(), firstPage.nextCursor);
+      initializeWithMessages(chatId, convertedMessages.reverse(), firstPage.nextCursor);
     }
-  }, [initialChatData, roomId, initializeWithMessages]);
+  }, [initialChatData, chatId, initializeWithMessages]);
 
   useEffect(() => {
-    if (!roomId) return;
-
     const socketInstance = getSocket();
     if (!socketInstance) {
       console.warn("Global socket not connected yet");
       return;
     }
 
-    setCurrentChatId(roomId);
-    initializeChatRoom(roomId);
+    setCurrentChatId(chatId);
+    initializeChatRoom(chatId);
 
     const cleanup = setupSocketListeners(socketInstance);
 
@@ -266,7 +261,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     if (socketId) {
       joinedSocketIdRef.current = socketId;
       joinChat(
-        { chatId: roomId, socketId },
+        { chatId: chatId, socketId },
         {
           onError: (error) => {
             joinedSocketIdRef.current = null;
@@ -282,7 +277,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
       if (joinedSocketIdRef.current) {
         leaveChat(
-          { chatId: roomId, socketId: joinedSocketIdRef.current },
+          { chatId: chatId, socketId: joinedSocketIdRef.current },
           {
             onError: (error) => {
               console.error("Failed to leave chat:", error);
@@ -295,7 +290,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       setCurrentChatId(null);
     };
   }, [
-    roomId,
+    chatId,
     getSocket,
     setCurrentChatId,
     initializeChatRoom,
@@ -307,7 +302,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   ]);
 
   useEffect(() => {
-    console.log("messages", currentRoom?.messages);
     scrollToBottom();
   }, [currentRoom?.messages, scrollToBottom]);
 
