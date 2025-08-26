@@ -1,10 +1,13 @@
 @use "@/styles/globals.scss" as *;
 
+$chat-room-height: 60px;
+$footer-height: 84px;
+
 .container {
   width: 100%;
+  height: calc(100vh - $header-height);
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
 }
 
 .header {
@@ -59,19 +62,21 @@
 }
 
 .messagesContainer {
-  flex-grow: 1;
+  flex: 1;
+  min-height: 0;
+  max-height: calc(100vh - $header-height - $chat-room-height - $footer-height);
   padding: 20px 40px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 6px;
   background-color: $gray0;
-  
+
   .loadingContainer {
     display: flex;
     justify-content: center;
     padding: 16px 0;
-    
+
     .loadingText {
       color: $gray60;
       @include Body2;
@@ -93,6 +98,11 @@
     color: $gray0;
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 10px;
+
+    img {
+      width: 300px;
+      height: auto;
+    }
   }
 }
 
