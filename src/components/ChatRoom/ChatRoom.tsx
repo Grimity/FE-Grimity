@@ -331,7 +331,22 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
             key={msg.id}
             className={`${styles.message} ${msg.userId === user_id ? styles.myMessage : ""}`}
           >
-            <span className={styles.messageContent}>{msg.content}</span>
+            <span className={styles.messageContent}>
+              {msg.images && msg.images.length > 0 && (
+                <>
+                  {msg.images.map((src, index) => (
+                    <img
+                      key={index}
+                      src={src}
+                      alt={`${index + 1}번째 이미지`}
+                      width={300}
+                      height={300}
+                    />
+                  ))}
+                </>
+              )}
+              {msg.content}
+            </span>
           </div>
         ))}
 
