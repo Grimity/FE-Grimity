@@ -12,6 +12,7 @@ import { usePostChatMessage } from "@/api/chat-messages/postChatMessage";
 
 import { useSocket } from "@/hooks/useSocket";
 import { useToast } from "@/hooks/useToast";
+import { useImageUploader } from "@/hooks/useImageUploader";
 
 import { useChatStore } from "@/states/chatStore";
 import { useAuthStore } from "@/states/authStore";
@@ -34,7 +35,7 @@ interface ChatRoomProps {
 const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [images, setImages] = useState<{ name: string; originalName: string }[]>([]);
+  const [images, setImages] = useState<{ fileName: string; fullUrl: string }[]>([]);
 
   const joinedSocketIdRef = useRef<string | null>(null);
 
@@ -64,6 +65,10 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     setHasNextPage,
   } = useChatStore();
   const { showToast } = useToast();
+
+  const { uploadImages } = useImageUploader({
+    uploadType: "chat",
+  });
 
   const { mutate: joinChat } = usePutChatJoin();
   const { mutate: leaveChat } = usePutChatLeave();
@@ -105,7 +110,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   );
 
   const handleSendMessage = useCallback(async () => {
-    if (!message.trim() || !chatId || isSending) return;
+    if ((!message.trim() && images.length === 0) || !chatId || isSending) return;
 
     setIsSending(true);
     isUserSendingRef.current = true;
@@ -114,11 +119,11 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       postChatMessage({
         chatId,
         content: message.trim(),
-        images: images.map((image) => image.name),
+        images: images.map((img) => img.fileName),
       });
 
       setMessage("");
-      // 스크롤은 소켓으로 메시지가 올 때 처리됨
+      setImages([]);
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
@@ -211,35 +216,35 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
 
     if (!files) {
       return;
     }
 
-    const newImages = Array.from(files).map((file) => ({
-      name: URL.createObjectURL(file),
-      originalName: file.name,
-    }));
+    const fileArray = Array.from(files);
+    const remainingSlots = 5 - images.length;
 
-    const imageCount = images.length + newImages.length;
-    if (imageCount > 5) {
+    if (fileArray.length > remainingSlots) {
       showToast("최대 5장까지 업로드할 수 있어요.", "error");
       return;
     }
 
-    setImages([...images, ...newImages]);
+    try {
+      const uploadedUrls = await uploadImages(fileArray);
+      setImages([...images, ...uploadedUrls]);
+    } catch (error) {
+      console.error("이미지 업로드 실패:", error);
+    }
+
+    // 파일 input 초기화
+    e.target.value = "";
   };
 
   const handleRemoveImage = (index: number) => {
     setImages((prevImages) => {
-      const imageToRemove = prevImages[index];
-      if (imageToRemove?.name) {
-        URL.revokeObjectURL(imageToRemove.name);
-      }
-      const updatedImages = prevImages.filter((_, i) => i !== index);
-      return updatedImages;
+      return prevImages.filter((_, i) => i !== index);
     });
   };
 
@@ -248,22 +253,23 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       socketInstance.on("newChatMessage", (socketResponse: NewChatMessageEventResponse) => {
         console.log("Socket response:", socketResponse);
         if (socketResponse.chatId === chatId && socketResponse.messages?.length > 0) {
-          // NewChatMessageEventResponse를 ChatMessage로 변환
-          const socketMessage = socketResponse.messages[0];
+          // 모든 메시지를 ChatMessage로 변환하여 처리
+          socketResponse.messages.forEach((socketMessage) => {
+            const convertedMessage: ChatMessage = {
+              id: socketMessage.id,
+              chatId: socketResponse.chatId,
+              userId: socketResponse.senderId,
+              content: socketMessage.content || "",
+              images: socketMessage.image ? [socketMessage.image] : [],
+              createdAt: socketMessage.createdAt.toString(),
+              updatedAt: socketMessage.createdAt.toString(),
+              isLiked: false,
+            };
 
-          const convertedMessage: ChatMessage = {
-            id: socketMessage.id,
-            chatId: socketResponse.chatId,
-            userId: socketResponse.senderId,
-            content: socketMessage.content || "",
-            images: socketMessage.image ? [socketMessage.image] : [],
-            createdAt: socketMessage.createdAt.toString(),
-            updatedAt: socketMessage.createdAt.toString(),
-            isLiked: false,
-          };
+            addMessage(chatId, convertedMessage);
+          });
 
-          addMessage(chatId, convertedMessage);
-
+          // 모든 메시지 처리 완료 후 스크롤 처리
           // 사용자가 보낸 메시지인 경우 스크롤 처리
           if (socketResponse.senderId === user_id) {
             handleScrollBehavior("user-send");
@@ -379,16 +385,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     }
   }, [currentRoom?.messages, currentRoom?.isLoadingMore, handleScrollBehavior]);
 
-  useEffect(() => {
-    return () => {
-      images.forEach((image) => {
-        if (image.name) {
-          URL.revokeObjectURL(image.name);
-        }
-      });
-    };
-  }, []);
-
   return (
     <section className={styles.container}>
       <ChatRoomHeader chatId={chatId} />
@@ -399,22 +395,17 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
             key={msg.id}
             className={`${styles.message} ${msg.userId === user_id ? styles.myMessage : ""}`}
           >
-            <span className={styles.messageContent}>
-              {msg.images && msg.images.length > 0 && (
-                <>
-                  {msg.images.map((src, index) => (
-                    <img
-                      key={index}
-                      src={src}
-                      alt={`${index + 1}번째 이미지`}
-                      width={300}
-                      height={300}
-                    />
-                  ))}
-                </>
-              )}
-              {msg.content}
-            </span>
+            {msg.images &&
+              msg.images.map((src, index) => (
+                <img
+                  key={index}
+                  src={src}
+                  alt={`${index + 1}번째 이미지`}
+                  width={300}
+                  height={300}
+                />
+              ))}
+            {msg.content && <span className={styles.messageContent}>{msg.content}</span>}
           </div>
         ))}
 
@@ -428,10 +419,10 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
               <Swiper slidesPerView="auto" spaceBetween={10} freeMode modules={[FreeMode]}>
                 {images.map((image, index) => (
                   <SwiperSlide key={index} className={styles.imageWrapper}>
-                    <Image
+                    <img
                       className={styles.image}
-                      src={image.name}
-                      alt={image.originalName}
+                      src={image.fullUrl}
+                      alt={image.fileName}
                       width={90}
                       height={90}
                     />
@@ -440,7 +431,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
                       type="button"
                       className={styles.removeButton}
                       onClick={() => handleRemoveImage(index)}
-                      aria-label={`${image.originalName} 이미지 삭제`}
+                      aria-label={`이미지 ${index + 1} 삭제`}
                     >
                       <Icon icon="close" size="xs" />
                     </button>
@@ -477,7 +468,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
               size="m"
               className={styles.sendButton}
               onClick={handleSendMessage}
-              disabled={!message.trim() || isSending}
+              disabled={(!message.trim() && images.length === 0) || isSending}
             >
               전송
             </Button>
