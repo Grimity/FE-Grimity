@@ -6,20 +6,26 @@ import ChatLeave from "@/components/Modal/ChatLeave/ChatLeave";
 import { useModal } from "@/hooks/useModal";
 
 import styles from "./Header.module.scss";
+import { useRouter } from "next/router";
 
 interface ChatRoomHeaderProps {
   chatId: string;
 }
 
 const ChatRoomHeader = ({ chatId }: ChatRoomHeaderProps) => {
+  const router = useRouter();
   const { openModal } = useModal();
-
   const { data: userData } = useGetChatsUser({ chatId });
 
   const handleShowLeaveModal = () => {
-    openModal((close) => <ChatLeave selectedChatIds={[chatId]} close={close} />, {
-      className: styles.leaveModal,
-    });
+    openModal(
+      (close) => (
+        <ChatLeave selectedChatIds={[chatId]} close={close} onSuccess={() => router.back()} />
+      ),
+      {
+        className: styles.leaveModal,
+      },
+    );
   };
 
   return (

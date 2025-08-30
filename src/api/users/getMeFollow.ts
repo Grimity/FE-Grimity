@@ -52,11 +52,11 @@ export async function getMyFollowing({
   keyword,
 }: MyFollowerRequest): Promise<MyFollowingsResponse> {
   try {
-    const params: Record<string, any> = { size, cursor };
+    const params: MyFollowerRequest = { size, cursor };
     if (keyword) {
       params.keyword = keyword;
     }
-    
+
     const response = await axiosInstance.get("/me/followings", {
       params,
     });
