@@ -20,6 +20,7 @@ import { useAuthStore } from "@/states/authStore";
 import Icon from "@/components/Asset/IconTemp";
 import Button from "@/components/Button/Button";
 import ChatRoomHeader from "@/components/ChatRoom/Header/Header";
+import LazyImage from "@/components/LazyImage/LazyImage";
 
 import type { ChatMessage } from "@/types/socket.types";
 import type { NewChatMessageEventResponse } from "@grimity/dto";
@@ -397,7 +398,8 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
           >
             {msg.images &&
               msg.images.map((src, index) => (
-                <img
+                <LazyImage
+                  className={styles.messageImage}
                   key={index}
                   src={src}
                   alt={`${index + 1}번째 이미지`}
@@ -419,7 +421,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
               <Swiper slidesPerView="auto" spaceBetween={10} freeMode modules={[FreeMode]}>
                 {images.map((image, index) => (
                   <SwiperSlide key={index} className={styles.imageWrapper}>
-                    <img
+                    <LazyImage
                       className={styles.image}
                       src={image.fullUrl}
                       alt={image.fileName}
