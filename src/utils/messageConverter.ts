@@ -34,6 +34,5 @@ export const convertApiMessageToChatMessage = (
     createdAt: apiMessage.createdAt,
     updatedAt: apiMessage.createdAt,
     isLiked: apiMessage.isLike,
-    likeCount: 0,
   };
 };
