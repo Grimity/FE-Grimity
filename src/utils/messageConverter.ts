@@ -33,11 +33,6 @@ export const convertApiMessageToChatMessage = (
     replyToId: apiMessage.replyTo?.id,
     createdAt: apiMessage.createdAt,
     updatedAt: apiMessage.createdAt,
-    user: {
-      id: apiMessage.user.id,
-      nickname: apiMessage.user.name,
-      profileImage: apiMessage.user.image || undefined,
-    },
     isLiked: apiMessage.isLike,
     likeCount: 0,
   };
