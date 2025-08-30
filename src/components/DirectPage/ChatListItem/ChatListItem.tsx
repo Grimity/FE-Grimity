@@ -84,6 +84,7 @@ const ChatListItem = React.memo(
           </div>
           <div className={styles.bottomRow}>
             <p className={styles.lastMessage}>
+              {chat.lastMessage?.image && <p>이미지</p>}
               {chat.lastMessage?.content && (
                 <Highlighter
                   highlightClassName={styles.highlighted}
