@@ -260,7 +260,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
             createdAt: socketMessage.createdAt.toString(),
             updatedAt: socketMessage.createdAt.toString(),
             isLiked: false,
-            likeCount: 0,
           };
 
           addMessage(chatId, convertedMessage);
