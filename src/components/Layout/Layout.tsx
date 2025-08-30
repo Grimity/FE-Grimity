@@ -17,6 +17,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 
 import type { HeaderProps } from "@/components/Layout/Header/types/Header.types";
 import type { LayoutProps } from "@/components/Layout/Layout.types";
+import type { NewChatMessageEventResponse } from "@grimity/dto";
 
 import styles from "@/components/Layout/Layout.module.scss";
 
@@ -90,7 +91,7 @@ export default function Layout({ children }: LayoutProps) {
     const socketInstance = getSocket();
     if (!socketInstance) return;
 
-    const handleNewChatMessage = (newMessage: any) => {
+    const handleNewChatMessage = (newMessage: NewChatMessageEventResponse) => {
       // 현재 보고 있는 채팅방의 메시지가 아닌 경우에만 알림 표시
       if (newMessage.chatId !== currentChatId) {
         setHasUnreadMessages(true);

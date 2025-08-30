@@ -8,11 +8,11 @@ import styles from "@/components/Modal/ChatLeave/ChatLeave.module.scss";
 
 interface ChatLeaveProps {
   selectedChatIds: string[];
-
   close: () => void;
+  onSuccess?: () => void;
 }
 
-export default function ChatLeave({ selectedChatIds, close }: ChatLeaveProps) {
+export default function ChatLeave({ selectedChatIds, close, onSuccess }: ChatLeaveProps) {
   const { showToast } = useToast();
 
   const { mutate: leaveChats, isPending } = usePostChatsBatchDelete();
@@ -25,6 +25,7 @@ export default function ChatLeave({ selectedChatIds, close }: ChatLeaveProps) {
       {
         onSuccess: () => {
           close();
+          onSuccess?.();
         },
         onError: () => {
           showToast("채팅방 나가기에 실패했습니다", "error");
