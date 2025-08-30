@@ -39,6 +39,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const lastMessageCountRef = useRef<number>(0);
+  const isUserSendingRef = useRef<boolean>(false);
 
   const { data: initialChatData } = useGetChatMessages(
     { chatId, size: 20 },
@@ -53,7 +56,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     setCurrentChatId,
     initializeChatRoom,
     addMessage,
-    removeMessage,
     initializeWithMessages,
     setIsLoadingMore,
     addOlderMessages,
@@ -71,21 +73,43 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
+  const isScrolledToBottom = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return false;
+
+    const threshold = 10;
+    return container.scrollTop + container.clientHeight >= container.scrollHeight - threshold;
+  }, []);
+
+  const handleScrollBehavior = useCallback(
+    (type: "user-send" | "new-message" | "initial-load") => {
+      switch (type) {
+        case "user-send":
+          // 사용자가 메시지를 보낸 경우 항상 최하단으로
+          setTimeout(() => scrollToBottom(), 100);
+          break;
+        case "new-message":
+          // 새 메시지 수신 시 사용자가 최하단에 있었다면 스크롤
+          if (isScrolledToBottom()) {
+            scrollToBottom();
+          }
+          break;
+        case "initial-load":
+          // 초기 로드 시 항상 최하단으로
+          setTimeout(() => scrollToBottom(), 100);
+          break;
+      }
+    },
+    [scrollToBottom, isScrolledToBottom],
+  );
+
   const handleSendMessage = useCallback(async () => {
     if (!message.trim() || !chatId || isSending) return;
 
     setIsSending(true);
+    isUserSendingRef.current = true;
 
     try {
-      const socketInstance = getSocket();
-      if (socketInstance) {
-        socketInstance.emit("sendMessage", {
-          chatId,
-          content: message.trim(),
-          images: [],
-        });
-      }
-
       postChatMessage({
         chatId,
         content: message.trim(),
@@ -99,17 +123,18 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         content: message.trim(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        user: { id: user_id, nickname: "임시 사용자" },
         images: images.map((image) => image.name),
       });
 
       setMessage("");
+      handleScrollBehavior("user-send");
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
       setIsSending(false);
+      isUserSendingRef.current = false;
     }
-  }, [message, getSocket, chatId, isSending, user_id, addMessage]);
+  }, [message, getSocket, chatId, isSending, user_id, addMessage, handleScrollBehavior]);
 
   const handleTyping = useCallback((value: string) => {
     setMessage(value);
@@ -129,6 +154,13 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const loadMoreMessages = useCallback(async () => {
     if (!currentRoom.hasNextPage || currentRoom.isLoadingMore) return;
 
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    // 페이지네이션 전 스크롤 상태 저장
+    const previousScrollHeight = container.scrollHeight;
+    const previousScrollTop = container.scrollTop;
+
     setIsLoadingMore(chatId, true);
 
     try {
@@ -145,6 +177,14 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       addOlderMessages(chatId, convertedMessages.reverse());
       setNextCursor(chatId, response.nextCursor);
       setHasNextPage(chatId, !!response.nextCursor);
+
+      requestAnimationFrame(() => {
+        if (container) {
+          const newScrollHeight = container.scrollHeight;
+          const addedHeight = newScrollHeight - previousScrollHeight;
+          container.scrollTop = previousScrollTop + addedHeight;
+        }
+      });
     } catch (error) {
       console.error("Failed to load more messages:", error);
       showToast("메시지를 불러오는데 실패했습니다.", "error");
@@ -220,18 +260,11 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         }
       });
 
-      socketInstance.on("deleteChat", (data: { messageId: string; chatId: string }) => {
-        if (data.chatId === chatId) {
-          removeMessage(chatId, data.messageId);
-        }
-      });
-
       return () => {
         socketInstance.off("newChatMessage");
-        socketInstance.off("deleteChat");
       };
     },
-    [chatId, addMessage, removeMessage],
+    [chatId, addMessage],
   );
 
   useEffect(() => {
@@ -302,8 +335,36 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   ]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [currentRoom?.messages, scrollToBottom]);
+    const messages = currentRoom?.messages;
+    if (!messages || messages.length === 0) return;
+
+    const currentMessageCount = messages.length;
+    const previousMessageCount = lastMessageCountRef.current;
+
+    // 메시지 수가 변경된 경우에만 처리
+    if (currentMessageCount !== previousMessageCount) {
+      const isFirstLoad = previousMessageCount === 0;
+      const isNewMessageAdded = currentMessageCount > previousMessageCount;
+      const isLoadingMore = currentRoom?.isLoadingMore;
+
+      if (isFirstLoad) {
+        // 초기 로드
+        handleScrollBehavior("initial-load");
+      } else if (isNewMessageAdded && !isLoadingMore) {
+        // 새 메시지 추가 (페이지네이션 아닌 경우)
+        if (isUserSendingRef.current) {
+          // 사용자가 보낸 메시지는 handleSendMessage에서 처리하므로 여기서는 스킵
+          return;
+        } else {
+          // 다른 사용자로부터 받은 메시지
+          handleScrollBehavior("new-message");
+        }
+      }
+      // 페이지네이션의 경우 (isLoadingMore === true) loadMoreMessages에서 스크롤 처리
+
+      lastMessageCountRef.current = currentMessageCount;
+    }
+  }, [currentRoom?.messages, currentRoom?.isLoadingMore, handleScrollBehavior]);
 
   useEffect(() => {
     return () => {
@@ -315,17 +376,12 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     };
   }, []);
 
+  console.log(currentRoom?.messages);
   return (
     <section className={styles.container}>
       <ChatRoomHeader chatId={chatId} />
 
-      <div className={styles.messagesContainer} onScroll={handleScroll}>
-        {currentRoom?.isLoadingMore && (
-          <div className={styles.loadingContainer}>
-            <span className={styles.loadingText}>메시지를 불러오는 중...</span>
-          </div>
-        )}
-
+      <div className={styles.messagesContainer} onScroll={handleScroll} ref={messagesContainerRef}>
         {currentRoom?.messages?.map((msg) => (
           <div
             key={msg.id}
