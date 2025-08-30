@@ -7,11 +7,6 @@ export interface ChatMessage {
   replyToId?: string;
   createdAt: string;
   updatedAt: string;
-  user: {
-    id: string;
-    nickname: string;
-    profileImage?: string;
-  };
   isLiked?: boolean;
   likeCount?: number;
 }
