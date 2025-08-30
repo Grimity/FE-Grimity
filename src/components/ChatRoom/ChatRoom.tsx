@@ -21,6 +21,7 @@ import Button from "@/components/Button/Button";
 import ChatRoomHeader from "@/components/ChatRoom/Header/Header";
 
 import type { ChatMessage } from "@/types/socket.types";
+import type { NewChatMessageEventResponse } from "@grimity/dto";
 
 import { convertApiMessageToChatMessage } from "@/utils/messageConverter";
 
@@ -116,25 +117,15 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         images: images.map((image) => image.name),
       });
 
-      addMessage(chatId, {
-        id: Date.now().toString(),
-        chatId,
-        userId: user_id,
-        content: message.trim(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        images: images.map((image) => image.name),
-      });
-
       setMessage("");
-      handleScrollBehavior("user-send");
+      // 스크롤은 소켓으로 메시지가 올 때 처리됨
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
       setIsSending(false);
       isUserSendingRef.current = false;
     }
-  }, [message, getSocket, chatId, isSending, user_id, addMessage, handleScrollBehavior]);
+  }, [message, chatId, isSending, postChatMessage]);
 
   const handleTyping = useCallback((value: string) => {
     setMessage(value);
@@ -254,9 +245,32 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const setupSocketListeners = useCallback(
     (socketInstance: Socket) => {
-      socketInstance.on("newChatMessage", (newMessage: ChatMessage) => {
-        if (newMessage.chatId === chatId) {
-          addMessage(chatId, newMessage);
+      socketInstance.on("newChatMessage", (socketResponse: NewChatMessageEventResponse) => {
+        console.log("Socket response:", socketResponse);
+        if (socketResponse.chatId === chatId && socketResponse.messages?.length > 0) {
+          // NewChatMessageEventResponse를 ChatMessage로 변환
+          const socketMessage = socketResponse.messages[0];
+
+          const convertedMessage: ChatMessage = {
+            id: socketMessage.id,
+            chatId: socketResponse.chatId,
+            userId: socketResponse.senderId,
+            content: socketMessage.content || "",
+            images: socketMessage.image ? [socketMessage.image] : [],
+            createdAt: socketMessage.createdAt.toString(),
+            updatedAt: socketMessage.createdAt.toString(),
+            isLiked: false,
+            likeCount: 0,
+          };
+
+          addMessage(chatId, convertedMessage);
+
+          // 사용자가 보낸 메시지인 경우 스크롤 처리
+          if (socketResponse.senderId === user_id) {
+            handleScrollBehavior("user-send");
+          } else {
+            handleScrollBehavior("new-message");
+          }
         }
       });
 
@@ -264,7 +278,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         socketInstance.off("newChatMessage");
       };
     },
-    [chatId, addMessage],
+    [chatId, addMessage, user_id, handleScrollBehavior],
   );
 
   useEffect(() => {
@@ -376,7 +390,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     };
   }, []);
 
-  console.log(currentRoom?.messages);
   return (
     <section className={styles.container}>
       <ChatRoomHeader chatId={chatId} />
