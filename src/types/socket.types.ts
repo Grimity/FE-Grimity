@@ -8,7 +8,6 @@ export interface ChatMessage {
   createdAt: string;
   updatedAt: string;
   isLiked?: boolean;
-  likeCount?: number;
 }
 
 export interface ChatRoomState {
