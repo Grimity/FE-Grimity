@@ -88,12 +88,12 @@ $footer-height: 84px;
   display: flex;
   flex-direction: column;
   max-width: 50%;
+}
 
-  img {
-    width: 300px;
-    border-radius: 8px;
-    height: auto;
-  }
+.messageImage {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
 }
 
 .myMessage {
