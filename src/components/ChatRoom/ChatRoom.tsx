@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import Image from "next/image";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
 import { Socket } from "socket.io-client";
@@ -54,6 +54,8 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const { getSocketId, getSocket } = useSocket({ autoConnect: false });
   const { user_id } = useAuthStore();
+  const queryClient = useQueryClient();
+
   const {
     chatRooms,
     setCurrentChatId,
@@ -268,8 +270,43 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
             addMessage(chatId, convertedMessage);
           });
 
-          // 모든 메시지 처리 완료 후 스크롤 처리
-          // 사용자가 보낸 메시지인 경우 스크롤 처리
+          const lastMessage = socketResponse.messages[socketResponse.messages.length - 1];
+
+          queryClient
+            .getQueryCache()
+            .findAll({ queryKey: ["chats"] })
+            .forEach((query) => {
+              queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                console.log(oldData);
+                if (!oldData?.chats) return oldData;
+
+                const updatedChat = oldData.chats.find(
+                  (chat: any) => chat.id === socketResponse.chatId,
+                );
+                if (!updatedChat) return oldData;
+
+                const otherChats = oldData.chats.filter(
+                  (chat: any) => chat.id !== socketResponse.chatId,
+                );
+
+                const updatedChatWithNewMessage = {
+                  ...updatedChat,
+                  lastMessage: {
+                    id: lastMessage.id,
+                    content: lastMessage.content,
+                    image: lastMessage.image,
+                    createdAt: lastMessage.createdAt,
+                    updatedAt: lastMessage.createdAt,
+                  },
+                };
+
+                return {
+                  ...oldData,
+                  chats: [updatedChatWithNewMessage, ...otherChats],
+                };
+              });
+            });
+
           if (socketResponse.senderId === user_id) {
             handleScrollBehavior("user-send");
           } else {
@@ -284,7 +321,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         socketInstance.off("newChatMessage", handleNewChatMessage);
       };
     },
-    [chatId, addMessage, user_id, handleScrollBehavior],
+    [chatId, addMessage, user_id, handleScrollBehavior, queryClient],
   );
 
   useEffect(() => {
