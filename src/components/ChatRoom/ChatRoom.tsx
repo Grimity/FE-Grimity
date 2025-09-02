@@ -23,7 +23,7 @@ import ChatRoomHeader from "@/components/ChatRoom/Header/Header";
 import LazyImage from "@/components/LazyImage/LazyImage";
 
 import type { ChatMessage } from "@/types/socket.types";
-import type { NewChatMessageEventResponse } from "@grimity/dto";
+import type { ChatsResponse, NewChatMessageEventResponse } from "@grimity/dto";
 
 import { convertApiMessageToChatMessage } from "@/utils/messageConverter";
 
@@ -276,17 +276,14 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
             .getQueryCache()
             .findAll({ queryKey: ["chats"] })
             .forEach((query) => {
-              queryClient.setQueryData(query.queryKey, (oldData: any) => {
-                console.log(oldData);
+              queryClient.setQueryData(query.queryKey, (oldData: ChatsResponse) => {
                 if (!oldData?.chats) return oldData;
 
-                const updatedChat = oldData.chats.find(
-                  (chat: any) => chat.id === socketResponse.chatId,
-                );
+                const updatedChat = oldData.chats.find((chat) => chat.id === socketResponse.chatId);
                 if (!updatedChat) return oldData;
 
                 const otherChats = oldData.chats.filter(
-                  (chat: any) => chat.id !== socketResponse.chatId,
+                  (chat) => chat.id !== socketResponse.chatId,
                 );
 
                 const updatedChatWithNewMessage = {
