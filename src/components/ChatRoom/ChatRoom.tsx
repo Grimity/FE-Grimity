@@ -76,8 +76,8 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const currentRoom = chatRooms[chatId];
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
   }, []);
 
   const isScrolledToBottom = useCallback(() => {
@@ -103,7 +103,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
           break;
         case "initial-load":
           // 초기 로드 시 항상 최하단으로
-          setTimeout(() => scrollToBottom(), 100);
+          setTimeout(() => scrollToBottom("auto"), 100);
           break;
       }
     },
@@ -239,7 +239,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       console.error("이미지 업로드 실패:", error);
     }
 
-    // 파일 input 초기화
     e.target.value = "";
   };
 
@@ -251,8 +250,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const setupSocketListeners = useCallback(
     (socketInstance: Socket) => {
-      socketInstance.on("newChatMessage", (socketResponse: NewChatMessageEventResponse) => {
-        console.log("Socket response:", socketResponse);
+      const handleNewChatMessage = (socketResponse: NewChatMessageEventResponse) => {
         if (socketResponse.chatId === chatId && socketResponse.messages?.length > 0) {
           // 모든 메시지를 ChatMessage로 변환하여 처리
           socketResponse.messages.forEach((socketMessage) => {
@@ -278,10 +276,12 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
             handleScrollBehavior("new-message");
           }
         }
-      });
+      };
+
+      socketInstance.on("newChatMessage", handleNewChatMessage);
 
       return () => {
-        socketInstance.off("newChatMessage");
+        socketInstance.off("newChatMessage", handleNewChatMessage);
       };
     },
     [chatId, addMessage, user_id, handleScrollBehavior],
@@ -305,11 +305,13 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       return;
     }
 
+    // 채팅방 상태 초기화
     setCurrentChatId(chatId);
     initializeChatRoom(chatId);
 
     const cleanup = setupSocketListeners(socketInstance);
 
+    // 채팅방 입장
     const socketId = getSocketId();
     if (socketId) {
       joinedSocketIdRef.current = socketId;
@@ -341,18 +343,11 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       }
 
       setCurrentChatId(null);
+
+      lastMessageCountRef.current = 0;
+      isUserSendingRef.current = false;
     };
-  }, [
-    chatId,
-    getSocket,
-    setCurrentChatId,
-    initializeChatRoom,
-    setupSocketListeners,
-    getSocketId,
-    joinChat,
-    leaveChat,
-    showToast,
-  ]);
+  }, [chatId]);
 
   useEffect(() => {
     const messages = currentRoom?.messages;
@@ -373,15 +368,12 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       } else if (isNewMessageAdded && !isLoadingMore) {
         // 새 메시지 추가 (페이지네이션 아닌 경우)
         if (isUserSendingRef.current) {
-          // 사용자가 보낸 메시지는 handleSendMessage에서 처리하므로 여기서는 스킵
           return;
         } else {
           // 다른 사용자로부터 받은 메시지
           handleScrollBehavior("new-message");
         }
       }
-      // 페이지네이션의 경우 (isLoadingMore === true) loadMoreMessages에서 스크롤 처리
-
       lastMessageCountRef.current = currentMessageCount;
     }
   }, [currentRoom?.messages, currentRoom?.isLoadingMore, handleScrollBehavior]);
