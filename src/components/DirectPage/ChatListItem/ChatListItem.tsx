@@ -68,7 +68,7 @@ const ChatListItem = React.memo(
         </div>
         <div className={styles.chatDetails}>
           <div className={styles.topRow}>
-            <span className={styles.username}>
+            <div className={styles.username}>
               <Highlighter
                 highlightClassName={styles.highlighted}
                 searchWords={[searchKeyword || ""]}
@@ -79,11 +79,11 @@ const ChatListItem = React.memo(
                   color: "#2bc466",
                 }}
               />
-            </span>
+            </div>
             <span className={styles.timestamp}>{formatTimestamp(chat.lastMessage?.createdAt)}</span>
           </div>
           <div className={styles.bottomRow}>
-            <p className={styles.lastMessage}>
+            <div className={styles.lastMessage}>
               {chat.lastMessage?.image && <p>이미지</p>}
               {chat.lastMessage?.content && (
                 <Highlighter
@@ -97,7 +97,7 @@ const ChatListItem = React.memo(
                   }}
                 />
               )}
-            </p>
+            </div>
           </div>
         </div>
         {chat.unreadCount > 0 && (
