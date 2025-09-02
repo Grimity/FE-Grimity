@@ -72,6 +72,10 @@ $footer-height: 84px;
   gap: 6px;
   background-color: $gray0;
 
+  @include Size("mobile") {
+    padding: 10px 16px;
+  }
+
   .loadingContainer {
     display: flex;
     justify-content: center;
@@ -88,6 +92,10 @@ $footer-height: 84px;
   display: flex;
   flex-direction: column;
   max-width: 50%;
+
+  &:has(.messageImage) {
+    max-width: none;
+  }
 }
 
 .messageImage {
