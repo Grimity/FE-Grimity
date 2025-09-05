@@ -88,7 +88,17 @@ $footer-height: 84px;
   }
 }
 
+.messageWrapper {
+  position: relative;
+  display: flex;
+
+  &.myMessage {
+    justify-content: flex-end;
+  }
+}
+
 .message {
+  position: relative;
   display: flex;
   flex-direction: column;
   max-width: 50%;
@@ -106,26 +116,52 @@ $footer-height: 84px;
 }
 
 .myMessage {
-  align-self: flex-end;
-
   .messageContent {
     background-color: $secandary1;
-    color: $gray0;
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 10px;
+  }
+
+  .messageContentText {
+    color: $gray0;
+  }
+
+  .heartIcon {
+    right: 10px;
+    left: auto;
   }
 }
 
 .messageContent {
-  @include Body1;
+  position: relative;
   background-color: $gray30;
   padding: 8px 12px;
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 50px;
-  word-wrap: break-word;
+}
+
+.messageContentText {
+  @include Body1;
   color: $gray80;
+  word-wrap: break-word;
+}
+
+.heartIcon {
+  border-radius: 20px;
+  background-color: $gray0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid $gray30;
+  position: absolute;
+  z-index: 1;
+  bottom: -8px;
+  left: 10px;
+  right: 0;
 }
 
 .footer {
@@ -222,4 +258,52 @@ $footer-height: 84px;
   &:hover {
     background: rgba(0, 0, 0, 0.8);
   }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.hoverActions {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid $gray40;
+  background-color: $gray0;
+  cursor: pointer;
+  color: $gray80;
+  border-radius: 20px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: $gray20;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.heart {
+  color: $red;
 }

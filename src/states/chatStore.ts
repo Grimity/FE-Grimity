@@ -25,6 +25,9 @@ interface ChatStore {
   setHasNextPage: (chatId: string, hasNext: boolean) => void;
   setNextCursor: (chatId: string, cursor: string | null) => void;
   setIsLoadingMore: (chatId: string, isLoading: boolean) => void;
+
+  // Message interactions
+  updateMessageLike: (chatId: string, messageId: string, isLiked: boolean) => void;
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -39,14 +42,14 @@ export const useChatStore = create<ChatStore>((set) => ({
   addMessage: (chatId, message) =>
     set((state) => {
       const existingMessages = state.chatRooms[chatId]?.messages || [];
-      
+
       // 중복 메시지 체크 - 같은 ID의 메시지가 이미 존재하는지 확인
-      const isDuplicate = existingMessages.some(existingMsg => existingMsg.id === message.id);
-      
+      const isDuplicate = existingMessages.some((existingMsg) => existingMsg.id === message.id);
+
       if (isDuplicate) {
         return state; // 중복이면 상태 변경하지 않음
       }
-      
+
       return {
         chatRooms: {
           ...state.chatRooms,
@@ -61,12 +64,12 @@ export const useChatStore = create<ChatStore>((set) => ({
   addOlderMessages: (chatId, messages) =>
     set((state) => {
       const existingMessages = state.chatRooms[chatId]?.messages || [];
-      
+
       // 중복 메시지 제거 - 기존 메시지에 없는 것만 추가
       const uniqueOlderMessages = messages.filter(
-        newMsg => !existingMessages.some(existingMsg => existingMsg.id === newMsg.id)
+        (newMsg) => !existingMessages.some((existingMsg) => existingMsg.id === newMsg.id),
       );
-      
+
       return {
         chatRooms: {
           ...state.chatRooms,
@@ -140,6 +143,20 @@ export const useChatStore = create<ChatStore>((set) => ({
         [chatId]: {
           ...state.chatRooms[chatId],
           isLoadingMore: isLoading,
+        },
+      },
+    })),
+
+  updateMessageLike: (chatId, messageId, isLiked) =>
+    set((state) => ({
+      chatRooms: {
+        ...state.chatRooms,
+        [chatId]: {
+          ...state.chatRooms[chatId],
+          messages:
+            state.chatRooms[chatId]?.messages.map((msg) =>
+              msg.id === messageId ? { ...msg, isLiked } : msg,
+            ) || [],
         },
       },
     })),
