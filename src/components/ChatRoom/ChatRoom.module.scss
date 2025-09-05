@@ -92,6 +92,7 @@ $footer-height: 84px;
   display: flex;
   flex-direction: column;
   max-width: 50%;
+  width: fit-content;
 
   &:has(.messageImage) {
     max-width: none;
