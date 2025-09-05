@@ -9,6 +9,8 @@ import { useGetChatMessages, getChatMessages } from "@/api/chat-messages/getChat
 import { usePutChatJoin } from "@/api/chats/putChatJoin";
 import { usePutChatLeave } from "@/api/chats/putChatLeave";
 import { usePostChatMessage } from "@/api/chat-messages/postChatMessage";
+import { usePutChatMessageLike } from "@/api/chat-messages/putChatMessageLike";
+import { deleteChatMessageLike } from "@/api/chat-messages/deleteChatMessageLike";
 
 import { useSocket } from "@/hooks/useSocket";
 import { useToast } from "@/hooks/useToast";
@@ -37,6 +39,8 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [images, setImages] = useState<{ fileName: string; fullUrl: string }[]>([]);
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const joinedSocketIdRef = useRef<string | null>(null);
 
@@ -51,6 +55,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     { enabled: !!chatId && typeof chatId === "string" },
   );
   const { mutate: postChatMessage } = usePostChatMessage();
+  const { mutate: likeChatMessage } = usePutChatMessageLike();
 
   const { getSocketId, getSocket } = useSocket({ autoConnect: false });
   const { user_id } = useAuthStore();
@@ -66,7 +71,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     addOlderMessages,
     setNextCursor,
     setHasNextPage,
+    updateMessageLike,
   } = useChatStore();
+
   const { showToast } = useToast();
 
   const { uploadImages } = useImageUploader({
@@ -250,6 +257,46 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     });
   };
 
+  const handleLikeMessage = useCallback(
+    async (messageId: string, isCurrentlyLiked: boolean) => {
+      try {
+        updateMessageLike(chatId, messageId, !isCurrentlyLiked);
+
+        if (isCurrentlyLiked) {
+          await deleteChatMessageLike({ id: messageId });
+        } else {
+          likeChatMessage({ id: messageId });
+        }
+      } catch (error) {
+        updateMessageLike(chatId, messageId, isCurrentlyLiked);
+        showToast("좋아요 처리에 실패했습니다.", "error");
+      }
+    },
+    [likeChatMessage, updateMessageLike, chatId, showToast],
+  );
+
+  const handleReplyMessage = useCallback((messageId: string) => {
+    // TODO: Implement reply functionality
+    console.log("Reply to message:", messageId);
+  }, []);
+
+  const handleMouseEnterMessage = useCallback((messageId: string) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setHoveredMessageId(messageId);
+  }, []);
+
+  const handleMouseLeaveMessage = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredMessageId(null);
+    }, 150);
+  }, []);
+
   const setupSocketListeners = useCallback(
     (socketInstance: Socket) => {
       const handleNewChatMessage = (socketResponse: NewChatMessageEventResponse) => {
@@ -312,10 +359,21 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         }
       };
 
+      const handleLikeChatMessage = (chatMessageId: string) => {
+        updateMessageLike(chatId, chatMessageId, true);
+      };
+      const handleUnlikeChatMessage = (chatMessageId: string) => {
+        updateMessageLike(chatId, chatMessageId, false);
+      };
+
+      socketInstance.on("likeChatMessage", handleLikeChatMessage);
+      socketInstance.on("unlikeChatMessage", handleUnlikeChatMessage);
       socketInstance.on("newChatMessage", handleNewChatMessage);
 
       return () => {
         socketInstance.off("newChatMessage", handleNewChatMessage);
+        socketInstance.off("likeChatMessage", handleLikeChatMessage);
+        socketInstance.off("unlikeChatMessage", handleUnlikeChatMessage);
       };
     },
     [chatId, addMessage, user_id, handleScrollBehavior, queryClient],
@@ -335,7 +393,6 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   useEffect(() => {
     const socketInstance = getSocket();
     if (!socketInstance) {
-      console.warn("Global socket not connected yet");
       return;
     }
 
@@ -420,20 +477,60 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         {currentRoom?.messages?.map((msg) => (
           <div
             key={msg.id}
-            className={`${styles.message} ${msg.userId === user_id ? styles.myMessage : ""}`}
+            className={`${styles.messageWrapper} ${msg.userId === user_id ? styles.myMessage : ""}`}
+            onMouseEnter={() => msg.userId !== user_id && handleMouseEnterMessage(msg.id)}
+            onMouseLeave={() => msg.userId !== user_id && handleMouseLeaveMessage()}
           >
-            {msg.images &&
-              msg.images.map((src, index) => (
-                <LazyImage
-                  className={styles.messageImage}
-                  key={index}
-                  src={src}
-                  alt={`${index + 1}번째 이미지`}
-                  width={300}
-                  height={300}
-                />
-              ))}
-            {msg.content && <span className={styles.messageContent}>{msg.content}</span>}
+            <div className={`${styles.message} ${msg.userId === user_id ? styles.myMessage : ""}`}>
+              {msg.images &&
+                msg.images.map((src, index) => (
+                  <LazyImage
+                    className={styles.messageImage}
+                    key={index}
+                    src={src}
+                    alt={`${index + 1}번째 이미지`}
+                    width={300}
+                    height={300}
+                  />
+                ))}
+              {msg.content && (
+                <div className={styles.messageContent}>
+                  <span className={styles.messageContentText}>{msg.content}</span>
+                  {msg.isLiked && (
+                    <div className={styles.heartIcon}>
+                      <Icon
+                        icon="heartFill"
+                        size="sm"
+                        className={msg.isLiked ? styles.heart : ""}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {msg.userId !== user_id && hoveredMessageId === msg.id && (
+                <div className={styles.hoverActions}>
+                  <button
+                    className={styles.actionButton}
+                    onClick={() => handleLikeMessage(msg.id, msg.isLiked || false)}
+                    aria-label={msg.isLiked ? "좋아요 취소" : "좋아요"}
+                  >
+                    <Icon
+                      icon={msg.isLiked ? "heartFill" : "heart"}
+                      size="sm"
+                      className={msg.isLiked ? styles.heart : ""}
+                    />
+                  </button>
+                  <button
+                    className={styles.actionButton}
+                    onClick={() => handleReplyMessage(msg.id)}
+                    aria-label="답글"
+                  >
+                    <Icon icon="move" size="sm" inversion />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         ))}
 

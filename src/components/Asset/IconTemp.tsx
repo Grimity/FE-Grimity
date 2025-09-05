@@ -5,10 +5,14 @@ interface IconProps {
   icon: IconList;
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "2.5xl" | "3xl" | "4xl";
   className?: string;
+  rotate?: number;
+  inversion?: boolean;
 }
 
-const Icon = ({ icon, size = "md", className = "" }: IconProps) => {
-  const iconClass = `${styles.icon} ${styles[size]} ${className}`;
+const Icon = ({ icon, size = "md", rotate = 0, inversion = false, className = "" }: IconProps) => {
+  const iconClass = `${styles.icon} ${styles[size]} ${styles[`rotate-${rotate}`]} ${
+    inversion ? styles.inversion : ""
+  } ${className}`;
 
   return (
     <svg
