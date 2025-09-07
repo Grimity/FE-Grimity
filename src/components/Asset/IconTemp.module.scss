@@ -49,6 +49,10 @@
   height: 40px;
 }
 
+.rotate-0 {
+  transform: rotate(0deg);
+}
+
 .rotate-90 {
   transform: rotate(90deg);
 }
@@ -63,4 +67,20 @@
 
 .inversion {
   transform: scaleX(-1);
+}
+
+.rotate-0.inversion {
+  transform: rotate(0deg) scaleX(-1);
+}
+
+.rotate-90.inversion {
+  transform: rotate(90deg) scaleX(-1);
+}
+
+.rotate-180.inversion {
+  transform: rotate(180deg) scaleX(-1);
+}
+
+.rotate-270.inversion {
+  transform: rotate(270deg) scaleX(-1);
 }
