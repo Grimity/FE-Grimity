@@ -10,14 +10,14 @@ interface ApiMessage {
   };
   image: string | null;
   content: string | null;
-  createdAt: string;
+  createdAt: Date;
   isLike: boolean;
-  replyTo: {
+  replyTo?: {
     id: string;
     content: string | null;
     image: string | null;
-    createdAt: string;
-  };
+    createdAt: Date;
+  } | null;
 }
 
 export const convertApiMessageToChatMessage = (
@@ -28,11 +28,18 @@ export const convertApiMessageToChatMessage = (
     id: apiMessage.id,
     chatId,
     userId: apiMessage.user.id,
+    userName: apiMessage.user.name,
     content: apiMessage.content || "",
     images: apiMessage.image ? [apiMessage.image] : undefined,
     replyToId: apiMessage.replyTo?.id,
-    createdAt: apiMessage.createdAt,
-    updatedAt: apiMessage.createdAt,
+    replyTo: apiMessage.replyTo ? {
+      id: apiMessage.replyTo.id,
+      content: apiMessage.replyTo.content || "",
+      image: apiMessage.replyTo.image,
+      createdAt: apiMessage.replyTo.createdAt.toString(),
+    } : undefined,
+    createdAt: apiMessage.createdAt.toString(),
+    updatedAt: apiMessage.createdAt.toString(),
     isLiked: apiMessage.isLike,
   };
 };

@@ -165,11 +165,61 @@ $footer-height: 84px;
 }
 
 .footer {
-  padding: 8px 20px 20px;
   background-color: $gray0;
 }
 
+.replyContainer {
+  padding: 8px 18px 0;
+  border-top: 1px solid $gray30;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.replyInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.replyContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.replyTarget {
+  @include Cap2;
+  color: $gray60;
+  font-weight: 600;
+}
+
+.replyMessage {
+  @include Label2;
+  color: $gray70;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cancelReply {
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: $gray60;
+
+  &:hover {
+    background-color: $gray20;
+    color: $gray80;
+  }
+}
+
 .inputContainer {
+  margin: 8px 20px 20px;
   display: flex;
   flex-direction: column;
 
@@ -306,4 +356,45 @@ $footer-height: 84px;
 
 .heart {
   color: $red;
+}
+
+.replyMessageBox {
+  display: flex;
+  flex-direction: column;
+
+  &.myReply {
+    align-items: flex-end;
+  }
+}
+
+.replyIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.replyIcon {
+  color: $gray50;
+  flex-shrink: 0;
+}
+
+.replyTarget {
+  @include Cap2;
+  color: $gray50;
+}
+
+.replyText {
+  @include Label2;
+  flex: 1;
+  border-radius: 20px;
+  padding: 6px 10px;
+
+  color: $gray0;
+  background-color: $secandary1;
+
+  .myReply & {
+    background-color: $gray30;
+    color: $gray80;
+  }
 }
