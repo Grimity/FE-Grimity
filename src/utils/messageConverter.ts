@@ -32,12 +32,14 @@ export const convertApiMessageToChatMessage = (
     content: apiMessage.content || "",
     images: apiMessage.image ? [apiMessage.image] : undefined,
     replyToId: apiMessage.replyTo?.id,
-    replyTo: apiMessage.replyTo ? {
-      id: apiMessage.replyTo.id,
-      content: apiMessage.replyTo.content || "",
-      image: apiMessage.replyTo.image,
-      createdAt: apiMessage.replyTo.createdAt.toString(),
-    } : undefined,
+    replyTo: apiMessage.replyTo
+      ? {
+          id: apiMessage.replyTo.id,
+          content: apiMessage.replyTo.content || "",
+          image: apiMessage.replyTo.image,
+          createdAt: apiMessage.replyTo.createdAt.toString(),
+        }
+      : undefined,
     createdAt: apiMessage.createdAt.toString(),
     updatedAt: apiMessage.createdAt.toString(),
     isLiked: apiMessage.isLike,

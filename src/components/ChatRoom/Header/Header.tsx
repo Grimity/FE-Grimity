@@ -1,21 +1,22 @@
-import { useGetChatsUser } from "@/api/chats/getChatsUser";
+import { useRouter } from "next/router";
 
 import Icon from "@/components/Asset/IconTemp";
 import ChatLeave from "@/components/Modal/ChatLeave/ChatLeave";
 
 import { useModal } from "@/hooks/useModal";
 
+import type { UserBaseResponse } from "@grimity/dto";
+
 import styles from "./Header.module.scss";
-import { useRouter } from "next/router";
 
 interface ChatRoomHeaderProps {
   chatId: string;
+  data: UserBaseResponse | undefined;
 }
 
-const ChatRoomHeader = ({ chatId }: ChatRoomHeaderProps) => {
+const ChatRoomHeader = ({ chatId, data }: ChatRoomHeaderProps) => {
   const router = useRouter();
   const { openModal } = useModal();
-  const { data: userData } = useGetChatsUser({ chatId });
 
   const handleShowLeaveModal = () => {
     openModal(
@@ -33,15 +34,15 @@ const ChatRoomHeader = ({ chatId }: ChatRoomHeaderProps) => {
       <div className={styles.userInfo}>
         <div className={styles.avatar}>
           <img
-            src={userData?.image || "/image/default.svg"}
+            src={data?.image || "/image/default.svg"}
             alt="프로필 이미지"
             width={40}
             height={40}
           />
         </div>
         <div>
-          <p className={styles.username}>{userData?.name}</p>
-          <p className={styles.hashtag}>@{userData?.url}</p>
+          <p className={styles.username}>{data?.name}</p>
+          <p className={styles.hashtag}>@{data?.url}</p>
         </div>
       </div>
 

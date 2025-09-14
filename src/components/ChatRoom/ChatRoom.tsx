@@ -11,6 +11,7 @@ import { usePutChatLeave } from "@/api/chats/putChatLeave";
 import { usePostChatMessage } from "@/api/chat-messages/postChatMessage";
 import { usePutChatMessageLike } from "@/api/chat-messages/putChatMessageLike";
 import { deleteChatMessageLike } from "@/api/chat-messages/deleteChatMessageLike";
+import { useGetChatsUser } from "@/api/chats/getChatsUser";
 
 import { useSocket } from "@/hooks/useSocket";
 import { useToast } from "@/hooks/useToast";
@@ -61,6 +62,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     { chatId, size: 20 },
     { enabled: !!chatId && typeof chatId === "string" },
   );
+  const { data: userData } = useGetChatsUser({ chatId });
   const { mutate: postChatMessage } = usePostChatMessage();
   const { mutate: likeChatMessage } = usePutChatMessageLike();
 
@@ -498,7 +500,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   return (
     <section className={styles.container}>
-      <ChatRoomHeader chatId={chatId} />
+      <ChatRoomHeader chatId={chatId} data={userData} />
 
       <div className={styles.messagesContainer} onScroll={handleScroll} ref={messagesContainerRef}>
         {currentRoom?.messages?.map((msg) => {
@@ -513,10 +515,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
             >
               <div className={`${styles.message} ${isMyMessage ? styles.myMessage : ""}`}>
                 {msg.replyTo && (
-                  <div className={`${styles.replyMessage} ${isMyMessage ? styles.myReply : ""}`}>
+                  <div className={`${styles.replyMessageBox} ${isMyMessage ? styles.myReply : ""}`}>
                     <span className={styles.replyTarget}>
-                      {/* TODO: 답장할때 상대방에게 답장으로 변경해야함. */}
-                      {isMyMessage ? `${msg.userName}님에게 답장` : "나에게 답장"}
+                      {isMyMessage ? `${userData?.name}님에게 답장` : "나에게 답장"}
                     </span>
                     <div className={styles.replyIndicator}>
                       <Icon
