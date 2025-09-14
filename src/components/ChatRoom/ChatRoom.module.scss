@@ -8,6 +8,10 @@ $footer-height: 84px;
   height: calc(100vh - $header-height);
   display: flex;
   flex-direction: column;
+
+  @include Size("mobile") {
+    height: 100vh;
+  }
 }
 
 .header {
@@ -74,6 +78,7 @@ $footer-height: 84px;
 
   @include Size("mobile") {
     padding: 10px 16px;
+    max-height: calc(100vh - $chat-room-height - $footer-height);
   }
 
   .loadingContainer {

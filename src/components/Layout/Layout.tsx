@@ -118,11 +118,13 @@ export default function Layout({ children }: LayoutProps) {
     };
   }, []);
 
+  const shouldHideHeader = router.pathname === "/direct/[chatId]" && isMobile;
+
   return (
     <div className={styles.layout}>
-      <Header variant={headerVariant} />
+      {!shouldHideHeader && <Header variant={headerVariant} />}
 
-      <div className={styles.container}>
+      <div className={`${styles.container} ${shouldHideHeader ? styles.noHeader : ""}`}>
         <div className={styles.children}>
           <Sidebar />
           {children}

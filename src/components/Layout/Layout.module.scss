@@ -11,6 +11,10 @@
     top: $header-height;
     display: flex;
     flex-direction: column;
+
+    &.noHeader {
+      top: 0;
+    }
   }
 
   .children {
