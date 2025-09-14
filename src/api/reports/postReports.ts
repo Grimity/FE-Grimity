@@ -8,9 +8,11 @@ export type ReportType =
   | "선정적인 컨텐츠"
   | "기타";
 
+export type ReportRefType = "USER" | "FEED" | "FEED_COMMENT" | "POST" | "POST_COMMENT" | "CHAT";
+
 export interface ReportsRequest {
   type: ReportType;
-  refType: "USER" | "FEED" | "FEED_COMMENT" | "POST" | "POST_COMMENT";
+  refType: ReportRefType;
   refId: string;
   content?: string;
 }

@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import Icon from "@/components/Asset/IconTemp";
 import ChatLeave from "@/components/Modal/ChatLeave/ChatLeave";
 
+import { useModalStore } from "@/states/modalStore";
+
 import { useModal } from "@/hooks/useModal";
 
 import type { UserBaseResponse } from "@grimity/dto";
@@ -17,6 +19,7 @@ interface ChatRoomHeaderProps {
 const ChatRoomHeader = ({ chatId, data }: ChatRoomHeaderProps) => {
   const router = useRouter();
   const { openModal } = useModal();
+  const { openModal: openModalStore } = useModalStore();
 
   const handleShowLeaveModal = () => {
     openModal(
@@ -27,6 +30,13 @@ const ChatRoomHeader = ({ chatId, data }: ChatRoomHeaderProps) => {
         className: styles.leaveModal,
       },
     );
+  };
+
+  const handleOpenReportModal = () => {
+    openModalStore({
+      type: "REPORT",
+      data: { refType: "CHAT", refId: data?.id },
+    });
   };
 
   return (
@@ -47,7 +57,12 @@ const ChatRoomHeader = ({ chatId, data }: ChatRoomHeaderProps) => {
       </div>
 
       <div className={styles.headerButtons}>
-        <button type="button" className={styles.iconButton} aria-label="불편 신고">
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label="유저 신고"
+          onClick={handleOpenReportModal}
+        >
           <Icon icon="complaint" size="xl" />
         </button>
         <button
