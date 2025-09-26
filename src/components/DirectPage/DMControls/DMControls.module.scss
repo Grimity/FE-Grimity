@@ -1,0 +1,139 @@
+@use "@/styles/globals.scss" as *;
+
+.buttonList {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 30px;
+
+  @include Size("mobile") {
+    padding: 0 16px;
+    min-height: 36px;
+  }
+
+  @include Size("tablet") {
+    padding: 0 16px;
+    min-height: 38px;
+  }
+}
+
+.justifyEnd {
+  justify-content: flex-end;
+
+  @include Size("mobile") {
+    display: none;
+  }
+
+  @include Size("tablet") {
+    display: none;
+  }
+}
+
+.editButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.selectAll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  @include Label2;
+  color: $gray70;
+
+  @include Size("mobile") {
+    @include Cap2;
+  }
+
+  @include Size("tablet") {
+    @include Cap2;
+  }
+}
+
+.hiddenCheckbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.customCheckbox {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("/icon/checkbox.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+.hiddenCheckbox:checked + .customCheckbox::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url("/icon/checkedbox.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.leaveChatButton,
+.cancelButton,
+.button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.cancelButton {
+  display: block;
+
+  @include Size("mobile") {
+    display: none;
+  }
+
+  @include Size("tablet") {
+    display: none;
+  }
+}
+
+.leaveChatChip {
+  @include Size("mobile") {
+    background-color: $primary4;
+    color: $gray0;
+  }
+
+  @include Size("tablet") {
+    background-color: $primary4;
+    color: $gray0;
+  }
+
+  &.disabled {
+    @include Size("mobile") {
+      background-color: $gray10;
+      color: $gray40;
+    }
+
+    @include Size("tablet") {
+      background-color: $gray10;
+      color: $gray40;
+    }
+  }
+}
+
+.cancelChip {
+  color: $gray70;
+}
+
+.leaveModal {
+  max-width: 358px;
+  width: 100%;
+  margin: 0 16px;
+}

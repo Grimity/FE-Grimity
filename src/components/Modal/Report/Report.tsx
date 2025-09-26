@@ -85,11 +85,7 @@ export default function Report({ refType, refId }: ReportProps) {
         />
       </div>
       <div className={styles.btns}>
-        <Button
-          size="l"
-          type="outlined-assistive"
-          onClick={() => openModal({ type: null, data: null, isComfirm: false })}
-        >
+        <Button size="l" type="outlined-assistive" onClick={closeModal}>
           취소
         </Button>
         <Button size="l" type="filled-primary" onClick={handleSubmit}>
