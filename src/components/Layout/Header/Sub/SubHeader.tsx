@@ -6,6 +6,7 @@ import { useDeviceStore } from "@/states/deviceStore";
 
 import IconComponent from "@/components/Asset/Icon";
 import SideMenu from "@/components/Layout/SideMenu/SideMenu";
+import Icon from "@/components/Asset/IconTemp";
 
 import styles from "./SubHeader.module.scss";
 
@@ -22,13 +23,15 @@ const SubHeader = () => {
     setIsMenuOpen((prev) => !prev);
   };
 
-  const showSearchIcon = !["/search", "/feeds/[id]", "/posts/[id]"].includes(router.pathname);
+  const showSearchIcon = !["/search", "/feeds/[id]", "/posts/[id]", "/direct"].includes(
+    router.pathname,
+  );
 
   return (
     <>
       <div className={styles.container}>
         <button onClick={handleBack} className={styles.backButton}>
-          <IconComponent name="backBtn" size={24} />
+          <Icon icon="chevronLeft" size="2xl" />
         </button>
         <div className={styles.icons}>
           {showSearchIcon && (

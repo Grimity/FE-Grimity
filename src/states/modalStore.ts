@@ -67,17 +67,19 @@ type NewModalType<T = Record<string, unknown>> = {
   id: string;
   content: ModalContent;
   props?: T;
+  isFill?: boolean;
+  title?: string;
 };
 
 interface NewModalState<T = Record<string, unknown>> {
   modals: NewModalType<T>[];
-  openModal: (id: string, content: ModalContent, props?: T) => void;
+  openModal: (id: string, content: ModalContent, props?: T, isFill?: boolean, title?: string) => void;
   closeModal: (id: string) => void;
 }
 
 export const useNewModalStore = create<NewModalState>((set) => ({
   modals: [],
-  openModal: (id, content, props) =>
-    set((state) => ({ modals: [...state.modals, { id, content, props }] })),
+  openModal: (id, content, props, isFill, title) =>
+    set((state) => ({ modals: [...state.modals, { id, content, props, isFill, title }] })),
   closeModal: (id) => set((state) => ({ modals: state.modals.filter((m) => m.id !== id) })),
 }));

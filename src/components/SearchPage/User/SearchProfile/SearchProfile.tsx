@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/states/authStore";
 import { SearchProfileProps } from "./SearchProfile.types";
-import { deleteFollow } from "@/api/users/deleteIdFollow";
-import { putFollow } from "@/api/users/putIdFollow";
+import { useDeleteFollow } from "@/api/users/deleteIdFollow";
+import { usePutFollow } from "@/api/users/putIdFollow";
 import { useToast } from "@/hooks/useToast";
 import Button from "@/components/Button/Button";
 import { useDeviceStore } from "@/states/deviceStore";
@@ -30,9 +30,12 @@ export default function SearchProfile({
   const { isMobile } = useDeviceStore();
   const { highlight } = useContext(SearchHighlightContext);
 
+  const { mutateAsync: putFollow } = usePutFollow();
+  const { mutateAsync: deleteFollow } = useDeleteFollow();
+
   const handleFollowClick = async () => {
     try {
-      await putFollow(id);
+      await putFollow({ id });
       setIsFollowing(true);
       setFollowerCount(followerCount + 1);
     } catch (error) {
@@ -42,7 +45,7 @@ export default function SearchProfile({
 
   const handleUnfollowClick = async () => {
     try {
-      await deleteFollow(id);
+      await deleteFollow({ id });
       setIsFollowing(false);
       setFollowerCount(followerCount - 1);
     } catch (error) {

@@ -7,6 +7,7 @@ export default function Button({
   size = "m",
   disabled = false,
   onClick,
+  onMouseDown,
   leftIcon,
   rightIcon,
   width,
@@ -19,7 +20,7 @@ export default function Button({
   }
 
   return (
-    <button className={classNames} disabled={disabled} onClick={onClick} style={{ width }}>
+    <button className={classNames} disabled={disabled} onClick={onClick} onMouseDown={onMouseDown} style={{ width }}>
       {leftIcon && <div className={styles.icon}>{leftIcon}</div>}
       {children}
       {rightIcon && <div className={styles.icon}>{rightIcon}</div>}

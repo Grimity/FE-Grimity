@@ -6,14 +6,15 @@ import Image from "next/image";
 import { useMyData } from "@/api/users/getMe";
 
 import { useAuthStore } from "@/states/authStore";
+import { useChatStore } from "@/states/chatStore";
 
 import IconComponent from "@/components/Asset/Icon";
 import Button from "@/components/Button/Button";
 import FooterSection from "@/components/Layout/FooterSection/FooterSection";
 import Login from "@/components/Modal/Login/Login";
+import Icon from "@/components/Asset/IconTemp";
 
 import { useModal } from "@/hooks/useModal";
-import { useDeviceStore } from "@/states/deviceStore";
 
 import axiosInstance from "@/constants/baseurl";
 
@@ -36,7 +37,7 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
   const setUserId = useAuthStore((state) => state.setUserId);
-  const { isMobile } = useDeviceStore();
+  const { hasUnreadMessages } = useChatStore();
 
   const isNavPage = ["/", "/ranking", "/board", "/following"].includes(router.pathname);
 
@@ -96,7 +97,9 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
     const currentPath = router.pathname;
     const activeItem = navItems.find(
       (item) =>
-        currentPath === item.path || (item.path === "/board" && currentPath.startsWith("/board/")),
+        currentPath === item.path ||
+        (item.path === "/board" && currentPath.startsWith("/posts/")) ||
+        (item.path === "/direct" && currentPath.startsWith("/direct")),
     );
     if (activeItem) {
       setActiveNav(activeItem.name);
@@ -130,10 +133,7 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
           </div>
           {!isLoggedIn || !myData ? (
             <>
-              <div
-                className={isMobile ? styles.uploadBtnContainer : styles.uploadBtn}
-                onClick={handleOpenLoginModal}
-              >
+              <div className={styles.loginBtn} onClick={handleOpenLoginModal}>
                 <Button size="m" type="filled-primary" width="200px">
                   로그인
                 </Button>
@@ -197,10 +197,19 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
                 </div>
               )}
               <div className={styles.uploadFeedBtn}>
+                <Link href="/direct" onClick={onClose}>
+                  <Button
+                    className={hasUnreadMessages ? styles.badge : ""}
+                    type="outlined-assistive"
+                    size="m"
+                    width="40px"
+                    leftIcon={<Icon icon="direct" size="lg" />}
+                  />
+                </Link>
                 <Link href="/write" onClick={onClose}>
                   <Button
                     size="m"
-                    width="200px"
+                    width="154px"
                     type="filled-primary"
                     leftIcon={<IconComponent name="menuUpload" size={16} isBtn />}
                   >
@@ -208,6 +217,7 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
                   </Button>
                 </Link>
               </div>
+
               <div className={styles.bar} />
               <nav className={styles.nav}>
                 {navItems.map((item, index) => (

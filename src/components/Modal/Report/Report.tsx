@@ -6,10 +6,10 @@ import Button from "@/components/Button/Button";
 import { ReportProps } from "./Report.types";
 import { postReports, ReportType } from "@/api/reports/postReports";
 
-export default function Report({ refType, refId }: ReportProps) {
+export default function Report({ refType, refId, closeModal }: ReportProps) {
   const { showToast } = useToast();
   const openModal = useModalStore((state) => state.openModal);
-  const closeModal = useModalStore((state) => state.closeModal);
+
   const [reason, setReason] = useState<ReportType>("사칭계정");
   const [details, setDetails] = useState("");
 
@@ -85,11 +85,7 @@ export default function Report({ refType, refId }: ReportProps) {
         />
       </div>
       <div className={styles.btns}>
-        <Button
-          size="l"
-          type="outlined-assistive"
-          onClick={() => openModal({ type: null, data: null, isComfirm: false })}
-        >
+        <Button size="l" type="outlined-assistive" onClick={closeModal}>
           취소
         </Button>
         <Button size="l" type="filled-primary" onClick={handleSubmit}>

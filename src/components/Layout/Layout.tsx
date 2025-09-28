@@ -4,6 +4,9 @@ import { useRouter } from "next/router";
 import { useMyData } from "@/api/users/getMe";
 
 import { useAuthStore } from "@/states/authStore";
+import { useChatStore } from "@/states/chatStore";
+
+import { useSocket } from "@/hooks/useSocket";
 
 import IconComponent from "@/components/Asset/Icon";
 import Header from "@/components/Layout/Header/Header";
@@ -13,6 +16,7 @@ import { useDeviceStore } from "@/states/deviceStore";
 
 import type { HeaderProps } from "@/components/Layout/Header/types/Header.types";
 import type { LayoutProps } from "@/components/Layout/Layout.types";
+import type { NewChatMessageEventResponse } from "@grimity/dto";
 
 import { setDocumentViewportHeight } from "@/utils/viewport";
 
@@ -25,8 +29,12 @@ export default function Layout({ children }: LayoutProps) {
 
   const { isMobile, isTablet } = useDeviceStore();
 
-  const { setIsLoggedIn, setAccessToken, setUserId, setIsAuthReady } = useAuthStore();
+  const { isLoggedIn, setIsLoggedIn, setAccessToken, setUserId, setIsAuthReady, access_token } =
+    useAuthStore();
   const { refetch: fetchMyData } = useMyData();
+  const { currentChatId, setHasUnreadMessages } = useChatStore();
+
+  const { connect, disconnect, getSocket } = useSocket({ autoConnect: false });
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -74,6 +82,36 @@ export default function Layout({ children }: LayoutProps) {
     initializeAuth();
   }, []);
 
+  // 글로벌 소켓 연결 관리
+  useEffect(() => {
+    if (isLoggedIn && access_token) {
+      connect();
+    } else {
+      disconnect();
+    }
+  }, [isLoggedIn, access_token, connect, disconnect]);
+
+  // 전역 메시지 알림 처리
+  useEffect(() => {
+    if (!isLoggedIn || !access_token) return;
+
+    const socketInstance = getSocket();
+    if (!socketInstance) return;
+
+    const handleNewChatMessage = (newMessage: NewChatMessageEventResponse) => {
+      // 현재 보고 있는 채팅방의 메시지가 아닌 경우에만 알림 표시
+      if (newMessage.chatId !== currentChatId) {
+        setHasUnreadMessages(true);
+      }
+    };
+
+    socketInstance.on("newChatMessage", handleNewChatMessage);
+
+    return () => {
+      socketInstance.off("newChatMessage", handleNewChatMessage);
+    };
+  }, [isLoggedIn, access_token, getSocket, currentChatId, setHasUnreadMessages]);
+
   // 스크롤 위치 감지
   useEffect(() => {
     const handleScroll = () => {
@@ -90,11 +128,13 @@ export default function Layout({ children }: LayoutProps) {
     };
   }, []);
 
+  const shouldHideHeader = router.pathname === "/direct/[chatId]" && isMobile;
+
   return (
     <div className={styles.layout}>
-      <Header variant={headerVariant} />
+      {!shouldHideHeader && <Header variant={headerVariant} />}
 
-      <div className={styles.container}>
+      <div className={`${styles.container} ${shouldHideHeader ? styles.noHeader : ""}`}>
         <div className={styles.children}>
           <Sidebar />
           {children}

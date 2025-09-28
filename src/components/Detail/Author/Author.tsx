@@ -3,13 +3,12 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/states/authStore";
-import { putFollow } from "@/api/users/putIdFollow";
-import { deleteFollow } from "@/api/users/deleteIdFollow";
+import { usePutFollow } from "@/api/users/putIdFollow";
+import { useDeleteFollow } from "@/api/users/deleteIdFollow";
 import { useToast } from "@/hooks/useToast";
 import Link from "next/link";
 import { AuthorProps } from "./Author.types";
 import { useUserData } from "@/api/users/getId";
-import { useUserDataByUrl } from "@/api/users/getId";
 import Button from "@/components/Button/Button";
 import { useUserForDetail } from "@/api/users/getIdFeeds";
 import SquareCard from "@/components/Layout/SquareCard/SquareCard";
@@ -20,7 +19,6 @@ import { useRouter } from "next/router";
 
 export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
   const { data: userData } = useUserData(authorId);
-  const { data: userDataByUrl } = useUserDataByUrl(authorUrl);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
   const imgRef = usePreventRightClick<HTMLImageElement>();
@@ -43,6 +41,8 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
     size: size,
     sort: "latest",
   });
+  const { mutateAsync: putFollow } = usePutFollow();
+  const { mutateAsync: deleteFollow } = useDeleteFollow();
 
   useEffect(() => {
     refetch();
@@ -56,7 +56,7 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
 
   const handleFollowClick = async (id: string) => {
     try {
-      await putFollow(id);
+      await putFollow({ id });
       setIsFollowing(true);
       setFollowerCount((prev) => prev + 1);
     } catch (error) {
@@ -66,7 +66,7 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
 
   const handleUnfollowClick = async (id: string) => {
     try {
-      await deleteFollow(id);
+      await deleteFollow({ id });
       setIsFollowing(false);
       setFollowerCount((prev) => prev - 1);
     } catch (error) {
