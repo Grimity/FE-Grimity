@@ -1,0 +1,46 @@
+@use "@/styles/globals" as *;
+
+.empty {
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+
+  @include Size("mobile") {
+    margin-top: 100px;
+  }
+
+  @include Size("tablet") {
+    margin-top: 100px;
+  }
+}
+
+.emptyText {
+  @include Sub4;
+  color: $gray60;
+  text-align: center;
+
+  @include Size("mobile") {
+    @include Sub2;
+    color: $gray50;
+  }
+
+  @include Size("tablet") {
+    @include Sub2;
+    color: $gray50;
+  }
+}
+
+.emptyButton {
+  display: none;
+
+  @include Size("mobile") {
+    display: block;
+  }
+
+  @include Size("tablet") {
+    display: block;
+  }
+}

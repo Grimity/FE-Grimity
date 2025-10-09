@@ -1,0 +1,51 @@
+@use "@/styles/globals" as *;
+
+.replyContainer {
+  padding: 8px 18px 0;
+  border-top: 1px solid $gray30;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.replyInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.replyContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.replyTarget {
+  @include Cap2;
+  color: $gray60;
+  font-weight: 600;
+}
+
+.replyMessage {
+  @include Label2;
+  color: $gray70;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cancelReply {
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: $gray60;
+
+  &:hover {
+    background-color: $gray20;
+    color: $gray80;
+  }
+}

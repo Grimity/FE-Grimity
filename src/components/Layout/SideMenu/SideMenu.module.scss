@@ -6,7 +6,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: $full-height;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
@@ -17,9 +17,9 @@
     pointer-events: auto;
   }
 
-  .uploadBtnContainer {
-    margin-top: 16px;
-    padding-bottom: 30px;
+  .loginBtn {
+    margin: 16px 0 30px;
+    padding: 0 20px;
   }
 
   .sideMenu {
@@ -27,8 +27,8 @@
     top: 0;
     right: 0;
     width: 240px;
-    height: 100vh;
-    padding: 16px 20px;
+    height: $full-height;
+    padding: 16px 0;
     background-color: $gray0;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
@@ -40,7 +40,7 @@
     @include Size("mobile") {
       width: 240px;
       height: 100%;
-      padding: 16px 20px;
+      padding: 16px 0;
     }
 
     &.open {
@@ -56,8 +56,6 @@
       width: 100%;
       height: 1px;
       background-color: $gray30;
-      margin-top: 4px;
-      margin-bottom: 24px;
     }
 
     .mobileProfile {
@@ -75,6 +73,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: 0 20px;
         margin-top: 16px;
         margin-bottom: 20px;
 
@@ -113,6 +112,7 @@
         flex-direction: column;
         gap: 2px;
         margin-bottom: 20px;
+        padding: 0 20px;
       }
 
       .itemBtn {
@@ -125,10 +125,6 @@
         height: 34px;
         border: none;
         padding: 10px 0;
-      }
-
-      .uploadFeedBtn {
-        margin-bottom: 20px;
       }
 
       .mobileDropdown {
@@ -155,12 +151,15 @@
   flex-direction: column-reverse;
   align-items: flex-start;
   margin-top: 24px;
+  padding: 0 20px;
 }
 
 .nav {
   display: flex;
   align-items: center;
   position: relative;
+  margin-top: 24px;
+  padding: 0 20px;
 
   @include Size("mobile") {
     flex-direction: column;
@@ -222,4 +221,34 @@
 .navUpload {
   display: flex;
   flex-direction: column;
+  padding: 0 20px;
+}
+
+.uploadFeedBtn {
+  width: 100%;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 6px;
+  padding: 0 20px;
+
+  button {
+    height: 40px;
+  }
+}
+
+.badge {
+  position: relative;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 100%;
+    height: 100%;
+    width: 8px;
+    height: 8px;
+    background-color: $red;
+    border-radius: 12px;
+  }
 }

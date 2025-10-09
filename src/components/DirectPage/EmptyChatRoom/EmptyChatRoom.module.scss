@@ -1,0 +1,22 @@
+@use "@/styles/globals.scss" as *;
+
+.emptyChatRoom {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $gray10;
+}
+
+.emptyChatRoomTextWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.emptyChatRoomText {
+  @include Sub4;
+  color: $gray60;
+}

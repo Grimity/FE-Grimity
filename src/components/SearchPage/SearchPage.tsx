@@ -46,6 +46,17 @@ export default function SearchPage() {
     return tab === tabName ? styles.selected : "";
   };
 
+  const handleSearch = (value?: string) => {
+    const currentTab = tab === "author" ? "author" : tab === "board" ? "board" : "feed";
+    setSearchKeyword(value || "");
+    router.push(`?tab=${currentTab}&keyword=${value}`, undefined, { shallow: true });
+  };
+
+  const handleClear = () => {
+    setSearchKeyword("");
+    router.push("", undefined, { shallow: true });
+  };
+
   const renderChips = () => {
     if (!popularData?.length) return null;
 
@@ -88,11 +99,15 @@ export default function SearchPage() {
     <div className={styles.container}>
       <div className={styles.center}>
         <section className={styles.searchBarSection}>
-          <SearchBar
-            searchValue={searchValue}
-            setSearchValue={setSearchValue}
-            onSearch={(value) => setSearchKeyword(value)}
-          />
+          <div className={styles.searchBarContainer}>
+            <SearchBar
+              searchValue={searchValue}
+              placeholder="그림, 작가, 관련 작품을 검색해보세요"
+              setSearchValue={setSearchValue}
+              onSearch={handleSearch}
+              onClear={handleClear}
+            />
+          </div>
           <div className={styles.recommend}>
             <p className={styles.recommendMessage}>추천 태그</p>
             {renderChips()}

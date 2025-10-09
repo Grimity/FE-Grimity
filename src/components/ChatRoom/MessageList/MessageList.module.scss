@@ -1,0 +1,32 @@
+@use "@/styles/globals" as *;
+
+$chat-room-height: 60px;
+$footer-height: 84px;
+
+.messagesContainer {
+  flex: 1;
+  min-height: 0;
+  max-height: calc($full-height - $header-height - $chat-room-height - $footer-height);
+  padding: 20px 40px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: $gray0;
+
+  @include Size("mobile") {
+    padding: 10px 16px;
+    max-height: calc($full-height - $chat-room-height - $footer-height);
+  }
+
+  .loadingContainer {
+    display: flex;
+    justify-content: center;
+    padding: 16px 0;
+
+    .loadingText {
+      color: $gray60;
+      @include Body2;
+    }
+  }
+}
