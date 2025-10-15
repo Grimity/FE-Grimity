@@ -4,7 +4,7 @@
 .mobileContainer {
   margin-top: 64px;
   width: 100vw;
-  height: calc(100vh - 64px);
+  height: calc($full-height - 64px);
   border-radius: 0;
   position: fixed;
   top: 0;
@@ -116,7 +116,7 @@
 
     @include Size("mobile") {
       height: auto;
-      max-height: calc(100vh - 64px - 150px);
+      max-height: calc($full-height - 64px - 150px);
 
       &::-webkit-scrollbar {
         display: none;
@@ -197,7 +197,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(100vh - 64px);
+    height: calc($full-height - 64px);
     background: rgba(0, 0, 0, 0.15);
     display: flex;
     justify-content: center;

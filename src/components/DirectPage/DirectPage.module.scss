@@ -1,0 +1,120 @@
+@use "@/styles/globals.scss" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 460px;
+  gap: 30px;
+  box-shadow: inset -1px 0 0 $gray30;
+
+  @include Size("mobile") {
+    max-width: 100%;
+    gap: 24px;
+    box-shadow: none;
+  }
+
+  @include Size("tablet") {
+    max-width: 100%;
+    gap: 22px;
+    box-shadow: none;
+  }
+}
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+  gap: 20px;
+
+  @include Size("mobile") {
+    gap: 16px;
+  }
+
+  @include Size("tablet") {
+    gap: 16px;
+  }
+}
+
+.controls {
+  @include Size("mobile") {
+    display: none;
+  }
+
+  @include Size("tablet") {
+    display: none;
+  }
+}
+
+.editModeControls {
+  @include Size("mobile") {
+    display: block;
+  }
+
+  @include Size("tablet") {
+    display: block;
+  }
+}
+
+.empty {
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+
+  @include Size("mobile") {
+    margin-top: 100px;
+  }
+
+  @include Size("tablet") {
+    margin-top: 100px;
+  }
+}
+
+.emptyText {
+  @include Sub4;
+  color: $gray60;
+  text-align: center;
+
+  @include Size("mobile") {
+    @include Sub2;
+    color: $gray50;
+  }
+
+  @include Size("tablet") {
+    @include Sub2;
+    color: $gray50;
+  }
+}
+
+.emptyButton {
+  display: block;
+
+  @include Size("mobile") {
+    display: none;
+  }
+
+  @include Size("tablet") {
+    display: none;
+  }
+}
+
+.loading {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    @include Sub4;
+    color: $gray60;
+  }
+}
+
+.loadMore {
+  height: 20px;
+  width: 100%;
+}

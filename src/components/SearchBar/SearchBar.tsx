@@ -1,32 +1,32 @@
-import { useRouter } from "next/router";
 import IconComponent from "../Asset/Icon";
 import styles from "./SearchBar.module.scss";
 import { SearchBarProps } from "./SearchBar.types";
 import { useToast } from "@/hooks/useToast";
 
-export default function SearchBar({ searchValue, setSearchValue, onSearch }: SearchBarProps) {
-  const router = useRouter();
-  const { tab } = router.query;
+export default function SearchBar({
+  searchValue,
+  placeholder,
+  setSearchValue,
+  onSearch,
+  onClear,
+}: SearchBarProps) {
   const { showToast } = useToast();
 
   const handleClear = () => {
     setSearchValue("");
-    router.push("");
-    onSearch("");
+    onClear?.();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
 
     if (e.key === "Enter") {
-      const currentTab = tab === "author" ? "author" : tab === "board" ? "board" : "feed";
       const trimmedKeyword = searchValue.trim();
       if (trimmedKeyword.length < 2) {
         showToast("두 글자 이상 입력해주세요.", "warning");
         return;
       }
-      router.push(`?tab=${currentTab}&keyword=${trimmedKeyword}`, undefined, { shallow: true });
-      onSearch(trimmedKeyword);
+      onSearch?.(trimmedKeyword);
     }
   };
 
@@ -40,7 +40,7 @@ export default function SearchBar({ searchValue, setSearchValue, onSearch }: Sea
         <IconComponent name="searchGray" size={24} padding={8} />
         <input
           type="text"
-          placeholder="그림, 작가, 관련 작품을 검색해보세요"
+          placeholder={placeholder}
           className={styles.input}
           value={searchValue}
           onChange={handleInputChange}

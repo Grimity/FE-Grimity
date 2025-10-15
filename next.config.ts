@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
 
 module.exports = {
   images: {
-    domains: ["image.grimity.com"],
+    domains: ["image.grimity.com", "d1qkekeyuugv87.cloudfront.net"],
   },
 };
 

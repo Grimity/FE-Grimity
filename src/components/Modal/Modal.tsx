@@ -28,15 +28,23 @@ export default function Modal() {
   const router = useRouter();
   const { isOpen, type, data, isFill, isComfirm, closeModal } = useModalStore();
   const modalRef = useRef<EventTarget | null>(null);
+  const historyPushedRef = useRef<boolean>(false);
+  const closedByPopStateRef = useRef<boolean>(false);
 
   usePreventScroll(isOpen);
 
   useEffect(() => {
     if (isOpen && isFill) {
       window.history.pushState({ isModalOpen: true }, "", window.location.href);
+      historyPushedRef.current = true;
+      closedByPopStateRef.current = false;
+    } else if (!isOpen) {
+      historyPushedRef.current = false;
+      closedByPopStateRef.current = false;
     }
 
     const handlePopState = () => {
+      closedByPopStateRef.current = true;
       closeModal();
     };
 
@@ -56,10 +64,15 @@ export default function Modal() {
   }, [router, closeModal]);
 
   const handleCloseModal = () => {
-    closeModal();
+    if (historyPushedRef.current && !closedByPopStateRef.current) {
+      historyPushedRef.current = false;
+      window.history.back();
+    } else {
+      closeModal();
 
-    if (type === "ALBUM-EDIT") {
-      router.reload();
+      if (type === "ALBUM-EDIT") {
+        router.reload();
+      }
     }
   };
 
@@ -111,7 +124,7 @@ export default function Modal() {
       case "LIKE":
         return <Like />;
       case "REPORT":
-        return <Report {...data} />;
+        return <Report {...data} closeModal={handleCloseModal} />;
       case "ALBUM-EDIT":
         return <AlbumEdit {...data} />;
       case "ALBUM-SELECT":

@@ -5,9 +5,16 @@ export function useModal() {
   const open = useNewModalStore((s) => s.openModal);
   const close = useNewModalStore((s) => s.closeModal);
 
-  function openModal<T extends Record<string, unknown>>(content: ModalContent, props?: T) {
+  function openModal<T extends Record<string, unknown>>(
+    content: ModalContent,
+    props?: T,
+    options?: {
+      isFill?: boolean;
+      title?: string;
+    },
+  ) {
     const id = uuidv4();
-    open(id, content, props);
+    open(id, content, props, options?.isFill, options?.title);
     return () => close(id);
   }
 

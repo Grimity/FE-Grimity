@@ -1,0 +1,130 @@
+@use "@/styles/globals.scss" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.skeletonItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid $gray20;
+
+  @include Size("mobile") {
+    padding: 16px 20px;
+    gap: 12px;
+  }
+
+  @include Size("tablet") {
+    padding: 16px 20px;
+    gap: 12px;
+  }
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $gray30;
+  flex-shrink: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @include Size("mobile") {
+    width: 36px;
+    height: 36px;
+  }
+
+  @include Size("tablet") {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.chatDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.username {
+  height: 16px;
+  width: 80px;
+  background: $gray30;
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @include Size("mobile") {
+    height: 14px;
+    width: 70px;
+  }
+
+  @include Size("tablet") {
+    height: 14px;
+    width: 70px;
+  }
+}
+
+.timestamp {
+  height: 12px;
+  width: 50px;
+  background: $gray30;
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @include Size("mobile") {
+    height: 11px;
+    width: 45px;
+  }
+
+  @include Size("tablet") {
+    height: 11px;
+    width: 45px;
+  }
+}
+
+.bottomRow {
+  display: flex;
+  align-items: center;
+}
+
+.lastMessage {
+  height: 14px;
+  width: 180px;
+  background: $gray30;
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @include Size("mobile") {
+    height: 13px;
+    width: 160px;
+  }
+
+  @include Size("tablet") {
+    height: 13px;
+    width: 160px;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}

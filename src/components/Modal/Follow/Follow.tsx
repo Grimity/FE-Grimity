@@ -6,7 +6,7 @@ import Button from "@/components/Button/Button";
 import { useRouter } from "next/router";
 import { useModalStore } from "@/states/modalStore";
 import { deleteMyFollowers } from "@/api/users/deleteMeFollowers";
-import { deleteFollow } from "@/api/users/deleteIdFollow";
+import { useDeleteFollow } from "@/api/users/deleteIdFollow";
 import { useToast } from "@/hooks/useToast";
 import { FollowProps } from "./Follow.types";
 import { useDeviceStore } from "@/states/deviceStore";
@@ -37,6 +37,8 @@ export default function Follow({ initialTab }: FollowProps) {
     isFetching: isFetchingFollowings,
     refetch: refetchFollowing,
   } = useMyFollowing({ size: 10 });
+
+  const { mutateAsync: deleteFollow } = useDeleteFollow();
 
   const handleFetchMoreFollowers = async () => {
     if (hasNextFollowers && !isFetchingFollowers && !isFetchingData) {
@@ -119,7 +121,7 @@ export default function Follow({ initialTab }: FollowProps) {
         showToast("해당 팔로워를 삭제했습니다.", "success");
         refetchFollower();
       } else {
-        await deleteFollow(id);
+        await deleteFollow({ id });
         showToast("언팔로우 되었습니다.", "success");
         refetchFollowing();
       }

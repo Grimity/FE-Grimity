@@ -3,7 +3,7 @@
 .container {
   position: sticky;
   top: $header-height;
-  height: calc(100vh - $header-height);
+  height: calc($full-height - $header-height);
   max-width: $sidebar-width;
   flex-direction: column;
   align-items: flex-start;
