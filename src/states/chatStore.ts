@@ -12,11 +12,6 @@ interface ChatStore {
   markAsRead: () => void;
   addMessage: (chatId: string, message: ChatMessage) => void;
   addOlderMessages: (chatId: string, messages: ChatMessage[]) => void;
-  initializeWithMessages: (
-    chatId: string,
-    messages: ChatMessage[],
-    nextCursor?: string | null,
-  ) => void;
 
   initializeChatRoom: (chatId: string) => void;
   clearChatRoom: (chatId: string) => void;
@@ -24,7 +19,6 @@ interface ChatStore {
   // Pagination state
   setHasNextPage: (chatId: string, hasNext: boolean) => void;
   setNextCursor: (chatId: string, cursor: string | null) => void;
-  setIsLoadingMore: (chatId: string, isLoading: boolean) => void;
 
   // Message interactions
   updateMessageLike: (chatId: string, messageId: string, isLiked: boolean) => void;
@@ -81,20 +75,6 @@ export const useChatStore = create<ChatStore>((set) => ({
       };
     }),
 
-  initializeWithMessages: (chatId, messages, nextCursor = null) =>
-    set((state) => ({
-      chatRooms: {
-        ...state.chatRooms,
-        [chatId]: {
-          ...state.chatRooms[chatId],
-          messages,
-          nextCursor,
-          hasNextPage: !!nextCursor,
-          isLoadingMore: false,
-        },
-      },
-    })),
-
   initializeChatRoom: (chatId) =>
     set((state) => ({
       chatRooms: {
@@ -103,7 +83,6 @@ export const useChatStore = create<ChatStore>((set) => ({
           messages: [],
           hasNextPage: true,
           nextCursor: null,
-          isLoadingMore: false,
         },
       },
     })),
@@ -132,17 +111,6 @@ export const useChatStore = create<ChatStore>((set) => ({
         [chatId]: {
           ...state.chatRooms[chatId],
           nextCursor: cursor,
-        },
-      },
-    })),
-
-  setIsLoadingMore: (chatId, isLoading) =>
-    set((state) => ({
-      chatRooms: {
-        ...state.chatRooms,
-        [chatId]: {
-          ...state.chatRooms[chatId],
-          isLoadingMore: isLoading,
         },
       },
     })),

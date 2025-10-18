@@ -4,9 +4,12 @@ $chat-room-height: 60px;
 $footer-height: 84px;
 
 .messagesContainer {
-  flex: 1;
-  min-height: 0;
-  max-height: calc($full-height - $header-height - $chat-room-height - $footer-height);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-basis: 0;
+  flex-grow: 1;
   padding: 20px 40px;
   overflow-y: auto;
   display: flex;
@@ -16,7 +19,6 @@ $footer-height: 84px;
 
   @include Size("mobile") {
     padding: 10px 16px;
-    max-height: calc($full-height - $chat-room-height - $footer-height);
   }
 
   .loadingContainer {

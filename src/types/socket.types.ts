@@ -21,5 +21,4 @@ export interface ChatRoomState {
   messages: ChatMessage[];
   hasNextPage?: boolean;
   nextCursor?: string | null;
-  isLoadingMore?: boolean;
 }
