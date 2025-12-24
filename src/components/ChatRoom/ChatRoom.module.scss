@@ -17,5 +17,36 @@
 }
 
 .footer {
-  background-color: $gray0;
+  background-color: $gray10;
+  padding: 8px 16px;
+  border-top: 1px solid $gray30;
+  
+  .footerContent {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    
+    .cameraButton {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      color: $gray60;
+      padding: 0;
+      width: 28px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+    
+    .sendButton {
+      flex-shrink: 0;
+    }
+  }
 }

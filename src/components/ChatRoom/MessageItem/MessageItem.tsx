@@ -1,3 +1,4 @@
+import { useRef, useEffect, useState } from "react";
 import Icon from "@/components/Asset/IconTemp";
 import LazyImage from "@/components/LazyImage/LazyImage";
 
@@ -26,6 +27,17 @@ const MessageItem = ({
   onLike,
   onReply,
 }: MessageItemProps) => {
+  const messageTextRef = useRef<HTMLSpanElement>(null);
+  const [isMultiLine, setIsMultiLine] = useState(false);
+
+  useEffect(() => {
+    if (messageTextRef.current) {
+      const lineHeight = parseFloat(getComputedStyle(messageTextRef.current).lineHeight);
+      const height = messageTextRef.current.offsetHeight;
+      setIsMultiLine(height > lineHeight * 1.5);
+    }
+  }, [message.content]);
+
   return (
     <div
       className={`${styles.messageWrapper} ${isMyMessage ? styles.myMessage : ""}`}
@@ -58,8 +70,14 @@ const MessageItem = ({
           ))}
 
         {message.content && (
-          <div className={styles.messageContent}>
-            <span className={styles.messageContentText}>{message.content}</span>
+          <div
+            className={`${styles.messageContent} ${isMultiLine ? styles.multiLine : ""} ${
+              isMyMessage ? styles.myMessage : ""
+            }`}
+          >
+            <span ref={messageTextRef} className={styles.messageContentText}>
+              {message.content}
+            </span>
             {message.isLiked && (
               <div className={styles.heartIcon}>
                 <Icon icon="heartFill" size="sm" className={message.isLiked ? styles.heart : ""} />
