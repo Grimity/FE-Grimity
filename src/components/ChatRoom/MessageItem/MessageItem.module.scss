@@ -31,17 +31,13 @@
   position: relative;
   background-color: $gray30;
   padding: 8px 12px;
-  border-top-left-radius: 50px;
-  border-top-right-radius: 50px;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 50px;
+  border-radius: 20px 20px 20px 4px;
 }
 
 .myMessage {
   .messageContent {
     background-color: $secandary1;
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 10px;
+    border-radius: 20px 20px 4px 20px;
   }
 
   .messageContentText {
@@ -58,6 +54,7 @@
   @include Body1;
   color: $gray80;
   word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .heartIcon {

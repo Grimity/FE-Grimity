@@ -12,9 +12,11 @@ const ReplyBar = ({ senderName, content, onCancel }: ReplyBarProps) => {
   return (
     <div className={styles.replyContainer}>
       <div className={styles.replyInfo}>
-        <Icon icon="move" size="sm" rotate={180} inversion />
         <div className={styles.replyContent}>
-          <span className={styles.replyTarget}>{senderName}님에게 답장</span>
+          <div className={styles.replyTargetContainer}>
+            <Icon icon="move" size="lg" rotate={180} inversion />
+            <span className={styles.replyTarget}>{senderName}님께 답장보내기</span>
+          </div>
           <span className={styles.replyMessage}>{content}</span>
         </div>
         <button className={styles.cancelReply} onClick={onCancel} aria-label="답장 취소">

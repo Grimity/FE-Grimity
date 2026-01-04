@@ -8,6 +8,8 @@ import { useChatRoom } from "@/hooks/useChatRoom";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useMessageActions } from "@/hooks/useMessageActions";
 import useUserBlock from "@/hooks/useUserBlock";
+import { useImageUploader } from "@/hooks/useImageUploader";
+import { useToast } from "@/hooks/useToast";
 
 import { useChatStore } from "@/states/chatStore";
 import { useAuthStore } from "@/states/authStore";
@@ -17,6 +19,8 @@ import MessageList from "@/components/ChatRoom/MessageList/MessageList";
 import MessageInput from "@/components/ChatRoom/MessageInput/MessageInput";
 import ReplyBar from "@/components/ChatRoom/ReplyBar/ReplyBar";
 import Toast from "@/components/Toast/Toast";
+import Icon from "@/components/Asset/IconTemp";
+import Button from "@/components/Button/Button";
 
 import type { ChatMessage } from "@/types/socket.types";
 import type { NewChatMessageEventResponse } from "@grimity/dto";
@@ -34,10 +38,13 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isUserSendingRef = useRef<boolean>(false);
-  const messageInputRef = useRef<HTMLInputElement>(null);
+  const messageInputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: userData } = useGetChatsUser({ chatId });
   const { mutate: postChatMessage } = usePostChatMessage();
+  const { uploadImages } = useImageUploader({ uploadType: "chat" });
+  const { showToast } = useToast();
 
   useUserBlock({
     isBlocked: userData?.isBlocked,
@@ -114,6 +121,40 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       }
     },
     [handleSendMessage],
+  );
+
+  const handleClickFile = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }, []);
+
+  const handleImageUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+
+      if (!files) {
+        return;
+      }
+
+      const fileArray = Array.from(files);
+      const remainingSlots = 5 - images.length;
+
+      if (fileArray.length > remainingSlots) {
+        showToast("최대 5장까지 업로드할 수 있어요.", "error");
+        return;
+      }
+
+      try {
+        const uploadedUrls = await uploadImages(fileArray);
+        setImages([...images, ...uploadedUrls]);
+      } catch (error) {
+        console.error("이미지 업로드 실패:", error);
+      }
+
+      e.target.value = "";
+    },
+    [images, uploadImages, showToast],
   );
 
   const setupSocketListeners = useCallback(
@@ -203,17 +244,47 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
           />
         )}
 
-        <MessageInput
-          disabled={userData?.isBlocked}
-          message={message}
-          isSending={isSending}
-          inputRef={messageInputRef}
-          onMessageChange={setMessage}
-          onSend={handleSendMessage}
-          onKeyPress={handleKeyPress}
-          images={images}
-          onImagesChange={setImages}
-        />
+        <div className={styles.footerContent}>
+          <button
+            disabled={userData?.isBlocked}
+            type="button"
+            className={styles.cameraButton}
+            onClick={handleClickFile}
+          >
+            <Icon icon="cameraAlt" size="2.5xl" />
+            <input
+              disabled={userData?.isBlocked}
+              ref={fileInputRef}
+              multiple
+              hidden
+              type="file"
+              accept="image/*"
+              max={10}
+              onChange={handleImageUpload}
+            />
+          </button>
+
+          <MessageInput
+            disabled={userData?.isBlocked}
+            message={message}
+            inputRef={messageInputRef}
+            onMessageChange={setMessage}
+            onKeyPress={handleKeyPress}
+            images={images}
+            onImagesChange={setImages}
+          />
+
+          <Button
+            type="filled-primary"
+            size="m"
+            className={styles.sendButton}
+            onClick={handleSendMessage}
+            onMouseDown={(e) => e.preventDefault()}
+            disabled={isSending || userData?.isBlocked || (!message.trim() && images.length === 0)}
+          >
+            전송
+          </Button>
+        </div>
       </footer>
     </section>
   );

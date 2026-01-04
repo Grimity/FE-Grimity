@@ -1,21 +1,23 @@
 @use "@/styles/globals" as *;
 
 .inputContainer {
-  margin: 8px 20px 20px;
   display: flex;
   flex-direction: column;
 
-  padding: 13px 8px 13px 16px;
-  background-color: $gray10;
+  width: 100%;
+  min-height: 42px;
+  padding: 16px;
+  background-color: $gray0;
   border: 1px solid $gray30;
-  border-radius: 12px;
+  border-radius: 8px;
+  box-sizing: border-box;
 
   &:focus-within {
     background-color: $gray0;
   }
 
   @include Size("mobile") {
-    padding: 12px 4px 12px 8px;
+    padding: 0 8px;
   }
 }
 
@@ -32,39 +34,32 @@
   align-items: center;
   gap: 12px;
   position: relative;
-}
-
-.cameraButton {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: $gray60;
-  padding: 0;
-  width: 28px;
-  height: 28px;
-}
-
-.fileInput {
-  display: none;
+  flex: 1;
+  height: 100%;
 }
 
 .input {
-  width: 60%;
-  padding: 3px 0;
-  @include Body1;
+  width: 100%;
+  @include Label2;
   color: $gray70;
   outline: none;
   border: none;
   background-color: inherit;
+  resize: none;
+  overflow-y: auto;
+  min-height: 20px;
+  max-height: 120px;
+  padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none; 
+  }
 
   &::placeholder {
     color: $gray50;
   }
-}
-
-.sendButton {
-  position: absolute;
-  right: 0;
 }
 
 .imageWrapper {
