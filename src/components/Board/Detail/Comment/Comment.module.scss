@@ -84,6 +84,16 @@
       @include Label1;
       margin-right: 4px;
     }
+
+    :global(.comment-link) {
+      color: $secandary1;
+      text-decoration: underline;
+      word-break: break-all;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
   }
 
   .likeReplyBtn {

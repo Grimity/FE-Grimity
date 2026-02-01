@@ -26,6 +26,7 @@ import ReplyInput from "@/components/Detail/Comment/ReplyInput/ReplyInput";
 import CommentInput from "@/components/Detail/Comment/CommentInput/CommentInput";
 
 import { timeAgo } from "@/utils/timeAgo";
+import { linkifyText } from "@/utils/linkifyText";
 
 import type { CommentProps, CommentWriter } from "@/components/Detail/Comment/Comment.types";
 
@@ -286,7 +287,7 @@ export default function Comment({ feedId, feedWriterId, isFollowingPage }: Comme
                       {reply.mentionedUser && (
                         <span className={styles.mentionedUser}>@{reply.mentionedUser.name}</span>
                       )}
-                      {reply.content}
+                      <span dangerouslySetInnerHTML={{ __html: linkifyText(reply.content) }} />
                     </div>
                     <div className={styles.likeReplyBtn}>
                       <span
@@ -402,7 +403,10 @@ export default function Comment({ feedId, feedWriterId, isFollowingPage }: Comme
                   )}
                   <p className={styles.createdAt}>{timeAgo(comment.createdAt)}</p>
                 </div>
-                <div className={styles.commentText}>{comment.content}</div>
+                <div
+                  className={styles.commentText}
+                  dangerouslySetInnerHTML={{ __html: linkifyText(comment.content) }}
+                />
                 <div className={styles.likeReplyBtn}>
                   <span
                     className={comment.isLike ? styles.likeOnButton : styles.likeButton}
