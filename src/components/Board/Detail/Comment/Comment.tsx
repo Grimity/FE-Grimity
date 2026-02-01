@@ -7,6 +7,7 @@ import Link from "next/link";
 import Loader from "@/components/Layout/Loader/Loader";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { timeAgo } from "@/utils/timeAgo";
+import { linkifyText } from "@/utils/linkifyText";
 import IconComponent from "@/components/Asset/Icon";
 import Button from "@/components/Button/Button";
 import { useModalStore } from "@/states/modalStore";
@@ -345,7 +346,7 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
                     {reply.mentionedUser && (
                       <span className={styles.mentionedUser}>@{reply.mentionedUser?.name}</span>
                     )}
-                    {reply.content}
+                    <span dangerouslySetInnerHTML={{ __html: linkifyText(reply.content) }} />
                   </div>
                   <div className={styles.likeReplyBtn}>
                     <div
@@ -454,7 +455,10 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
                 </div>
                 {!comment.isDeleted && (
                   <>
-                    <p className={styles.commentText}>{comment.content}</p>
+                    <p
+                      className={styles.commentText}
+                      dangerouslySetInnerHTML={{ __html: linkifyText(comment.content) }}
+                    />
                     <div className={styles.likeReplyBtn}>
                       <div
                         className={comment.isLike ? styles.likeOnButton : styles.likeButton}
