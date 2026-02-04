@@ -1,0 +1,271 @@
+// ============================================
+// Semantic Colors
+// 의미 기반 색상 토큰 - CSS 변수로 다크모드 지원
+// ============================================
+
+@use "./atomic" as atomic;
+
+// ============================================
+// CSS Custom Properties (Light/Dark 테마)
+// ============================================
+
+:root {
+  // Background
+  --bg-primary: #{atomic.$white};
+  --bg-secondary: #{atomic.$gray10};
+  --bg-tertiary: #{atomic.$gray30};
+  --bg-black: #{atomic.$black};
+  --bg-overlay-black: #{rgba(atomic.$black, atomic.$opacity40)};
+
+  // Surface
+  --surface-base: #{atomic.$white};
+  --surface-white: #{atomic.$white};
+  --surface-black: #{atomic.$black};
+  --surface-inverse: #{atomic.$gray100};
+
+  // Surface - Gray
+  --surface-gray-bold: #{atomic.$gray80};
+  --surface-gray-normal: #{atomic.$gray60};
+  --surface-gray-subtle: #{atomic.$gray40};
+  --surface-gray-subtler: #{atomic.$gray20};
+  --surface-gray-subtlest: #{atomic.$gray10};
+
+  // Surface - Primary
+  --surface-primary-normal: #{atomic.$green60};
+  --surface-primary-subtler: #{atomic.$green30};
+  --surface-primary-subtlest: #{atomic.$green10};
+
+  // Text
+  --text-white: #{atomic.$white};
+  --text-black: #{atomic.$black};
+  --text-inverse: #{atomic.$white};
+
+  // Text - Gray
+  --text-gray-bold: #{atomic.$gray90};
+  --text-gray-normal: #{atomic.$gray70};
+  --text-gray-subtle: #{atomic.$gray50};
+  --text-gray-subtler: #{atomic.$gray30};
+
+  // Text - Primary
+  --text-primary-normal: #{atomic.$green60};
+  --text-primary-subtle: #{atomic.$green30};
+
+  // Icon
+  --icon-base: #{atomic.$black};
+  --icon-white: #{atomic.$white};
+  --icon-inverse: #{atomic.$white};
+
+  // Icon - Gray
+  --icon-gray-bold: #{atomic.$gray90};
+  --icon-gray-normal: #{atomic.$gray70};
+  --icon-gray-subtle: #{atomic.$gray50};
+  --icon-gray-subtler: #{atomic.$gray30};
+  --icon-gray-subtlest: #{atomic.$gray20};
+
+  // Icon - Primary
+  --icon-primary-normal: #{atomic.$green60};
+  --icon-primary-subtle: #{atomic.$green30};
+
+  // Border
+  --border-inverse: #{atomic.$white};
+
+  // Border - Gray
+  --border-gray-bold: #{atomic.$gray90};
+  --border-gray-normal: #{atomic.$gray40};
+  --border-gray-subtle: #{atomic.$gray30};
+  --border-gray-subtler: #{atomic.$gray20};
+
+  // Border - Primary
+  --border-primary-normal: #{atomic.$green60};
+  --border-primary-subtle: #{atomic.$green30};
+  --border-primary-subtler: #{atomic.$green10};
+
+  // Status
+  --status-positive: #{atomic.$green60};
+  --status-info: #{atomic.$blue60};
+  --status-negative: #{atomic.$red70};
+  --status-cautionary: #{atomic.$orange60};
+  --status-notification: #{atomic.$red60};
+
+  // Graphic
+  --graphic-white: #{atomic.$white};
+  --graphic-primary: #{atomic.$green60};
+  --graphic-bold: #{atomic.$gray90};
+  --graphic-normal: #{atomic.$gray80};
+  --graphic-subtle: #{atomic.$gray60};
+  --graphic-subtler: #{atomic.$gray40};
+}
+
+// ============================================
+// Dark Theme
+// ============================================
+
+[data-theme="dark"] {
+  // Background
+  --bg-primary: #{atomic.$gray100};
+  --bg-secondary: #{atomic.$gray90};
+  --bg-tertiary: #{atomic.$gray70};
+  --bg-overlay-black: #{rgba(atomic.$black, atomic.$opacity80)};
+
+  // Surface
+  --surface-base: #{atomic.$gray100};
+  --surface-inverse: #{atomic.$white};
+
+  // Surface - Gray
+  --surface-gray-bold: #{atomic.$gray20};
+  --surface-gray-normal: #{atomic.$gray40};
+  --surface-gray-subtle: #{atomic.$gray60};
+  --surface-gray-subtler: #{atomic.$gray80};
+  --surface-gray-subtlest: #{atomic.$gray90};
+
+  // Surface - Primary
+  --surface-primary-normal: #{atomic.$green70};
+  --surface-primary-subtler: #{atomic.$green80};
+  --surface-primary-subtlest: #{atomic.$green100};
+
+  // Text
+  --text-inverse: #{atomic.$gray90};
+
+  // Text - Gray
+  --text-gray-bold: #{atomic.$gray20};
+  --text-gray-normal: #{atomic.$gray40};
+  --text-gray-subtle: #{atomic.$gray60};
+  --text-gray-subtler: #{atomic.$gray80};
+
+  // Text - Primary
+  --text-primary-normal: #{atomic.$green50};
+  --text-primary-subtle: #{atomic.$green100};
+
+  // Icon
+  --icon-base: #{atomic.$white};
+  --icon-inverse: #{atomic.$black};
+
+  // Icon - Gray
+  --icon-gray-bold: #{atomic.$gray20};
+  --icon-gray-normal: #{atomic.$gray40};
+  --icon-gray-subtle: #{atomic.$gray60};
+  --icon-gray-subtler: #{atomic.$gray80};
+  --icon-gray-subtlest: #{atomic.$gray90};
+
+  // Icon - Primary
+  --icon-primary-normal: #{atomic.$green50};
+  --icon-primary-subtle: #{atomic.$green100};
+
+  // Border
+  --border-inverse: #{atomic.$gray90};
+
+  // Border - Gray
+  --border-gray-bold: #{atomic.$gray70};
+  --border-gray-normal: #{atomic.$gray70};
+  --border-gray-subtle: #{atomic.$gray80};
+  --border-gray-subtler: #{atomic.$gray90};
+
+  // Border - Primary
+  --border-primary-normal: #{atomic.$green70};
+  --border-primary-subtle: #{atomic.$green80};
+  --border-primary-subtler: #{atomic.$green100};
+
+  // Status
+  --status-positive: #{atomic.$green50};
+  --status-info: #{atomic.$blue50};
+  --status-negative: #{atomic.$red60};
+  --status-cautionary: #{atomic.$orange50};
+  --status-notification: #{atomic.$red50};
+
+  // Graphic
+  --graphic-white: #{atomic.$gray100};
+  --graphic-primary: #{atomic.$green50};
+  --graphic-bold: #{atomic.$gray10};
+  --graphic-normal: #{atomic.$gray30};
+  --graphic-subtle: #{atomic.$gray50};
+  --graphic-subtler: #{atomic.$gray70};
+}
+
+// ============================================
+// SCSS 변수 (편의용 래퍼)
+// ============================================
+
+// Background
+$bg-primary: var(--bg-primary);
+$bg-secondary: var(--bg-secondary);
+$bg-tertiary: var(--bg-tertiary);
+$bg-black: var(--bg-black);
+$bg-overlay-black: var(--bg-overlay-black);
+
+// Surface
+$surface-base: var(--surface-base);
+$surface-white: var(--surface-white);
+$surface-black: var(--surface-black);
+$surface-inverse: var(--surface-inverse);
+
+// Surface - Gray
+$surface-gray-bold: var(--surface-gray-bold);
+$surface-gray-normal: var(--surface-gray-normal);
+$surface-gray-subtle: var(--surface-gray-subtle);
+$surface-gray-subtler: var(--surface-gray-subtler);
+$surface-gray-subtlest: var(--surface-gray-subtlest);
+
+// Surface - Primary
+$surface-primary-normal: var(--surface-primary-normal);
+$surface-primary-subtler: var(--surface-primary-subtler);
+$surface-primary-subtlest: var(--surface-primary-subtlest);
+
+// Text
+$text-white: var(--text-white);
+$text-black: var(--text-black);
+$text-inverse: var(--text-inverse);
+
+// Text - Gray
+$text-gray-bold: var(--text-gray-bold);
+$text-gray-normal: var(--text-gray-normal);
+$text-gray-subtle: var(--text-gray-subtle);
+$text-gray-subtler: var(--text-gray-subtler);
+
+// Text - Primary
+$text-primary-normal: var(--text-primary-normal);
+$text-primary-subtle: var(--text-primary-subtle);
+
+// Icon
+$icon-base: var(--icon-base);
+$icon-white: var(--icon-white);
+$icon-inverse: var(--icon-inverse);
+
+// Icon - Gray
+$icon-gray-bold: var(--icon-gray-bold);
+$icon-gray-normal: var(--icon-gray-normal);
+$icon-gray-subtle: var(--icon-gray-subtle);
+$icon-gray-subtler: var(--icon-gray-subtler);
+$icon-gray-subtlest: var(--icon-gray-subtlest);
+
+// Icon - Primary
+$icon-primary-normal: var(--icon-primary-normal);
+$icon-primary-subtle: var(--icon-primary-subtle);
+
+// Border
+$border-inverse: var(--border-inverse);
+
+// Border - Gray
+$border-gray-bold: var(--border-gray-bold);
+$border-gray-normal: var(--border-gray-normal);
+$border-gray-subtle: var(--border-gray-subtle);
+$border-gray-subtler: var(--border-gray-subtler);
+
+// Border - Primary
+$border-primary-normal: var(--border-primary-normal);
+$border-primary-subtle: var(--border-primary-subtle);
+$border-primary-subtler: var(--border-primary-subtler);
+
+// Status
+$status-positive: var(--status-positive);
+$status-info: var(--status-info);
+$status-negative: var(--status-negative);
+$status-cautionary: var(--status-cautionary);
+$status-notification: var(--status-notification);
+
+// Graphic
+$graphic-white: var(--graphic-white);
+$graphic-primary: var(--graphic-primary);
+$graphic-bold: var(--graphic-bold);
+$graphic-normal: var(--graphic-normal);
+$graphic-subtle: var(--graphic-subtle);
+$graphic-subtler: var(--graphic-subtler);
