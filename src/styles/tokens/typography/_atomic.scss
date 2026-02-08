@@ -1,0 +1,40 @@
+// ============================================
+// Atomic Typography
+// 원시 타이포그래피 토큰 - 의미 없는 순수 값
+// ============================================
+
+// Font Family
+$fontfamily-primary:
+  "Pretendard",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial,
+  sans-serif;
+
+// Font Weight
+$fontweight-regular: 400;
+$fontweight-medium: 500;
+$fontweight-semibold: 600;
+$fontweight-bold: 700;
+
+// Font Size
+$fontsize-xs: 12px;
+$fontsize-sm: 14px;
+$fontsize-md: 16px;
+$fontsize-ml: 18px;
+$fontsize-lg: 20px;
+$fontsize-xl: 24px;
+$fontsize-xxl: 28px;
+
+// Line Height
+$lineheight-sm: 120%;
+$lineheight-md: 140%;
+$lineheight-lg: 160%;
+
+// Letter Spacing
+$letterspacing-default: 0;
+$letterspacing-tight: 0.2px;
+$letterspacing-tighter: 0.8px;
