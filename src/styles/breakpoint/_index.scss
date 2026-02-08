@@ -1,0 +1,66 @@
+// ============================================
+// Breakpoint
+// Breakpoint 정의 + 반응형 믹스인
+// ============================================
+
+@use "sass:map";
+
+// Breakpoint 값 정의
+$breakpoints: (
+  "xs": 0px,
+  "sm": 768px,
+  "md": 992px,
+  "lg": 1200px,
+  "xl": 1600px,
+);
+
+$max-breakpoints: (
+  "xs": 767px,
+  "sm": 991px,
+  "md": 1199px,
+  "lg": 1599px,
+);
+
+// 특정 범위에만 적용
+@mixin breakpoint-only($name) {
+  $min: map.get($breakpoints, $name);
+  $max: map.get($max-breakpoints, $name);
+
+  @if $min == 0 {
+    @media (max-width: $max) {
+      @content;
+    }
+  } @else if $max {
+    @media (min-width: $min) and (max-width: $max) {
+      @content;
+    }
+  } @else {
+    @media (min-width: $min) {
+      @content;
+    }
+  }
+}
+
+// 특정 너비 이상 (mobile-first)
+@mixin breakpoint-up($name) {
+  $min: map.get($breakpoints, $name);
+
+  @if $min == 0 {
+    @content;
+  } @else {
+    @media (min-width: $min) {
+      @content;
+    }
+  }
+}
+
+// 특정 너비 이하 (desktop-first)
+@mixin breakpoint-down($name) {
+  $max: map.get($max-breakpoints, $name);
+
+  @if $max {
+    @media (max-width: $max) {
+      @content;
+    }
+  }
+}
