@@ -1,0 +1,20 @@
+// ============================================
+// Shadow
+// Figma Shadow 정의 + 다크모드 대응
+// ============================================
+
+// Light mode (default)
+:root {
+  --shadow-level1: 0px 2px 6px 0px rgba(0, 0, 0, 0.08);
+  --shadow-level2: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+// Dark mode - 그림자 사용 안함
+[data-theme="dark"] {
+  --shadow-level1: none;
+  --shadow-level2: none;
+}
+
+// SCSS 변수 (컴포넌트에서 사용)
+$shadow-level1: var(--shadow-level1);
+$shadow-level2: var(--shadow-level2);
