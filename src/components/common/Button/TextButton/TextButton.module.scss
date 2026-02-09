@@ -1,0 +1,58 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.text {
+  background-color: transparent;
+  border: none;
+  border-radius: radius.$radius-sm;
+
+  &:disabled {
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// Variant: primary (green text)
+.primary {
+  color: colors.$text-primary-normal;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-primary-subtlest;
+  }
+
+  &:active:not(:disabled) {
+    background-color: colors.$surface-primary-subtler;
+  }
+}
+
+// Variant: assistive (gray text)
+.assistive {
+  color: colors.$text-gray-bold;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:active:not(:disabled) {
+    background-color: colors.$surface-gray-subtler;
+  }
+}
+
+.large {
+  height: 32px;
+  padding: 0 spacing.$spacing-8;
+  @include typo.label-1;
+}
+
+.regular {
+  height: auto;
+  padding: 0 spacing.$spacing-4;
+  @include typo.label-3;
+}
+
+.small {
+  height: auto;
+  padding: 0 spacing.$spacing-4;
+  @include typo.label-6;
+}

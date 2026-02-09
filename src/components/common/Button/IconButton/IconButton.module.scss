@@ -1,0 +1,104 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+
+.iconButton {
+  position: relative;
+  border: none;
+  background-color: transparent;
+}
+
+// Variant: sm (32x32)
+.sm {
+  width: 32px;
+  height: 32px;
+  border-radius: radius.$radius-sm;
+  color: colors.$icon-gray-normal;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:active:not(:disabled) {
+    background-color: colors.$surface-gray-subtler;
+  }
+
+  &:disabled {
+    color: colors.$icon-gray-subtler;
+  }
+}
+
+// Variant: normal (40x40)
+.normal {
+  width: 40px;
+  height: 40px;
+  border-radius: radius.$radius-sm;
+  color: colors.$icon-gray-normal;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:active:not(:disabled) {
+    background-color: colors.$surface-gray-subtler;
+  }
+
+  &:disabled {
+    color: colors.$icon-gray-subtler;
+  }
+}
+
+// Variant: outlined (40x40 with border)
+.outlined {
+  width: 40px;
+  height: 40px;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-base;
+  color: colors.$icon-gray-normal;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:active:not(:disabled) {
+    background-color: colors.$surface-gray-subtler;
+  }
+
+  &:disabled {
+    color: colors.$icon-gray-subtler;
+    border-color: colors.$border-gray-subtler;
+  }
+}
+
+// Variant: solid (40x40 with dark bg)
+.solid {
+  width: 40px;
+  height: 40px;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-inverse;
+  color: colors.$icon-inverse;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.75;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtle;
+    color: colors.$icon-gray-subtler;
+  }
+}
+
+.badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: radius.$radius-full;
+  background-color: colors.$status-notification;
+  pointer-events: none;
+}

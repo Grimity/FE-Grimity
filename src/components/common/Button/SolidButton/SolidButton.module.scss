@@ -1,0 +1,58 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.solid {
+  background-color: colors.$surface-inverse;
+  color: colors.$text-inverse;
+  border-radius: radius.$radius-sm;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.75;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtle;
+    color: colors.$text-gray-subtler;
+  }
+}
+
+.large {
+  height: 52px;
+  padding: 0 spacing.$spacing-20;
+  @include typo.label-1;
+}
+
+.regular {
+  height: 42px;
+  padding: 0 spacing.$spacing-16;
+  @include typo.label-3;
+}
+
+.small {
+  height: 32px;
+  padding: 0 spacing.$spacing-12;
+  @include typo.label-5;
+}
+
+.iconOnly {
+  &.large {
+    width: 52px;
+    padding: 0;
+  }
+
+  &.regular {
+    width: 42px;
+    padding: 0;
+  }
+
+  &.small {
+    width: 32px;
+    padding: 0;
+  }
+}
