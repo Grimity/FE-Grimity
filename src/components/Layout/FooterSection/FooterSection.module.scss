@@ -19,6 +19,22 @@
     gap: 12px;
   }
 
+  .guideItem {
+    display: none;
+
+    @include Size("tablet") {
+      display: block;
+    }
+  }
+
+  .noticeItem {
+    display: block;
+
+    @include Size("tablet") {
+      display: none;
+    }
+  }
+
   .dropdown {
     position: absolute;
     padding: 8px 0;
@@ -62,6 +78,59 @@
     }
   }
 
+  .guideDropdown {
+    position: absolute;
+    padding: 8px 0;
+    bottom: 120px;
+    left: 16px;
+    background-color: $gray0;
+    box-shadow: 0 0px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 180px;
+    z-index: 10;
+
+    @include Size("tablet") {
+      bottom: 80px;
+      left: 0px;
+    }
+
+    @include Size("mobile") {
+      bottom: auto;
+      top: -160px;
+      left: auto;
+    }
+
+    .dropdownItem {
+      @include Sub4;
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      text-align: left;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: $gray80;
+      text-decoration: none;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: $gray20;
+      }
+    }
+  }
+
+  .link {
+    color: $gray60;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $gray80;
+    }
+  }
+
   .subLinkWrapper {
     display: flex;
     flex-direction: column;
@@ -79,15 +148,7 @@
       display: flex;
       align-items: center;
 
-      a {
-        color: $gray60;
-        text-decoration: none;
-        transition: color 0.2s;
-
-        &:hover {
-          color: $gray80;
-        }
-
+      .link {
         &:not(:last-child)::after {
           content: "•";
           margin: 0 6px;
