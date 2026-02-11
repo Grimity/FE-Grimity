@@ -1,32 +1,5 @@
 @use "sass:map";
-
-@font-face {
-  font-family: "Pretendard";
-  font-style: normal;
-  font-weight: 400;
-  src: url("/font/Pretendard-Regular.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Pretendard";
-  font-style: normal;
-  font-weight: 500;
-  src: url("/font/Pretendard-Medium.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Pretendard";
-  font-style: normal;
-  font-weight: 600;
-  src: url("/font/Pretendard-SemiBold.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Pretendard";
-  font-style: normal;
-  font-weight: 700;
-  src: url("/font/Pretendard-Bold.woff2") format("woff2");
-}
+@use "./tokens/typography/fonts";
 
 // font family + weight
 @mixin REGULAR {

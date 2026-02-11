@@ -1,0 +1,147 @@
+// ============================================
+// Semantic Typography
+// 의미 기반 텍스트 스타일 - Figma Text Styles 매핑
+// ============================================
+
+@use "./atomic" as atomic;
+
+// Title
+@mixin title-1 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-bold;
+  font-size: atomic.$fontsize-xxl;
+  line-height: atomic.$lineheight-sm;
+  letter-spacing: atomic.$letterspacing-default;
+}
+
+@mixin title-2 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-bold;
+  font-size: atomic.$fontsize-xl;
+  line-height: atomic.$lineheight-sm;
+  letter-spacing: atomic.$letterspacing-default;
+}
+
+@mixin title-3 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-bold;
+  font-size: atomic.$fontsize-lg;
+  line-height: atomic.$lineheight-sm;
+  letter-spacing: atomic.$letterspacing-default;
+}
+
+// Subtitle
+@mixin subtitle-1 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-bold;
+  font-size: atomic.$fontsize-ml;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-default;
+}
+
+@mixin subtitle-2 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-bold;
+  font-size: atomic.$fontsize-md;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin subtitle-3 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-bold;
+  font-size: atomic.$fontsize-sm;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+// Body
+@mixin body-1-r {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-regular;
+  font-size: atomic.$fontsize-md;
+  line-height: atomic.$lineheight-lg;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin body-1-sb {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-semibold;
+  font-size: atomic.$fontsize-md;
+  line-height: atomic.$lineheight-lg;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin body-2-r {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-regular;
+  font-size: atomic.$fontsize-sm;
+  line-height: atomic.$lineheight-lg;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin body-2-sb {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-semibold;
+  font-size: atomic.$fontsize-sm;
+  line-height: atomic.$lineheight-lg;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+// Caption
+@mixin caption-1 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-regular;
+  font-size: atomic.$fontsize-xs;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tighter;
+}
+
+// Label
+@mixin label-1 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-semibold;
+  font-size: atomic.$fontsize-md;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin label-2 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-medium;
+  font-size: atomic.$fontsize-md;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin label-3 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-semibold;
+  font-size: atomic.$fontsize-sm;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin label-4 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-medium;
+  font-size: atomic.$fontsize-sm;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tight;
+}
+
+@mixin label-5 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-semibold;
+  font-size: atomic.$fontsize-xs;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tighter;
+}
+
+@mixin label-6 {
+  font-family: atomic.$fontfamily-primary;
+  font-weight: atomic.$fontweight-medium;
+  font-size: atomic.$fontsize-xs;
+  line-height: atomic.$lineheight-md;
+  letter-spacing: atomic.$letterspacing-tighter;
+}

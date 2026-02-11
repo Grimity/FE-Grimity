@@ -1,0 +1,26 @@
+@use "../tokens/spacing" as *;
+
+// ============================================
+// Layout Variables
+// 레이아웃 변수 - 그리드, LNB, 컨테이너
+// ============================================
+
+// LNB (Left Navigation Bar)
+$lnb-width-tablet: 72px;
+$lnb-width-desktop: 260px;
+
+// Container
+$container-max-width: 1500px;
+
+// Grid - 컬럼 수
+$grid-columns-mobile: 2;
+$grid-columns-tablet: 4;
+$grid-columns-desktop: 12;
+
+// Grid - 패딩 (spacing 토큰 참조)
+$grid-padding-mobile: $spacing-16;
+$grid-padding-tablet: $spacing-20;
+$grid-padding-desktop: $spacing-20;
+
+// Grid - Gap (spacing 토큰 참조)
+$grid-gap: $spacing-16;

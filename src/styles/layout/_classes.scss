@@ -1,0 +1,67 @@
+@use "variables" as *;
+@use "../breakpoint" as *;
+
+// ============================================
+// Layout Classes
+// className으로 사용하는 전역 레이아웃 클래스
+// ============================================
+
+// Container - max-width + 중앙 정렬 + 반응형 패딩
+.container {
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $grid-padding-mobile;
+
+  @include breakpoint-up("sm") {
+    padding: 0 $grid-padding-tablet;
+  }
+
+  @include breakpoint-up("lg") {
+    padding: 0 $grid-padding-desktop;
+  }
+}
+
+// Grid - 반응형 컬럼 그리드
+.grid {
+  display: grid;
+  gap: $grid-gap;
+  grid-template-columns: repeat($grid-columns-mobile, 1fr);
+
+  @include breakpoint-up("sm") {
+    grid-template-columns: repeat($grid-columns-tablet, 1fr);
+  }
+
+  @include breakpoint-up("lg") {
+    grid-template-columns: repeat($grid-columns-desktop, 1fr);
+  }
+}
+
+// Column Span - 데스크톱 12단 기준
+.col-span-1 {
+  grid-column: span 1;
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+.col-span-3 {
+  grid-column: span 3;
+}
+
+.col-span-4 {
+  grid-column: span 4;
+}
+
+.col-span-6 {
+  grid-column: span 6;
+}
+
+.col-span-8 {
+  grid-column: span 8;
+}
+
+.col-span-12 {
+  grid-column: span 12;
+}
