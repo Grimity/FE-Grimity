@@ -1,0 +1,43 @@
+@use "@/styles/globals.scss" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px 40px;
+  gap: 24px;
+
+  .title {
+    @include Title2;
+    color: $gray80;
+  }
+
+  .infoList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .label {
+    @include Sub3;
+    color: $gray80;
+  }
+
+  .value {
+    @include Label3;
+    color: $gray80;
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+
+  .link {
+    @include Label3;
+    color: $gray80;
+    line-height: 1.6;
+  }
+}
