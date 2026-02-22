@@ -1,0 +1,44 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+
+.wrapper {
+  display: inline-block;
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.spoke {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2.5px;
+  height: 7px;
+  border-radius: 2px;
+  transform-origin: center bottom;
+  animation: fade 0.8s linear infinite;
+
+  .basic & {
+    background-color: colors.$icon-gray-bold;
+  }
+
+  .dark & {
+    background-color: colors.$icon-white;
+  }
+}
+
+@for $i from 0 through 7 {
+  .spoke#{$i} {
+    transform: translate(-50%, -100%) rotate(#{$i * 45}deg) translateY(-5px);
+    animation-delay: #{($i - 7) * 0.1}s;
+  }
+}
+
+@keyframes fade {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}

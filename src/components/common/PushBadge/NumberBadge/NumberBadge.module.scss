@@ -1,0 +1,29 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 16px;
+  @include typo.label-5;
+  white-space: nowrap;
+
+  &.solid {
+    background-color: colors.$status-notification;
+    color: colors.$text-white;
+  }
+
+  &.outline {
+    background-color: colors.$surface-white;
+    border: 1px solid colors.$border-gray-subtler;
+    color: colors.$status-notification;
+  }
+
+  &.text {
+    background-color: colors.$surface-white;
+    color: colors.$text-gray-bold;
+  }
+}

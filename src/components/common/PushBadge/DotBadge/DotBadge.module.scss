@@ -1,0 +1,52 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.dot {
+  position: absolute;
+  border-radius: 50%;
+  background-color: colors.$status-notification;
+  border: 2px solid colors.$surface-white;
+
+  &.xSmall {
+    width: 6px;
+    height: 6px;
+  }
+
+  &.small {
+    width: 8px;
+    height: 8px;
+  }
+
+  &.medium {
+    width: 10px;
+    height: 10px;
+  }
+
+  &.topRight {
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+  }
+
+  &.topLeft {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  &.bottomRight {
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+  }
+
+  &.bottomLeft {
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, 50%);
+  }
+}
