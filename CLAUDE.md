@@ -69,6 +69,27 @@ onSettled: () => { /* invalidate queries */ }
 - `Component.module.scss` - Scoped styles
 - `Component.types.ts` - TypeScript interfaces
 
+**SCSS Token Usage**: Always import design tokens via `@use`, never use raw CSS variables directly:
+```scss
+// ✅ Correct
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.element {
+  background-color: colors.$surface-primary-normal;
+  color: colors.$text-white;
+  @include typo.label-5;
+  padding: 0 spacing.$spacing-12;
+}
+
+// ❌ Wrong
+.element {
+  background-color: var(--surface-primary-normal);
+}
+```
+
 ### Shared Types
 
 Types from backend are imported from `@grimity/dto` and `@grimity/shared-types` packages.
