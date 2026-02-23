@@ -1,0 +1,101 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/colors/atomic" as atomic;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+// ============================================
+// FormFieldBase - TextField/TextArea 공유 기반 스타일
+// ============================================
+
+// Wrapper (border + background 담당)
+.wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-base;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+
+  &:focus-within {
+    border-color: colors.$status-info;
+  }
+}
+
+// 내부 input/textarea 공통
+.input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: colors.$text-gray-bold;
+
+  &::placeholder {
+    color: colors.$text-gray-subtle;
+  }
+}
+
+// ============================================
+// Size variants
+// ============================================
+
+.md {
+  height: 52px;
+  padding: 0 spacing.$spacing-16;
+
+  .input {
+    @include typo.label-2;
+  }
+}
+
+.sm {
+  height: 42px;
+  padding: 0 spacing.$spacing-12;
+
+  .input {
+    @include typo.label-4;
+  }
+}
+
+// ============================================
+// Status variants
+// ============================================
+
+.error {
+  border-color: colors.$status-negative;
+  background-color: rgba(atomic.$red70, atomic.$opacity10);
+
+  &:focus-within {
+    border-color: colors.$status-negative;
+  }
+}
+
+.success {
+  border-color: colors.$status-positive;
+
+  &:focus-within {
+    border-color: colors.$status-positive;
+  }
+}
+
+.disabled {
+  border-color: colors.$border-gray-subtler;
+  background-color: colors.$surface-gray-subtlest;
+  cursor: not-allowed;
+
+  &:focus-within {
+    border-color: colors.$border-gray-subtler;
+  }
+
+  .input {
+    color: colors.$text-gray-subtler;
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: colors.$text-gray-subtler;
+    }
+  }
+}

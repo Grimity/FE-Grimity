@@ -1,0 +1,96 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/colors/atomic" as atomic;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+// ============================================
+// TextArea wrapper overrides
+// ============================================
+
+.wrapper {
+  align-items: flex-start;
+  padding: spacing.$spacing-12 spacing.$spacing-16;
+  min-height: 120px;
+}
+
+.textarea {
+  @include typo.label-2;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: colors.$text-gray-bold;
+  resize: vertical;
+
+  &::placeholder {
+    color: colors.$text-gray-subtle;
+  }
+}
+
+// ============================================
+// Variant: underline
+// ============================================
+
+.underline {
+  border: none;
+  border-bottom: 1px solid colors.$border-gray-subtle;
+  border-radius: 0;
+  background-color: transparent;
+  padding: spacing.$spacing-12 0;
+
+  &:focus-within {
+    border-color: colors.$status-info;
+  }
+}
+
+// ============================================
+// Variant: text (no border)
+// ============================================
+
+.text {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  padding: spacing.$spacing-8 0;
+
+  &:focus-within {
+    border-color: transparent;
+  }
+}
+
+// ============================================
+// Variant: sm (smaller textarea)
+// ============================================
+
+.smVariant {
+  min-height: 80px;
+  padding: spacing.$spacing-8 spacing.$spacing-12;
+
+  .textarea {
+    @include typo.label-4;
+  }
+}
+
+// ============================================
+// Count inside textarea
+// ============================================
+
+.countWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.count {
+  @include typo.label-5;
+  color: colors.$text-gray-subtle;
+  align-self: flex-end;
+  flex-shrink: 0;
+  margin-top: spacing.$spacing-4;
+}
+
+.countError {
+  color: colors.$status-negative;
+}

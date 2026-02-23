@@ -1,0 +1,30 @@
+@use "@/styles/tokens/spacing" as spacing;
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-6;
+}
+
+.fieldRow {
+  display: flex;
+  gap: spacing.$spacing-8;
+  align-items: flex-start;
+}
+
+.fieldWrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+// Horizontal layout
+.horizontal {
+  flex-direction: row;
+  align-items: center;
+  gap: spacing.$spacing-16;
+
+  .fieldRow {
+    flex: 1;
+    min-width: 0;
+  }
+}

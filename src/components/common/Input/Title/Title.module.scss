@@ -1,0 +1,18 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+$required-color: #dc2626;
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+}
+
+.essential {
+  color: $required-color;
+  @include typo.label-3;
+}
