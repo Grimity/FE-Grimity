@@ -1,0 +1,68 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.navigation {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 spacing.$spacing-8;
+  border-radius: radius.$radius-sm;
+  color: colors.$text-gray-normal;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  @include typo.label-2;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  &:hover:not(:disabled) {
+    color: colors.$text-gray-bold;
+  }
+
+  &.active {
+    background-color: colors.$surface-gray-subtler;
+    color: colors.$text-gray-bold;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: spacing.$spacing-4;
+  color: colors.$icon-gray-normal;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  &:hover:not(:disabled) {
+    color: colors.$icon-gray-bold;
+  }
+
+  &.active {
+    color: colors.$icon-gray-bold;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

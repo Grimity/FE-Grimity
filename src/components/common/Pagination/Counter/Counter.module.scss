@@ -1,0 +1,30 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/colors/atomic" as atomic;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background-color: #{rgba(atomic.$black, atomic.$opacity60)};
+  color: colors.$text-white;
+  gap: spacing.$spacing-2;
+
+  &.lg {
+    padding: spacing.$spacing-4 spacing.$spacing-12;
+    @include typo.label-2;
+  }
+
+  &.md {
+    padding: spacing.$spacing-4 spacing.$spacing-10;
+    @include typo.label-5;
+  }
+
+  .current,
+  .separator,
+  .total {
+    display: inline-block;
+  }
+}
