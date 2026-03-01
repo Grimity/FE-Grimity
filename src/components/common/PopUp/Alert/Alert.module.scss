@@ -1,0 +1,103 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.alert {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 335px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: spacing.$spacing-32 spacing.$spacing-16 spacing.$spacing-16;
+  border-radius: radius.$radius-xl;
+  border: 1px solid colors.$border-gray-subtler;
+  background-color: colors.$surface-base;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.iconWrap {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  margin-bottom: spacing.$spacing-16;
+}
+
+.illustIcon {
+  width: 58px;
+  height: 54px;
+}
+
+.mainText {
+  margin: 0 0 spacing.$spacing-6;
+  min-width: 0;
+  width: 100%;
+  text-align: center;
+  color: colors.$text-gray-bold;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  @include typo.subtitle-1;
+}
+
+.description {
+  margin: 0 0 spacing.$spacing-20;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  text-align: center;
+  color: colors.$text-gray-bold;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  @include typo.body-2-r;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.buttons {
+  min-width: 0;
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+  gap: spacing.$spacing-6;
+  width: 100%;
+}
+
+.buttonWrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+
+  button {
+    width: 100%;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.alert.xl {
+  width: 400px;
+  max-width: 400px;
+
+  .iconWrap {
+    margin-bottom: spacing.$spacing-20;
+  }
+  .illustIcon {
+    width: 72px;
+    height: auto;
+    aspect-ratio: 58 / 54;
+  }
+  .mainText {
+    @include typo.title-2;
+    margin: 0 0 spacing.$spacing-10;
+  }
+  .description {
+    @include typo.body-1-r;
+    margin: 0 0 spacing.$spacing-28;
+  }
+}
