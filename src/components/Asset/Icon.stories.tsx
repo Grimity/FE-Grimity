@@ -7,7 +7,7 @@ import ICONS_TEMP from "@/constants/asset";
 import styles from "@/components/Asset/Icon.stories.module.scss";
 
 const meta = {
-  title: "Common/Icon",
+  title: "Asset/Icon (Legacy)",
   component: Icon,
   parameters: {
     layout: "centered",
