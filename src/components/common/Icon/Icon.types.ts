@@ -150,8 +150,6 @@ export type IconName =
   | "illust"
   | "illust-success"
   | "illust-warning"
-  | "illust-information"
-  // Status (Toast etc.)
   | "success"
   | "error"
   | "warning"
