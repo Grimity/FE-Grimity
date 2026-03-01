@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import Icon from "@/components/Asset/IconTemp";
+import Icon from "../../Icon/Icon";
+import { IconName } from "../../Icon/Icon.types";
 import styles from "./Toast.module.scss";
 import type { ToastProps } from "./Toast.types";
 
@@ -56,8 +57,8 @@ export default function Toast({
       {showIcon && type in TOAST_ICON_MAP && (
         <span className={styles.iconWrap} aria-hidden>
           <Icon
-            icon={TOAST_ICON_MAP[type as keyof typeof TOAST_ICON_MAP]}
-            size="md"
+            name={TOAST_ICON_MAP[type as keyof typeof TOAST_ICON_MAP] as IconName}
+            size={16}
             className={styles.icon}
           />
         </span>

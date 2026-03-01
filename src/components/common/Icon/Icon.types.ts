@@ -149,7 +149,13 @@ export type IconName =
   | "illust-replay"
   | "illust"
   | "illust-success"
-  | "illust-warning";
+  | "illust-warning"
+  | "illust-information"
+  // Status (Toast etc.)
+  | "success"
+  | "error"
+  | "warning"
+  | "information";
 
 export type IconSize = 12 | 16 | 20 | 24 | 32;
 

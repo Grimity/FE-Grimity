@@ -1,11 +1,11 @@
 "use client";
 
 import clsx from "clsx";
-import Icon from "@/components/Asset/IconTemp";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import styles from "./Modal.module.scss";
 import type { ModalProps } from "./Modal.types";
+import Icon from "../../Icon/Icon";
 
 export default function Modal({
   title,
@@ -41,7 +41,7 @@ export default function Modal({
                 onClick={onBack}
                 aria-label="뒤로가기"
               >
-                <Icon icon="chevronLeft" size="2xl" />
+                <Icon name="chevron-left" size={24} />
               </button>
             )}
             <h2 id="modal-title" className={styles.title}>
@@ -53,7 +53,7 @@ export default function Modal({
               <div className={styles.headerRightAction}>{headerRightAction}</div>
             )}
             <button type="button" className={styles.iconButton} onClick={onClose} aria-label="닫기">
-              <Icon icon="close" size="2xl" />
+              <Icon name="x" size={24} />
             </button>
           </div>
         </header>

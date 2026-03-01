@@ -41,30 +41,21 @@
   flex-shrink: 0;
   width: 16px;
   height: 16px;
-  border-radius: 50%;
-
-  .icon {
-    color: color-mix(in srgb, colors.$surface-black 80%, transparent);
-  }
 }
 
-.positive .iconWrap,
-.positive .iconWrap .icon {
+.positive .iconWrap {
   color: colors.$status-positive;
 }
 
-.negative .iconWrap,
-.negative .iconWrap .icon {
+.negative .iconWrap {
   color: colors.$status-negative;
 }
 
-.cautionary .iconWrap,
-.cautionary .iconWrap .icon {
+.cautionary .iconWrap {
   color: colors.$status-cautionary;
 }
 
-.info .iconWrap,
-.info .iconWrap .icon {
+.info .iconWrap {
   color: colors.$status-info;
 }
 

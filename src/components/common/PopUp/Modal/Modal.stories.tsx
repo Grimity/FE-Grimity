@@ -2,7 +2,7 @@ import { useState } from "react";
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 import Modal from "./Modal";
-import Icon from "@/components/Asset/IconTemp";
+import Icon from "../../Icon/Icon";
 
 const meta = {
   title: "Common/PopUp/Modal",
@@ -93,7 +93,7 @@ export const WithHeaderAction: Story = {
         }}
         aria-label="헤더 액션"
       >
-        <Icon icon="plus" size="2xl" />
+        <Icon name="plus" size={24} />
       </button>
     ),
     onClose: action("close"),
