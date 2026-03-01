@@ -21,6 +21,7 @@ export default function Icon({
         color && styles[`color-${color}`],
         className
       )}
+      fill="none"
       width={size}
       height={size}
       aria-hidden={isDecorative ? "true" : undefined}

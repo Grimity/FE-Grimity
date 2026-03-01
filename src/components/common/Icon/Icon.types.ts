@@ -117,6 +117,7 @@ export type IconName =
   | "kakao"
   | "kakao-fill"
   | "instagram"
+  | "instagram-fill"
   | "thread"
   | "thread-fill"
   | "pixiv"
