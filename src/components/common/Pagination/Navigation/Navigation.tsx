@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import Icon from "@/components/Asset/IconTemp";
+import Icon from "../../Icon/Icon";
 import styles from "./Navigation.module.scss";
 import type { NavigationProps, NavigationPageProps, NavigationIconProps } from "./Navigation.types";
 
@@ -43,7 +43,7 @@ export default function Navigation({
   return (
     <nav className={clsx(styles.navigation, className)} aria-label="페이지 네비게이션">
       <NavigationIcon
-        icon={prevIcon ?? <Icon icon="chevronLeft" size="3xl" />}
+        icon={prevIcon ?? <Icon name="chevron-left" size={24} />}
         active={currentPage > 1}
         aria-label="이전 페이지"
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
@@ -58,7 +58,7 @@ export default function Navigation({
         />
       ))}
       <NavigationIcon
-        icon={nextIcon ?? <Icon icon="chevronRight" size="3xl" />}
+        icon={nextIcon ?? <Icon name="chevron-right" size={24} />}
         active={currentPage < totalPages}
         aria-label="다음 페이지"
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
