@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import Icon from "../../Icon/Icon";
+import Icon from "@/components/common/Icon/Icon";
 import styles from "./Navigation.module.scss";
 import type { NavigationProps, NavigationPageProps, NavigationIconProps } from "./Navigation.types";
 

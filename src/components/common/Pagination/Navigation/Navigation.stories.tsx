@@ -1,6 +1,5 @@
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
-import Icon from "@/components/Asset/IconTemp";
 import Navigation from "./Navigation";
 
 const meta = {
