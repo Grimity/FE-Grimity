@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 import Modal from "./Modal";
-import Icon from "../../Icon/Icon";
+import Icon from "@/components/common/Icon/Icon";
 
 const meta = {
   title: "Common/PopUp/Modal",
@@ -10,8 +9,10 @@ const meta = {
   parameters: { layout: "centered" },
   tags: ["autodocs"],
   argTypes: {
-    showBackButton: { control: "boolean" },
-    singleButtonVariant: { options: ["primary", "secondary"], control: { type: "radio" } },
+    buttonType: {
+      options: ["primary", "secondary", "tertiary", "double"],
+      control: { type: "radio" },
+    },
   },
 } satisfies Meta<typeof Modal>;
 
@@ -30,10 +31,10 @@ const defaultChildren = (
 export const Primary: Story = {
   args: {
     title: "제목",
-    showBackButton: true,
+    onBack: action("back"),
     onClose: action("close"),
     children: defaultChildren,
-    singleButtonVariant: "primary",
+    buttonType: "primary",
     primaryLabel: "label",
     onPrimary: action("primary"),
   },
@@ -42,30 +43,29 @@ export const Primary: Story = {
 export const Secondary: Story = {
   args: {
     title: "제목",
-    showBackButton: false,
     onClose: action("close"),
     children: defaultChildren,
-    singleButtonVariant: "secondary",
-    primaryLabel: "Label",
-    onPrimary: action("primary"),
+    buttonType: "secondary",
+    secondaryLabel: "Label",
+    onSecondary: action("secondary"),
   },
 };
 
 export const Tertiary: Story = {
   args: {
     title: "제목",
-    showBackButton: false,
     onClose: action("close"),
     children: defaultChildren,
+    buttonType: "tertiary",
   },
 };
 
 export const TwoButtons: Story = {
   args: {
     title: "제목",
-    showBackButton: false,
     onClose: action("close"),
     children: defaultChildren,
+    buttonType: "double",
     primaryLabel: "label",
     onPrimary: action("primary"),
     secondaryLabel: "Label",
@@ -76,7 +76,6 @@ export const TwoButtons: Story = {
 export const WithHeaderAction: Story = {
   args: {
     title: "제목",
-    showBackButton: true,
     onBack: action("back"),
     headerRightAction: (
       <button
@@ -98,6 +97,7 @@ export const WithHeaderAction: Story = {
     ),
     onClose: action("close"),
     children: defaultChildren,
+    buttonType: "primary",
     primaryLabel: "label",
     onPrimary: action("primary"),
   },

@@ -1,16 +1,31 @@
 import type { ReactNode } from "react";
 
-export interface ModalProps {
+type ButtonConfig =
+  | {
+      buttonType: "primary";
+      primaryLabel: string;
+      onPrimary: () => void;
+    }
+  | {
+      buttonType: "secondary";
+      secondaryLabel: string;
+      onSecondary: () => void;
+    }
+  | { buttonType: "tertiary" }
+  | {
+      buttonType: "double";
+      primaryLabel: string;
+      onPrimary: () => void;
+      secondaryLabel: string;
+      onSecondary: () => void;
+    }
+  | { buttonType?: never };
+
+export type ModalProps = ButtonConfig & {
   title: string;
-  showBackButton?: boolean;
   onBack?: () => void;
   headerRightAction?: ReactNode;
   onClose: () => void;
   children: ReactNode;
-  singleButtonVariant?: "primary" | "secondary";
-  primaryLabel?: string;
-  onPrimary?: () => void;
-  secondaryLabel?: string;
-  onSecondary?: () => void;
   className?: string;
-}
+};

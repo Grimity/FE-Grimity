@@ -5,24 +5,14 @@ import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import styles from "./Modal.module.scss";
 import type { ModalProps } from "./Modal.types";
-import Icon from "../../Icon/Icon";
+import Icon from "@/components/common/Icon/Icon";
 
-export default function Modal({
-  title,
-  showBackButton = false,
-  onBack,
-  headerRightAction,
-  onClose,
-  children,
-  singleButtonVariant = "primary",
-  primaryLabel,
-  onPrimary,
-  secondaryLabel,
-  onSecondary,
-  className,
-}: ModalProps) {
-  const hasFooter = primaryLabel != null && onPrimary != null;
-  const hasTwoButtons = hasFooter && secondaryLabel != null && onSecondary != null;
+export default function Modal(props: ModalProps) {
+  const { title, onBack, headerRightAction, onClose, children, className } = props;
+  const hasFooter =
+    props.buttonType === "primary" ||
+    props.buttonType === "secondary" ||
+    props.buttonType === "double";
 
   return (
     <div
@@ -34,7 +24,7 @@ export default function Modal({
       <div className={styles.modal}>
         <header className={styles.header}>
           <div className={styles.headerLeft}>
-            {showBackButton && (
+            {onBack != null && (
               <button
                 type="button"
                 className={styles.iconButton}
@@ -62,30 +52,32 @@ export default function Modal({
 
         {hasFooter && (
           <footer className={styles.footer}>
-            {hasTwoButtons ? (
+            {props.buttonType === "double" && (
               <>
                 <div className={styles.buttonWrap}>
-                  <OutlinedButton size="large" onClick={onSecondary}>
-                    {secondaryLabel}
+                  <OutlinedButton size="large" onClick={props.onSecondary}>
+                    {props.secondaryLabel}
                   </OutlinedButton>
                 </div>
                 <div className={styles.buttonWrap}>
-                  <SolidButton size="large" onClick={onPrimary}>
-                    {primaryLabel}
+                  <SolidButton size="large" onClick={props.onPrimary}>
+                    {props.primaryLabel}
                   </SolidButton>
                 </div>
               </>
-            ) : (
+            )}
+            {props.buttonType === "primary" && (
               <div className={styles.buttonWrap}>
-                {singleButtonVariant === "primary" ? (
-                  <SolidButton size="large" onClick={onPrimary}>
-                    {primaryLabel}
-                  </SolidButton>
-                ) : (
-                  <OutlinedButton size="large" onClick={onPrimary}>
-                    {primaryLabel}
-                  </OutlinedButton>
-                )}
+                <SolidButton size="large" onClick={props.onPrimary}>
+                  {props.primaryLabel}
+                </SolidButton>
+              </div>
+            )}
+            {props.buttonType === "secondary" && (
+              <div className={styles.buttonWrap}>
+                <OutlinedButton size="large" onClick={props.onSecondary}>
+                  {props.secondaryLabel}
+                </OutlinedButton>
               </div>
             )}
           </footer>
