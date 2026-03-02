@@ -2,20 +2,20 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import Icon from "../../Icon/Icon";
-import { IconName } from "../../Icon/Icon.types";
+import Icon from "@/components/common/Icon/Icon";
+import type { IconName } from "@/components/common/Icon/Icon.types";
 import styles from "./Toast.module.scss";
 import type { ToastProps } from "./Toast.types";
 
 const TOAST_ICON_MAP = {
-  Positive: "success",
-  Negative: "error",
-  Cautionary: "warning",
-  Info: "information",
+  Positive: "check-circle-fill",
+  Negative: "danger-circle-fill",
+  Cautionary: "danger-triangle-fill",
+  Info: "info-circle-fill",
 } as const;
 
 const TOAST_DURATION = 2000;
-const EXIT_ANIMATION_MS = 200;
+const ANIMATION_MS = 200;
 
 export default function Toast({
   type = "Default",
@@ -27,20 +27,14 @@ export default function Toast({
   const [phase, setPhase] = useState<"enter" | "visible" | "exit">("enter");
 
   useEffect(() => {
-    const visibleTimer = setTimeout(() => {
-      setPhase("exit");
-    }, duration);
-
-    return () => clearTimeout(visibleTimer);
-  }, [duration]);
-
-  useEffect(() => {
-    if (phase !== "exit") return;
-    const exitTimer = setTimeout(() => {
-      onClose?.();
-    }, EXIT_ANIMATION_MS);
-    return () => clearTimeout(exitTimer);
-  }, [phase, onClose]);
+    const delay = phase === "visible" ? duration : ANIMATION_MS;
+    const timer = setTimeout(() => {
+      if (phase === "enter") setPhase("visible");
+      else if (phase === "visible") setPhase("exit");
+      else onClose?.();
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [phase, duration, onClose]);
 
   const showIcon = type !== "Default";
 
