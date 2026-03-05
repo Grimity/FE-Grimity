@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  border-radius: 999px;
+  border-radius: radius.$radius-full;
   background-color: colors.$surface-base;
   border: 1px solid colors.$border-gray-subtle;
   color: colors.$text-gray-bold;
