@@ -32,12 +32,3 @@ export const FivePages: Story = {
     onPageChange: action("page-change"),
   },
 };
-
-export const PageIconOnly: Story = {
-  args: {
-    currentPage: 1,
-    totalPages: 10,
-    onPageChange: action("page-change"),
-  },
-  render: (args) => <Navigation {...args} />,
-};

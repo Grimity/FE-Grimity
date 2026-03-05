@@ -2,12 +2,13 @@
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/colors/atomic" as atomic;
 @use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/radius" as radius;
 
 .counter {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: radius.$radius-full;
   background-color: #{rgba(atomic.$black, atomic.$opacity60)};
   color: colors.$text-white;
   gap: spacing.$spacing-2;
