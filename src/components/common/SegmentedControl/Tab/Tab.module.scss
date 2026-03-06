@@ -1,0 +1,42 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid colors.$border-gray-bold;
+  color: colors.$text-gray-subtle;
+  cursor: pointer;
+  padding: spacing.$spacing-12 0 spacing.$spacing-16 0;
+  transition: all 0.2s ease-in-out;
+
+  &.lg {
+    @include typo.subtitle-1;
+  }
+
+  &.md {
+    @include typo.label-1;
+  }
+
+  &.sm {
+    @include typo.label-3;
+    gap: 4px;
+  }
+
+  &.active {
+    border-bottom-color: colors.$border-gray-bold;
+
+    .title {
+      color: colors.$text-gray-bold;
+    }
+
+    .number {
+      color: colors.$text-primary-normal;
+    }
+  }
+}
