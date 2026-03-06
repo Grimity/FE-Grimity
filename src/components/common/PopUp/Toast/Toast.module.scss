@@ -1,0 +1,82 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/colors/atomic" as atomic;
+
+.container {
+  position: absolute;
+  top: spacing.$spacing-8;
+  right: spacing.$spacing-8;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+  pointer-events: none;
+}
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  padding: spacing.$spacing-10 spacing.$spacing-12 spacing.$spacing-10 spacing.$spacing-10;
+  border-radius: 999px;
+  background: #{rgba(atomic.$black, atomic.$opacity80)};
+  backdrop-filter: blur(5px);
+  color: colors.$text-white;
+  @include typo.label-5;
+
+  &.enter {
+    animation: toastEnter 0.2s ease-out forwards;
+  }
+
+  &.exit {
+    animation: toastExit 0.2s ease-out forwards;
+  }
+}
+
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.positive .iconWrap {
+  color: colors.$status-positive;
+}
+
+.negative .iconWrap {
+  color: colors.$status-negative;
+}
+
+.cautionary .iconWrap {
+  color: colors.$status-cautionary;
+}
+
+.info .iconWrap {
+  color: colors.$status-info;
+}
+
+@keyframes toastEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}

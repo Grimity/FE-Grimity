@@ -1,0 +1,116 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: spacing.$spacing-24;
+  background-color: colors.$bg-overlay-black;
+}
+
+.modal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  max-height: 760px;
+  min-height: 200px;
+  border-radius: radius.$radius-xl;
+  border: 1px solid colors.$border-gray-subtler;
+  background-color: colors.$surface-base;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.header {
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
+  padding: 0 spacing.$spacing-20;
+  background-color: colors.$surface-base;
+
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    gap: spacing.$spacing-8;
+    min-width: 0;
+  }
+
+  .headerRight {
+    display: flex;
+    align-items: center;
+    gap: spacing.$spacing-4;
+    flex-shrink: 0;
+  }
+
+  .iconButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    color: colors.$icon-gray-bold;
+    cursor: pointer;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  .headerRightAction {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .title {
+    margin: 0;
+    min-width: 0;
+    @include typo.title-3;
+    color: colors.$text-gray-bold;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  @include typo.body-1-r;
+  color: colors.$text-gray-normal;
+}
+
+.footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-8;
+  padding: 0 spacing.$spacing-20 spacing.$spacing-20;
+
+  .buttonWrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+
+    button {
+      width: 100%;
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
