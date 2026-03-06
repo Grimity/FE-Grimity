@@ -1,0 +1,61 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+  width: 375px;
+  padding: spacing.$spacing-72 0;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  aspect-ratio: 1/1;
+  margin-bottom: spacing.$spacing-16;
+
+  .empty.xl & {
+    margin-bottom: spacing.$spacing-24;
+  }
+}
+
+.title {
+  margin: 0;
+  min-width: 0;
+  color: colors.$text-gray-bold;
+  @include typo.subtitle-1;
+
+  .empty.xl & {
+    @include typo.title-3;
+  }
+}
+
+.content {
+  margin: spacing.$spacing-12 0 0;
+  min-width: 0;
+  max-width: 100%;
+  color: colors.$text-gray-bold;
+  @include typo.body-2-r;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  .empty.xl & {
+    @include typo.body-1-r;
+  }
+}
+
+.buttonWrap {
+  margin-top: spacing.$spacing-24;
+  flex-shrink: 0;
+}
