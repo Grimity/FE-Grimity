@@ -1,0 +1,21 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+
+.checkmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: colors.$icon-gray-subtle;
+
+  &.checked {
+    color: colors.$icon-primary-normal;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
