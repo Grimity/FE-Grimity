@@ -48,7 +48,7 @@ export default function Input({
               aria-invalid={ariaInvalid}
               {...textFieldProps}
             />
-          ) : (
+          ) : textAreaProps ? (
             <TextArea
               id={inputId}
               status={fieldStatus}
@@ -56,7 +56,7 @@ export default function Input({
               aria-invalid={ariaInvalid}
               {...textAreaProps}
             />
-          )}
+          ) : null}
         </div>
         {button}
       </div>

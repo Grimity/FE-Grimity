@@ -106,10 +106,9 @@ export const TextAreaInput: Story = {
     inputType: "textarea",
     textAreaProps: {
       placeholder: "Enter description...",
+      maxCount: 500,
     },
     helperMessage: "Max 500 characters",
-    currentCount: 120,
-    maxCount: 500,
   },
 };
 

@@ -9,9 +9,15 @@
 // ============================================
 
 .wrapper {
-  align-items: flex-start;
-  padding: spacing.$spacing-12 spacing.$spacing-16;
+  flex-direction: column;
+  align-items: stretch;
+  padding: spacing.$spacing-16 spacing.$spacing-16 spacing.$spacing-12 spacing.$spacing-16;
   min-height: 120px;
+
+  // TextArea: focus 시 border 색상 변경 없음
+  &:focus-within {
+    border-color: colors.$border-gray-subtle;
+  }
 }
 
 .textarea {
@@ -22,10 +28,19 @@
   outline: none;
   background: transparent;
   color: colors.$text-gray-bold;
-  resize: vertical;
+  resize: none;
 
   &::placeholder {
     color: colors.$text-gray-subtle;
+  }
+
+  &:disabled {
+    color: colors.$text-gray-subtler;
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: colors.$text-gray-subtler;
+    }
   }
 }
 
@@ -38,10 +53,10 @@
   border-bottom: 1px solid colors.$border-gray-subtle;
   border-radius: 0;
   background-color: transparent;
-  padding: spacing.$spacing-12 0;
+  padding: spacing.$spacing-16 spacing.$spacing-16 spacing.$spacing-12 spacing.$spacing-16;
 
   &:focus-within {
-    border-color: colors.$status-info;
+    border-bottom-color: colors.$border-gray-subtle;
   }
 }
 
@@ -53,7 +68,7 @@
   border: none;
   border-radius: 0;
   background-color: transparent;
-  padding: spacing.$spacing-8 0;
+  padding: spacing.$spacing-16 0 spacing.$spacing-12 0;
 
   &:focus-within {
     border-color: transparent;
@@ -65,12 +80,55 @@
 // ============================================
 
 .smVariant {
-  min-height: 80px;
-  padding: spacing.$spacing-8 spacing.$spacing-12;
+  height: 100px;
+  min-height: 40px;
+  padding: spacing.$spacing-10 spacing.$spacing-16;
 
   .textarea {
     @include typo.label-4;
   }
+}
+
+// ============================================
+// Error state (variant-specific overrides)
+// ============================================
+
+.error {
+  &:focus-within {
+    border-color: colors.$status-negative;
+  }
+}
+
+.underlineError {
+  border-bottom-color: colors.$status-negative;
+  background-color: rgba(atomic.$red70, atomic.$opacity10);
+
+  &:focus-within {
+    border-bottom-color: colors.$status-negative;
+  }
+}
+
+.textError {
+  border: none;
+  background-color: rgba(atomic.$red70, atomic.$opacity10);
+
+  &:focus-within {
+    border: none;
+  }
+}
+
+// ============================================
+// Disabled state (variant-specific overrides)
+// ============================================
+
+.underlineDisabled {
+  border-bottom-color: colors.$border-gray-subtler;
+  background-color: colors.$surface-gray-subtlest;
+}
+
+.textDisabled {
+  border-bottom: 1px solid colors.$border-gray-subtler;
+  background-color: colors.$surface-gray-subtlest;
 }
 
 // ============================================
@@ -80,6 +138,7 @@
 .countWrapper {
   display: flex;
   flex-direction: column;
+  flex: 1;
   width: 100%;
 }
 
@@ -91,6 +150,7 @@
   margin-top: spacing.$spacing-4;
 }
 
-.countError {
-  color: colors.$status-negative;
+.countCurrent {
+  color: colors.$text-gray-normal;
 }
+

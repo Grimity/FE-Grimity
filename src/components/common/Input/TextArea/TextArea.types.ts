@@ -8,8 +8,7 @@ export interface TextAreaProps
   > {
   variant?: TextAreaVariant;
   status?: TextAreaStatus;
-  currentCount?: number;
-  maxCount?: number;
+  maxCount: number;
   autoResize?: boolean;
   className?: string;
 }

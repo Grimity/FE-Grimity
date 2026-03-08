@@ -18,6 +18,7 @@ const meta = {
       control: { type: "radio" },
     },
     autoResize: { control: "boolean" },
+    maxCount: { control: "number" },
   },
   decorators: [
     (Story) => (
@@ -34,6 +35,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     placeholder: "Enter text...",
+    maxCount: 500,
   },
 };
 
@@ -42,6 +44,7 @@ export const ErrorState: Story = {
     placeholder: "Error state",
     status: "error",
     defaultValue: "Invalid content",
+    maxCount: 500,
   },
 };
 
@@ -49,14 +52,7 @@ export const Disabled: Story = {
   args: {
     placeholder: "Disabled",
     status: "disabled",
-  },
-};
-
-export const WithCount: Story = {
-  args: {
-    placeholder: "Type something...",
-    currentCount: 45,
-    maxCount: 200,
+    maxCount: 500,
   },
 };
 
@@ -64,6 +60,7 @@ export const UnderlineVariant: Story = {
   args: {
     variant: "underline",
     placeholder: "Underline style",
+    maxCount: 500,
   },
 };
 
@@ -71,6 +68,7 @@ export const TextVariant: Story = {
   args: {
     variant: "text",
     placeholder: "No border style",
+    maxCount: 500,
   },
 };
 
@@ -78,6 +76,7 @@ export const SmallVariant: Story = {
   args: {
     variant: "sm",
     placeholder: "Small textarea",
+    maxCount: 500,
   },
 };
 
@@ -85,5 +84,6 @@ export const AutoResize: Story = {
   args: {
     autoResize: true,
     placeholder: "Auto-resize textarea",
+    maxCount: 500,
   },
 };

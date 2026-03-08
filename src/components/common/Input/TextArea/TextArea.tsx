@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import baseStyles from "../FormFieldBase.module.scss";
 import styles from "./TextArea.module.scss";
@@ -9,7 +9,6 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     {
       variant = "default",
       status = "default",
-      currentCount,
       maxCount,
       autoResize = false,
       className,
@@ -21,7 +20,24 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ) => {
     const internalRef = useRef<HTMLTextAreaElement | null>(null);
     const isDisabled = disabled || status === "disabled";
-    const hasCount = currentCount !== undefined && maxCount !== undefined;
+    const isError = status === "error";
+
+    const getInitialCount = () => {
+      if (typeof rest.value === "string") return rest.value.length;
+      if (typeof rest.defaultValue === "string")
+        return rest.defaultValue.length;
+      return 0;
+    };
+
+    const [charCount, setCharCount] = useState(getInitialCount);
+
+    const isControlled = rest.value !== undefined;
+
+    useEffect(() => {
+      if (isControlled) {
+        setCharCount(String(rest.value).length);
+      }
+    }, [isControlled, rest.value]);
 
     const adjustHeight = useCallback(() => {
       const el = internalRef.current;
@@ -35,6 +51,10 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     }, [adjustHeight, rest.value]);
 
     const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+      const target = e.target as HTMLTextAreaElement;
+      if (!isControlled) {
+        setCharCount(target.value.length);
+      }
       adjustHeight();
       onInput?.(e);
     };
@@ -44,7 +64,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       if (typeof ref === "function") {
         ref(el);
       } else if (ref) {
-        (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = el;
+        (ref as React.RefObject<HTMLTextAreaElement | null>).current = el;
       }
     };
 
@@ -54,8 +74,13 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       variant === "underline" && styles.underline,
       variant === "text" && styles.text,
       variant === "sm" && styles.smVariant,
-      status === "error" && baseStyles.error,
+      isError && baseStyles.error,
+      isError && styles.error,
+      isError && variant === "underline" && styles.underlineError,
+      isError && variant === "text" && styles.textError,
       isDisabled && baseStyles.disabled,
+      isDisabled && variant === "underline" && styles.underlineDisabled,
+      isDisabled && variant === "text" && styles.textDisabled,
       className
     );
 
@@ -66,21 +91,16 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             ref={setRefs}
             disabled={isDisabled}
             className={styles.textarea}
-            aria-invalid={status === "error" || undefined}
+            maxLength={maxCount}
+            aria-invalid={isError || undefined}
             onInput={handleInput}
             {...(autoResize && { style: { resize: "none", overflow: "hidden" } })}
             {...rest}
           />
-          {hasCount && (
-            <span
-              className={clsx(
-                styles.count,
-                status === "error" && styles.countError
-              )}
-            >
-              {currentCount}/{maxCount}
-            </span>
-          )}
+          <span className={styles.count}>
+            <span className={styles.countCurrent}>{charCount}</span>/
+            {maxCount}
+          </span>
         </div>
       </div>
     );
