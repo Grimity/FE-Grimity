@@ -1,5 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Input from "./Input";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import type { MentionItem } from "../MentionTextField/MentionTextField.types";
+
+const MOCK_USERS: MentionItem[] = [
+  { id: "u1", name: "Alice" },
+  { id: "u2", name: "Bob" },
+  { id: "u3", name: "Charlie" },
+];
 
 const meta = {
   title: "Common/Input/Input",
@@ -10,7 +18,7 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     inputType: {
-      options: ["textfield", "textarea"],
+      options: ["textfield", "textarea", "mention"],
       control: { type: "radio" },
     },
     layout: {
@@ -92,10 +100,8 @@ export const WithCount: Story = {
   args: {
     label: "Title",
     textFieldProps: {
-      variant: "count",
       placeholder: "Enter title",
     },
-    currentCount: 12,
     maxCount: 50,
   },
 };
@@ -112,6 +118,44 @@ export const TextAreaInput: Story = {
   },
 };
 
+export const WithButton: Story = {
+  name: "Type=button",
+  args: {
+    label: "Title",
+    showEssential: true,
+    textFieldProps: {
+      placeholder: "Input filled",
+    },
+    helperMessage: "Helper text",
+    button: <SolidButton size="large">label</SolidButton>,
+  },
+};
+
+export const Community: Story = {
+  name: "Type=Community",
+  args: {
+    textFieldProps: {
+      placeholder: "댓글 입력",
+      size: "sm",
+    },
+    button: <SolidButton size="regular">등록</SolidButton>,
+  },
+};
+
+export const CommunityAnswer: Story = {
+  name: "Type=CommunityAnswer",
+  args: {
+    inputType: "mention",
+    mentionTextFieldProps: {
+      placeholder: "댓글 입력",
+      size: "sm",
+      mentionItems: MOCK_USERS,
+    },
+    replyTo: { id: "u1", nickname: "user" },
+    button: <SolidButton size="regular">등록</SolidButton>,
+  },
+};
+
 export const HorizontalWithButton: Story = {
   args: {
     label: "Tag",
@@ -120,22 +164,6 @@ export const HorizontalWithButton: Story = {
       placeholder: "Enter tag",
       size: "sm",
     },
-    button: (
-      <button
-        type="button"
-        style={{
-          height: 42,
-          padding: "0 16px",
-          borderRadius: 8,
-          border: "none",
-          background: "#1a1b1e",
-          color: "#fff",
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-        }}
-      >
-        Add
-      </button>
-    ),
+    button: <SolidButton size="regular">Add</SolidButton>,
   },
 };

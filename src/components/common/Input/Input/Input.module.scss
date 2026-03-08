@@ -1,9 +1,11 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 
 .input {
   display: flex;
   flex-direction: column;
-  gap: spacing.$spacing-6;
+  gap: spacing.$spacing-8;
 }
 
 .fieldRow {
@@ -15,6 +17,15 @@
 .fieldWrapper {
   flex: 1;
   min-width: 0;
+}
+
+// Reply header
+.replyHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
 }
 
 // Horizontal layout

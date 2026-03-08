@@ -7,7 +7,7 @@ $required-color: #dc2626;
 .title {
   display: inline-flex;
   align-items: center;
-  gap: spacing.$spacing-4;
+  gap: spacing.$spacing-2;
   @include typo.label-3;
   color: colors.$text-gray-bold;
 }
