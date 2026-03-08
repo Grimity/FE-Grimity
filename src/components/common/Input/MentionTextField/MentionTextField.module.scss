@@ -1,0 +1,112 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+// ============================================
+// Container (position context for dropdown)
+// ============================================
+
+.container {
+  position: relative;
+}
+
+// ============================================
+// Editable — contenteditable input area
+// ============================================
+
+.editable {
+  flex: 1;
+  min-width: 0;
+  outline: none;
+  border: none;
+  background: transparent;
+  color: colors.$text-gray-bold;
+  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+
+  // Placeholder via CSS pseudo-element (contenteditable has no native placeholder)
+  &[data-empty="true"][data-placeholder]::before {
+    content: attr(data-placeholder);
+    color: colors.$text-gray-subtle;
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.editableMd {
+  @include typo.label-2;
+}
+
+.editableSm {
+  @include typo.label-4;
+}
+
+// ============================================
+// Mention chip
+// ============================================
+
+.mentionChip {
+  display: inline;
+  color: colors.$text-primary-normal;
+  @include typo.label-3;
+  font-weight: 600;
+  cursor: default;
+  user-select: none;
+}
+
+// ============================================
+// Count display
+// ============================================
+
+.count {
+  @include typo.caption-1;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.currentCount {
+  color: colors.$text-gray-normal;
+}
+
+.maxCount {
+  color: colors.$text-gray-subtle;
+}
+
+// ============================================
+// Dropdown
+// ============================================
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + spacing.$spacing-4);
+  left: 0;
+  right: 0;
+  background-color: colors.$surface-base;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: spacing.$spacing-10 spacing.$spacing-16;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  @include typo.label-4;
+  color: colors.$text-gray-bold;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
+  }
+}

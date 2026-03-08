@@ -1,4 +1,4 @@
-import { TextFieldBaseProps } from "../TextField/TextField.types";
+import { TextFieldProps } from "../TextField/TextField.types";
 import { TextAreaProps } from "../TextArea/TextArea.types";
 import { HelperTextStatus } from "../HelperText/HelperText.types";
 
@@ -7,7 +7,7 @@ export interface InputProps {
   showEssential?: boolean;
   inputType?: "textfield" | "textarea";
   layout?: "default" | "horizontal";
-  textFieldProps?: TextFieldBaseProps;
+  textFieldProps?: TextFieldProps;
   textAreaProps?: TextAreaProps;
   helperMessage?: string;
   helperStatus?: HelperTextStatus;
