@@ -82,19 +82,21 @@ export const WithCount: Story = {
   },
 };
 
-export const SearchVariant: Story = {
-  render: () => {
-    const ref = useRef<TextFieldHandle>(null);
+function SearchRenderer() {
+  const ref = useRef<TextFieldHandle>(null);
 
-    return (
-      <TextField
-        ref={ref}
-        variant="search"
-        placeholder="Search..."
-        onClear={() => ref.current?.clear()}
-      />
-    );
-  },
+  return (
+    <TextField
+      ref={ref}
+      variant="search"
+      placeholder="Search..."
+      onClear={() => ref.current?.clear()}
+    />
+  );
+}
+
+export const SearchVariant: Story = {
+  render: () => <SearchRenderer />,
 };
 
 export const TitleVariant: Story = {
