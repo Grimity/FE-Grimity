@@ -1,5 +1,6 @@
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+
 import baseStyles from "../FormFieldBase.module.scss";
 import styles from "./TextArea.module.scss";
 import { TextAreaProps } from "./TextArea.types";
@@ -16,7 +17,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       onInput,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const internalRef = useRef<HTMLTextAreaElement | null>(null);
     const isDisabled = disabled || status === "disabled";
@@ -24,8 +25,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
     const getInitialCount = () => {
       if (typeof rest.value === "string") return rest.value.length;
-      if (typeof rest.defaultValue === "string")
-        return rest.defaultValue.length;
+      if (typeof rest.defaultValue === "string") return rest.defaultValue.length;
       return 0;
     };
 
@@ -81,7 +81,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       isDisabled && baseStyles.disabled,
       isDisabled && variant === "underline" && styles.underlineDisabled,
       isDisabled && variant === "text" && styles.textDisabled,
-      className
+      className,
     );
 
     return (
@@ -98,13 +98,12 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             {...rest}
           />
           <span className={styles.count}>
-            <span className={styles.countCurrent}>{charCount}</span>/
-            {maxCount}
+            <span className={styles.countCurrent}>{charCount}</span>/{maxCount}
           </span>
         </div>
       </div>
     );
-  }
+  },
 );
 
 TextArea.displayName = "TextArea";

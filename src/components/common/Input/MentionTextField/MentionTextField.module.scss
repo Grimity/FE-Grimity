@@ -3,17 +3,9 @@
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
 
-// ============================================
-// Container (position context for dropdown)
-// ============================================
-
 .container {
   position: relative;
 }
-
-// ============================================
-// Editable — contenteditable input area
-// ============================================
 
 .editable {
   flex: 1;
@@ -27,7 +19,6 @@
   overflow: hidden;
   position: relative;
 
-  // Placeholder via CSS pseudo-element (contenteditable has no native placeholder)
   &[data-empty="true"][data-placeholder]::before {
     content: attr(data-placeholder);
     color: colors.$text-gray-subtle;
@@ -47,10 +38,6 @@
   @include typo.label-4;
 }
 
-// ============================================
-// Mention chip
-// ============================================
-
 .mentionChip {
   display: inline;
   color: colors.$text-primary-normal;
@@ -59,10 +46,6 @@
   cursor: default;
   user-select: none;
 }
-
-// ============================================
-// Count display
-// ============================================
 
 .count {
   @include typo.caption-1;
@@ -77,10 +60,6 @@
 .maxCount {
   color: colors.$text-gray-subtle;
 }
-
-// ============================================
-// Dropdown
-// ============================================
 
 .dropdown {
   position: absolute;

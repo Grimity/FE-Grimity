@@ -4,11 +4,6 @@
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
 
-// ============================================
-// FormFieldBase - TextField/TextArea 공유 기반 스타일
-// ============================================
-
-// Wrapper (border + background 담당)
 .wrapper {
   display: flex;
   align-items: center;
@@ -24,7 +19,6 @@
   }
 }
 
-// 내부 input/textarea 공통
 .input {
   flex: 1;
   min-width: 0;
@@ -37,10 +31,6 @@
     color: colors.$text-gray-subtle;
   }
 }
-
-// ============================================
-// Size variants
-// ============================================
 
 .md {
   height: 52px;
@@ -59,10 +49,6 @@
     @include typo.label-4;
   }
 }
-
-// ============================================
-// Status variants
-// ============================================
 
 .error {
   border-color: colors.$status-negative;

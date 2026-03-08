@@ -9,8 +9,10 @@ export type TextFieldVariant = "default" | "count" | "search" | "title";
 export type TextFieldSize = "md" | "sm";
 export type TextFieldStatus = "default" | "error" | "success" | "disabled";
 
-export interface TextFieldProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "type" | "children"> {
+export interface TextFieldProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "size" | "type" | "children"
+> {
   variant?: TextFieldVariant;
   size?: TextFieldSize;
   status?: TextFieldStatus;

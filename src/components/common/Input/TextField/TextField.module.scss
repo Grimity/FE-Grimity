@@ -4,10 +4,6 @@
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
 
-// ============================================
-// Search variant
-// ============================================
-
 .search {
   height: 48px;
   padding: 0 spacing.$spacing-16;
@@ -43,10 +39,6 @@
   }
 }
 
-// ============================================
-// Title variant
-// ============================================
-
 .titleVariant {
   height: auto;
   border: none;
@@ -78,7 +70,6 @@
   }
 }
 
-// Title variant status overrides (must come after .titleVariant)
 .titleError {
   border-bottom-color: colors.$status-negative;
 
@@ -94,10 +85,6 @@
     border-bottom-color: colors.$status-positive;
   }
 }
-
-// ============================================
-// Count display
-// ============================================
 
 .count {
   @include typo.caption-1;

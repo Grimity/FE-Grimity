@@ -4,17 +4,12 @@
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
 
-// ============================================
-// TextArea wrapper overrides
-// ============================================
-
 .wrapper {
   flex-direction: column;
   align-items: stretch;
   padding: spacing.$spacing-16 spacing.$spacing-16 spacing.$spacing-12 spacing.$spacing-16;
   min-height: 120px;
 
-  // TextArea: focus 시 border 색상 변경 없음
   &:focus-within {
     border-color: colors.$border-gray-subtle;
   }
@@ -44,10 +39,6 @@
   }
 }
 
-// ============================================
-// Variant: underline
-// ============================================
-
 .underline {
   border: none;
   border-bottom: 1px solid colors.$border-gray-subtle;
@@ -60,10 +51,6 @@
   }
 }
 
-// ============================================
-// Variant: text (no border)
-// ============================================
-
 .text {
   border: none;
   border-radius: 0;
@@ -75,10 +62,6 @@
   }
 }
 
-// ============================================
-// Variant: sm (smaller textarea)
-// ============================================
-
 .smVariant {
   height: 100px;
   min-height: 40px;
@@ -88,10 +71,6 @@
     @include typo.label-4;
   }
 }
-
-// ============================================
-// Error state (variant-specific overrides)
-// ============================================
 
 .error {
   &:focus-within {
@@ -117,10 +96,6 @@
   }
 }
 
-// ============================================
-// Disabled state (variant-specific overrides)
-// ============================================
-
 .underlineDisabled {
   border-bottom-color: colors.$border-gray-subtler;
   background-color: colors.$surface-gray-subtlest;
@@ -130,10 +105,6 @@
   border-bottom: 1px solid colors.$border-gray-subtler;
   background-color: colors.$surface-gray-subtlest;
 }
-
-// ============================================
-// Count inside textarea
-// ============================================
 
 .countWrapper {
   display: flex;
@@ -153,4 +124,3 @@
 .countCurrent {
   color: colors.$text-gray-normal;
 }
-

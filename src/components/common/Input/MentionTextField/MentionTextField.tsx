@@ -363,14 +363,7 @@ const MentionTextField = forwardRef<MentionTextFieldHandle, MentionTextFieldProp
 
       triggerChange();
       if (!isComposing.current) saveValidState();
-    }, [
-      getIsEmpty,
-      getTextContent,
-      maxCount,
-      restoreLastValid,
-      triggerChange,
-      saveValidState,
-    ]);
+    }, [getIsEmpty, getTextContent, maxCount, restoreLastValid, triggerChange, saveValidState]);
 
     const handleCompositionStart = useCallback(() => {
       isComposing.current = true;
