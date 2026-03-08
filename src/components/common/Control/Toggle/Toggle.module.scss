@@ -1,0 +1,35 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  width: 52px;
+  height: 32px;
+  padding: 4px;
+  border-radius: 100px;
+  border: none;
+  background-color: colors.$surface-gray-subtle;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  &.checked {
+    background-color: colors.$surface-primary-normal;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: colors.$surface-white;
+  transition: transform 0.2s ease-in-out;
+
+  .checked & {
+    transform: translateX(20px);
+  }
+}
