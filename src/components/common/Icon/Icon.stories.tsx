@@ -210,6 +210,7 @@ const ICON_CATEGORIES: { label: string; icons: IconName[] }[] = [
       "head",
       "fontbg",
       "fontcolor",
+      "dot",
     ],
   },
   {
