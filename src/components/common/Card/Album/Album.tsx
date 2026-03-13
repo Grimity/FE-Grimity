@@ -63,10 +63,8 @@ export default function Album({
   const isRank = variant === "rank" && rank != null && rank in RANK_ICON_MAP;
   const isMainOrRank = variant === "mainTitle" || variant === "rank";
 
-  const Tag = onClick ? "div" : "article";
-
   return (
-    <Tag
+    <article
       className={clsx(styles.album, className)}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -185,6 +183,6 @@ export default function Album({
           </span>
         </div>
       </div>
-    </Tag>
+    </article>
   );
 }

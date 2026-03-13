@@ -1,0 +1,107 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.img {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: spacing.$spacing-8;
+  overflow: hidden;
+
+  &.lg {
+    width: 200px;
+  }
+
+  &.md {
+    width: 160px;
+  }
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: radius.$radius-md;
+  overflow: hidden;
+  background-color: colors.$surface-gray-subtlest;
+
+  &.representative {
+    outline: 2px solid colors.$border-primary-normal;
+    outline-offset: -2px;
+    box-sizing: border-box;
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.badge {
+  position: absolute;
+  z-index: 1;
+  top: spacing.$spacing-8;
+  left: spacing.$spacing-8;
+  display: inline-flex;
+  align-items: center;
+  border-radius: radius.$radius-full;
+  border: 1px solid colors.$border-gray-subtler;
+  cursor: pointer;
+  background-color: colors.$surface-base;
+  color: colors.$text-gray-subtle;
+
+  &.badgeActive {
+    background-color: colors.$surface-primary-normal;
+    border-color: colors.$border-primary-normal;
+    color: colors.$text-white;
+  }
+
+  &.lg {
+    padding: spacing.$spacing-6 spacing.$spacing-10;
+    @include typo.label-4;
+    gap: spacing.$spacing-4;
+  }
+
+  &.md {
+    padding: spacing.$spacing-4 spacing.$spacing-8;
+    @include typo.label-6;
+    gap: spacing.$spacing-2;
+  }
+}
+
+.deleteBtn {
+  position: absolute;
+  z-index: 1;
+  top: spacing.$spacing-8;
+  right: spacing.$spacing-8;
+  padding: spacing.$spacing-4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: radius.$radius-sm;
+  border: none;
+  cursor: pointer;
+  background-color: colors.$bg-overlay-black;
+}
+
+.body {
+  min-width: 0;
+
+  .title {
+    margin: 0;
+    min-width: 0;
+    color: colors.$text-gray-bold;
+    @include typo.label-2;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

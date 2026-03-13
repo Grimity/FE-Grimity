@@ -152,7 +152,7 @@ export type IconName =
   | "illust-success"
   | "illust-warning";
 
-export type IconSize = 2 | 12 | 16 | 20 | 24 | 32;
+export type IconSize = 2 | 12 | 16 | 20 | 24 | 32 | 40;
 
 export type IconColor =
   | "base"
