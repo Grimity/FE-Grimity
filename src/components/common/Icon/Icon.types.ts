@@ -137,6 +137,7 @@ export type IconName =
   | "logo-g-square"
   | "logo-g"
   | "logo-g-circle"
+  | "profile"
   // Graphic
   | "rank-1"
   | "rank-2"
@@ -152,7 +153,7 @@ export type IconName =
   | "illust-success"
   | "illust-warning";
 
-export type IconSize = 2 | 12 | 16 | 20 | 24 | 32 | 40;
+export type IconSize = 2 | 12 | 16 | 20 | 24 | 32 | 40 | 64;
 
 export type IconColor =
   | "base"

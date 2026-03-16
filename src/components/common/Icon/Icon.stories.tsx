@@ -241,7 +241,7 @@ const ICON_CATEGORIES: { label: string; icons: IconName[] }[] = [
   },
   {
     label: "Logo",
-    icons: ["logo", "logo-g-square", "logo-g", "logo-g-circle"],
+    icons: ["logo", "logo-g-square", "logo-g", "logo-g-circle", "profile"],
   },
   {
     label: "Graphic",

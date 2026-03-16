@@ -1,4 +1,4 @@
-import { fn } from "@storybook/test";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import UserHover from "./UserHover";
 
@@ -9,46 +9,46 @@ const meta = {
   tags: ["autodocs"],
   args: {
     nickname: "Nickname",
-    bio: "Main title is here Main title is here Main title is here",
-    onFollowClick: fn(),
-    onMessageClick: fn(),
+    isFollowing: false,
   },
   argTypes: {
-    concent: { control: "boolean" },
     isFollowing: { control: "boolean" },
+    content: { control: "text" },
   },
 } satisfies Meta<typeof UserHover>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    concent: false,
-    isFollowing: false,
-  },
-};
+function createInteractiveStory(initialHasContent: boolean): Story {
+  return {
+    render: (args) => {
+      const [isFollowing, setIsFollowing] = useState<boolean>(
+        args.isFollowing ?? false
+      );
 
-export const DefaultWithConcent: Story = {
-  name: "Default (concent=True)",
-  args: {
-    concent: true,
-    isFollowing: false,
-  },
-};
+      const handleFollowClick = () => {
+        setIsFollowing((prev) => !prev);
+      };
 
-export const Following: Story = {
-  name: "Follow (concent=False)",
-  args: {
-    concent: false,
-    isFollowing: true,
-  },
-};
+      return (
+        <UserHover
+          {...args}
+          isFollowing={isFollowing}
+          onFollowClick={handleFollowClick}
+          content={initialHasContent ? args.content : undefined}
+        />
+      );
+    },
+  };
+}
 
-export const FollowingWithConcent: Story = {
-  name: "Follow (concent=True)",
+export const Default: Story = createInteractiveStory(false);
+
+export const WithContent: Story = {
+  ...createInteractiveStory(true),
   args: {
-    concent: true,
-    isFollowing: true,
+    content:
+      "소개글 2줄이 노출됩니다. 내용이 길지 않을 경우 한줄만 차지하게 해주세요, 넘어가면 이렇게 처리해주세요.",
   },
 };
