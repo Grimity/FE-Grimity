@@ -32,6 +32,32 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+function DefaultWrapper(args: DefaultUserCardProps) {
+  const [isFollowing, setIsFollowing] = useState(args.isFollowing ?? false);
+  return (
+    <div style={{ width: "320px" }}>
+      <UserCard
+        {...args}
+        variant="default"
+        isFollowing={isFollowing}
+        onFollowClick={() => setIsFollowing((prev) => !prev)}
+      />
+    </div>
+  );
+}
+
+function SearchWrapper(args: SearchUserCardProps) {
+  const [isFollowing, setIsFollowing] = useState(args.isFollowing ?? false);
+  return (
+    <UserCard
+      {...args}
+      variant="search"
+      isFollowing={isFollowing}
+      onFollowClick={() => setIsFollowing((prev) => !prev)}
+    />
+  );
+}
+
 export const Default: Story = {
   args: {
     variant: "default",
@@ -39,20 +65,7 @@ export const Default: Story = {
     followingCount: 32,
     images: [{}, {}, {}],
   } as DefaultUserCardProps,
-  render: (args) => {
-    const a = args as DefaultUserCardProps;
-    const [isFollowing, setIsFollowing] = useState(a.isFollowing ?? false);
-    return (
-      <div style={{ width: "320px" }}>
-        <UserCard
-          {...a}
-          variant="default"
-          isFollowing={isFollowing}
-          onFollowClick={() => setIsFollowing((prev: boolean) => !prev)}
-        />
-      </div>
-    );
-  },
+  render: (args) => <DefaultWrapper {...(args as DefaultUserCardProps)} />,
 };
 
 export const Search: Story = {
@@ -62,18 +75,7 @@ export const Search: Story = {
     content:
       "소개글 2줄이 노출됩니다. 내용이 길지 않을 경우 한줄만 차지하게 해주세요, 넘어가면 이렇게 처리해주세요.",
   } as SearchUserCardProps,
-  render: (args) => {
-    const a = args as SearchUserCardProps;
-    const [isFollowing, setIsFollowing] = useState(a.isFollowing ?? false);
-    return (
-      <UserCard
-        {...a}
-        variant="search"
-        isFollowing={isFollowing}
-        onFollowClick={() => setIsFollowing((prev: boolean) => !prev)}
-      />
-    );
-  },
+  render: (args) => <SearchWrapper {...(args as SearchUserCardProps)} />,
 };
 
 export const TagView: Story = {
