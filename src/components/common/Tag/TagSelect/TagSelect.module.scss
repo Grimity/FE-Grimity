@@ -1,0 +1,54 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: spacing.$spacing-6;
+  border: 1px solid colors.$border-gray-subtler;
+  border-radius: radius.$radius-sm;
+  cursor: text;
+}
+
+.md {
+  min-height: 52px;
+  padding: spacing.$spacing-8;
+}
+
+.xs {
+  min-height: 44px;
+  padding: spacing.$spacing-6 spacing.$spacing-8;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 60px;
+  padding-left: spacing.$spacing-4;
+}
+
+.prefix {
+  @include typo.label-4;
+  color: colors.$text-gray-subtle;
+  font-feature-settings: "ss10" 1;
+}
+
+.input {
+  @include typo.label-4;
+  color: colors.$text-gray-bold;
+  font-feature-settings: "ss10" 1;
+  border: none;
+  outline: none;
+  background: none;
+  padding: 0;
+  flex: 1;
+  min-width: 0;
+
+  &::placeholder {
+    color: colors.$text-gray-subtle;
+  }
+}
