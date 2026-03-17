@@ -1,0 +1,40 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: radius.$radius-full;
+  border: 1px solid;
+  white-space: nowrap;
+  font-feature-settings: "ss10" 1;
+}
+
+// Variants
+.primary {
+  background-color: colors.$surface-primary-subtlest;
+  border-color: colors.$border-primary-subtle;
+  color: colors.$text-primary-normal;
+  @include typo.label-6;
+}
+
+.assistive {
+  background-color: colors.$surface-gray-subtlest;
+  border-color: colors.$border-gray-subtler;
+  color: colors.$text-gray-normal;
+  @include typo.label-5;
+}
+
+// Sizes
+.xl {
+  height: 24px;
+  padding: 0 spacing.$spacing-10;
+}
+
+.md {
+  height: 22px;
+  padding: 0 spacing.$spacing-8;
+}
