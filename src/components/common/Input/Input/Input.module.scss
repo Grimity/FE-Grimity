@@ -1,0 +1,41 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+.fieldRow {
+  display: flex;
+  gap: spacing.$spacing-8;
+  align-items: flex-start;
+}
+
+.fieldWrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+// Reply header
+.replyHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+}
+
+// Horizontal layout
+.horizontal {
+  flex-direction: row;
+  align-items: center;
+  gap: spacing.$spacing-16;
+
+  .fieldRow {
+    flex: 1;
+    min-width: 0;
+  }
+}
