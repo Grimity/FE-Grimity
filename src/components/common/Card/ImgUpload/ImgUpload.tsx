@@ -1,5 +1,3 @@
-"use client";
-
 import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
 import styles from "./ImgUpload.module.scss";

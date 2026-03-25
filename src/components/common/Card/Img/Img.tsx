@@ -1,23 +1,11 @@
-"use client";
-
 import { useState } from "react";
 import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
+import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import { useToggleWithCallback } from "@/hooks/useCardInteraction";
 import styles from "./Img.module.scss";
 import type { ImgProps } from "./Img.types";
-
-const thumbnail = "/image/thumbnail.png";
-
-const makeToggleHandler =
-  (
-    isControlled: boolean,
-    setter: React.Dispatch<React.SetStateAction<boolean>>,
-    callback?: () => void,
-  ) =>
-  () => {
-    if (!isControlled) setter((prev) => !prev);
-    callback?.();
-  };
+import { THUMBNAIL_PATH } from "@/constants/imageUrl";
 
 export default function Img({
   size = "md",
@@ -34,7 +22,7 @@ export default function Img({
     ? isRepresentativeProp
     : internalRepresentative;
 
-  const handleRepresentativeClick = makeToggleHandler(
+  const handleRepresentativeClick = useToggleWithCallback(
     isControlledRepresentative,
     setInternalRepresentative,
     onRepresentativeClick,
@@ -48,7 +36,13 @@ export default function Img({
           isRepresentative && styles.representative,
         )}
       >
-        <img src={imageUrl ?? thumbnail} alt="" className={styles.image} loading="lazy" />
+        <ResponsiveImage
+          src={imageUrl ?? THUMBNAIL_PATH}
+          alt=""
+          className={styles.image}
+          mobileSize={400}
+          desktopSize={800}
+        />
 
         <button
           type="button"

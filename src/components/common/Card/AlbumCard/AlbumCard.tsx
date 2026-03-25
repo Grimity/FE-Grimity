@@ -1,17 +1,9 @@
-"use client";
-
 import clsx from "clsx";
+import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import { useKeyDownActivate } from "@/hooks/useCardInteraction";
 import styles from "./AlbumCard.module.scss";
 import type { AlbumCardProps } from "./AlbumCard.types";
-
-const createKeyDownHandler = (handler: () => void) => (e: React.KeyboardEvent) => {
-  if (e.key === "Enter" || e.key === " ") {
-    e.preventDefault();
-    handler();
-  }
-};
-
-const thumbnail = "/image/thumbnail.png";
+import { THUMBNAIL_PATH } from "@/constants/imageUrl";
 
 export default function AlbumCard({
   imageUrl,
@@ -20,6 +12,7 @@ export default function AlbumCard({
   onClick,
   className,
 }: AlbumCardProps) {
+  const keyDownOnArticle = useKeyDownActivate(onClick);
 
   return (
     <article
@@ -27,10 +20,16 @@ export default function AlbumCard({
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
-      onKeyDown={onClick ? createKeyDownHandler(onClick) : undefined}
+      onKeyDown={keyDownOnArticle}
     >
       <div className={clsx(styles.imageWrap, onClick && styles.withOnClick, checked && styles.albumChecked)}>
-        <img src={imageUrl ?? thumbnail} alt="" className={styles.image} loading="lazy" />
+        <ResponsiveImage
+          src={imageUrl ?? THUMBNAIL_PATH}
+          alt=""
+          className={styles.image}
+          mobileSize={400}
+          desktopSize={800}
+        />
 
         {checked && (
           <div className={styles.badge}>

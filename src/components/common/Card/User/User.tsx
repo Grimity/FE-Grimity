@@ -1,10 +1,10 @@
-"use client";
-
 import { useState } from "react";
 import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import { useKeyDownActivate, useToggleWithCallback } from "@/hooks/useCardInteraction";
 import styles from "./User.module.scss";
 import type {
   UserCardProps,
@@ -13,23 +13,29 @@ import type {
   SearchUserCardProps,
   TagViewUserCardProps,
 } from "./User.types";
-
-const thumbnail = "/image/thumbnail.png";
+import { THUMBNAIL_PATH } from "@/constants/imageUrl";
 
 function UserCardImage({ image }: { image: UserCardImageItem }) {
   const isControlled = image.isLiked !== undefined;
   const [internalLiked, setInternalLiked] = useState(false);
   const isLiked = isControlled ? image.isLiked! : internalLiked;
 
+  const toggleLike = useToggleWithCallback(isControlled, setInternalLiked, image.onLikeClick);
+
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!isControlled) setInternalLiked((prev) => !prev);
-    image.onLikeClick?.();
+    toggleLike();
   };
 
   return (
     <div className={styles.imageItem}>
-      <img src={image.url ?? thumbnail} alt="" className={styles.image} loading="lazy" />
+      <ResponsiveImage
+        src={image.url ?? THUMBNAIL_PATH}
+        alt=""
+        className={styles.image}
+        mobileSize={320}
+        desktopSize={640}
+      />
       <button
         className={styles.likeBtn}
         onClick={handleLikeClick}
@@ -47,15 +53,24 @@ function UserCardImage({ image }: { image: UserCardImageItem }) {
 }
 
 function TagViewCard({ bannerUrl, tagText, onClick, className }: TagViewUserCardProps) {
+  const keyDownOnArticle = useKeyDownActivate(onClick);
+
   return (
     <article
       className={clsx(styles.tagView, className)}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
+      onKeyDown={keyDownOnArticle}
     >
       <div className={styles.tagViewBg}>
-        <img src={bannerUrl ?? thumbnail} alt="" className={styles.tagViewBgImage} loading="lazy" />
+        <ResponsiveImage
+          src={bannerUrl ?? THUMBNAIL_PATH}
+          alt=""
+          className={styles.tagViewBgImage}
+          mobileSize={360}
+          desktopSize={720}
+        />
         <div className={styles.tagViewOverlay} aria-hidden />
       </div>
       <div className={styles.tagViewBody}>
@@ -86,26 +101,36 @@ function SearchCard({
     onFollowClick?.();
   };
 
+  const keyDownOnArticle = useKeyDownActivate(onClick);
+
   return (
     <article
       className={clsx(styles.search, className)}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
+      onKeyDown={keyDownOnArticle}
     >
       <div className={styles.searchBanner}>
-        <img
-          src={bannerUrl ?? thumbnail}
+        <ResponsiveImage
+          src={bannerUrl ?? THUMBNAIL_PATH}
           alt=""
           className={styles.searchBannerImage}
-          loading="lazy"
+          mobileSize={720}
+          desktopSize={1200}
         />
       </div>
       <div className={styles.searchBody}>
         <div className={styles.searchTop}>
           <div className={styles.searchAvatar}>
             {avatarUrl ? (
-              <img src={avatarUrl} alt={nickname} className={styles.searchAvatarImage} />
+              <ResponsiveImage
+                src={avatarUrl}
+                alt={nickname}
+                className={styles.searchAvatarImage}
+                mobileSize={80}
+                desktopSize={160}
+              />
             ) : (
               <Icon name="profile" size={40} />
             )}
@@ -157,17 +182,26 @@ function DefaultCard({
     onFollowClick?.();
   };
 
+  const keyDownOnArticle = useKeyDownActivate(onClick);
+
   return (
     <article
       className={clsx(styles.userCard, className)}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
+      onKeyDown={keyDownOnArticle}
     >
       <div className={styles.header}>
         <div className={styles.avatar}>
           {avatarUrl ? (
-            <img src={avatarUrl} alt={nickname} className={styles.avatarImage} />
+            <ResponsiveImage
+              src={avatarUrl}
+              alt={nickname}
+              className={styles.avatarImage}
+              mobileSize={80}
+              desktopSize={160}
+            />
           ) : (
             <Icon name="profile" size={40} />
           )}

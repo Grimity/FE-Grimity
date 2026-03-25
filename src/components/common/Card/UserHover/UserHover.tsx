@@ -1,11 +1,11 @@
-"use client";
-
 import clsx from "clsx";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import Icon from "@/components/common/Icon/Icon";
 import styles from "./UserHover.module.scss";
 import type { UserHoverProps } from "./UserHover.types";
-import Icon from "@/components/common/Icon/Icon";
+import { THUMBNAIL_PATH } from "@/constants/imageUrl";
 
 export default function UserHover({
   isFollowing = false,
@@ -20,28 +20,26 @@ export default function UserHover({
   return (
     <div className={clsx(styles.userHover, className)}>
       <div className={styles.banner}>
-        {bannerUrl ? (
-          <img
-            src={bannerUrl}
-            alt=""
-            className={styles.bannerImage}
-            loading="lazy"
-          />
-        ) : (
-          <img
-            src="/image/thumbnail.png"
-            alt=""
-            className={styles.bannerImage}
-            loading="lazy"
-          />
-        )}
+        <ResponsiveImage
+          src={bannerUrl ?? THUMBNAIL_PATH}
+          alt=""
+          className={styles.bannerImage}
+          mobileSize={560}
+          desktopSize={1120}
+        />
       </div>
 
       <div className={styles.body}>
         <div className={styles.avatarWrap}>
           <div className={styles.avatar}>
             {avatarUrl ? (
-              <img src={avatarUrl} alt={nickname} className={styles.avatarImage} />
+              <ResponsiveImage
+                src={avatarUrl}
+                alt={nickname}
+                className={styles.avatarImage}
+                mobileSize={128}
+                desktopSize={256}
+              />
             ) : (
               <Icon name="profile" size={64} />
             )}

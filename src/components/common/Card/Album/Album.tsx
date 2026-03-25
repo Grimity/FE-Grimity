@@ -1,10 +1,15 @@
-"use client";
-
 import { useState } from "react";
 import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
+import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import {
+  useKeyDownActivate,
+  useKeyDownActivateStopPropagation,
+  useToggleWithCallback,
+} from "@/hooks/useCardInteraction";
 import styles from "./Album.module.scss";
 import type { AlbumProps, AlbumRank } from "./Album.types";
+import { THUMBNAIL_PATH } from "@/constants/imageUrl";
 
 const RANK_ICON_MAP: Record<AlbumRank, "rank-1" | "rank-2" | "rank-3" | "rank-4"> = {
   1: "rank-1",
@@ -12,26 +17,6 @@ const RANK_ICON_MAP: Record<AlbumRank, "rank-1" | "rank-2" | "rank-3" | "rank-4"
   3: "rank-3",
   4: "rank-4",
 };
-
-const thumbnail = "/image/thumbnail.png";
-
-const createKeyDownHandler = (handler: () => void) => (e: React.KeyboardEvent) => {
-  if (e.key === "Enter" || e.key === " ") {
-    e.preventDefault();
-    handler();
-  }
-};
-
-const makeToggleHandler =
-  (
-    isControlled: boolean,
-    setter: React.Dispatch<React.SetStateAction<boolean>>,
-    callback?: () => void,
-  ) =>
-  () => {
-    if (!isControlled) setter((prev) => !prev);
-    callback?.();
-  };
 
 export default function Album({
   variant = "mainTitle",
@@ -56,10 +41,18 @@ export default function Album({
   const [internalLiked, setInternalLiked] = useState(false);
   const isLiked = isControlledLiked ? isLikedProp : internalLiked;
 
-  const handleCheckClick = makeToggleHandler(isControlledChecked, setInternalChecked, onCheckClick);
-  const handleLikeClick = makeToggleHandler(isControlledLiked, setInternalLiked, onLikeClick);
+  const handleCheckClick = useToggleWithCallback(
+    isControlledChecked,
+    setInternalChecked,
+    onCheckClick,
+  );
+  const handleLikeClick = useToggleWithCallback(isControlledLiked, setInternalLiked, onLikeClick);
 
   const isCheck = variant === "check";
+  const keyDownOnArticle = useKeyDownActivate(onClick);
+  const keyDownOnCheckWrap = useKeyDownActivateStopPropagation(
+    isCheck && onCheckClick ? handleCheckClick : undefined,
+  );
   const isRank = variant === "rank" && rank != null && rank in RANK_ICON_MAP;
   const isMainOrRank = variant === "mainTitle" || variant === "rank";
 
@@ -69,7 +62,7 @@ export default function Album({
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
-      onKeyDown={onClick ? createKeyDownHandler(onClick) : undefined}
+      onKeyDown={keyDownOnArticle}
     >
       <div
         className={clsx(
@@ -89,19 +82,15 @@ export default function Album({
               }
             : undefined
         }
-        onKeyDown={
-          isCheck && onCheckClick
-            ? (e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleCheckClick();
-                }
-              }
-            : undefined
-        }
+        onKeyDown={isCheck && onCheckClick ? keyDownOnCheckWrap : undefined}
       >
-        <img src={imageUrl ?? thumbnail} alt="" className={styles.image} loading="lazy" />
+        <ResponsiveImage
+          src={imageUrl ?? THUMBNAIL_PATH}
+          alt=""
+          className={styles.image}
+          mobileSize={400}
+          desktopSize={800}
+        />
 
         {isRank && (
           <span className={styles.iconTopLeft} aria-hidden>
