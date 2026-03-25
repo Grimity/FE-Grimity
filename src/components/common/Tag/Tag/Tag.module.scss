@@ -1,0 +1,62 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: radius.$radius-full;
+  font-feature-settings: "ss10" 1;
+  white-space: nowrap;
+  @include typo.label-4;
+  background-color: colors.$surface-gray-subtlest;
+  color: colors.$text-gray-subtler;
+}
+
+.active {
+  background-color: colors.$surface-gray-subtler;
+  color: colors.$text-gray-bold;
+}
+
+// Default type sizes
+.md {
+  padding: spacing.$spacing-6 spacing.$spacing-16;
+}
+
+.xs {
+  padding: spacing.$spacing-4 spacing.$spacing-10;
+}
+
+// Icon type overrides
+.withIcon {
+  &.md {
+    padding: spacing.$spacing-6 spacing.$spacing-12 spacing.$spacing-6 spacing.$spacing-16;
+    gap: spacing.$spacing-4;
+  }
+
+  &.xs {
+    padding: spacing.$spacing-4 spacing.$spacing-8 spacing.$spacing-4 spacing.$spacing-10;
+    gap: spacing.$spacing-4;
+  }
+}
+
+.removeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  line-height: 0;
+}
+
+.iconSlot {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+  color: inherit;
+}
