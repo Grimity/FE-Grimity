@@ -1,9 +1,11 @@
 import {
   useCallback,
   useMemo,
+  useState,
   type Dispatch,
   type KeyboardEvent,
   type KeyboardEventHandler,
+  type MouseEvent,
   type SetStateAction,
 } from "react";
 
@@ -52,4 +54,32 @@ export function useToggleWithCallback(
     if (!isControlled) setInternal((prev) => !prev);
     onAfter?.();
   }, [isControlled, setInternal, onAfter]);
+}
+
+/**
+ * User 카드 팔로우: 제어/비제어 + 카드 `onClick` 전파 차단.
+ */
+export function useUserCardFollow(
+  isFollowingProp: boolean | undefined,
+  onFollowClick?: () => void,
+) {
+  const isControlled = isFollowingProp !== undefined;
+  const [internalFollowing, setInternalFollowing] = useState(false);
+  const isFollowing = isControlled ? isFollowingProp : internalFollowing;
+
+  const toggleFollow = useToggleWithCallback(
+    isControlled,
+    setInternalFollowing,
+    onFollowClick,
+  );
+
+  const handleFollowClick = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      toggleFollow();
+    },
+    [toggleFollow],
+  );
+
+  return { isFollowing, handleFollowClick };
 }

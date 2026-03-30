@@ -4,7 +4,11 @@ import Icon from "@/components/common/Icon/Icon";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
-import { useKeyDownActivate, useToggleWithCallback } from "@/hooks/useCardInteraction";
+import {
+  useKeyDownActivate,
+  useToggleWithCallback,
+  useUserCardFollow,
+} from "@/hooks/useCardInteraction";
 import styles from "./User.module.scss";
 import type {
   UserCardProps,
@@ -91,15 +95,10 @@ function SearchCard({
   onFollowClick,
   className,
 }: SearchUserCardProps) {
-  const isControlled = isFollowingProp !== undefined;
-  const [internalFollowing, setInternalFollowing] = useState(false);
-  const isFollowing = isControlled ? isFollowingProp : internalFollowing;
-
-  const handleFollowClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!isControlled) setInternalFollowing((prev) => !prev);
-    onFollowClick?.();
-  };
+  const { isFollowing, handleFollowClick } = useUserCardFollow(
+    isFollowingProp,
+    onFollowClick,
+  );
 
   const keyDownOnArticle = useKeyDownActivate(onClick);
 
@@ -172,15 +171,10 @@ function DefaultCard({
   onFollowClick,
   className,
 }: DefaultUserCardProps) {
-  const isControlled = isFollowingProp !== undefined;
-  const [internalFollowing, setInternalFollowing] = useState(false);
-  const isFollowing = isControlled ? isFollowingProp : internalFollowing;
-
-  const handleFollowClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!isControlled) setInternalFollowing((prev) => !prev);
-    onFollowClick?.();
-  };
+  const { isFollowing, handleFollowClick } = useUserCardFollow(
+    isFollowingProp,
+    onFollowClick,
+  );
 
   const keyDownOnArticle = useKeyDownActivate(onClick);
 
