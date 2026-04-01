@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import styles from "./Avatar.module.scss";
 import { AvatarProps } from "./Avatar.types";
+import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
 
 const SPRITE_PATH = "/sprites/icons.svg";
 
@@ -12,24 +13,28 @@ export default function Avatar({
   className,
 }: AvatarProps) {
   const resolvedType = src ? "photo" : type;
+  const isNamedSize = typeof size === "string";
 
   return (
     <div
       className={clsx(
         styles.avatar,
-        styles[`size-${size}`],
+        isNamedSize && styles[`size-${size}`],
         styles[`type-${resolvedType}`],
         className
       )}
+      style={!isNamedSize ? { width: size, height: size } : undefined}
       role="img"
       aria-label={alt || "아바타"}
     >
       {resolvedType === "photo" ? (
-        <img
-          src={src}
+        <ResponsiveImage
+          src={src!}
           alt={alt || ""}
           className={styles.image}
           draggable={false}
+          desktopSize={300}
+          mobileSize={300}
         />
       ) : (
         <svg

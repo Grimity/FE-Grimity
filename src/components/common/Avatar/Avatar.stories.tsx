@@ -15,8 +15,8 @@ const meta = {
       control: { type: "select" },
     },
     size: {
-      options: ["xxl", "xl", "lg", "ml", "md", "sm", "xs"],
-      control: { type: "select" },
+      control: { type: "text" },
+      description: "Named size (xxl|xl|lg|ml|md|sm|xs) or number (px)",
     },
     src: { control: "text" },
     alt: { control: "text" },
@@ -99,6 +99,25 @@ export const AllTypes: Story = {
           />
           <Avatar type="default" size={size} alt="Default" />
           <Avatar type="dark" size={size} alt="Dark" />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const CustomSizes: Story = {
+  args: {
+    alt: "커스텀 사이즈",
+  },
+  render: () => (
+    <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+      {[28, 30, 50].map((size) => (
+        <div
+          key={size}
+          style={{ textAlign: "center", fontSize: 12, color: "#9397a5" }}
+        >
+          <Avatar size={size} alt={`${size}px 아바타`} />
+          <p style={{ marginTop: 8 }}>{size}px</p>
         </div>
       ))}
     </div>
