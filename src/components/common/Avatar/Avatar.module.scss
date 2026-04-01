@@ -1,0 +1,77 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+
+.avatar {
+  position: relative;
+  border-radius: radius.$radius-full;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Type
+.type-photo {
+  border: 1px solid colors.$border-gray-subtler;
+}
+
+.type-default {
+  background-color: colors.$surface-gray-subtlest;
+  border: 1px solid colors.$border-gray-subtler;
+  color: colors.$graphic-subtler;
+}
+
+.type-dark {
+  background-color: colors.$surface-inverse;
+  border: 1px solid colors.$surface-gray-bold;
+  color: colors.$graphic-subtle;
+}
+
+// Size
+.size-xxl {
+  width: 100px;
+  height: 100px;
+}
+
+.size-xl {
+  width: 80px;
+  height: 80px;
+}
+
+.size-lg {
+  width: 64px;
+  height: 64px;
+}
+
+.size-ml {
+  width: 48px;
+  height: 48px;
+}
+
+.size-md {
+  width: 40px;
+  height: 40px;
+}
+
+.size-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.size-xs {
+  width: 24px;
+  height: 24px;
+}
+
+// Elements
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logo {
+  width: 50%;
+  height: 50%;
+}
