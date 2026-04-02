@@ -157,6 +157,7 @@ export default function UserItem({
             <UserInfo
               type="follow"
               followerCount={followerCount}
+              showFollowing={!!followingCount}
               followingCount={followingCount}
             />
           </div>
@@ -496,7 +497,7 @@ export default function UserItem({
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
             <div className={styles.commentPlusHeaderLeft}>
-              <Icon name="reply" size={12} color="gray-subtle" />
+              <Icon name="reply-branch" size={12} color="gray-subtler" />
               <Avatar size="xs" image={profileImage} />
               <UserInfo
                 type="comment"
@@ -559,7 +560,7 @@ export default function UserItem({
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
             <div className={styles.commentPlusHeaderLeft}>
-              <Icon name="reply" size={12} color="gray-subtle" />
+              <Icon name="reply-branch" size={12} color="gray-subtler" />
               <Avatar size="xs" image={profileImage} />
               <UserInfo
                 type="comment"
