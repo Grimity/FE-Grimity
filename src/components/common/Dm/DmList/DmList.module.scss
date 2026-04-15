@@ -1,0 +1,93 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-12;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-primary-normal;
+    outline-offset: -2px;
+  }
+}
+
+.active {
+  background-color: colors.$surface-gray-subtler;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtler;
+  }
+}
+
+.checkbox {
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  flex: 1;
+  min-width: 0;
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+  min-width: 0;
+  flex: 1;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  flex-shrink: 0;
+}
+
+.nickname {
+  @include typo.label-5;
+  color: colors.$text-gray-normal;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 2px;
+  height: 2px;
+  border-radius: radius.$radius-full;
+  background-color: colors.$text-gray-normal;
+  flex-shrink: 0;
+}
+
+.time {
+  @include typo.label-6;
+  color: colors.$text-gray-normal;
+  white-space: nowrap;
+}
+
+.lastMessage {
+  @include typo.body-2-r;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  flex-shrink: 0;
+}

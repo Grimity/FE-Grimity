@@ -1,0 +1,239 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+// ─── Standard bubble wrapper ─────────────────────────
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+
+  &.wrapperMine {
+    flex-direction: row-reverse;
+  }
+
+  &.wrapperHeart {
+    padding-bottom: spacing.$spacing-10;
+  }
+
+  &.wrapperSand {
+    align-items: flex-end;
+  }
+}
+
+// ─── Bubble ──────────────────────────────────────────
+.bubble {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: spacing.$spacing-8 spacing.$spacing-12;
+}
+
+.others {
+  background-color: colors.$surface-gray-subtler;
+  border-radius: radius.$radius-xl radius.$radius-xl radius.$radius-xl radius.$radius-xs;
+
+  .text {
+    color: colors.$text-gray-bold;
+  }
+}
+
+.mine {
+  background-color: colors.$surface-primary-normal;
+  border-radius: radius.$radius-xl radius.$radius-xl radius.$radius-xs radius.$radius-xl;
+
+  .text {
+    color: colors.$text-white;
+  }
+}
+
+.text {
+  @include typo.label-2;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+// ─── Sand state icon ─────────────────────────────────
+.sandIcon {
+  flex-shrink: 0;
+  margin-bottom: spacing.$spacing-4;
+  color: colors.$icon-gray-subtler;
+}
+
+// ─── Hover actions ───────────────────────────────────
+.actions {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: radius.$radius-full;
+  border: 1px solid colors.$border-gray-subtle;
+  background-color: colors.$surface-base;
+  cursor: pointer;
+  color: colors.$icon-gray-bold;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
+  }
+}
+
+// ─── Right slide button ──────────────────────────────
+.slideBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: radius.$radius-full;
+  border: 1px solid colors.$border-gray-subtle;
+  background-color: colors.$surface-base;
+  cursor: pointer;
+  color: colors.$icon-gray-bold;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
+  }
+}
+
+// ─── Heart badge ─────────────────────────────────────
+.heartBadge {
+  position: absolute;
+  bottom: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: radius.$radius-full;
+  border: 1px solid colors.$border-gray-subtler;
+  background-color: colors.$surface-base;
+}
+
+.heartBadgeOthers {
+  left: 8px;
+}
+
+.heartBadgeMine {
+  right: 8px;
+}
+
+.heartBadgeIcon {
+  color: colors.$status-negative;
+}
+
+// ─── Answer 1 / Answer 2 ─────────────────────────────
+.answerWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-6;
+}
+
+.alignStart {
+  align-items: flex-start;
+}
+
+.alignEnd {
+  align-items: flex-end;
+}
+
+.answerLabel {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+}
+
+.answerLabelEnd {
+  text-align: right;
+}
+
+.answerRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.answerReplyIcon {
+  color: colors.$icon-gray-subtle;
+  flex-shrink: 0;
+}
+
+.answerPill {
+  display: flex;
+  align-items: center;
+  width: 200px;
+  padding: spacing.$spacing-4 spacing.$spacing-10;
+  border-radius: radius.$radius-full;
+}
+
+.answerPillOthers {
+  background-color: colors.$surface-gray-subtler;
+
+  .answerPillText {
+    color: colors.$text-gray-bold;
+  }
+}
+
+.answerPillMine {
+  background-color: colors.$surface-primary-normal;
+
+  .answerPillText {
+    color: colors.$text-white;
+  }
+}
+
+.answerPillText {
+  @include typo.label-4;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ─── Images state ────────────────────────────────────
+.imagesWrapper {
+  width: 300px;
+  min-height: 140px;
+  border-radius: radius.$radius-sm;
+  overflow: hidden;
+}
+
+.imagePlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 140px;
+  background-color: #ffe6e6;
+  color: #ff0000;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+  gap: 0;
+
+  p {
+    margin: 0;
+  }
+
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
