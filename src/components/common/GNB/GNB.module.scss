@@ -1,0 +1,116 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.gnb {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: colors.$surface-white;
+  border-bottom: 1px solid colors.$border-gray-subtler;
+  box-sizing: border-box;
+}
+
+.desktop {
+  height: 64px;
+  padding: 0 spacing.$spacing-24;
+  justify-content: space-between;
+} 
+
+.mobile {
+  height: 56px;
+  padding: 0 spacing.$spacing-16;
+  gap: spacing.$spacing-8 ;
+}
+
+.logoBtn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: spacing.$spacing-4;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.title {
+  flex: 1;
+  @include typo.subtitle-2;
+  color: colors.$text-gray-bold;
+  padding: 0 spacing.$spacing-4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profileBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: spacing.$spacing-4;
+  cursor: pointer;
+  border-radius: radius.$radius-full;
+  flex-shrink: 0;
+}
+
+
+.searchInput {
+  flex: 1;
+  height: 48px;
+  padding: 0 spacing.$spacing-16;
+  border: 1px solid colors.$border-gray-subtle;
+  outline: none;
+  min-width: 0;
+}
+
+.backTitleContainer {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.dmInfo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  overflow: hidden;
+  padding: 0 spacing.$spacing-4;
+}
+
+.dmText {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dmName {
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dmUsername {
+  @include typo.caption-1;
+  color: colors.$text-gray-normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
