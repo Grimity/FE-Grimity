@@ -13,8 +13,8 @@ const meta = {
   argTypes: {
     variant: {
       options: [
-        "main-desktop",
-        "guest-desktop",
+        "pc-main",
+        "pc-guest",
         "guest",
         "guest-menu",
         "main",
@@ -22,6 +22,7 @@ const meta = {
         "3button",
         "search",
         "text-button",
+        "editor",
         "dm",
         "image-viewer",
       ],
@@ -38,20 +39,25 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const MainDesktop: Story = {
+/** PC · 로그인 메인 */
+export const PcMain: Story = {
+  name: "PC · Main",
   args: {
-    variant: "main-desktop",
+    variant: "pc-main",
     hasNotification: true,
   },
 };
 
-export const GuestDesktop: Story = {
+/** PC · 게스트 */
+export const PcGuest: Story = {
+  name: "PC · Guest",
   args: {
-    variant: "guest-desktop",
+    variant: "pc-guest",
   },
 };
 
 export const GuestMobile: Story = {
+  name: "Mobile · Guest",
   args: {
     variant: "guest",
   },
@@ -61,6 +67,7 @@ export const GuestMobile: Story = {
 };
 
 export const GuestMenuMobile: Story = {
+  name: "Mobile · Guest_Menu",
   args: {
     variant: "guest-menu",
   },
@@ -70,6 +77,7 @@ export const GuestMenuMobile: Story = {
 };
 
 export const MainMobile: Story = {
+  name: "Mobile · Main",
   args: {
     variant: "main",
     hasNotification: true,
@@ -79,8 +87,9 @@ export const MainMobile: Story = {
   },
 };
 
-export const TwoDep: Story = {
-  name: "2dep",
+/** 모바일 Top Navigation · 2dep */
+export const TwoDepMobile: Story = {
+  name: "Mobile · 2dep",
   args: {
     variant: "2dep",
     title: "Title",
@@ -91,16 +100,17 @@ export const TwoDep: Story = {
   },
 };
 
-export const ThreeButton: Story = {
-  name: "3button",
+/** 모바일 · 3button */
+export const ThreeButtonMobile: Story = {
+  name: "Mobile · 3button",
   args: {
     variant: "3button",
-    title: "Title",
+    title: "3button",
     rightActions: [
-      <IconButton key="0" icon={<Icon name="gallery" size={24} color="gray-bold"/>} />,
-      <IconButton key="1" icon={<Icon name="pen" size={24} color="gray-bold"/>} />,
+      <IconButton key="0" icon={<Icon name="gallery" size={24} color="gray-bold" />} />,
+      <IconButton key="1" icon={<Icon name="pen" size={24} color="gray-bold" />} />,
       <IconButton key="2" icon={<Icon name="trash-bin-trash" size={24} color="gray-bold" />} />,
-      ],
+    ],
   },
   parameters: {
     viewport: { defaultViewport: "mobile1" },
@@ -108,9 +118,11 @@ export const ThreeButton: Story = {
 };
 
 export const Search: Story = {
+  name: "Mobile · Search",
   args: {
     variant: "search",
     searchValue: "Input filled",
+    searchPlaceholder: "Input filled",
   },
   parameters: {
     viewport: { defaultViewport: "mobile1" },
@@ -118,6 +130,7 @@ export const Search: Story = {
 };
 
 export const TextButton: Story = {
+  name: "Mobile · TextButton",
   args: {
     variant: "text-button",
     title: "Title",
@@ -128,7 +141,21 @@ export const TextButton: Story = {
   },
 };
 
+/** 모바일 · Editor */
+export const Editor: Story = {
+  name: "Mobile · Editor",
+  args: {
+    variant: "editor",
+    title: "Title",
+    rightLabel: "Label",
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+};
+
 export const DM: Story = {
+  name: "Mobile · DM",
   args: {
     variant: "dm",
     dmName: "호두마루",
@@ -140,6 +167,7 @@ export const DM: Story = {
 };
 
 export const ImageViewer: Story = {
+  name: "Mobile · ImageViewer",
   args: {
     variant: "image-viewer",
   },
@@ -150,12 +178,12 @@ export const ImageViewer: Story = {
 
 export const AllVariants: Story = {
   args: {
-    variant: "main-desktop",
+    variant: "pc-main",
   },
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-      <GNB variant="main-desktop" hasNotification />
-      <GNB variant="guest-desktop" />
+      <GNB variant="pc-main" hasNotification />
+      <GNB variant="pc-guest" />
       <GNB variant="guest" />
       <GNB variant="guest-menu" />
       <GNB variant="main" hasNotification />
@@ -164,13 +192,14 @@ export const AllVariants: Story = {
         variant="3button"
         title="Title"
         rightActions={[
-          <IconButton key="0" icon={<Icon name="gallery" size={24} color="gray-bold"/>} />,
-          <IconButton key="1" icon={<Icon name="pen" size={24} color="gray-bold"/>} />,
-          <IconButton key="2" icon={<Icon name="trash-bin-trash" size={24} color="gray-bold" />} /> 
+          <IconButton key="0" icon={<Icon name="gallery" size={24} color="gray-bold" />} />,
+          <IconButton key="1" icon={<Icon name="pen" size={24} color="gray-bold" />} />,
+          <IconButton key="2" icon={<Icon name="trash-bin-trash" size={24} color="gray-bold" />} />,
         ]}
       />
-      <GNB variant="search" searchValue="Input filled" />
+      <GNB variant="search" searchValue="Input filled" searchPlaceholder="Input filled" />
       <GNB variant="text-button" title="Title" rightLabel="Label" />
+      <GNB variant="editor" title="Title" rightLabel="Label" />
       <GNB variant="dm" dmName="호두마루" dmUsername="@hodooo" />
       <GNB variant="image-viewer" />
     </div>
