@@ -4,7 +4,7 @@ import GNB from "./GNB";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
 
 const meta = {
-  title: "Common/GNB",
+  title: "Common/Navigation/GNB",
   component: GNB,
   parameters: {
     layout: "fullscreen",
