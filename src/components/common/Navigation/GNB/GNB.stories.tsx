@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Icon from "@/components/common/Icon/Icon";
 import GNB from "./GNB";
-import IconButton from "../Button/IconButton/IconButton";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
 
 const meta = {
   title: "Common/GNB",
