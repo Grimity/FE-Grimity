@@ -1,0 +1,61 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.wrapper {
+  position: relative;
+  display: inline-block;
+  
+  .right {
+    right: 0;
+  }
+
+  .left {
+    left: 0;
+  }
+}
+
+.menuContainer {
+  position: absolute;
+  top: calc(100% + spacing.$spacing-8);
+  z-index: 100;
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: spacing.$spacing-6 0;
+  background-color: colors.$surface-white;
+  border-radius: radius.$radius-md;
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 spacing.$spacing-16;
+  @include typo.label-2;
+  color: colors.$text-gray-bold;
+  cursor: pointer;
+  outline: none;
+
+  &:hover,
+  &:focus-visible {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:active {
+    background-color: colors.$surface-gray-subtler;
+  }
+}
+
+.divider {
+  list-style: none;
+}
