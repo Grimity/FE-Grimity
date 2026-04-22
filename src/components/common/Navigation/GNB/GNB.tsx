@@ -85,267 +85,258 @@ export default function GNB({
     />
   );
 
-  if (variant === "pc-main") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
-        <LogoArea />
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
-          <SolidButton onClick={onUpload} size="regular">
-            그림 올리기
-          </SolidButton>
-          <div className={clsx(styles.flexRow, styles.gap8)}>
+  switch (variant) {
+    case "pc-main":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
+          <LogoArea />
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
+            <SolidButton onClick={onUpload} size="regular">
+              그림 올리기
+            </SolidButton>
+            <div className={clsx(styles.flexRow, styles.gap8)}>
+              <SearchButton />
+              <BellButton />
+              <ProfileArea imageUrl={profileImageUrl} />
+            </div>
+          </div>
+        </nav>
+      );
+
+    case "pc-guest":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
+          <LogoArea />
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
+            <SearchButton />
+            <SolidButton onClick={onLogin} size="regular">
+              회원가입/로그인
+            </SolidButton>
+          </div>
+        </nav>
+      );
+
+    case "guest":
+      return (
+        <nav
+          className={clsx(
+            styles.gnb,
+            styles.gnbTopNav,
+            styles.topNavBorderBottom,
+            styles.navGap8,
+            className,
+          )}
+        >
+          <LogoArea />
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap12)}>
+            <OutlinedButton size="small" onClick={onLogin}>
+              회원가입
+            </OutlinedButton>
+            <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
+              <SearchButton />
+              <IconButton
+                variant="sm"
+                icon={<Icon name="hamburger" size={24} color="gray-bold" />}
+                onClick={onMenu}
+                aria-label="메뉴"
+              />
+            </div>
+          </div>
+        </nav>
+      );
+
+    case "guest-menu":
+      return (
+        <nav
+          className={clsx(
+            styles.gnb,
+            styles.gnbTopNav,
+            styles.topNavBorderBottom,
+            styles.navGap8,
+            className,
+          )}
+        >
+          <LogoArea />
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap12)}>
+            <OutlinedButton size="small" onClick={onLogin}>
+              회원가입
+            </OutlinedButton>
+            <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
+              <SearchButton />
+              <IconButton
+                variant="sm"
+                icon={<Icon name="x" size={24} color="gray-bold" />}
+                onClick={onClose}
+                aria-label="닫기"
+              />
+            </div>
+          </div>
+        </nav>
+      );
+
+    case "main":
+      return (
+        <nav
+          className={clsx(
+            styles.gnb,
+            styles.gnbTopNav,
+            styles.topNavBorderBottom,
+            styles.navGap8,
+            className,
+          )}
+        >
+          <LogoArea />
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap16)}>
             <SearchButton />
             <BellButton />
             <ProfileArea imageUrl={profileImageUrl} />
           </div>
-        </div>
-      </nav>
-    );
-  }
+        </nav>
+      );
 
-  if (variant === "pc-guest") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
-        <LogoArea />
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
-          <SearchButton />
-          <SolidButton onClick={onLogin} size="regular">
-            회원가입/로그인
-          </SolidButton>
-        </div>
-      </nav>
-    );
-  }
-
-  if (variant === "guest") {
-    return (
-      <nav
-        className={clsx(
-          styles.gnb,
-          styles.gnbTopNav,
-          styles.topNavBorderBottom,
-          styles.navGap8,
-          className,
-        )}
-      >
-        <LogoArea />
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap12)}>
-          <OutlinedButton size="small" onClick={onLogin}>
-            회원가입
-          </OutlinedButton>
-          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-            <SearchButton />
-            <IconButton
-              variant="sm"
-              icon={<Icon name="hamburger" size={24} color="gray-bold" />}
-              onClick={onMenu}
-              aria-label="메뉴"
-            />
-          </div>
-        </div>
-      </nav>
-    );
-  }
-
-  if (variant === "guest-menu") {
-    return (
-      <nav
-        className={clsx(
-          styles.gnb,
-          styles.gnbTopNav,
-          styles.topNavBorderBottom,
-          styles.navGap8,
-          className,
-        )}
-      >
-        <LogoArea />
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap12)}>
-          <OutlinedButton size="small" onClick={onLogin}>
-            회원가입
-          </OutlinedButton>
-          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-            <SearchButton />
-            <IconButton
-              variant="sm"
-              icon={<Icon name="x" size={24} color="gray-bold" />}
-              onClick={onClose}
-              aria-label="닫기"
-            />
-          </div>
-        </div>
-      </nav>
-    );
-  }
-
-  if (variant === "main") {
-    return (
-      <nav
-        className={clsx(
-          styles.gnb,
-          styles.gnbTopNav,
-          styles.topNavBorderBottom,
-          styles.navGap8,
-          className,
-        )}
-      >
-        <LogoArea />
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap16)}>
-          <SearchButton />
-          <BellButton />
-          <ProfileArea imageUrl={profileImageUrl} />
-        </div>
-      </nav>
-    );
-  }
-
-  if (variant === "2dep") {
-    return (
-      <nav
-        className={clsx(
-          styles.gnb,
-          styles.gnbTopNav,
-          styles.topNavBorderBottom,
-          styles.navGap8,
-          className,
-        )}
-      >
-        <div className={clsx(styles.flexRow, styles.gap8)}>
-          <BackButton />
-          <span className={styles.title}>{title}</span>
-        </div>
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-          <SearchButton />
-          <BellButton />
-          <ProfileArea imageUrl={profileImageUrl} />
-        </div>
-      </nav>
-    );
-  }
-
-  if (variant === "3button") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
-        <div className={clsx(styles.flexRow, styles.gap8)}>
-          <BackButton />
-          <span className={styles.title}>{title}</span>
-        </div>
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-          {rightActions.slice(0, 3)}
-        </div>
-      </nav>
-    );
-  }
-
-  if (variant === "search") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
-        <BackButton />
-        <TextField
-          variant="search"
-          className={styles.searchInput}
-          value={searchValue}
-          onChange={(e) => onSearchChange?.(e.target.value)}
-          placeholder={searchPlaceholder}
-        />
-      </nav>
-    );
-  }
-
-  if (variant === "text-button") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.topNavRowBetween, className)}>
-        <div className={styles.leftCluster}>
-          <BackButton />
-          <span className={styles.title}>{title}</span>
-        </div>
-        <TextButton
-          variant="primary"
-          size="regular"
-          onClick={onRightLabelClick}
-          className={styles.trailingText}
+    case "2dep":
+      return (
+        <nav
+          className={clsx(
+            styles.gnb,
+            styles.gnbTopNav,
+            styles.topNavBorderBottom,
+            styles.navGap8,
+            className,
+          )}
         >
-          {rightLabel}
-        </TextButton>
-      </nav>
-    );
-  }
-
-  if (variant === "editor") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.topNavRowBetween, className)}>
-        <div className={styles.leftCluster}>
-          <BackButton />
-          <div className={styles.editorTitleRow}>
+          <div className={clsx(styles.flexRow, styles.gap8)}>
+            <BackButton />
             <span className={styles.title}>{title}</span>
+          </div>
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
+            <SearchButton />
+            <BellButton />
+            <ProfileArea imageUrl={profileImageUrl} />
+          </div>
+        </nav>
+      );
+
+    case "3button":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
+          <div className={clsx(styles.flexRow, styles.gap8)}>
+            <BackButton />
+            <span className={styles.title}>{title}</span>
+          </div>
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
+            {rightActions.slice(0, 3)}
+          </div>
+        </nav>
+      );
+
+    case "search":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
+          <BackButton />
+          <TextField
+            variant="search"
+            className={styles.searchInput}
+            value={searchValue}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+            placeholder={searchPlaceholder}
+          />
+        </nav>
+      );
+
+    case "text-button":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.topNavRowBetween, className)}>
+          <div className={styles.leftCluster}>
+            <BackButton />
+            <span className={styles.title}>{title}</span>
+          </div>
+          <TextButton
+            variant="primary"
+            size="regular"
+            onClick={onRightLabelClick}
+            className={styles.trailingText}
+          >
+            {rightLabel}
+          </TextButton>
+        </nav>
+      );
+
+    case "editor":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.topNavRowBetween, className)}>
+          <div className={styles.leftCluster}>
+            <BackButton />
+            <div className={styles.editorTitleRow}>
+              <span className={styles.title}>{title}</span>
+              <IconButton
+                variant="sm"
+                icon={<Icon name="chevron-down" size={24} color="gray-bold" />}
+                onClick={onTitleMenuClick}
+                aria-label="메뉴 열기"
+              />
+            </div>
+          </div>
+          <TextButton
+            variant="primary"
+            size="regular"
+            onClick={onRightLabelClick}
+            className={styles.trailingText}
+          >
+            {rightLabel}
+          </TextButton>
+        </nav>
+      );
+
+    case "dm":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
+          <BackButton />
+          <div className={styles.dmInfo}>
+            <Avatar src={dmProfileImageUrl} size="md" />
+            <div className={styles.dmText}>
+              <span className={styles.dmName}>{dmName}</span>
+              <span className={styles.dmUsername}>{dmUsername}</span>
+            </div>
+          </div>
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
             <IconButton
               variant="sm"
-              icon={<Icon name="chevron-down" size={24} color="gray-bold" />}
-              onClick={onTitleMenuClick}
-              aria-label="메뉴 열기"
+              icon={<Icon name="siren-rounded" size={24} color="gray-bold" />}
+              onClick={onDMReport}
+              aria-label="신고하기"
+            />
+            <IconButton
+              variant="sm"
+              icon={<Icon name="out" size={24} color="gray-bold" />}
+              onClick={onDMExit}
+              aria-label="나가기"
             />
           </div>
-        </div>
-        <TextButton
-          variant="primary"
-          size="regular"
-          onClick={onRightLabelClick}
-          className={styles.trailingText}
-        >
-          {rightLabel}
-        </TextButton>
-      </nav>
-    );
-  }
+        </nav>
+      );
 
-  if (variant === "dm") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
-        <BackButton />
-        <div className={styles.dmInfo}>
-          <Avatar src={dmProfileImageUrl} size="md" />
-          <div className={styles.dmText}>
-            <span className={styles.dmName}>{dmName}</span>
-            <span className={styles.dmUsername}>{dmUsername}</span>
+    case "image-viewer":
+      return (
+        <nav className={clsx(styles.gnb, styles.gnbTopNav, className)}>
+          <IconButton
+            variant="sm"
+            icon={<Icon name="x" size={24} color="gray-bold" />}
+            onClick={onClose}
+            aria-label="닫기"
+          />
+          <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
+            <IconButton
+              variant="sm"
+              icon={<Icon name="down" size={24} color="gray-bold" />}
+              onClick={onDownload}
+              aria-label="다운로드"
+            />
           </div>
-        </div>
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-          <IconButton
-            variant="sm"
-            icon={<Icon name="siren-rounded" size={24} color="gray-bold" />}
-            onClick={onDMReport}
-            aria-label="신고하기"
-          />
-          <IconButton
-            variant="sm"
-            icon={<Icon name="out" size={24} color="gray-bold" />}
-            onClick={onDMExit}
-            aria-label="나가기"
-          />
-        </div>
-      </nav>
-    );
-  }
+        </nav>
+      );
 
-  if (variant === "image-viewer") {
-    return (
-      <nav className={clsx(styles.gnb, styles.gnbTopNav, className)}>
-        <IconButton
-          variant="sm"
-          icon={<Icon name="x" size={24} color="gray-bold" />}
-          onClick={onClose}
-          aria-label="닫기"
-        />
-        <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-          <IconButton
-            variant="sm"
-            icon={<Icon name="down" size={24} color="gray-bold" />}
-            onClick={onDownload}
-            aria-label="다운로드"
-          />
-        </div>
-      </nav>
-    );
+    default:
+      return null;
   }
-
-  return null;
 }
