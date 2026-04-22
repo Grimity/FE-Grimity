@@ -3,6 +3,32 @@ import type { Meta, StoryObj } from "@storybook/react";
 import BottomNavigation from "./BottomNavigation";
 import type { BottomNavTab } from "./BottomNavigation.types";
 
+type StatefulBottomNavigationProps = {
+  initialTab: BottomNavTab;
+  hasDmBadge?: boolean;
+  showPlus?: boolean;
+  onPlusClick?: () => void;
+};
+
+function StatefulBottomNavigation({
+  initialTab,
+  hasDmBadge,
+  showPlus,
+  onPlusClick,
+}: StatefulBottomNavigationProps) {
+  const [activeTab, setActiveTab] = useState<BottomNavTab>(initialTab);
+
+  return (
+    <BottomNavigation
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      hasDmBadge={hasDmBadge}
+      showPlus={showPlus}
+      onPlusClick={onPlusClick}
+    />
+  );
+}
+
 const meta = {
   title: "Common/Navigation/BottomNavigation",
   component: BottomNavigation,
@@ -32,43 +58,22 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: { activeTab: "home", onTabChange: () => {} },
-  render: () => {
-    const [activeTab, setActiveTab] = useState<BottomNavTab>("home");
-    return (
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
-    );
-  },
+  render: () => <StatefulBottomNavigation initialTab="home" />,
 };
 
 export const WithDmBadge: Story = {
   args: { activeTab: "dm", onTabChange: () => {} },
-  render: () => {
-    const [activeTab, setActiveTab] = useState<BottomNavTab>("dm");
-    return (
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        hasDmBadge
-      />
-    );
-  },
+  render: () => <StatefulBottomNavigation initialTab="dm" hasDmBadge />,
 };
 
 export const WithPlus: Story = {
   args: { activeTab: "home", onTabChange: () => {}, hasDmBadge: true },
-  render: () => {
-    const [activeTab, setActiveTab] = useState<BottomNavTab>("home");
-    return (
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        hasDmBadge
-        showPlus
-        onPlusClick={() => {}}
-      />
-    );
-  },
+  render: () => (
+    <StatefulBottomNavigation
+      initialTab="home"
+      hasDmBadge
+      showPlus
+      onPlusClick={() => {}}
+    />
+  ),
 };
