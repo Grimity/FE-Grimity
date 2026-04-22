@@ -1,0 +1,105 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 spacing.$spacing-10 0 spacing.$spacing-12;
+  border: none;
+  background: none;
+  outline: none;
+  cursor: pointer;
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:disabled {
+    cursor: not-allowed;
+    color: colors.$text-gray-subtler;
+  }
+}
+
+.outline {
+  height: 42px;
+  gap: spacing.$spacing-4;
+  border-radius: radius.$radius-sm;
+  border: 1px solid colors.$border-gray-subtle;
+  background-color: colors.$surface-base;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:focus-visible:not(:disabled) {
+    border: 2px solid colors.$border-gray-normal;
+  }
+
+  &:active:not(:disabled) {
+    border-color: colors.$border-gray-bold;
+  }
+
+  &:disabled {
+    border-color: colors.$border-gray-subtler;
+  }
+}
+
+.text {
+  height: 32px;
+  gap: spacing.$spacing-8;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: 2px solid colors.$border-gray-normal;
+    outline-offset: -2px;
+  }
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + spacing.$spacing-8);
+  left: 0;
+  z-index: 10;
+  min-width: 100%;
+  margin: 0;
+  padding: spacing.$spacing-8 0;
+  list-style: none;
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-lg;
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-12 spacing.$spacing-20;
+  cursor: pointer;
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &.selected {
+    color: colors.$text-primary-normal;
+  }
+}
