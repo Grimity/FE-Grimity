@@ -1,35 +1,64 @@
 import clsx from "clsx";
+import { useCallback, useLayoutEffect, useRef } from "react";
+
 import Icon from "@/components/common/Icon/Icon";
+
 import styles from "./DmInput.module.scss";
 import type { DmInputProps } from "./DmInput.types";
 
-const PLACEHOLDER_TEXT: Record<string, string> = {
-  Default: "메시지 입력",
-  Focused: "아 네!",
-  Filled: "아 네! ㅎㅎ 감사합니다",
-  Filled_log:
-    "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요. 감사합니다.",
-  Disabled: "더 이상 채팅이 불가능해요",
-  Answer: "넵!ㅎㅎ",
-};
+const MIN_HEIGHT = 40;
+const MAX_HEIGHT = 88;
+const BORDER_Y = 2;
 
 export default function DmInput({
-  type = "Default",
-  value,
-  replyText,
-  replyTarget,
-  onCancelReply,
+  value = "",
   onChange,
   onSend,
   onImageClick,
+  onKeyDown,
+  inputRef,
+  images,
+  onRemoveImage,
+  replyTo,
+  onCancelReply,
+  disabled = false,
+  isSending = false,
+  placeholder = "메시지 입력",
   className,
 }: DmInputProps) {
-  const isDisabled = type === "Disabled";
-  const isActive = ["Focused", "Filled", "Filled_log", "Answer"].includes(type);
-  const isAnswer = type === "Answer";
-  const isFilledLog = type === "Filled_log";
-  const displayValue = value ?? PLACEHOLDER_TEXT[type] ?? "";
-  const isEmpty = type === "Default";
+  const internalRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const setRef = useCallback(
+    (el: HTMLTextAreaElement | null) => {
+      internalRef.current = el;
+      if (typeof inputRef === "function") {
+        inputRef(el);
+      } else if (inputRef) {
+        (inputRef as React.MutableRefObject<HTMLTextAreaElement | null>).current = el;
+      }
+    },
+    [inputRef],
+  );
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => onChange?.(e.target.value),
+    [onChange],
+  );
+
+  useLayoutEffect(() => {
+    const el = internalRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const total = el.scrollHeight + BORDER_Y;
+    const next = Math.min(Math.max(total, MIN_HEIGHT), MAX_HEIGHT);
+    el.style.height = `${next}px`;
+    el.style.overflowY = total > MAX_HEIGHT ? "auto" : "hidden";
+  }, [value]);
+
+  const hasImages = !!images && images.length > 0;
+  const isAnswer = !!replyTo;
+  const canSend = !disabled && !isSending && (value.trim().length > 0 || hasImages);
+  const resolvedPlaceholder = disabled ? "더 이상 채팅이 불가능해요" : placeholder;
 
   return (
     <div className={clsx(styles.container, className)}>
@@ -39,13 +68,9 @@ export default function DmInput({
         <div className={styles.replyContainer}>
           <div className={styles.replyHeader}>
             <Icon name="reply-2" size={16} className={styles.replyIcon} />
-            <span className={styles.replyTarget}>
-              {replyTarget ? `${replyTarget}님에게 답장` : "[user]님에게 답장"}
-            </span>
+            <span className={styles.replyTarget}>{`${replyTo.target}님에게 답장`}</span>
           </div>
-          <p className={styles.replyPreviewText}>
-            {replyText ?? "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요."}
-          </p>
+          <p className={styles.replyPreviewText}>{replyTo.text}</p>
           {onCancelReply && (
             <button
               type="button"
@@ -59,8 +84,33 @@ export default function DmInput({
         </div>
       )}
 
+      {hasImages && (
+        <div className={styles.imageList}>
+          {images!.map((image, index) => (
+            <div key={`${image.fileName}-${index}`} className={styles.imageItem}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={image.fullUrl} alt={image.fileName} className={styles.imageThumb} />
+              {onRemoveImage && (
+                <button
+                  type="button"
+                  className={styles.imageRemove}
+                  onClick={() => onRemoveImage(index)}
+                  aria-label={`이미지 ${index + 1} 삭제`}
+                >
+                  <Icon name="close-circle-fill" size={12} />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className={styles.inputContainer}>
-        {!isDisabled && (
+        {disabled ? (
+          <span className={styles.cameraBtnDisabled} aria-hidden="true">
+            <Icon name="camera" size={24} className={styles.cameraIconDisabled} />
+          </span>
+        ) : (
           <button
             type="button"
             className={styles.cameraBtn}
@@ -71,41 +121,21 @@ export default function DmInput({
           </button>
         )}
 
-        {isDisabled && (
-          <span className={styles.cameraBtnDisabled} aria-hidden="true">
-            <Icon name="camera" size={24} className={styles.cameraIconDisabled} />
-          </span>
-        )}
-
-        {isFilledLog ? (
-          <textarea
-            className={clsx(styles.textarea, styles.field)}
-            value={displayValue}
-            disabled={isDisabled}
-            onChange={(e) => onChange?.(e.target.value)}
-            placeholder="메시지 입력"
-            rows={1}
-          />
-        ) : (
-          <input
-            type="text"
-            className={clsx(
-              styles.textField,
-              styles.field,
-              isDisabled && styles.fieldDisabled,
-            )}
-            value={isEmpty ? "" : displayValue}
-            placeholder={isEmpty ? displayValue : undefined}
-            disabled={isDisabled}
-            readOnly={!onChange}
-            onChange={(e) => onChange?.(e.target.value)}
-          />
-        )}
+        <textarea
+          ref={setRef}
+          className={clsx(styles.field, styles.textarea, disabled && styles.fieldDisabled)}
+          value={value}
+          placeholder={resolvedPlaceholder}
+          disabled={disabled}
+          onChange={handleChange}
+          onKeyDown={onKeyDown}
+          rows={1}
+        />
 
         <button
           type="button"
-          className={clsx(styles.sendBtn, isActive && styles.sendBtnActive)}
-          disabled={isDisabled || isEmpty}
+          className={clsx(styles.sendBtn, canSend && styles.sendBtnActive)}
+          disabled={!canSend}
           onClick={onSend}
           aria-label="전송"
         >

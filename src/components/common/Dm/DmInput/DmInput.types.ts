@@ -1,13 +1,28 @@
-export type DmInputType = "Default" | "Focused" | "Filled" | "Filled_log" | "Disabled" | "Answer";
+import type { KeyboardEvent, Ref } from "react";
+
+export interface DmInputAttachedImage {
+  fileName: string;
+  fullUrl: string;
+}
+
+export interface DmInputReply {
+  target: string;
+  text: string;
+}
 
 export interface DmInputProps {
-  type?: DmInputType;
   value?: string;
-  replyText?: string;
-  replyTarget?: string;
-  onCancelReply?: () => void;
   onChange?: (value: string) => void;
   onSend?: () => void;
   onImageClick?: () => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLTextAreaElement>) => void;
+  inputRef?: Ref<HTMLTextAreaElement>;
+  images?: DmInputAttachedImage[];
+  onRemoveImage?: (index: number) => void;
+  replyTo?: DmInputReply;
+  onCancelReply?: () => void;
+  disabled?: boolean;
+  isSending?: boolean;
+  placeholder?: string;
   className?: string;
 }

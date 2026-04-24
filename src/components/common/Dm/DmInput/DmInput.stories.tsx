@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+
 import DmInput from "./DmInput";
+import type { DmInputAttachedImage } from "./DmInput.types";
 
 const meta = {
   title: "DM/DmInput",
@@ -9,13 +12,18 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    type: {
-      control: { type: "select" },
-      options: ["Default", "Focused", "Filled", "Filled_log", "Disabled", "Answer"],
-    },
-    replyText: { control: "text" },
-    replyTarget: { control: "text" },
+    value: { control: "text" },
+    placeholder: { control: "text" },
+    disabled: { control: "boolean" },
+    isSending: { control: "boolean" },
   },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 375 }}>
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof DmInput>;
 
 export default meta;
@@ -23,55 +31,93 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    type: "Default",
-  },
-};
-
-export const Focused: Story = {
-  args: {
-    type: "Focused",
+    value: "",
+    placeholder: "메시지 입력",
   },
 };
 
 export const Filled: Story = {
   args: {
-    type: "Filled",
+    value: "아 네! ㅎㅎ 감사합니다",
   },
 };
 
-export const FilledLog: Story = {
+export const FilledLong: Story = {
   args: {
-    type: "Filled_log",
+    value: "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요. 감사합니다.",
   },
 };
 
 export const Disabled: Story = {
   args: {
-    type: "Disabled",
+    disabled: true,
   },
 };
 
-export const Answer: Story = {
+export const Reply: Story = {
   args: {
-    type: "Answer",
-    replyText: "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요.",
-    replyTarget: "상대방",
+    value: "넵!ㅎㅎ",
+    replyTo: {
+      target: "상대방",
+      text: "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요.",
+    },
   },
 };
 
-export const AllStates: Story = {
-  render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {(["Default", "Focused", "Filled", "Filled_log", "Disabled", "Answer"] as const).map((type) => (
-        <div key={type}>
-          <p style={{ fontSize: 12, color: "#70737e", marginBottom: 4 }}>State={type}</p>
+export const WithImages: Story = {
+  render: () => {
+    const Wrapper = () => {
+      const [value, setValue] = useState("이미지 첨부 테스트");
+      const [images, setImages] = useState<DmInputAttachedImage[]>([
+        { fileName: "a.png", fullUrl: "https://placehold.co/90" },
+        { fileName: "b.png", fullUrl: "https://placehold.co/90/EDEEF0/35373C" },
+        { fileName: "c.png", fullUrl: "https://placehold.co/90/FFE6E6/FF0000" },
+      ]);
+      return (
+        <DmInput
+          value={value}
+          onChange={setValue}
+          images={images}
+          onRemoveImage={(idx) => setImages((prev) => prev.filter((_, i) => i !== idx))}
+        />
+      );
+    };
+    return <Wrapper />;
+  },
+};
+
+export const Controlled: Story = {
+  render: () => {
+    const Wrapper = () => {
+      const [value, setValue] = useState("");
+      const [log, setLog] = useState<string[]>([]);
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <DmInput
-            type={type}
-            replyText="감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요."
-            replyTarget="상대방"
+            value={value}
+            onChange={setValue}
+            onSend={() => {
+              if (!value.trim()) return;
+              setLog((l) => [...l, value]);
+              setValue("");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (!value.trim()) return;
+                setLog((l) => [...l, value]);
+                setValue("");
+              }
+            }}
           />
+          <ul style={{ fontSize: 12, color: "#70737e" }}>
+            {log.map((msg, i) => (
+              <li key={i}>• {msg}</li>
+            ))}
+          </ul>
         </div>
-      ))}
-    </div>
-  ),
+      );
+    };
+    return <Wrapper />;
+  },
 };
