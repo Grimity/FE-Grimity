@@ -1,12 +1,16 @@
 export interface DmListProps {
   active?: boolean;
   nickname?: string;
+  avatarUrl?: string;
   showCheck?: boolean;
-  showNew?: boolean;
+  checked?: boolean;
   text?: string;
-  time?: string;
+  hasImage?: boolean;
+  date?: Date | string;
+  searchKeyword?: string;
+  showNew?: boolean;
   count?: number;
-  onCheck?: () => void;
+  onCheck?: (checked: boolean) => void;
   onClick?: () => void;
   className?: string;
 }

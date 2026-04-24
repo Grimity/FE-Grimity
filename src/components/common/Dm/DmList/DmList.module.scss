@@ -83,9 +83,15 @@
 .lastMessage {
   @include typo.body-2-r;
   color: colors.$text-gray-bold;
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.highlight {
+  background-color: transparent;
+  color: colors.$text-primary-normal;
 }
 
 .badge {
