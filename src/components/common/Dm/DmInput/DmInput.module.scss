@@ -127,9 +127,13 @@
 // ─── Input row ───────────────────────────────────────
 .inputContainer {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: spacing.$spacing-8;
   padding: spacing.$spacing-8 spacing.$spacing-16;
+}
+
+.inputContainerMultiline {
+  align-items: flex-end;
 }
 
 // ─── Camera button ───────────────────────────────────

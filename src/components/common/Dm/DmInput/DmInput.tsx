@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 import Icon from "@/components/common/Icon/Icon";
 
@@ -27,6 +27,7 @@ export default function DmInput({
   className,
 }: DmInputProps) {
   const internalRef = useRef<HTMLTextAreaElement | null>(null);
+  const [isMultiline, setIsMultiline] = useState(false);
 
   const setRef = useCallback(
     (el: HTMLTextAreaElement | null) => {
@@ -53,6 +54,7 @@ export default function DmInput({
     const next = Math.min(Math.max(total, MIN_HEIGHT), MAX_HEIGHT);
     el.style.height = `${next}px`;
     el.style.overflowY = total > MAX_HEIGHT ? "auto" : "hidden";
+    setIsMultiline(total > MIN_HEIGHT);
   }, [value]);
 
   const hasImages = !!images && images.length > 0;
@@ -105,7 +107,7 @@ export default function DmInput({
         </div>
       )}
 
-      <div className={styles.inputContainer}>
+      <div className={clsx(styles.inputContainer, isMultiline && styles.inputContainerMultiline)}>
         {disabled ? (
           <span className={styles.cameraBtnDisabled} aria-hidden="true">
             <Icon name="camera" size={24} className={styles.cameraIconDisabled} />
