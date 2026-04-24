@@ -1,23 +1,22 @@
-export type ChatBubbleType = "Others" | "Default";
+export type ChatBubbleVariant = "mine" | "others";
 
-export type ChatBubbleState =
-  | "Default"
-  | "Sand"
-  | "Hovered"
-  | "Heart"
-  | "RightSlide"
-  | "Answer1"
-  | "Answer2"
-  | "images";
+export interface ChatBubbleReply {
+  target: string;
+  text: string;
+}
 
 export interface ChatBubbleProps {
-  type?: ChatBubbleType;
-  state?: ChatBubbleState;
+  variant?: ChatBubbleVariant;
   text?: string;
-  replyText?: string;
-  replyTarget?: string;
-  imageSrc?: string;
+  images?: string[];
+  replyTo?: ChatBubbleReply;
+  isLiked?: boolean;
+  isHovered?: boolean;
+  isPending?: boolean;
+  showSlide?: boolean;
   onLike?: () => void;
   onReply?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   className?: string;
 }

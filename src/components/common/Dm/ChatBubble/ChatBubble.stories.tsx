@@ -9,17 +9,15 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    type: {
+    variant: {
       control: { type: "select" },
-      options: ["Others", "Default"],
-    },
-    state: {
-      control: { type: "select" },
-      options: ["Default", "Sand", "Hovered", "Heart", "RightSlide", "Answer1", "Answer2", "images"],
+      options: ["others", "mine"],
     },
     text: { control: "text" },
-    replyText: { control: "text" },
-    replyTarget: { control: "text" },
+    isLiked: { control: "boolean" },
+    isHovered: { control: "boolean" },
+    isPending: { control: "boolean" },
+    showSlide: { control: "boolean" },
   },
 } satisfies Meta<typeof ChatBubble>;
 
@@ -27,116 +25,90 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const OthersDefault: Story = {
-  args: {
-    type: "Others",
-    state: "Default",
-    text: "Hello~",
-  },
+  args: { variant: "others", text: "Hello~" },
 };
 
 export const MineDefault: Story = {
-  args: {
-    type: "Default",
-    state: "Default",
-    text: "Hello~",
-  },
+  args: { variant: "mine", text: "Hello~" },
 };
 
 export const OthersHovered: Story = {
-  args: {
-    type: "Others",
-    state: "Hovered",
-    text: "Hello~",
-  },
+  args: { variant: "others", text: "Hello~", isHovered: true },
 };
 
-export const MineHovered: Story = {
-  args: {
-    type: "Default",
-    state: "Hovered",
-    text: "Hello~",
-  },
+export const OthersLiked: Story = {
+  args: { variant: "others", text: "Hello~", isLiked: true },
 };
 
-export const OthersHeart: Story = {
-  args: {
-    type: "Others",
-    state: "Heart",
-    text: "Hello~",
-  },
+export const MineLiked: Story = {
+  args: { variant: "mine", text: "Hello~", isLiked: true },
 };
 
-export const MineHeart: Story = {
-  args: {
-    type: "Default",
-    state: "Heart",
-    text: "Hello~",
-  },
+export const OthersLikedHovered: Story = {
+  args: { variant: "others", text: "Hello~", isLiked: true, isHovered: true },
 };
 
 export const OthersRightSlide: Story = {
-  args: {
-    type: "Others",
-    state: "RightSlide",
-    text: "Hello~",
-  },
+  args: { variant: "others", text: "Hello~", showSlide: true },
 };
 
-export const MineRightSlide: Story = {
-  args: {
-    type: "Default",
-    state: "RightSlide",
-    text: "Hello~",
-  },
+export const OthersPending: Story = {
+  args: { variant: "mine", text: "전송 중...", isPending: true },
 };
 
-export const OthersAnswer1: Story = {
+export const OthersWithReply: Story = {
   args: {
-    type: "Others",
-    state: "Answer1",
+    variant: "others",
     text: "넵!ㅎㅎ",
-    replyText: "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요.",
-    replyTarget: "상대방",
+    replyTo: {
+      target: "상대방",
+      text: "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요.",
+    },
   },
 };
 
-export const MineAnswer1: Story = {
+export const MineWithReply: Story = {
   args: {
-    type: "Default",
-    state: "Answer1",
+    variant: "mine",
     text: "넵!ㅎㅎ",
-    replyText: "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요.",
-    replyTarget: "상대방",
+    replyTo: {
+      target: "상대방",
+      text: "감사합니다. 이 부분도 1줄만 노출되고 길게 나오면 말줄임표를 해주세요.",
+    },
   },
 };
 
-export const MineImages: Story = {
+export const MineWithImages: Story = {
   args: {
-    type: "Default",
-    state: "images",
+    variant: "mine",
+    images: ["https://placehold.co/300x200/FFE6E6/FF0000?text=1"],
   },
 };
 
-export const AllStates: Story = {
+export const ReplyPlusLiked: Story = {
+  args: {
+    variant: "others",
+    text: "확인했어요",
+    isLiked: true,
+    replyTo: { target: "상대방", text: "이 메시지에 대해 답장합니다" },
+  },
+};
+
+export const AllVariants: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: 24, padding: 24 }}>
-      {(["Default", "Sand", "Hovered", "Heart", "RightSlide", "Answer1", "Answer2", "images"] as const).map((state) => (
-        <div key={state} style={{ display: "flex", gap: 32, alignItems: "center" }}>
-          <span style={{ width: 100, fontSize: 12, color: "#70737e" }}>State={state}</span>
-          <ChatBubble
-            type="Others"
-            state={state}
-            text="Hello~"
-            replyText="인용된 메시지입니다."
-            replyTarget="상대방"
-          />
-          <ChatBubble
-            type="Default"
-            state={state}
-            text="Hello~"
-            replyText="인용된 메시지입니다."
-            replyTarget="상대방"
-          />
+      {[
+        { label: "Default", props: {} },
+        { label: "Hovered", props: { isHovered: true } },
+        { label: "Liked", props: { isLiked: true } },
+        { label: "Liked+Hovered", props: { isLiked: true, isHovered: true } },
+        { label: "Slide", props: { showSlide: true } },
+        { label: "Pending (mine only)", props: { isPending: true } },
+      ].map(({ label, props }) => (
+        <div key={label} style={{ display: "flex", gap: 32, alignItems: "center" }}>
+          <span style={{ width: 140, fontSize: 12, color: "#70737e" }}>{label}</span>
+          <ChatBubble variant="others" text="Hello~" {...props} />
+          <ChatBubble variant="mine" text="Hello~" {...props} />
         </div>
       ))}
     </div>

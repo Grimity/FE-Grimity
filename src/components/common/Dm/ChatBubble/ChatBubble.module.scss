@@ -3,6 +3,21 @@
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
 
+// ─── Container (groups reply + images + bubble) ──────
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-6;
+}
+
+.containerMine {
+  align-items: flex-end;
+}
+
+.containerOthers {
+  align-items: flex-start;
+}
+
 // ─── Standard bubble wrapper ─────────────────────────
 .wrapper {
   position: relative;
@@ -21,6 +36,18 @@
   &.wrapperSand {
     align-items: flex-end;
   }
+}
+
+// ─── Images stack (multiple attachments) ─────────────
+.imagesStack {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+  align-items: flex-start;
+}
+
+.imagesStackMine {
+  align-items: flex-end;
 }
 
 // ─── Bubble ──────────────────────────────────────────
@@ -86,6 +113,10 @@
   &:hover {
     background-color: colors.$surface-gray-subtlest;
   }
+}
+
+.actionBtnLiked {
+  color: colors.$status-negative;
 }
 
 // ─── Right slide button ──────────────────────────────
