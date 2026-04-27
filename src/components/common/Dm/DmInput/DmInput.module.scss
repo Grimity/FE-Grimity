@@ -1,0 +1,233 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: colors.$surface-gray-subtlest;
+  width: 100%;
+}
+
+// ─── Top divider ─────────────────────────────────────
+.divider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: colors.$border-gray-subtler;
+}
+
+// ─── Reply preview (Answer state) ────────────────────
+.replyContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+  padding: spacing.$spacing-8 spacing.$spacing-16 spacing.$spacing-4;
+  border-top: 1px solid colors.$border-gray-subtler;
+  background-color: colors.$surface-gray-subtlest;
+  overflow: hidden;
+}
+
+.replyHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+}
+
+.replyIcon {
+  color: colors.$icon-gray-subtle;
+  flex-shrink: 0;
+}
+
+.replyTarget {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+}
+
+.replyPreviewText {
+  @include typo.label-4;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cancelReply {
+  position: absolute;
+  top: spacing.$spacing-8;
+  right: spacing.$spacing-16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: colors.$icon-gray-subtle;
+  padding: 0;
+
+  &:hover {
+    color: colors.$icon-gray-normal;
+  }
+}
+
+// ─── Image preview list ──────────────────────────────
+.imageList {
+  display: flex;
+  gap: spacing.$spacing-8;
+  padding: spacing.$spacing-8 spacing.$spacing-16 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.imageItem {
+  position: relative;
+  flex-shrink: 0;
+  width: 90px;
+  height: 90px;
+}
+
+.imageThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: radius.$radius-sm;
+  display: block;
+}
+
+.imageRemove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: radius.$radius-full;
+  color: colors.$text-white;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+// ─── Input row ───────────────────────────────────────
+.inputContainer {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  padding: spacing.$spacing-8 spacing.$spacing-16;
+}
+
+.inputContainerMultiline {
+  align-items: flex-end;
+}
+
+// ─── Camera button ───────────────────────────────────
+.cameraBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: colors.$icon-gray-bold;
+
+  &:hover {
+    color: colors.$icon-gray-normal;
+  }
+}
+
+.cameraBtnDisabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cameraIconDisabled {
+  color: colors.$icon-gray-subtler;
+}
+
+// ─── Text field ──────────────────────────────────────
+.field {
+  @include typo.label-4;
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  padding: 9px spacing.$spacing-12;
+  background-color: colors.$surface-gray-subtlest;
+  color: colors.$text-gray-bold;
+  caret-color: colors.$border-primary-normal;
+  outline: none;
+  resize: none;
+
+  &::placeholder {
+    color: colors.$text-gray-subtle;
+  }
+}
+
+.textField {
+  height: 40px;
+}
+
+.textarea {
+  min-height: 40px;
+  max-height: 88px;
+  overflow-y: auto;
+}
+
+.fieldDisabled {
+  background-color: colors.$surface-gray-subtlest;
+  border-color: colors.$border-gray-subtler;
+  color: colors.$text-gray-subtler;
+  cursor: not-allowed;
+
+  &::placeholder {
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// ─── Send button ─────────────────────────────────────
+.sendBtn {
+  @include typo.label-3;
+  flex-shrink: 0;
+  width: 60px;
+  height: 42px;
+  border: none;
+  border-radius: radius.$radius-sm;
+  cursor: pointer;
+  background-color: colors.$surface-gray-subtlest;
+  color: colors.$text-gray-subtler;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.sendBtnActive {
+  background-color: colors.$surface-inverse;
+  color: colors.$text-inverse;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
