@@ -192,18 +192,17 @@ function DefaultCard({
           nickname={nickname}
           followerCount={followerCount.toString()}
           followingCount={followingCount.toString()}
-          children={
-            isFollowing ? (
-              <OutlinedButton size="small" onClick={handleFollowClick}>
-                팔로잉
-              </OutlinedButton>
-            ) : (
-              <SolidButton size="small" onClick={handleFollowClick}>
-                팔로우
-              </SolidButton>
-            )
-          }
-        />
+        >
+          {isFollowing ? (
+            <OutlinedButton size="small" onClick={handleFollowClick}>
+              팔로잉
+            </OutlinedButton>
+          ) : (
+            <SolidButton size="small" onClick={handleFollowClick}>
+              팔로우
+            </SolidButton>
+          )}
+        </UserItem>
       </div>
       {images.length > 0 && (
         <div className={styles.imageGrid}>
