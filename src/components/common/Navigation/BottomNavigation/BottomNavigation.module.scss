@@ -1,0 +1,56 @@
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/colors/semantic" as colors;
+
+.nav {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: spacing.$spacing-2;
+  width: 55px;
+  height: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: spacing.$spacing-2 0;
+
+  &:active {
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: 2px;
+  }
+}
+
+.active {
+  .label {
+    color: colors.$text-gray-bold;
+  }
+}
+
+.iconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+  white-space: nowrap;
+
+  .active & {
+    color: colors.$text-gray-bold;
+  }
+}

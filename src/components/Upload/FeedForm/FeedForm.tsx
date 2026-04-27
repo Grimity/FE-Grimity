@@ -207,7 +207,7 @@ export default function FeedForm({
               resolve(webpFile);
             },
             "image/webp",
-            0.8,
+            0.9,
           );
         };
         img.onerror = (error) => {
