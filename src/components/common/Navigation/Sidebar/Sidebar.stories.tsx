@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import Sidebar from "./Sidebar";
-import type { SidebarActiveItem } from "./Sidebar.types";
+import type { SidebarActiveItem, SidebarProps } from "./Sidebar.types";
 
 const meta = {
   title: "Common/Navigation/Sidebar",
@@ -39,32 +39,45 @@ const defaultArgs = {
   followingCount: 32,
   onLogoutClick: () => {},
   onTermsClick: () => {},
+  onPrivacyClick: () => {},
   onBusinessClick: () => {},
 };
 
-function SidebarDefault() {
-  const [activeItem, setActiveItem] = useState<SidebarActiveItem | undefined>(undefined);
+type SidebarStoryProps = SidebarProps;
+
+function SidebarStory({ size = "lg", activeItem: initialActiveItem, ...rest }: SidebarStoryProps) {
+  const [activeItem, setActiveItem] = useState<SidebarActiveItem | undefined>(initialActiveItem);
+  useEffect(() => {
+    setActiveItem(initialActiveItem);
+  }, [initialActiveItem]);
+
   return (
-    <>
-      <Sidebar
-        {...defaultArgs}
-        size="lg"
-        activeItem={activeItem}
-        onLikedClick={() => setActiveItem("liked")}
-        onSavedClick={() => setActiveItem("saved")}
-      />
-      <Sidebar
-        {...defaultArgs}
-        size="md"
-        activeItem={activeItem}
-        onLikedClick={() => setActiveItem("liked")}
-        onSavedClick={() => setActiveItem("saved")}
-      />
-    </>
+    <Sidebar
+      {...rest}
+      size={size}
+      activeItem={activeItem}
+      onLikedClick={() => setActiveItem("liked")}
+      onSavedClick={() => setActiveItem("saved")}
+    />
   );
 }
 
 export const Default: Story = {
-  args: { ...defaultArgs, size: "lg" },
-  render: () => <SidebarDefault />,
+  args: { ...defaultArgs, size: "lg", activeItem: undefined },
+  render: (args) => <SidebarStory {...args} />,
+};
+
+export const Medium: Story = {
+  args: { ...defaultArgs, size: "md", activeItem: undefined },
+  render: (args) => <SidebarStory {...args} />,
+};
+
+export const LikedActive: Story = {
+  args: { ...defaultArgs, size: "lg", activeItem: "liked" },
+  render: (args) => <SidebarStory {...args} />,
+};
+
+export const SavedActive: Story = {
+  args: { ...defaultArgs, size: "lg", activeItem: "saved" },
+  render: (args) => <SidebarStory {...args} />,
 };

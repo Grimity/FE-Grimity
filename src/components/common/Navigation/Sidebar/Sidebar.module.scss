@@ -41,6 +41,8 @@
 }
 
 .stats {
+  display: flex;
+  gap: spacing.$spacing-8;
   @include typo.label-6;
   color: colors.$text-gray-normal;
   margin: 0;
@@ -90,14 +92,9 @@
       }
     }
   
-    &:active {
-      .menuLabel {
-        color: colors.$text-primary-normal;
-      }
-
-      .menuItemIcon {
-        color: colors.$icon-primary-normal;
-      }
+    &:focus-visible {
+      outline: 2px solid colors.$border-gray-subtle;
+      outline-offset: 2px;
     }
   }
   
@@ -105,6 +102,10 @@
     .menuLabel {
       @include typo.body-1-sb;
       color: colors.$text-primary-normal;
+    }
+
+    .menuItemIcon {
+      color: colors.$icon-primary-normal;
     }
 
     &:hover {

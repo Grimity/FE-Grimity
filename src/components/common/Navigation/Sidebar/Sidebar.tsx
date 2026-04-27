@@ -25,6 +25,7 @@ export default function Sidebar({
   onSavedClick,
   onLogoutClick,
   onTermsClick,
+  onPrivacyClick,
   onBusinessClick,
   className,
 }: SidebarProps) {
@@ -42,18 +43,23 @@ export default function Sidebar({
           <p className={styles.handle}>@{handle}</p>
         </div>
         <p className={styles.stats}>
-          팔로워 <span className={styles.count}>{followerCount}</span>
-          &nbsp;&nbsp;팔로잉 <span className={styles.count}>{followingCount}</span>
+          <span>
+            팔로워 <span className={styles.count}>{followerCount}</span>
+          </span>
+          <span>
+            팔로잉 <span className={styles.count}>{followingCount}</span>
+          </span>
         </p>
       </div>
 
-      <nav className={styles.menu}>
+      <nav className={styles.menu} aria-label="프로필 사이드바 메뉴">
         {MENU_ITEMS.map(({ key, icon, label }) => {
           const isActive = activeItem === key;
           return (
             <button
               key={key}
               type="button"
+              aria-current={isActive ? "page" : undefined}
               className={clsx(styles.menuItem, isActive && styles.menuItemActive)}
               onClick={handlers[key]}
             >
@@ -72,14 +78,14 @@ export default function Sidebar({
       <footer className={styles.footer}>
         <button type="button" className={styles.logout} onClick={onLogoutClick}>
           로그아웃
-          <Icon name="out" size={16} color="gray-subtle" className={styles.logoutIcon}/>
+          <Icon name="out" size={16} color="gray-subtle" className={styles.logoutIcon} />
         </button>
         <div className={styles.footerLinks}>
           <button type="button" className={styles.footerLink} onClick={onTermsClick}>
             이용약관
           </button>
-          <p className={styles.footerSeparator}/>
-          <button type="button" className={styles.footerLink} onClick={onTermsClick}>
+          <span className={styles.footerSeparator} aria-hidden="true" />
+          <button type="button" className={styles.footerLink} onClick={onPrivacyClick}>
             개인정보처리방침
           </button>
         </div>

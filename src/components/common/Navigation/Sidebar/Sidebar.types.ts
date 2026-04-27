@@ -13,6 +13,7 @@ export interface SidebarProps {
   onSavedClick?: () => void;
   onLogoutClick?: () => void;
   onTermsClick?: () => void;
+  onPrivacyClick?: () => void;
   onBusinessClick?: () => void;
   className?: string;
 }
