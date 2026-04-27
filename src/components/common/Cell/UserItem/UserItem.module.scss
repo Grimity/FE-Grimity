@@ -1,0 +1,707 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+// ============================================
+// Avatar
+// ============================================
+
+.avatarMd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: radius.$radius-full;
+  background-color: colors.$surface-gray-subtlest;
+  border: 1px solid colors.$border-gray-subtler;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatarXs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: radius.$radius-full;
+  background-color: colors.$surface-gray-subtlest;
+  border: 1px solid colors.$border-gray-subtler;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// ============================================
+// Tag chips
+// ============================================
+
+.tagAssistive {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 spacing.$spacing-8;
+  border-radius: radius.$radius-full;
+  background-color: colors.$surface-gray-subtlest;
+  border: 1px solid colors.$border-gray-subtler;
+  @include typo.label-5;
+  color: colors.$text-gray-normal;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tagPrimary {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 spacing.$spacing-8;
+  border-radius: radius.$radius-full;
+  background-color: colors.$surface-primary-subtlest;
+  border: 1px solid colors.$border-primary-subtle;
+  @include typo.label-6;
+  color: colors.$text-primary-normal;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// ============================================
+// Type: default
+// ============================================
+
+.default {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-8 0;
+  width: 100%;
+}
+
+.defaultLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+.defaultNickname {
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.defaultRight {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex-shrink: 0;
+}
+
+// ============================================
+// Type: id / iconId
+// ============================================
+
+.id {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-8 0;
+  width: 100%;
+}
+
+.idLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+.idInfo {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-2;
+  min-width: 0;
+}
+
+.idNickname {
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idUserId {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idRight {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex-shrink: 0;
+}
+
+// ============================================
+// Type: radio
+// ============================================
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-8 0;
+  width: 100%;
+}
+
+.radioLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+// ============================================
+// Type: follow
+// ============================================
+
+.follow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-8 0;
+  width: 100%;
+}
+
+.followLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+.followInfo {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-2;
+  min-width: 0;
+}
+
+.followNickname {
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.followRight {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex-shrink: 0;
+}
+
+// ============================================
+// Type: notification
+// ============================================
+
+.notification {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-12 0;
+  width: 100%;
+}
+
+.notificationLeft {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+.notificationContent {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-2;
+}
+
+.notificationCategory {
+  @include typo.label-5;
+  color: colors.$text-primary-normal;
+}
+
+.notificationMessage {
+  @include typo.label-4;
+  color: colors.$text-gray-bold;
+}
+
+.notificationTime {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+}
+
+// ============================================
+// Type: link
+// ============================================
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-8 0;
+  width: 100%;
+}
+
+.linkLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  flex: 1;
+  min-width: 0;
+}
+
+.linkBrandIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: radius.$radius-xs;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.linkInfo {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-2;
+  min-width: 0;
+}
+
+.linkSiteName {
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkUrl {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ============================================
+// Type: linkMain
+// ============================================
+
+.linkMain {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  padding: spacing.$spacing-4 0;
+  width: 100%;
+}
+
+.linkMainBrandIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: radius.$radius-xs;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.linkMainSiteName {
+  @include typo.label-5;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ============================================
+// Type: bookMark
+// ============================================
+
+.bookMark {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-16;
+  padding: spacing.$spacing-20 0;
+  width: 100%;
+  position: relative;
+}
+
+.bookMarkLeft {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+.bookMarkPost {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+}
+
+.bookMarkHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+  min-width: 0;
+}
+
+.bookMarkGalleryIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.bookMarkTitle {
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.bookMarkBody {
+  @include typo.body-2-r;
+  color: colors.$text-gray-bold;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bookMarkDivider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+// ============================================
+// Type: communityTitle
+// ============================================
+
+.communityTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-8;
+  padding: spacing.$spacing-20 0;
+  width: 100%;
+  position: relative;
+}
+
+.communityTitlePost {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+  height: 48px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.communityTitleHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  min-width: 0;
+}
+
+.communityTitleText {
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.communityTitleBody {
+  @include typo.body-2-r;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.communityTitleDivider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+// ============================================
+// Type: title
+// ============================================
+
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-8;
+  padding: spacing.$spacing-12 0;
+  width: 100%;
+  position: relative;
+}
+
+.titleHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  min-width: 0;
+  width: 100%;
+}
+
+.titleText {
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.titleDivider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+// ============================================
+// Type: image
+// ============================================
+
+.image {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-12 0;
+  width: 100%;
+  position: relative;
+}
+
+.imageThumbnail {
+  width: 48px;
+  height: 48px;
+  border-radius: radius.$radius-sm;
+  border: 1px solid colors.$border-gray-subtler;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.imageRight {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+.imageTitle {
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.imageDivider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+// ============================================
+// Type: comment / commentxs
+// ============================================
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-12;
+  width: 100%;
+}
+
+.commentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+  width: 100%;
+}
+
+.commentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.commentHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  min-width: 0;
+}
+
+.commentContent {
+  @include typo.body-2-r;
+  color: colors.$text-gray-bold;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.commentContentMd {
+  padding-left: spacing.$spacing-48;
+}
+
+.commentContentXs {
+  padding-left: spacing.$spacing-32;
+}
+
+.commentActions {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-10;
+}
+
+.commentActionsMd {
+  padding-left: spacing.$spacing-48;
+}
+
+.commentActionsXs {
+  padding-left: spacing.$spacing-32;
+}
+
+.commentActionBtn {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background: none;
+  cursor: pointer;
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+
+  &:hover {
+    color: colors.$text-gray-normal;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: 2px;
+    border-radius: radius.$radius-xs;
+  }
+}
+
+// ============================================
+// Type: commentPlus / commentPlusxs
+// ============================================
+
+.commentPlus {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-12;
+  width: 100%;
+}
+
+.commentPlusMd {
+  padding-left: spacing.$spacing-48;
+}
+
+.commentPlusXs {
+  padding-left: spacing.$spacing-32;
+}
+
+.commentPlusHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.commentPlusHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+  min-width: 0;
+}
+
+.commentPlusContent {
+  @include typo.body-2-r;
+  color: colors.$text-gray-bold;
+  padding-left: spacing.$spacing-32;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.commentPlusMention {
+  @include typo.label-5;
+  color: colors.$text-primary-normal;
+}
+
+.commentPlusActions {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-10;
+  padding-left: spacing.$spacing-32;
+}
+
+// ============================================
+// Type: commentDeleted
+// ============================================
+
+.commentDeleted {
+  display: flex;
+  flex-direction: column;
+  padding: spacing.$spacing-8 0;
+  width: 100%;
+}
+
+.commentDeletedText {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+}

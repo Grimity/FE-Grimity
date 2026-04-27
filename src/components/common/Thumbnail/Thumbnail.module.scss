@@ -1,0 +1,73 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+
+.thumbnail {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: colors.$bg-secondary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  picture {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logo {
+  width: 25%;
+  height: auto;
+  max-width: 100px;
+}
+
+// Aspect Ratios
+.ratio1_1 {
+  aspect-ratio: 1 / 1;
+}
+
+.ratio5_4 {
+  aspect-ratio: 5 / 4;
+}
+
+.ratio4_3 {
+  aspect-ratio: 4 / 3;
+}
+
+.ratio3_2 {
+  aspect-ratio: 3 / 2;
+}
+
+.ratio16_10 {
+  aspect-ratio: 16 / 10;
+}
+
+.ratio16_9 {
+  aspect-ratio: 16 / 9;
+}
+
+.ratio2_1 {
+  aspect-ratio: 2 / 1;
+}
+
+.ratio21_9 {
+  aspect-ratio: 21 / 9;
+}
+
+.ratio4_1 {
+  aspect-ratio: 4 / 1;
+}
+
+.ratio3_4 {
+  aspect-ratio: 3 / 4;
+}

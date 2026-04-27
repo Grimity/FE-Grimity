@@ -1,0 +1,40 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.controlItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 52px;
+  padding: 0;
+  margin: 0;
+  border: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: none;
+    border-color: colors.$border-gray-subtle;
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+
+    .text {
+      color: colors.$text-gray-subtler;
+    }
+  }
+}
+
+.text {
+  color: colors.$text-gray-bold;
+}
+
+.bold .text {
+  @include typo.subtitle-1;
+}
+
+.normal .text {
+  @include typo.label-2;
+}

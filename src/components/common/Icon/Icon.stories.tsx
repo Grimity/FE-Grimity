@@ -125,6 +125,7 @@ const ICON_CATEGORIES: { label: string; icons: IconName[] }[] = [
       "arrow-to-down-right",
       "reply",
       "reply-2",
+      "reply-branch",
       "forward",
       "forward-2",
       "sort-horizontal",

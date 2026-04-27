@@ -1,0 +1,101 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/colors/atomic" as atomic;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.search {
+  height: 48px;
+  padding: 0 spacing.$spacing-16;
+  background-color: colors.$surface-gray-subtlest;
+  border-color: transparent;
+  border-radius: radius.$radius-sm;
+  gap: 8px;
+
+  &:focus-within {
+    border-color: colors.$status-info;
+  }
+
+  .iconLeft {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: colors.$icon-gray-subtle;
+  }
+
+  .clearButton {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: colors.$icon-gray-subtle;
+
+    &:hover {
+      color: colors.$icon-gray-normal;
+    }
+  }
+}
+
+.titleVariant {
+  height: auto;
+  border: none;
+  border-bottom: 1px solid colors.$border-gray-subtle;
+  border-radius: 0;
+  padding: 0 0 spacing.$spacing-8 0;
+  background-color: transparent;
+
+  &:focus-within {
+    border-color: colors.$status-info;
+  }
+}
+
+.titleInputMd {
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+
+  &::placeholder {
+    color: colors.$text-gray-subtler;
+  }
+}
+
+.titleInputSm {
+  @include typo.label-2;
+  color: colors.$text-gray-bold;
+
+  &::placeholder {
+    color: colors.$text-gray-subtler;
+  }
+}
+
+.titleError {
+  border-bottom-color: colors.$status-negative;
+
+  &:focus-within {
+    border-bottom-color: colors.$status-negative;
+  }
+}
+
+.titleSuccess {
+  border-bottom-color: colors.$status-positive;
+
+  &:focus-within {
+    border-bottom-color: colors.$status-positive;
+  }
+}
+
+.count {
+  @include typo.caption-1;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.currentCount {
+  color: colors.$text-gray-normal;
+}
+
+.maxCount {
+  color: colors.$text-gray-subtle;
+}

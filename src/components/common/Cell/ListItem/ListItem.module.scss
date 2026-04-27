@@ -1,0 +1,294 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+// ============================================
+// Base styles
+// ============================================
+
+.base {
+  display: flex;
+  align-items: center;
+  border: none;
+  outline: none;
+  background: none;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: -2px;
+  }
+
+  &:disabled,
+  &.disabled {
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// Section type
+// ============================================
+
+.section {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: spacing.$spacing-6 spacing.$spacing-16 spacing.$spacing-6
+    spacing.$spacing-24;
+  background-color: colors.$surface-gray-subtlest;
+  @include typo.label-6;
+  color: colors.$text-gray-normal;
+}
+
+// ============================================
+// RightIcon type
+// ============================================
+
+.rightIcon {
+  height: 52px;
+  padding: 0 spacing.$spacing-16;
+  justify-content: space-between;
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:disabled {
+    color: colors.$text-gray-subtler;
+  }
+}
+
+.rightIconRight {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.subText {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+
+  .base:disabled & {
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// ============================================
+// OptionCard type
+// ============================================
+
+.optionCard {
+  height: 52px;
+  padding: 0 spacing.$spacing-16;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-base;
+  gap: spacing.$spacing-8;
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+    border-color: colors.$border-gray-normal;
+  }
+
+  &.active {
+    background-color: colors.$surface-primary-subtlest;
+    border-color: colors.$border-primary-normal;
+    color: colors.$text-primary-normal;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtlest;
+    border-color: colors.$border-gray-subtler;
+    color: colors.$text-gray-subtler;
+  }
+}
+
+.optionCardContent {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex: 1;
+  min-width: 0;
+}
+
+.optionCardText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optionCardCheck {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+// ============================================
+// Icon type (no border variant of optionCard)
+// ============================================
+
+.icon {
+  height: 52px;
+  padding: 0 spacing.$spacing-16;
+  gap: spacing.$spacing-8;
+  @include typo.label-1;
+  color: colors.$text-gray-normal;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &.active {
+    background-color: colors.$surface-gray-subtlest;
+    color: colors.$text-gray-bold;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtlest;
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// ============================================
+// PickerCard type
+// ============================================
+
+.pickerCard {
+  height: 32px;
+  padding: 0 spacing.$spacing-4;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-base;
+  justify-content: center;
+  @include typo.label-4;
+  color: colors.$text-gray-bold;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+    border-color: colors.$border-gray-normal;
+  }
+
+  &.active {
+    background-color: colors.$surface-primary-subtlest;
+    border-color: colors.$border-primary-normal;
+    color: colors.$text-primary-normal;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtlest;
+    border-color: colors.$border-gray-subtler;
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// ============================================
+// TextLg type
+// ============================================
+
+.textLg {
+  height: 52px;
+  padding: 0 spacing.$spacing-16;
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &.active {
+    color: colors.$text-primary-normal;
+  }
+
+  &.negative {
+    color: colors.$status-negative;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtlest;
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// ============================================
+// TextMd type
+// ============================================
+
+.textMd {
+  height: 40px;
+  padding: 0 spacing.$spacing-16;
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &.active {
+    color: colors.$text-primary-normal;
+  }
+
+  &.negative {
+    color: colors.$status-negative;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtlest;
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// ============================================
+// Shared text + checkmark layout for textLg / textMd
+// ============================================
+
+.textContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: spacing.$spacing-8;
+}
+
+// ============================================
+// CheckBox / Radio / CheckMark control types
+// ============================================
+
+.control {
+  padding: spacing.$spacing-8 spacing.$spacing-12;
+  gap: spacing.$spacing-8;
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+
+  &:hover:not(:disabled):not(.disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:disabled,
+  &.disabled {
+    color: colors.$text-gray-subtler;
+  }
+}
+
+// ============================================
+// Icon slot
+// ============================================
+
+.iconSlot {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}

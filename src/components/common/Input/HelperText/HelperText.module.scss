@@ -1,0 +1,55 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.helperText {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-8;
+}
+
+.messageWrapper {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+}
+
+.message {
+  @include typo.caption-1;
+}
+
+.count {
+  @include typo.caption-1;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.currentCount {
+  color: colors.$text-gray-normal;
+}
+
+.maxCount {
+  color: colors.$text-gray-subtle;
+}
+
+// Status colors
+.default {
+  .message {
+    color: colors.$text-gray-bold;
+  }
+}
+
+.error {
+  .icon,
+  .message {
+    color: colors.$status-negative;
+  }
+}
+
+.success {
+  .icon,
+  .message {
+    color: colors.$status-positive;
+  }
+}

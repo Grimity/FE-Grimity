@@ -1,0 +1,128 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1501;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-color: colors.$bg-overlay-black;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.sheet {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: min(460px, 90vh);
+  border-radius: radius.$radius-xl radius.$radius-xl 0 0;
+  background-color: colors.$surface-base;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.header {
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
+  padding: 0 spacing.$spacing-20;
+  background-color: colors.$surface-base;
+
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    gap: spacing.$spacing-12;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .headerRight {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .iconButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    color: colors.$icon-gray-bold;
+    cursor: pointer;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  .closeButton {
+    width: 32px;
+    height: 32px;
+    border-radius: radius.$radius-full;
+  }
+
+  .title {
+    margin: 0;
+    min-width: 0;
+    @include typo.title-3;
+    color: colors.$text-gray-bold;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
+}
+
+.footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-8;
+  padding: 0 spacing.$spacing-20 spacing.$spacing-20;
+
+  .buttonWrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+
+    button {
+      width: 100%;
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
