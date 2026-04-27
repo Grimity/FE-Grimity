@@ -18,8 +18,8 @@ const meta = {
         "guest",
         "guest-menu",
         "main",
-        "2dep",
-        "3button",
+        "depth-2",
+        "three-button",
         "search",
         "text-button",
         "editor",
@@ -87,11 +87,11 @@ export const MainMobile: Story = {
   },
 };
 
-/** 모바일 Top Navigation · 2dep */
+/** 모바일 Top Navigation · depth-2 */
 export const TwoDepMobile: Story = {
-  name: "Mobile · 2dep",
+  name: "Mobile · depth-2",
   args: {
-    variant: "2dep",
+    variant: "depth-2",
     title: "Title",
     hasNotification: false,
   },
@@ -100,12 +100,12 @@ export const TwoDepMobile: Story = {
   },
 };
 
-/** 모바일 · 3button */
+/** 모바일 · three-button */
 export const ThreeButtonMobile: Story = {
-  name: "Mobile · 3button",
+  name: "Mobile · three-button",
   args: {
-    variant: "3button",
-    title: "3button",
+    variant: "three-button",
+    title: "three-button",
     rightActions: [
       <IconButton key="0" icon={<Icon name="gallery" size={24} color="gray-bold" />} />,
       <IconButton key="1" icon={<Icon name="pen" size={24} color="gray-bold" />} />,
@@ -187,9 +187,9 @@ export const AllVariants: Story = {
       <GNB variant="guest" />
       <GNB variant="guest-menu" />
       <GNB variant="main" hasNotification />
-      <GNB variant="2dep" title="Title" hasNotification />
+      <GNB variant="depth-2" title="Title" hasNotification />
       <GNB
-        variant="3button"
+        variant="three-button"
         title="Title"
         rightActions={[
           <IconButton key="0" icon={<Icon name="gallery" size={24} color="gray-bold" />} />,

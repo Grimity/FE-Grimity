@@ -23,7 +23,7 @@
   padding: 0 spacing.$spacing-16;
 }
 
-/** 모바일 Top Nav border bottom (guest / guest-menu / main / 2dep)*/
+/** 모바일 Top Nav border bottom (guest / guest-menu / main / depth-2)*/
 .gnbTopNav.topNavBorderBottom {
   border-bottom: 1px solid colors.$border-gray-subtler;
 }
@@ -64,6 +64,11 @@
   padding: spacing.$spacing-4;
   cursor: pointer;
   flex-shrink: 0;
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: 2px;  
+  }
 }
 
 .flexRow {
@@ -112,6 +117,11 @@
   cursor: pointer;
   border-radius: radius.$radius-full;
   flex-shrink: 0;
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-normal;
+    outline-offset: 2px;
+  }
 }
 
 .searchInput {

@@ -200,7 +200,7 @@ export default function GNB({
         </nav>
       );
 
-    case "2dep":
+    case "depth-2":
       return (
         <nav
           className={clsx(
@@ -223,7 +223,7 @@ export default function GNB({
         </nav>
       );
 
-    case "3button":
+    case "three-button":
       return (
         <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
           <div className={clsx(styles.flexRow, styles.gap8)}>
