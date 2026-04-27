@@ -111,21 +111,4 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-
-  .meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: spacing.$spacing-4;
-    min-width: 0;
-    color: colors.$text-gray-subtle;
-    @include typo.label-6;
-
-    .metaItem {
-      display: inline-flex;
-      align-items: center;
-      gap: spacing.$spacing-2;
-      flex-shrink: 0;
-    }
-  }
 }

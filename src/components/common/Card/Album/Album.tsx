@@ -10,6 +10,7 @@ import {
 import styles from "./Album.module.scss";
 import type { AlbumProps, AlbumRank } from "./Album.types";
 import { THUMBNAIL_PATH } from "@/constants/imageUrl";
+import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
 
 const RANK_ICON_MAP: Record<AlbumRank, "rank-1" | "rank-2" | "rank-3" | "rank-4"> = {
   1: "rank-1",
@@ -158,19 +159,14 @@ export default function Album({
 
       <div className={styles.body}>
         <h3 className={styles.title}>{title}</h3>
-        <div className={styles.meta}>
-          <span className={styles.metaItem}>{nickname}</span>
-          <Icon name="dot" size={2} color="gray-subtler" aria-hidden />
-          <span className={styles.metaItem}>
-            <Icon name="heart" size={16} color="gray-subtle" aria-hidden />
-            {likeCount}
-          </span>
-          <Icon name="dot" size={2} color="gray-subtler" aria-hidden />
-          <span className={styles.metaItem}>
-            <Icon name="eye" size={16} color="gray-subtle" aria-hidden />
-            {viewCount}
-          </span>
-        </div>
+        <UserInfo
+          type="default"
+          nickname={nickname}
+          showHeart={true}
+          heartCount={likeCount.toString()}
+          showView={true}
+          viewCount={viewCount.toString()}
+        />
       </div>
     </article>
   );

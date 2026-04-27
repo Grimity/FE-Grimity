@@ -18,66 +18,6 @@
     display: flex;
     align-items: center;
     gap: spacing.$spacing-8;
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      aspect-ratio: 1;
-      flex-shrink: 0;
-      border-radius: radius.$radius-full;
-      border: 1px solid colors.$border-gray-subtler;
-      background-color: colors.$surface-gray-subtlest;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .avatarImage {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-    }
-
-    .info {
-      flex: 1;
-      min-width: 0;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: spacing.$spacing-2;
-
-      .nickname {
-        width: 100%;
-        min-width: 0;
-        @include typo.label-2;
-        color: colors.$text-gray-bold;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .counts {
-        display: flex;
-        align-items: center;
-        gap: spacing.$spacing-8;
-
-        .countItem {
-          display: inline-flex;
-          align-items: center;
-          gap: spacing.$spacing-2;
-          @include typo.label-6;
-          color: colors.$text-gray-normal;
-
-          .countItemValue {
-            @include typo.label-5;
-            color: colors.$text-gray-bold;
-            margin: 0;
-          }
-        }
-      }
-    }
   }
 
   .imageGrid {

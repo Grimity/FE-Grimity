@@ -18,6 +18,7 @@ import type {
   TagViewUserCardProps,
 } from "./User.types";
 import { THUMBNAIL_PATH } from "@/constants/imageUrl";
+import UserItem from "../../Cell/UserItem/UserItem";
 
 function UserCardImage({ image }: { image: UserCardImageItem }) {
   const isControlled = image.isLiked !== undefined;
@@ -161,7 +162,6 @@ function SearchCard({
 }
 
 function DefaultCard({
-  avatarUrl,
   nickname,
   followerCount = 0,
   followingCount = 0,
@@ -187,35 +187,23 @@ function DefaultCard({
       onKeyDown={keyDownOnArticle}
     >
       <div className={styles.header}>
-        <div className={styles.avatar}>
-          {avatarUrl ? (
-            <ResponsiveImage
-              src={avatarUrl}
-              alt={nickname}
-              className={styles.avatarImage}
-              mobileSize={80}
-              desktopSize={160}
-            />
-          ) : (
-            <Icon name="profile" size={40} />
-          )}
-        </div>
-        <div className={styles.info}>
-          <span className={styles.nickname}>{nickname}</span>
-          <div className={styles.counts}>
-            <span className={styles.countItem}>
-              팔로워 <span className={styles.countItemValue}>{followerCount}</span>
-            </span>
-            <span className={styles.countItem}>
-              팔로잉 <span className={styles.countItemValue}>{followingCount}</span>
-            </span>
-          </div>
-        </div>
-        {isFollowing ? (
-          <OutlinedButton size="small" onClick={handleFollowClick}>팔로잉</OutlinedButton>
-        ) : (
-          <SolidButton size="small" onClick={handleFollowClick}>팔로우</SolidButton>
-        )}
+        <UserItem
+          type="follow"
+          nickname={nickname}
+          followerCount={followerCount.toString()}
+          followingCount={followingCount.toString()}
+          children={
+            isFollowing ? (
+              <OutlinedButton size="small" onClick={handleFollowClick}>
+                팔로잉
+              </OutlinedButton>
+            ) : (
+              <SolidButton size="small" onClick={handleFollowClick}>
+                팔로우
+              </SolidButton>
+            )
+          }
+        />
       </div>
       {images.length > 0 && (
         <div className={styles.imageGrid}>
