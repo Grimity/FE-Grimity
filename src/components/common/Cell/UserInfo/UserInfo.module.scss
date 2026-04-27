@@ -1,0 +1,103 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+// Shared
+.userInfo {
+  display: inline-flex;
+  align-items: center;
+}
+
+// Type: default, community
+.default,
+.community {
+  gap: spacing.$spacing-4;
+}
+
+// Type: comment, follow
+.comment,
+.follow {
+  gap: spacing.$spacing-8;
+}
+
+// Dot separator
+.dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background-color: colors.$icon-gray-subtler;
+  flex-shrink: 0;
+}
+
+// Nickname (default / community)
+.nickname {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Stat section (icon + count)
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+  flex-shrink: 0;
+}
+
+.count {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+}
+
+// Time
+.time {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+  flex-shrink: 0;
+}
+
+// Comment type
+.commentNicknameWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.commentNickname {
+  @include typo.label-5;
+  color: colors.$text-gray-bold;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 spacing.$spacing-8;
+  background-color: colors.$surface-primary-subtlest;
+  border: 1px solid colors.$border-primary-subtle;
+  border-radius: radius.$radius-full;
+
+  @include typo.label-6;
+  color: colors.$text-primary-normal;
+}
+
+// Follow type
+.followPair {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+}
+
+.followLabel {
+  @include typo.label-6;
+  color: colors.$text-gray-normal;
+}
+
+.followCount {
+  @include typo.label-5;
+  color: colors.$text-gray-bold;
+}
