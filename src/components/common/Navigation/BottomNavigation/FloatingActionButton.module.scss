@@ -1,0 +1,31 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/shadow" as shadow;
+
+.fab {
+  width: 54px;
+  height: 54px;
+  border-radius: radius.$radius-full;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: colors.$surface-primary-normal;
+  box-shadow: shadow.$shadow-level2;
+  transition: background-color 0.1s ease;
+  position: fixed;
+  right: spacing.$spacing-16;
+  bottom: calc(56px + #{spacing.$spacing-16});
+  z-index: 10;
+
+  &:active {
+    background-color: colors.$surface-inverse;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: -2px;
+  }
+}

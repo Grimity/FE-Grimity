@@ -2,6 +2,7 @@ import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
 import DotBadge from "@/components/common/PushBadge/DotBadge/DotBadge";
 import Divider from "@/components/common/Divider/Divider";
+import FloatingActionButton from "@/components/common/Navigation/BottomNavigation/FloatingActionButton";
 import type { BottomNavTab, BottomNavigationProps } from "./BottomNavigation.types";
 import type { IconName } from "@/components/common/Icon/Icon.types";
 import styles from "./BottomNavigation.module.scss";
@@ -25,14 +26,7 @@ export default function BottomNavigation({
   return (
     <>
       {showPlus && (
-        <button
-          type="button"
-          className={styles.plusBtn}
-          onClick={onPlusClick}
-          aria-label="그림 업로드"
-        >
-          <Icon name="plus-thick" size={24} color="white" />
-        </button>
+        <FloatingActionButton onClick={onPlusClick} ariaLabel="그림 업로드" />
       )}
       <Divider
         variant="secondary"
@@ -41,6 +35,9 @@ export default function BottomNavigation({
         {NAV_ITEMS.map(({ tab, icon, label }) => {
           const isActive = activeTab === tab;
           const showBadge = tab === "dm" && hasDmBadge;
+          const iconElement = (
+            <Icon name={icon} size={24} color={isActive ? "gray-bold" : "gray-subtle"} />
+          );
 
           return (
             <button
@@ -49,16 +46,9 @@ export default function BottomNavigation({
               className={clsx(styles.item, isActive && styles.active)}
               onClick={() => onTabChange(tab)}
               aria-current={isActive ? "page" : undefined}
-              aria-label={label}
             >
               <div className={styles.iconWrapper}>
-                {showBadge ? (
-                  <DotBadge size="small" position="bottomRight">
-                    <Icon name={icon} size={24} color={isActive ? "gray-bold" : "gray-subtle"} />
-                  </DotBadge>
-                ) : (
-                  <Icon name={icon} size={24} color={isActive ? "gray-bold" : "gray-subtle"} />
-                )}
+                {showBadge ? <DotBadge size="small" position="bottomRight">{iconElement}</DotBadge> : iconElement}
               </div>
               <span className={styles.label}>{label}</span>
             </button>
