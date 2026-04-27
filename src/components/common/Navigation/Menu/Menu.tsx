@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import clsx from "clsx";
 import Divider from "@/components/common/Divider/Divider";
 import styles from "./Menu.module.scss";
 import { MenuProps } from "./Menu.types";
-import clsx from "clsx";
 
 export default function Menu({ items, trigger, align = "right", className }: MenuProps) {
   const [open, setOpen] = useState(false);
@@ -15,16 +15,22 @@ export default function Menu({ items, trigger, align = "right", className }: Men
         setOpen(false);
       }
     };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [open]);
 
   const list = (
     <ul className={clsx(styles.menu, className)} role="menu">
       {items.map((item, i) => (
-        <>
+        <React.Fragment key={item.label ?? i}>
           <li
-            key={i}
             role="menuitem"
             tabIndex={0}
             className={styles.item}
@@ -42,11 +48,11 @@ export default function Menu({ items, trigger, align = "right", className }: Men
             {item.label}
           </li>
           {item.borderBottom && (
-            <li key={`divider-${i}`} role="separator" className={styles.divider}>
+            <li role="separator" className={styles.divider}>
               <Divider variant="secondary" />
             </li>
           )}
-        </>
+        </React.Fragment>
       ))}
     </ul>
   );

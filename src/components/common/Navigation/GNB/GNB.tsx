@@ -10,6 +10,56 @@ import styles from "./GNB.module.scss";
 import type { GNBProps } from "./GNB.types";
 import { useRouter } from "next/router";
 
+function LogoArea({ onClick }: { onClick: () => void }) {
+  return (
+    <button type="button" className={styles.logoBtn} onClick={onClick} aria-label="홈">
+      <img src="/image/logo.svg" width={100} height={29} alt="Grimity" />
+    </button>
+  );
+}
+
+function ProfileArea({ imageUrl, onClick }: { imageUrl?: string; onClick?: () => void }) {
+  return (
+    <button type="button" className={styles.profileBtn} onClick={onClick} aria-label="프로필">
+      <Avatar src={imageUrl} size="xs" />
+    </button>
+  );
+}
+
+function BellButton({ hasNotification, onClick }: { hasNotification?: boolean; onClick?: () => void }) {
+  return (
+    <IconButton
+      variant="sm"
+      icon={<Icon name="bell" size={24} color="gray-bold" />}
+      badge={hasNotification}
+      onClick={onClick}
+      aria-label="알림"
+    />
+  );
+}
+
+function SearchButton({ onClick }: { onClick?: () => void }) {
+  return (
+    <IconButton
+      variant="sm"
+      icon={<Icon name="magnifer" size={24} color="gray-bold" />}
+      onClick={onClick}
+      aria-label="검색"
+    />
+  );
+}
+
+function BackButton({ onClick }: { onClick?: () => void }) {
+  return (
+    <IconButton
+      variant="sm"
+      icon={<Icon name="chevron-left" size={24} color="gray-bold" />}
+      onClick={onClick}
+      aria-label="뒤로가기"
+    />
+  );
+}
+
 export default function GNB({
   variant,
   title,
@@ -39,65 +89,21 @@ export default function GNB({
   className,
 }: GNBProps) {
   const router = useRouter();
-
-  const LogoArea = () => (
-    <button
-      type="button"
-      className={styles.logoBtn}
-      onClick={() => router.push("/")}
-      aria-label="홈"
-    >
-      <img src="/image/logo.svg" width={100} height={29} alt="Grimity" />
-    </button>
-  );
-
-  const ProfileArea = ({ imageUrl }: { imageUrl?: string }) => (
-    <button type="button" className={styles.profileBtn} onClick={onProfile} aria-label="프로필">
-      <Avatar src={imageUrl} size="xs" />
-    </button>
-  );
-
-  const BellButton = () => (
-    <IconButton
-      variant="sm"
-      icon={<Icon name="bell" size={24} color="gray-bold" />}
-      badge={hasNotification}
-      onClick={onBell}
-      aria-label="알림"
-    />
-  );
-
-  const SearchButton = () => (
-    <IconButton
-      variant="sm"
-      icon={<Icon name="magnifer" size={24} color="gray-bold" />}
-      onClick={onSearch}
-      aria-label="검색"
-    />
-  );
-
-  const BackButton = () => (
-    <IconButton
-      variant="sm"
-      icon={<Icon name="chevron-left" size={24} color="gray-bold" />}
-      onClick={onBack}
-      aria-label="뒤로가기"
-    />
-  );
+  const handleLogoClick = () => router.push("/");
 
   switch (variant) {
     case "pc-main":
       return (
         <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
-          <LogoArea />
+          <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
             <SolidButton onClick={onUpload} size="regular">
               그림 올리기
             </SolidButton>
             <div className={clsx(styles.flexRow, styles.gap8)}>
-              <SearchButton />
-              <BellButton />
-              <ProfileArea imageUrl={profileImageUrl} />
+              <SearchButton onClick={onSearch} />
+              <BellButton hasNotification={hasNotification} onClick={onBell} />
+              <ProfileArea imageUrl={profileImageUrl} onClick={onProfile} />
             </div>
           </div>
         </nav>
@@ -106,9 +112,9 @@ export default function GNB({
     case "pc-guest":
       return (
         <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
-          <LogoArea />
+          <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
-            <SearchButton />
+            <SearchButton onClick={onSearch} />
             <SolidButton onClick={onLogin} size="regular">
               회원가입/로그인
             </SolidButton>
@@ -127,13 +133,13 @@ export default function GNB({
             className,
           )}
         >
-          <LogoArea />
+          <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap12)}>
             <OutlinedButton size="small" onClick={onLogin}>
               회원가입
             </OutlinedButton>
             <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-              <SearchButton />
+              <SearchButton onClick={onSearch} />
               <IconButton
                 variant="sm"
                 icon={<Icon name="hamburger" size={24} color="gray-bold" />}
@@ -156,13 +162,13 @@ export default function GNB({
             className,
           )}
         >
-          <LogoArea />
+          <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap12)}>
             <OutlinedButton size="small" onClick={onLogin}>
               회원가입
             </OutlinedButton>
             <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-              <SearchButton />
+              <SearchButton onClick={onSearch} />
               <IconButton
                 variant="sm"
                 icon={<Icon name="x" size={24} color="gray-bold" />}
@@ -185,11 +191,11 @@ export default function GNB({
             className,
           )}
         >
-          <LogoArea />
+          <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap16)}>
-            <SearchButton />
-            <BellButton />
-            <ProfileArea imageUrl={profileImageUrl} />
+            <SearchButton onClick={onSearch} />
+            <BellButton hasNotification={hasNotification} onClick={onBell} />
+            <ProfileArea imageUrl={profileImageUrl} onClick={onProfile} />
           </div>
         </nav>
       );
@@ -206,13 +212,13 @@ export default function GNB({
           )}
         >
           <div className={clsx(styles.flexRow, styles.gap8)}>
-            <BackButton />
+            <BackButton onClick={onBack} />
             <span className={styles.title}>{title}</span>
           </div>
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-            <SearchButton />
-            <BellButton />
-            <ProfileArea imageUrl={profileImageUrl} />
+            <SearchButton onClick={onSearch} />
+            <BellButton hasNotification={hasNotification} onClick={onBell} />
+            <ProfileArea imageUrl={profileImageUrl} onClick={onProfile} />
           </div>
         </nav>
       );
@@ -221,11 +227,11 @@ export default function GNB({
       return (
         <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
           <div className={clsx(styles.flexRow, styles.gap8)}>
-            <BackButton />
+            <BackButton onClick={onBack} />
             <span className={styles.title}>{title}</span>
           </div>
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-            {rightActions.slice(0, 3)}
+            {rightActions}
           </div>
         </nav>
       );
@@ -233,7 +239,7 @@ export default function GNB({
     case "search":
       return (
         <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
-          <BackButton />
+          <BackButton onClick={onBack} />
           <TextField
             variant="search"
             className={styles.searchInput}
@@ -248,7 +254,7 @@ export default function GNB({
       return (
         <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.topNavRowBetween, className)}>
           <div className={styles.leftCluster}>
-            <BackButton />
+            <BackButton onClick={onBack} />
             <span className={styles.title}>{title}</span>
           </div>
           <TextButton
@@ -266,7 +272,7 @@ export default function GNB({
       return (
         <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.topNavRowBetween, className)}>
           <div className={styles.leftCluster}>
-            <BackButton />
+            <BackButton onClick={onBack} />
             <div className={styles.editorTitleRow}>
               <span className={styles.title}>{title}</span>
               <IconButton
@@ -291,7 +297,7 @@ export default function GNB({
     case "dm":
       return (
         <nav className={clsx(styles.gnb, styles.gnbTopNav, styles.navGap8, className)}>
-          <BackButton />
+          <BackButton onClick={onBack} />
           <div className={styles.dmInfo}>
             <Avatar src={dmProfileImageUrl} size="md" />
             <div className={styles.dmText}>

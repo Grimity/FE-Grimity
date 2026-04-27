@@ -33,8 +33,12 @@ export interface GNBProps {
   searchValue?: string;
   searchPlaceholder?: string;
   onSearchChange?: (value: string) => void;
-  /** icon-button 변형의 우측 아이콘 슬롯 */
-  rightActions?: React.ReactNode[];
+  /** icon-button 변형의 우측 아이콘 슬롯 (최대 3개) */
+  rightActions?:
+    | []
+    | [React.ReactNode]
+    | [React.ReactNode, React.ReactNode]
+    | [React.ReactNode, React.ReactNode, React.ReactNode];
   /** text-button / editor 변형의 우측 텍스트 레이블 */
   rightLabel?: string;
   onRightLabelClick?: () => void;
