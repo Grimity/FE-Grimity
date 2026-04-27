@@ -22,7 +22,7 @@ export const convertToWebP = async (file: File): Promise<File> => {
           }
         },
         "image/webp",
-        0.8,
+        0.9,
       );
     };
     img.onerror = () => reject(new Error("Image loading failed"));

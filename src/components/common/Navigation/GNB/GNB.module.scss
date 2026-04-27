@@ -1,0 +1,166 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.gnb {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: colors.$surface-white;
+  box-sizing: border-box;
+}
+
+.gnbPc {
+  height: 64px;
+  padding: 0 spacing.$spacing-24;
+  justify-content: space-between;
+  border-bottom: 1px solid colors.$border-gray-subtle;
+}
+
+.gnbTopNav {
+  height: 52px;
+  padding: 0 spacing.$spacing-16;
+}
+
+/** 모바일 Top Nav border bottom (guest / guest-menu / main / depth-2)*/
+.gnbTopNav.topNavBorderBottom {
+  border-bottom: 1px solid colors.$border-gray-subtler;
+}
+
+.gnbTopNav.navGap8 {
+  gap: spacing.$spacing-8;
+}
+
+.gnbTopNav.topNavRowBetween {
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
+}
+
+.leftCluster {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  min-width: 0;
+  flex: 1;
+}
+
+.editorTitleRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+  min-width: 0;
+}
+
+.trailingText {
+  flex-shrink: 0;
+}
+
+.logoBtn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: spacing.$spacing-4;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: 2px;  
+  }
+}
+
+.flexRow {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.flexPushEnd {
+  margin-left: auto;
+}
+
+.gap8 {
+  gap: spacing.$spacing-8;
+}
+
+.gap12 {
+  gap: spacing.$spacing-12;
+}
+
+.gap16 {
+  gap: spacing.$spacing-16;
+}
+
+.gap24 {
+  gap: spacing.$spacing-24;
+}
+
+.title {
+  flex: 1;
+  @include typo.subtitle-2;
+  color: colors.$text-gray-bold;
+  padding: 0 spacing.$spacing-4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profileBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: spacing.$spacing-4;
+  cursor: pointer;
+  border-radius: radius.$radius-full;
+  flex-shrink: 0;
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-normal;
+    outline-offset: 2px;
+  }
+}
+
+.searchInput {
+  flex: 1;
+  height: 48px;
+  padding: 0 spacing.$spacing-16;
+  border: 1px solid colors.$border-gray-subtle;
+  outline: none;
+  min-width: 0;
+}
+
+.dmInfo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  overflow: hidden;
+  padding: 0 spacing.$spacing-4;
+}
+
+.dmText {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-2;
+  overflow: hidden;
+}
+
+.dmName {
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dmUsername {
+  @include typo.label-6;
+  color: colors.$text-gray-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
