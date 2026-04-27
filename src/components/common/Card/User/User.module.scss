@@ -1,0 +1,235 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/colors/atomic" as atomic;
+
+.userCard {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-24;
+  padding: spacing.$spacing-16;
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-md;
+  border: 1px solid colors.$border-gray-subtle;
+  min-width: 0;
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: spacing.$spacing-8;
+  }
+
+  .imageGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: spacing.$spacing-8;
+  }
+
+  .imageItem {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: radius.$radius-sm;
+    overflow: hidden;
+    background-color: colors.$surface-gray-subtlest;
+
+    .image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .likeBtn {
+      position: absolute;
+      bottom: spacing.$spacing-6;
+      right: spacing.$spacing-6;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+  }
+}
+
+.search {
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  border-radius: radius.$radius-md;
+  border: 1px solid colors.$border-gray-subtle;
+  overflow: hidden;
+  min-width: 0;
+
+  .searchBanner {
+    width: 100%;
+    height: 90px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background-color: colors.$surface-gray-subtler;
+
+    .searchBannerImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .searchBody {
+    display: flex;
+    flex-direction: column;
+    gap: spacing.$spacing-12;
+    padding: 0 spacing.$spacing-16 spacing.$spacing-16;
+  }
+
+  .searchTop {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: spacing.$spacing-12;
+  }
+
+  .searchAvatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: radius.$radius-full;
+    border: 1px solid colors.$border-gray-subtler;
+    outline: 3px solid colors.$surface-base;
+    background-color: colors.$surface-gray-subtlest;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -20px;
+    position: relative;
+    z-index: 1;
+
+    .searchAvatarImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .searchInfo {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: spacing.$spacing-4;
+    padding-top: spacing.$spacing-4;
+  }
+
+  .searchHeader {
+    display: flex;
+    align-items: center;
+    gap: spacing.$spacing-8;
+
+    .searchHeaderContent {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: spacing.$spacing-2;
+    }
+  }
+
+  .searchNickname {
+    min-width: 0;
+    @include typo.label-1;
+    color: colors.$text-gray-bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .searchFollowerCount {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    @include typo.label-6;
+    color: colors.$text-gray-normal;
+    display: flex;
+    align-items: center;
+    gap: spacing.$spacing-2;
+    flex: 1;
+
+    .searchFollowerCountValue {
+      @include typo.label-5;
+      color: colors.$text-gray-bold;
+    }
+  }
+
+  .searchContent {
+    margin: 0;
+    @include typo.body-2-r;
+    color: colors.$text-gray-normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.tagView {
+  position: relative;
+  width: 180px;
+  height: 240px;
+  aspect-ratio: 3 / 4;
+  border-radius: radius.$radius-md;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  cursor: default;
+
+  .tagViewBg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    .tagViewBgImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .tagViewOverlay {
+    position: absolute;
+    inset: 0;
+    opacity: atomic.$opacity60;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, atomic.$black 100%);
+    z-index: 1;
+  }
+
+  .tagViewBody {
+    position: relative;
+    z-index: 1;
+    padding: spacing.$spacing-16;
+
+    .tagViewTagText {
+      margin: 0;
+      @include typo.body-1-sb;
+      color: colors.$text-white;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
