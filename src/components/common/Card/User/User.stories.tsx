@@ -61,6 +61,7 @@ function SearchWrapper(args: SearchUserCardProps) {
 export const Default: Story = {
   args: {
     variant: "default",
+    nickname: "Nickname",
     followerCount: 123,
     followingCount: 32,
     images: [{}, {}, {}],
