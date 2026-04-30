@@ -1,5 +1,6 @@
 import Icon from "@/components/common/Icon/Icon";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import type { IconSize } from "@/components/common/Icon/Icon.types";
 
 interface UserAvatarProps {
   avatarUrl?: string;
@@ -7,7 +8,7 @@ interface UserAvatarProps {
   imageClassName: string;
   mobileSize: number;
   desktopSize: number;
-  fallbackIconSize: number;
+  fallbackIconSize: IconSize;
 }
 
 export default function UserAvatar({
