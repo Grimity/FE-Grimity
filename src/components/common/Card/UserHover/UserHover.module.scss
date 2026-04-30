@@ -72,13 +72,6 @@
       object-fit: cover;
       display: block;
     }
-
-    .avatarInitial {
-      color: colors.$text-gray-subtle;
-      @include typo.title-1;
-      line-height: 1;
-      user-select: none;
-    }
   }
 }
 

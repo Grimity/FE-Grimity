@@ -15,7 +15,7 @@ const meta = {
       control: { type: "text" },
     },
     size: {
-      options: [12, 16, 20, 24, 32],
+      options: [2, 12, 16, 20, 24, 32, 40, 64],
       control: { type: "radio" },
     },
     color: {
@@ -47,7 +47,7 @@ export const Default: Story = {
   },
 };
 
-const SIZES: IconSize[] = [12, 16, 20, 24, 32];
+const SIZES: IconSize[] = [2, 12, 16, 20, 24, 32, 40, 64];
 
 export const Sizes: Story = {
   args: {

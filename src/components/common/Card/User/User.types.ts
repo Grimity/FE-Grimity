@@ -4,6 +4,12 @@ export interface UserCardImageItem {
   onLikeClick?: () => void;
 }
 
+export type UserCardImages = [
+  UserCardImageItem?,
+  UserCardImageItem?,
+  UserCardImageItem?,
+];
+
 interface BaseUserCardProps {
   onClick?: () => void;
   className?: string;
@@ -16,7 +22,7 @@ export interface DefaultUserCardProps extends BaseUserCardProps {
   followingCount?: number;
   isFollowing?: boolean;
   onFollowClick?: () => void;
-  images?: UserCardImageItem[];
+  images?: UserCardImages;
 }
 
 export interface SearchUserCardProps extends BaseUserCardProps {

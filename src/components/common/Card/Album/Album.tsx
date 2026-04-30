@@ -100,17 +100,14 @@ export default function Album({
         )}
 
         {isCheck && (
-          <span
+          <button
+            type="button"
             className={styles.iconTopRight}
             aria-pressed={checked}
+            aria-label={checked ? "선택 해제" : "선택"}
             onClick={(e) => {
               e.stopPropagation();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                e.stopPropagation();
-              }
+              handleCheckClick();
             }}
           >
             <Icon
@@ -118,7 +115,7 @@ export default function Album({
               size={24}
               color={checked ? "primary-normal" : "gray-subtler"}
             />
-          </span>
+          </button>
         )}
 
         {isMainOrRank && (
@@ -158,7 +155,7 @@ export default function Album({
       </div>
 
       <div className={styles.body}>
-        <h3 className={styles.title}>{title}</h3>
+        <p className={styles.title}>{title}</p>
         <UserInfo
           type="default"
           nickname={nickname}

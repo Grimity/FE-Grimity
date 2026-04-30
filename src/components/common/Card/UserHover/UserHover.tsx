@@ -2,7 +2,7 @@ import clsx from "clsx";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
-import Icon from "@/components/common/Icon/Icon";
+import UserAvatar from "@/components/common/Avatar/UserAvatar/UserAvatar";
 import styles from "./UserHover.module.scss";
 import type { UserHoverProps } from "./UserHover.types";
 import { THUMBNAIL_PATH } from "@/constants/imageUrl";
@@ -32,17 +32,14 @@ export default function UserHover({
       <div className={styles.body}>
         <div className={styles.avatarWrap}>
           <div className={styles.avatar}>
-            {avatarUrl ? (
-              <ResponsiveImage
-                src={avatarUrl}
-                alt={nickname}
-                className={styles.avatarImage}
-                mobileSize={128}
-                desktopSize={256}
-              />
-            ) : (
-              <Icon name="profile" size={64} />
-            )}
+            <UserAvatar
+              avatarUrl={avatarUrl}
+              nickname={nickname}
+              imageClassName={styles.avatarImage}
+              mobileSize={128}
+              desktopSize={256}
+              fallbackIconSize={64}
+            />
           </div>
         </div>
 

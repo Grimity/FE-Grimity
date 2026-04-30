@@ -79,7 +79,7 @@ export default function Img({
       </div>
 
       <div className={styles.body}>
-        <h3 className={styles.title}>{title}</h3>
+        <p className={styles.title}>{title}</p>
       </div>
     </div>
   );

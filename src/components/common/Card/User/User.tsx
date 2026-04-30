@@ -4,6 +4,7 @@ import Icon from "@/components/common/Icon/Icon";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import UserAvatar from "@/components/common/Avatar/UserAvatar/UserAvatar";
 import {
   useKeyDownActivate,
   useToggleWithCallback,
@@ -123,17 +124,14 @@ function SearchCard({
       <div className={styles.searchBody}>
         <div className={styles.searchTop}>
           <div className={styles.searchAvatar}>
-            {avatarUrl ? (
-              <ResponsiveImage
-                src={avatarUrl}
-                alt={nickname}
-                className={styles.searchAvatarImage}
-                mobileSize={80}
-                desktopSize={160}
-              />
-            ) : (
-              <Icon name="profile" size={40} />
-            )}
+            <UserAvatar
+              avatarUrl={avatarUrl}
+              nickname={nickname}
+              imageClassName={styles.searchAvatarImage}
+              mobileSize={80}
+              desktopSize={160}
+              fallbackIconSize={40}
+            />
           </div>
           <div className={styles.searchInfo}>
             <div className={styles.searchHeader}>
@@ -206,9 +204,7 @@ function DefaultCard({
       </div>
       {images.length > 0 && (
         <div className={styles.imageGrid}>
-          {images.slice(0, 3).map((img, i) => (
-            <UserCardImage key={i} image={img} />
-          ))}
+          {images.map((img, i) => (img ? <UserCardImage key={i} image={img} /> : null))}
         </div>
       )}
     </article>
