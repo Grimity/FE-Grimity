@@ -1,0 +1,124 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.userHover {
+  width: 280px;
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-md;
+  border: 1px solid colors.$border-gray-subtler;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.10);
+  padding-bottom: spacing.$spacing-24;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.banner {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  min-height: 140px;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: colors.$surface-gray-subtler;
+
+  .bannerImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.body {
+  width: 100%;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-16;
+  align-self: stretch;
+}
+
+.avatarWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top: -32px;
+  z-index: 2;
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+    aspect-ratio: 1;
+    border-radius: radius.$radius-full;
+    background-color: colors.$surface-gray-subtlest;
+    border: 1px solid colors.$border-gray-subtler;
+    outline: 4px solid colors.$border-inverse;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .avatarImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+}
+
+.bio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 spacing.$spacing-24;
+}
+
+.nickname {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  color: colors.$text-gray-bold;
+  @include typo.subtitle-1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.content {
+  width: 100%;
+  margin: spacing.$spacing-6 0 0;
+  color: colors.$text-gray-normal;
+  @include typo.body-2-r;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  gap: spacing.$spacing-8;
+  justify-content: center;
+  margin-top: spacing.$spacing-16;
+}
+
+.actionBtn {
+  flex: 1;
+  min-width: 0;
+}
+
+.actionFull {
+  width: 100%;
+}

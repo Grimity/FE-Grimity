@@ -1,0 +1,43 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.imgUpload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  gap: spacing.$spacing-12;
+  border-radius: radius.$radius-md;
+  border: 1px solid colors.$border-gray-subtler;
+  cursor: pointer;
+  background-color: colors.$surface-gray-subtlest;
+
+  &.lg {
+    width: 200px;
+  }
+
+  &.md {
+    width: 160px;
+  }
+
+  .uploadText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: colors.$text-gray-subtle;
+
+    .uploadTextLabel {
+      &.lg {  
+        @include typo.label-4;
+      }
+
+      &.md {
+        @include typo.label-6;
+      }
+    }
+
+  }
+}
