@@ -8,11 +8,11 @@ import Divider from "@/components/common/Divider/Divider";
 import Icon from "@/components/common/Icon/Icon";
 import type { IconName } from "@/components/common/Icon/Icon.types";
 import Menu from "@/components/common/Navigation/Menu/Menu";
+import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import { PATH_ROUTES } from "@/constants/routes";
 import { EXTERNAL_URLS } from "@/constants/serviceurl";
 import { useToast } from "@/hooks/useToast";
-import { useAuthStore } from "@/states/authStore";
 import { useChatStore } from "@/states/chatStore";
 import { useDeviceStore } from "@/states/deviceStore";
 
@@ -63,6 +63,8 @@ type ActiveDropdown = "ask" | "guide" | null;
 
 export default function Sidebar({
   className,
+  isLoggedIn = false,
+  isOpen = false,
   onClose,
   onLoginClick,
   onLogoutClick,
@@ -74,14 +76,19 @@ export default function Sidebar({
   onNavigate,
 }: SidebarProps) {
   const router = useRouter();
-  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const hasUnreadMessages = useChatStore((s) => s.hasUnreadMessages);
   const isMobile = useDeviceStore((s) => s.isMobile);
   const { showToast } = useToast();
 
+  const [hasInteracted, setHasInteracted] = useState(false);
+  useEffect(() => {
+    if (isOpen) setHasInteracted(true);
+  }, [isOpen]);
+
   const footerIconSize = isMobile ? 16 : 20;
 
   const [activeDropdown, setActiveDropdown] = useState<ActiveDropdown>(null);
+  const [isInquirySheetOpen, setIsInquirySheetOpen] = useState(false);
   const guideDropdownWrapperRef = useRef<HTMLDivElement>(null);
   const askDropdownWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -107,18 +114,55 @@ export default function Sidebar({
   const copyEmail = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(INQUIRY_EMAIL);
-      showToast("이메일이 복사되었습니다!", "success");
+      showToast("링크를 복사했어요", "success");
       onClose?.();
     } catch {
       showToast("복사에 실패했습니다.", "error");
     }
   }, [showToast, onClose]);
 
+  const closeInquirySheet = useCallback(() => {
+    setIsInquirySheetOpen(false);
+  }, []);
+
+  const handleKakaoInquiry = useCallback(() => {
+    window.open(EXTERNAL_URLS.KAKAO_INQUIRY, "_blank", "noopener noreferrer");
+    closeInquirySheet();
+  }, [closeInquirySheet]);
+
+  const handleCopyInquiryEmail = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(INQUIRY_EMAIL);
+      showToast("링크를 복사했어요", "success");
+      closeInquirySheet();
+    } catch {
+      showToast("복사에 실패했습니다.", "error");
+    }
+  }, [showToast, closeInquirySheet]);
+
+  const handleAskClick = useCallback(() => {
+    if (isMobile) {
+      onClose?.();
+      setIsInquirySheetOpen(true);
+      return;
+    }
+    setActiveDropdown((v) => (v === "ask" ? null : "ask"));
+  }, [isMobile, onClose]);
+
   useEffect(() => {
-    const close = () => setActiveDropdown(null);
+    const close = () => {
+      setActiveDropdown(null);
+      setIsInquirySheetOpen(false);
+    };
     router.events.on("routeChangeComplete", close);
     return () => router.events.off("routeChangeComplete", close);
   }, [router.events]);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIsInquirySheetOpen(false);
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     const onDocMouseDown = (e: MouseEvent) => {
@@ -160,12 +204,18 @@ export default function Sidebar({
   const mobileHeaderContent = isLoggedIn ? (
     user && (
       <>
-        <div className={styles.profileRow}>
-          <div className={styles.profileAvatar}>
+        <button
+          type="button"
+          className={styles.profileRow}
+          onClick={() => user.profileUrl && navigate(`/${user.profileUrl}`)}
+          disabled={!user.profileUrl}
+          aria-label="내 프로필로 이동"
+        >
+          <span className={styles.profileAvatar}>
             <Avatar src={user.avatarSrc} size="ml" />
-          </div>
-          <p className={styles.profileName}>{user.username}</p>
-        </div>
+          </span>
+          <span className={styles.profileName}>{user.username}</span>
+        </button>
         <div className={styles.profileMenu}>
           {profileMenuItems.map(({ icon, label, active, onClick }) => (
             <button
@@ -195,8 +245,8 @@ export default function Sidebar({
 
   const askMenuItems = useMemo(
     () => [
-      { label: "오픈 카카오톡으로 이동", onClick: () => openExternal(EXTERNAL_URLS.KAKAO_INQUIRY) },
-      { label: "메일로 보내기", onClick: copyEmail },
+      { label: "카카오톡으로 이동", onClick: () => openExternal(EXTERNAL_URLS.KAKAO_INQUIRY) },
+      { label: "메일 링크 복사", onClick: copyEmail },
     ],
     [openExternal, copyEmail],
   );
@@ -212,10 +262,24 @@ export default function Sidebar({
   );
 
   return (
-    <aside
-      className={clsx(styles.sidebar, !isLoggedIn && styles.guest, className)}
-      aria-label="메뉴"
-    >
+    <>
+      {onClose && (
+        <div
+          className={clsx(styles.overlay, isOpen && styles.overlayOpen)}
+          aria-hidden
+          onClick={onClose}
+        />
+      )}
+      <aside
+        className={clsx(
+          styles.sidebar,
+          !isLoggedIn && styles.guest,
+          isOpen && styles.open,
+          hasInteracted && styles.ready,
+          className,
+        )}
+        aria-label="메뉴"
+      >
       <div className={styles.sidebarBody}>
         <div className={styles.mobileHeader}>{mobileHeaderContent}</div>
 
@@ -278,7 +342,7 @@ export default function Sidebar({
           </div>
 
           <div ref={askDropdownWrapperRef} className={styles.footerBtnWrapper}>
-            {activeDropdown === "ask" && (
+            {!isMobile && activeDropdown === "ask" && (
               <div id="ask-dropdown" className={styles.dropdown}>
                 <Menu items={askMenuItems} />
               </div>
@@ -286,10 +350,10 @@ export default function Sidebar({
             <button
               type="button"
               className={styles.footerRow}
-              aria-expanded={activeDropdown === "ask"}
-              aria-controls={activeDropdown === "ask" ? "ask-dropdown" : undefined}
-              aria-haspopup="menu"
-              onClick={() => setActiveDropdown((v) => (v === "ask" ? null : "ask"))}
+              aria-expanded={!isMobile && activeDropdown === "ask"}
+              aria-controls={!isMobile && activeDropdown === "ask" ? "ask-dropdown" : undefined}
+              aria-haspopup={isMobile ? "dialog" : "menu"}
+              onClick={handleAskClick}
             >
               <Icon name="question-circle" size={footerIconSize} className={styles.footerIcon} aria-hidden />
               <span className={styles.footerLabel}>문의</span>
@@ -337,6 +401,41 @@ export default function Sidebar({
           <p className={styles.copyright}>© Grimity. All rights reserved.</p>
         </div>
       </div>
-    </aside>
+      </aside>
+
+      {isMobile && (
+        <BottomSheet
+          isOpen={isInquirySheetOpen}
+          onClose={closeInquirySheet}
+          title="문의하기"
+          showCloseIcon
+          buttonType="tertiary"
+          className={styles.inquirySheetOverlay}
+        >
+          <ul className={styles.inquirySheetList} role="menu">
+            <li role="none">
+              <button
+                type="button"
+                role="menuitem"
+                className={styles.inquirySheetItem}
+                onClick={handleKakaoInquiry}
+              >
+                카카오톡으로 이동
+              </button>
+            </li>
+            <li role="none">
+              <button
+                type="button"
+                role="menuitem"
+                className={styles.inquirySheetItem}
+                onClick={handleCopyInquiryEmail}
+              >
+                메일 링크 복사
+              </button>
+            </li>
+          </ul>
+        </BottomSheet>
+      )}
+    </>
   );
 }

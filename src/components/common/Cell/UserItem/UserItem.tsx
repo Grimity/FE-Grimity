@@ -74,6 +74,7 @@ export default function UserItem({
   onReplyClick,
   onMenuClick,
   onClick,
+  showTrailingDivider = true,
 }: UserItemProps) {
   // ------------------------------------------
   // default
@@ -334,9 +335,11 @@ export default function UserItem({
           showChatting={!!chattingCount}
           chattingCount={chattingCount}
         />
-        <div className={styles.titleDivider}>
-          <Divider />
-        </div>
+        {showTrailingDivider && (
+          <div className={styles.titleDivider}>
+            <Divider />
+          </div>
+        )}
       </div>
     );
   }
@@ -369,9 +372,11 @@ export default function UserItem({
             chattingCount={chattingCount}
           />
         </div>
-        <div className={styles.imageDivider}>
-          <Divider />
-        </div>
+        {showTrailingDivider && (
+          <div className={styles.imageDivider}>
+            <Divider />
+          </div>
+        )}
       </div>
     );
   }

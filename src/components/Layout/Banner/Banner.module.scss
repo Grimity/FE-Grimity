@@ -1,7 +1,10 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+
 .banner {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  box-shadow: 0 0 0 1px #edeef0;
-  border-radius: 12px;
+  border-radius: radius.$radius-md;
+  box-shadow: 0 0 0 1px colors.$border-gray-subtler;
 }

@@ -7,7 +7,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Layout from "@/components/Layout/Layout";
 import Modal from "@/components/Modal/Modal";
-import Toast from "@/components/Toast/Toast";
+import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
+import GlobalLoading from "@/components/common/Loading/GlobalLoading/GlobalLoading";
 import ModalProvider from "@/components/Modal/Provider";
 
 import { useInitializeDevice } from "@/hooks/useInitializeDevice";
@@ -45,7 +46,8 @@ export default function App({ Component, pageProps }: AppProps) {
             </ModalProvider>
           </div>
           <Modal />
-          <Toast target="global" />
+          <ToastContainer target="global" />
+          <GlobalLoading />
           <Script
             strategy="afterInteractive"
             src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_TRACKING_ID}`}

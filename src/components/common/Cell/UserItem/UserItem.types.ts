@@ -74,4 +74,7 @@ export interface UserItemProps {
   onMenuClick?: () => void;
 
   onClick?: () => void;
+
+  /** `title` · `image` 전용: 카드 하단 Divider 표시 여부 (기본 true) */
+  showTrailingDivider?: boolean;
 }

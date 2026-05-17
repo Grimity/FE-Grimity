@@ -1,45 +1,38 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-  @include Drag;
 
-  @include Size("mobile") {
-    margin-bottom: 16px;
+  &.gap-lg {
+    margin-bottom: spacing.$spacing-24;
   }
 
-  @include Size("tablet") {
-    margin-bottom: 16px;
+  &.gap-sm {
+    margin-bottom: spacing.$spacing-12;
+  }
+
+  @include bp.breakpoint-down("xs") {
+    &.gap-lg {
+      margin-bottom: spacing.$spacing-16;
+    }
+
+    &.gap-sm {
+      margin-bottom: 0;
+    }
   }
 
   .title {
-    @include Title3;
-    color: $gray80;
+    color: colors.$text-gray-bold;
+    @include typo.title-2;
 
-    @include Size("mobile") {
-      @include Sub1;
-    }
-
-    @include Size("tablet") {
-      @include Title3;
-    }
-  }
-
-  .btn {
-    @include Sub2;
-    color: $gray60;
-    cursor: pointer;
-
-    @include Size("mobile") {
-      @include Sub4;
-    }
-
-    @include Size("tablet") {
-      @include Sub4;
+    @include bp.breakpoint-down("xs") {
+      @include typo.title-3;
     }
   }
 }

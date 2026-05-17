@@ -1,5 +1,26 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/breakpoint" as bp;
 @use "sass:color";
+
+.notificationAnchor {
+  position: fixed;
+  top: calc($header-height + 8px);
+  right: 80px;
+  z-index: 1000;
+
+  @include bp.breakpoint-down("xs") {
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+}
+
+.profileAnchor {
+  position: fixed;
+  top: calc($header-height + 8px);
+  right: 32px;
+  z-index: 1000;
+}
 
 .layout {
   width: 100%;
@@ -12,6 +33,10 @@
 
     &.noHeader {
       top: 0;
+    }
+
+    @include bp.breakpoint-down("xs") {
+      top: $header-height-mobile;
     }
   }
 
@@ -39,7 +64,7 @@
       right: calc(40px + var(--scrollbar-width));
     }
 
-    @include Size("mobile") {
+    @include bp.breakpoint-down("xs") {
       right: 16px;
 
       :global(body.modalOpen) & {

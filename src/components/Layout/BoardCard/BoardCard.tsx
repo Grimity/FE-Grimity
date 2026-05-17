@@ -1,10 +1,19 @@
-import IconComponent from "@/components/Asset/Icon";
-import styles from "./BoardCard.module.scss";
-import { formatCurrency } from "@/utils/formatCurrency";
-import { BoardCardProps } from "./BoardCard.types";
 import Link from "next/link";
+
+import UserItem from "@/components/common/Cell/UserItem/UserItem";
+
+import { BoardCardProps } from "./BoardCard.types";
+
+import { formatCurrency } from "@/utils/formatCurrency";
 import { timeAgo } from "@/utils/timeAgo";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+
+import styles from "./BoardCard.module.scss";
+
+function plainPreviewFromContent(html: string | null | undefined): string | undefined {
+  if (!html?.trim()) return undefined;
+  const plain = html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return plain || undefined;
+}
 
 export default function BoardCard({
   id,
@@ -13,39 +22,25 @@ export default function BoardCard({
   viewCount,
   createdAt,
   thumbnail,
+  content,
+  isNotice = false,
 }: BoardCardProps) {
+  const hasThumbnail = Boolean(thumbnail);
+  const bodyPreview = !isNotice ? plainPreviewFromContent(content ?? undefined) : undefined;
+
   return (
-    <div className={styles.container}>
-      {thumbnail && (
-        <div className={styles.thumbnailContainer}>
-          <ResponsiveImage
-            src={thumbnail}
-            alt="썸네일"
-            width={48}
-            height={48}
-            desktopSize={600}
-            className={styles.thumbnailImage}
-          />
-        </div>
-      )}
-      <div className={styles.infoContainer}>
-        <Link href={`/posts/${id}`}>
-          <h3 className={styles.title}>{title}</h3>
-          <div className={styles.bottomContainer}>
-            <div className={styles.countContainer}>
-              <div className={styles.likeContainer}>
-                <IconComponent name="commentCount" size={16} />
-                <span className={styles.commentCount}>{formatCurrency(commentCount)}</span>
-              </div>
-              <div className={styles.likeContainer}>
-                <IconComponent name="viewCount" size={16} />
-                <span className={styles.count}>{formatCurrency(viewCount)}</span>
-              </div>
-            </div>
-            <p className={styles.createdAt}>{timeAgo(createdAt)}</p>
-          </div>
-        </Link>
-      </div>
-    </div>
+    <Link href={`/posts/${id}`} className={styles.container}>
+      <UserItem
+        type={hasThumbnail ? "image" : "title"}
+        className={styles.userItem}
+        postTitle={title}
+        thumbnailUrl={thumbnail ?? undefined}
+        body={bodyPreview}
+        chattingCount={!isNotice ? formatCurrency(commentCount) : undefined}
+        viewCount={formatCurrency(viewCount)}
+        timeCount={timeAgo(createdAt)}
+        showTrailingDivider={false}
+      />
+    </Link>
   );
 }

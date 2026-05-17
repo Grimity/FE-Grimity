@@ -40,14 +40,6 @@ export const useToastStore = create<ToastState>((set) => ({
 
       return { toasts: newToasts };
     });
-
-    if (duration !== null) {
-      setTimeout(() => {
-        set((state) => ({
-          toasts: state.toasts.filter((t) => t.id !== id),
-        }));
-      }, duration);
-    }
   },
 
   removeToast: (id: string) => {

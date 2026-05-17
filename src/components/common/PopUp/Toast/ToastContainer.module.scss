@@ -1,0 +1,38 @@
+@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/spacing" as spacing;
+
+.container {
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  pointer-events: none;
+}
+
+.global {
+  position: fixed;
+  top: 80px;
+  left: calc(50% + $sidebar-width / 2);
+  transform: translateX(-50%);
+
+  @include Size("tablet") {
+    left: calc(50% + $sidebar-width-tablet / 2);
+  }
+
+  @include Size("mobile") {
+    top: 68px;
+    left: 50%;
+  }
+}
+
+.local {
+  position: absolute;
+  top: spacing.$spacing-16;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.toastItem {
+  pointer-events: auto;
+}

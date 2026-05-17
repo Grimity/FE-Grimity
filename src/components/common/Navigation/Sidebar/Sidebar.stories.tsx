@@ -1,20 +1,7 @@
-import { ReactElement, useEffect, useState } from "react";
-import type { Decorator, Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react";
 import Sidebar from "./Sidebar";
 import type { SidebarProps } from "./Sidebar.types";
-import { useAuthStore } from "@/states/authStore";
-
-function LoggedInWrapper({ Story }: { Story: () => ReactElement }) {
-  useEffect(() => {
-    useAuthStore.getState().setIsLoggedIn(true);
-    return () => {
-      useAuthStore.getState().setIsLoggedIn(false);
-    };
-  }, []);
-  return <Story />;
-}
-
-const loggedInDecorator: Decorator = (Story) => <LoggedInWrapper Story={Story} />;
 
 function InteractiveSidebar(props: SidebarProps) {
   const [activeRoute, setActiveRoute] = useState("/");
@@ -61,9 +48,8 @@ export const Desktop: Story = {
 };
 
 export const DesktopLoggedIn: Story = {
-  decorators: [loggedInDecorator],
   parameters: { viewport: { defaultViewport: "responsive" } },
-  args: { user: userData },
+  args: { isLoggedIn: true, user: userData },
 };
 
 export const Tablet: Story = {
@@ -71,9 +57,8 @@ export const Tablet: Story = {
 };
 
 export const TabletLoggedIn: Story = {
-  decorators: [loggedInDecorator],
   parameters: { viewport: { defaultViewport: "tablet" } },
-  args: { user: userData },
+  args: { isLoggedIn: true, user: userData },
 };
 
 export const MobileGuest: Story = {
@@ -81,7 +66,6 @@ export const MobileGuest: Story = {
 };
 
 export const MobileLoggedIn: Story = {
-  decorators: [loggedInDecorator],
   parameters: { viewport: { defaultViewport: "mobile2" } },
-  args: { user: userData },
+  args: { isLoggedIn: true, user: userData },
 };

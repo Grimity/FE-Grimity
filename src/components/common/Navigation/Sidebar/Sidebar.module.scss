@@ -4,14 +4,40 @@
 @use "@/styles/tokens/radius" as radius;
 @use "@/styles/globals" as g;
 
+.overlay {
+  display: none;
+
+  @include g.Size("mobile") {
+    display: block;
+    position: fixed;
+    top: g.$header-height-mobile;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1500;
+
+    &.overlayOpen {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
 .sidebar {
+  position: sticky;
+  top: g.$header-height;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   flex-shrink: 0;
-  height: 100vh;
+  height: calc(100vh - #{g.$header-height});
   width: 260px;
   border-right: 1px solid colors.$border-gray-subtle;
+  background-color: colors.$surface-base;
 
   @include g.Size("tablet") {
     width: 72px;
@@ -19,9 +45,25 @@
   }
 
   @include g.Size("mobile") {
+    position: fixed;
+    top: g.$header-height-mobile;
+    right: 0;
+    left: auto;
+    height: calc(100vh - #{g.$header-height-mobile});
     width: 220px;
     align-items: stretch;
     border-right: none;
+    box-shadow: -1px 0 4px rgba(0, 0, 0, 0.08);
+    transform: translateX(100%);
+    z-index: 1600;
+
+    &.ready {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    &.open {
+      transform: translateX(0);
+    }
   }
 
   &.guest {
@@ -94,6 +136,30 @@
   display: flex;
   align-items: center;
   gap: spacing.$spacing-8;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtler;
+    border-radius: radius.$radius-xl;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
 }
 
 .profileAvatar {
@@ -423,6 +489,45 @@
 
   @include g.Size("tablet") {
     display: block;
+  }
+}
+
+.inquirySheetOverlay {
+  z-index: 1700;
+}
+
+.inquirySheetList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.inquirySheetItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  @include typo.label-2;
+  color: colors.$text-gray-bold;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:active {
+    background-color: colors.$surface-gray-subtler;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$border-gray-subtle;
+    outline-offset: -2px;
   }
 }
 

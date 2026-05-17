@@ -1,66 +1,46 @@
-@use "sass:color";
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   min-width: 0;
-  flex-shrink: 1;
+  flex: 1;
   width: 100%;
-  max-width: 1462px;
+  max-width: 1500px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-self: flex-start;
-  padding: 24px 32px 80px;
+  padding: spacing.$spacing-24 spacing.$spacing-20 spacing.$spacing-72;
 
-  @include Size("tablet") {
-    max-width: 880px;
-    padding-top: 16px;
-  }
-
-  @include Size("mobile") {
-    padding: 30px 16px 80px;
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-16 spacing.$spacing-16 spacing.$spacing-40;
   }
 
   .FeedSection {
-    flex: 2;
     display: flex;
     flex-direction: column;
-    gap: 72px;
+    gap: spacing.$spacing-56;
 
-    @include Size("mobile") {
-      gap: 40px;
+    @include bp.breakpoint-down("xs") {
+      gap: spacing.$spacing-32;
     }
   }
 
   .BoardSection {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-  }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: spacing.$spacing-40;
 
-  .uploadButton {
-    position: fixed;
-    bottom: 30px;
-    right: 16px;
-    background-color: $primary4;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.3s;
-    z-index: 1000;
-    @include Drag;
-
-    &:hover {
-      background-color: color.adjust($primary4, $lightness: -10%);
+    @include bp.breakpoint-down("sm") {
+      gap: spacing.$spacing-16;
     }
-  }
 
-  .uploadButton.slide {
-    bottom: 40px;
+    @include bp.breakpoint-down("xs") {
+      grid-template-columns: 1fr;
+      gap: spacing.$spacing-32;
+    }
   }
 }

@@ -498,6 +498,19 @@
   min-width: 0;
 }
 
+.titleBody {
+  margin: 0;
+  width: 100%;
+  color: colors.$text-gray-bold;
+  @include typo.body-2-r;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .titleDivider {
   position: absolute;
   bottom: 0;
@@ -541,6 +554,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.imageBody {
+  margin: 0;
+  width: 100%;
+  color: colors.$text-gray-bold;
+  @include typo.body-2-r;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .imageDivider {

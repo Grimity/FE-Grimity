@@ -18,7 +18,7 @@ import ChatRoomHeader from "@/components/ChatRoom/Header/Header";
 import MessageList from "@/components/ChatRoom/MessageList/MessageList";
 import MessageInput from "@/components/ChatRoom/MessageInput/MessageInput";
 import ReplyBar from "@/components/ChatRoom/ReplyBar/ReplyBar";
-import Toast from "@/components/Toast/Toast";
+import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
 import Icon from "@/components/Asset/IconTemp";
 import Button from "@/components/Button/Button";
 
@@ -220,7 +220,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   return (
     <section className={styles.container}>
       <ChatRoomHeader chatId={chatId} data={userData} />
-      <Toast target="local" />
+      <ToastContainer target="local" />
 
       <MessageList
         messages={currentRoom?.messages || []}

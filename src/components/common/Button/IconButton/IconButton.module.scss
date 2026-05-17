@@ -7,11 +7,31 @@
   background-color: transparent;
 }
 
-// Variant: sm (32x32)
+// Variant: sm (24x24)
 .sm {
+  width: 24px;
+  height: 24px;
+  border-radius: radius.$radius-full;
+  color: colors.$icon-gray-normal;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+  }
+
+  &:active:not(:disabled) {
+    background-color: colors.$surface-gray-subtler;
+  }
+
+  &:disabled {
+    color: colors.$icon-gray-subtler;
+  }
+}
+
+// Variant: normal (32x32)
+.normal {
   width: 32px;
   height: 32px;
-  border-radius: radius.$radius-sm;
+  border-radius: radius.$radius-full;
   color: colors.$icon-gray-normal;
 
   &:hover:not(:disabled) {
@@ -27,32 +47,12 @@
   }
 }
 
-// Variant: normal (40x40)
-.normal {
-  width: 40px;
-  height: 40px;
-  border-radius: radius.$radius-sm;
-  color: colors.$icon-gray-normal;
-
-  &:hover:not(:disabled) {
-    background-color: colors.$surface-gray-subtlest;
-  }
-
-  &:active:not(:disabled) {
-    background-color: colors.$surface-gray-subtler;
-  }
-
-  &:disabled {
-    color: colors.$icon-gray-subtler;
-  }
-}
-
-// Variant: outlined (40x40 with border)
+// Variant: outlined (32x32 with border)
 .outlined {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border: 1px solid colors.$border-gray-subtle;
-  border-radius: radius.$radius-sm;
+  border-radius: radius.$radius-full;
   background-color: colors.$surface-base;
   color: colors.$icon-gray-normal;
 
@@ -70,11 +70,11 @@
   }
 }
 
-// Variant: solid (40x40 with dark bg)
+// Variant: solid (32x32 with dark bg)
 .solid {
-  width: 40px;
-  height: 40px;
-  border-radius: radius.$radius-sm;
+  width: 32px;
+  height: 32px;
+  border-radius: radius.$radius-full;
   background-color: colors.$surface-inverse;
   color: colors.$icon-inverse;
 

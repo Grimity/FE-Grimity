@@ -1,86 +1,10 @@
-@use "@/styles/globals.scss" as *;
-
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: block;
   width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
 
-  .thumbnailContainer {
-    margin-right: 12px;
-    flex-shrink: 0;
-    background-color: rgba(0, 0, 0, 0.02);
-  }
-
-  .thumbnailImage {
-    object-fit: cover;
-    border-radius: 6px;
-  }
-
-  .infoContainer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-
-    .title {
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 1;
-      line-clamp: 1;
-      text-overflow: ellipsis;
-      color: $gray80;
-      @include Sub4;
-    }
-
-    .bottomContainer {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      @include Drag;
-      margin-top: 4px;
-
-      .createdAt {
-        @include Label1;
-        color: $gray60;
-      }
-
-      .countContainer {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-
-        &::after {
-          color: $gray50;
-          content: "•";
-        }
-
-        &:last-child::after {
-          content: none;
-        }
-      }
-
-      .likeContainer {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-
-        p {
-          margin: 0;
-          line-height: 1;
-        }
-      }
-
-      .count {
-        @include Cap2;
-        color: $gray60;
-      }
-
-      .commentCount {
-        @extend .count;
-        color: $gray60;
-      }
-    }
-  }
+.userItem {
+  width: 100%;
 }
