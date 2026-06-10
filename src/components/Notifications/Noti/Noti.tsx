@@ -1,56 +1,28 @@
-import IconComponent from "@/components/Asset/Icon";
-import styles from "./Noti.module.scss";
-import { NotiProps } from "./Noti.types";
+import { useRouter } from "next/router";
+
+import UserItem from "@/components/common/Cell/UserItem/UserItem";
 import { timeAgo } from "@/utils/timeAgo";
 import { deleteNotificationsId } from "@/api/notifications/deleteNotifications";
-import Image from "next/image";
 import { putNotificationsId } from "@/api/notifications/putNotifications";
-import { useToast } from "@/hooks/useToast";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { useDeviceStore } from "@/states/deviceStore";
-import { imageUrl as imagePrefix } from "@/constants/imageUrl";
+
+import { NotiProps } from "./Noti.types";
+
+/**
+ * 알림 메시지 키워드로 카테고리를 추론한다.
+ */
+function getNotificationCategory(message: string): string {
+  if (message.includes("팔로우")) return "팔로우";
+  if (message.includes("북마크")) return "북마크";
+  if (message.includes("좋아요")) return "좋아요";
+  if (message.includes("대댓글")) return "새 대댓글";
+  if (message.includes("댓글")) return "새 댓글";
+  return "알림";
+}
 
 export default function Noti({ notification, onClose, onRefetch }: NotiProps) {
-  const { showToast } = useToast();
   const router = useRouter();
-  const { isTablet } = useDeviceStore();
 
-  const renderMessage = () => {
-    return notification?.message || "";
-  };
-
-  const renderImage = () => {
-    const imageUrl = notification?.image || "/image/default.svg";
-    const isFeedImage = imageUrl.startsWith(`${imagePrefix}/feed`);
-
-    if (isFeedImage) {
-      return (
-        <img
-          src={imageUrl}
-          width={isTablet ? 32 : 40}
-          height={isTablet ? 32 : 40}
-          loading="lazy"
-          alt="Thumbnail Image"
-          className={styles.thumbnail}
-        />
-      );
-    } else {
-      return (
-        <Image
-          src={imageUrl}
-          width={isTablet ? 32 : 40}
-          height={isTablet ? 32 : 40}
-          quality={50}
-          alt="Actor Image"
-          className={styles.actorImage}
-          unoptimized
-        />
-      );
-    }
-  };
-
-  const handleDeleteNotification = async () => {
+  const handleDelete = async () => {
     try {
       await deleteNotificationsId(notification.id);
       onRefetch();
@@ -59,52 +31,26 @@ export default function Noti({ notification, onClose, onRefetch }: NotiProps) {
     }
   };
 
-  const handleReadNotification = async () => {
-    try {
-      await putNotificationsId(notification.id);
-    } catch (error) {
-      console.error("Failed to mark notification as read:", error);
-    }
-  };
-
-  const handleNotificationClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    try {
-      if (!notification.isRead) handleReadNotification();
-      router.push(notification.link);
-    } catch (error) {
-      console.error("Notification error:", error);
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 404) {
-          showToast("삭제된 게시물입니다.", "warning");
-          try {
-            await handleDeleteNotification();
-            onRefetch();
-          } catch (deleteError) {
-            console.error("알림 삭제 실패:", deleteError);
-          }
-        } else {
-          showToast("오류가 발생했습니다.", "error");
-        }
+  const handleClick = async () => {
+    if (!notification.isRead) {
+      try {
+        await putNotificationsId(notification.id);
+      } catch (error) {
+        console.error("Failed to mark notification as read:", error);
       }
-    } finally {
-      onClose();
     }
+    router.push(notification.link);
+    onClose();
   };
 
   return (
-    <div className={`${styles.container} ${notification.isRead ? styles.read : ""}`}>
-      <div className={styles.content} onClick={handleNotificationClick}>
-        {renderImage()}
-        <div className={styles.messageWrapper}>
-          <span className={styles.message}>{renderMessage()}</span>
-          <span className={styles.date}>{timeAgo(notification.createdAt)}</span>
-        </div>
-      </div>
-      <div onClick={handleDeleteNotification}>
-        <IconComponent name="notiDelete" size={24} isBtn padding={8} />
-      </div>
-    </div>
+    <UserItem
+      type="notification"
+      category={getNotificationCategory(notification.message)}
+      message={notification.message}
+      time={timeAgo(notification.createdAt)}
+      onClick={handleClick}
+      onClose={handleDelete}
+    />
   );
 }

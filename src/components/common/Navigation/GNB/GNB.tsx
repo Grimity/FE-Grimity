@@ -26,10 +26,20 @@ function ProfileArea({ imageUrl, onClick }: { imageUrl?: string; onClick?: () =>
   );
 }
 
-function BellButton({ hasNotification, onClick }: { hasNotification?: boolean; onClick?: () => void }) {
+type GNBIconVariant = "normal" | "sm";
+
+function BellButton({
+  hasNotification,
+  onClick,
+  variant = "sm",
+}: {
+  hasNotification?: boolean;
+  onClick?: () => void;
+  variant?: GNBIconVariant;
+}) {
   return (
     <IconButton
-      variant="sm"
+      variant={variant}
       icon={<Icon name="bell" size={24} color="gray-bold" />}
       badge={hasNotification}
       onClick={onClick}
@@ -38,10 +48,16 @@ function BellButton({ hasNotification, onClick }: { hasNotification?: boolean; o
   );
 }
 
-function SearchButton({ onClick }: { onClick?: () => void }) {
+function SearchButton({
+  onClick,
+  variant = "sm",
+}: {
+  onClick?: () => void;
+  variant?: GNBIconVariant;
+}) {
   return (
     <IconButton
-      variant="sm"
+      variant={variant}
       icon={<Icon name="magnifer" size={24} color="gray-bold" />}
       onClick={onClick}
       aria-label="검색"
@@ -103,8 +119,8 @@ export default function GNB({
               그림 올리기
             </SolidButton>
             <div className={clsx(styles.flexRow, styles.gap8)}>
-              <SearchButton onClick={onSearch} />
-              <BellButton hasNotification={hasNotification} onClick={onBell} />
+              <SearchButton variant="normal" onClick={onSearch} />
+              <BellButton variant="normal" hasNotification={hasNotification} onClick={onBell} />
               <ProfileArea imageUrl={profileImageUrl} onClick={onProfile} />
             </div>
           </div>
@@ -116,7 +132,7 @@ export default function GNB({
         <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
           <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
-            <SearchButton onClick={onSearch} />
+            <SearchButton variant="normal" onClick={onSearch} />
             <SolidButton onClick={onLogin} size="regular">
               회원가입/로그인
             </SolidButton>

@@ -5,7 +5,7 @@
 .notificationAnchor {
   position: fixed;
   top: calc($header-height + 8px);
-  right: 80px;
+  right: 32px;
   z-index: 1000;
 
   @include bp.breakpoint-down("xs") {

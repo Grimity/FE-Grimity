@@ -1,334 +1,148 @@
-@use "@/styles/globals.scss" as *;
-@use "sass:color";
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/breakpoint" as bp;
 
-.mobileContainer {
-  margin-top: 64px;
-  width: 100vw;
-  height: calc($full-height - 64px);
-  border-radius: 0;
+.panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  min-height: 320px;
+  max-height: 760px;
+  border-radius: radius.$radius-xl;
+  border: 1px solid colors.$border-gray-subtler;
+  background-color: colors.$surface-base;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  @include bp.breakpoint-down("xs") {
+    width: 100%;
+    height: 100dvh;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+  }
+}
+
+.header {
+  flex-shrink: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
+  padding: 0 spacing.$spacing-20;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  min-width: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  min-width: 0;
+  @include typo.title-3;
+  color: colors.$text-gray-bold;
+}
+
+.actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: spacing.$spacing-8;
+  padding: spacing.$spacing-8 spacing.$spacing-20;
+}
+
+.actionsDivider {
+  display: flex;
+  align-items: center;
+  height: 24px;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: 0 spacing.$spacing-20 spacing.$spacing-20;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
+}
+
+.settingsSection {
+  display: flex;
+  flex-direction: column;
+  padding-left: spacing.$spacing-12;
+}
+
+.sectionTitle {
+  margin: 0;
+  padding: spacing.$spacing-8 0;
+  @include typo.label-4;
+  color: colors.$text-gray-subtle;
+}
+
+/* ===== 모바일: 전체화면 + GNB 헤더 ===== */
+.mobileFill {
   position: fixed;
-  top: 0;
-  left: 0;
-  background-color: $gray0;
-  z-index: 15;
-  padding: 16px;
-}
-
-.container {
-  min-width: 500px;
-  height: 600px;
-  position: absolute;
-  padding: 40px 32px;
-  flex-direction: column;
-  align-items: flex-start;
-  border-radius: 12px;
-  background-color: $gray0;
-  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
-  z-index: 15;
-  top: 100%;
-  right: -100%;
-  transform: translateY(10px);
-
-  @include Size("tablet") {
-    right: 0;
-    min-width: 350px;
-    height: 500px;
-    padding: 20px;
-  }
-}
-
-.notification {
-  width: 100%;
+  inset: 0;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-
-  @include Size("mobile") {
-    gap: 3px;
-  }
-
-  @include Size("tablet") {
-    gap: 6px;
-  }
-
-  .topSection {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .titleContainer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .title {
-        @include Title3;
-        color: $gray70;
-
-        @include Size("tablet") {
-          @include Title5;
-        }
-      }
-
-      .headerBtns {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        .settingButton {
-          padding: 0;
-          background: none;
-          border: none;
-          cursor: pointer;
-        }
-
-        .closeButton {
-          padding: 0;
-          background: none;
-          border: none;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .notiSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 400px;
-    overflow-y: auto;
-
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: $gray20;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: $gray30;
-    }
-
-    @include Size("mobile") {
-      height: auto;
-      max-height: calc($full-height - 64px - 150px);
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        display: none;
-      }
-    }
-
-    @include Size("tablet") {
-      height: 365px;
-    }
-  }
-
-  .noneNoti {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 234px;
-    gap: 6px;
-    margin: 80px 0;
-  }
-
-  .noneNotiTitle {
-    @include Title3;
-    color: $gray70;
-  }
-
-  .noneNotiDescription {
-    @include Label2;
-    color: $gray50;
-    text-align: center;
-  }
-
-  .options {
-    width: 100%;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-
-    @include Size("mobile") {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      background-color: $gray0;
-      padding: 32px 16px 50px;
-    }
-
-    .option {
-      width: 100%;
-      border: 1px solid $gray30;
-      color: $gray70;
-      background-color: $gray0;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-      padding: 11px 20px;
-      border-radius: 10px;
-      @include Btn2;
-      line-height: 14px;
-      outline: none;
-      cursor: pointer;
-      @include Drag;
-
-      &:hover {
-        background-color: color.adjust($gray0, $lightness: 4%);
-      }
-
-      &:active {
-        background-color: color.adjust($gray0, $lightness: 8%);
-      }
-    }
-  }
+  background-color: colors.$surface-base;
 }
 
-.mobileSetting {
-  @include Size("mobile") {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: calc($full-height - 64px);
-    background: rgba(0, 0, 0, 0.15);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-.setting {
-  width: 100%;
+.mobileBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  // GNB(three-button)가 position: fixed 라 고정 헤더(52px) 아래부터 시작하도록 보정
+  padding-top: 52px;
+}
 
-  @include Size("mobile") {
-    z-index: 15;
-    background: white;
-    width: 90%;
-    max-width: 400px;
-    border-radius: 12px;
-    padding: 20px 20px 24px;
-    gap: 24px;
-    margin-bottom: 64px;
-  }
+.mobileSettings {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: spacing.$spacing-20;
+}
 
-  .topSection {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .titleContainer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .title {
-        @include Title3;
-        color: $gray70;
-
-        @include Size("tablet") {
-          @include Title5;
-        }
-      }
-
-      .backButton {
-        padding: 0;
-        background: none;
-        border: none;
-        cursor: pointer;
-      }
-
-      .closeButton {
-        padding: 0;
-        background: none;
-        border: none;
-        cursor: pointer;
-      }
-    }
-  }
-  .notiOption {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
-    .column {
-      width: 100%;
-      height: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      align-self: stretch;
-    }
-
-    .bar {
-      width: 100%;
-      height: 1px;
-      background-color: $gray30;
-      margin: 20px 0;
-    }
-
-    .label {
-      @include Sub4;
-      color: $gray80;
-    }
-
-    .gap {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    .toggle {
-      cursor: pointer;
-      transition: transform 0.5s ease, opacity 0.5s ease;
-    }
-
-    .columnContainer {
-      display: flex;
-      align-items: flex-start;
-      gap: 40px;
-
-      @include Size("mobile") {
-        gap: 20px;
-      }
-
-      .topLabel {
-        @include Sub4;
-        color: $gray60;
-        width: 100px;
-        flex-shrink: 0;
-
-        @include Size("tablet") {
-          width: 70px;
-        }
-      }
-
-      .optionsContainer {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-    }
-  }
+.mobileControlRow {
+  padding: 0 spacing.$spacing-16;
 }

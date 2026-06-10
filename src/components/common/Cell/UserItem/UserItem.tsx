@@ -174,7 +174,7 @@ export default function UserItem({
   if (type === "notification") {
     return (
       <div className={clsx(styles.notification, className)}>
-        <div className={styles.notificationLeft}>
+        <div className={styles.notificationLeft} onClick={onClick}>
           <div className={styles.notificationContent}>
             {category && (
               <span className={styles.notificationCategory}>{category}</span>
