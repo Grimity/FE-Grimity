@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import CircularLoading from "./CircularLoading";
+import RefreshLoading from "./RefreshLoading";
 
 const meta = {
-  title: "Common/Loading/CircularLoading",
-  component: CircularLoading,
+  title: "Common/Loading/RefreshLoading",
+  component: RefreshLoading,
   parameters: {
     layout: "centered",
   },
@@ -14,8 +14,11 @@ const meta = {
       options: ["basic", "dark"],
       control: { type: "radio" },
     },
+    size: {
+      control: { type: "number" },
+    },
   },
-} satisfies Meta<typeof CircularLoading>;
+} satisfies Meta<typeof RefreshLoading>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -23,12 +26,21 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     type: "basic",
+    size: 24,
+  },
+};
+
+export const Large: Story = {
+  args: {
+    type: "basic",
+    size: 40,
   },
 };
 
 export const Dark: Story = {
   args: {
     type: "dark",
+    size: 40,
   },
   parameters: {
     backgrounds: { default: "dark" },

@@ -1,4 +1,4 @@
-import CircularLoading from "@/components/common/Loading/CircularLoading/CircularLoading";
+import PageLoading from "@/components/common/Loading/PageLoading/PageLoading";
 import { useLoadingStore } from "@/states/loadingStore";
 import styles from "./GlobalLoading.module.scss";
 
@@ -7,7 +7,7 @@ export default function GlobalLoading() {
   if (!isLoading) return null;
   return (
     <div className={styles.overlay}>
-      <CircularLoading />
+      <PageLoading />
     </div>
   );
 }
