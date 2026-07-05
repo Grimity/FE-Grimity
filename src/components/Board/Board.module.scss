@@ -1,5 +1,4 @@
 @use "@/styles/globals.scss" as *;
-@use "sass:color";
 
 .container {
   width: 100%;
@@ -27,30 +26,6 @@
 
     @include Size("tablet") {
       max-width: 100%;
-    }
-  }
-
-  .uploadButton {
-    position: fixed;
-    bottom: 30px;
-    right: 16px;
-    background-color: $primary4;
-    border: none;
-    color: $gray0;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.3s;
-    z-index: 1000;
-    cursor: pointer;
-
-    @include Drag;
-
-    &:hover {
-      background-color: color.adjust($primary4, $lightness: 10%);
     }
   }
 }

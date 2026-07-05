@@ -1,62 +1,57 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
 
 .container {
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: spacing.$spacing-24;
 
-  .header {
-    height: 60px;
+  .pageHeader {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 32px;
-    @include Drag;
     align-items: center;
+    justify-content: space-between;
 
     @include Size("mobile") {
-      height: auto;
       margin-top: 8px;
-      margin-bottom: 16px;
     }
+  }
 
-    @include Size("tablet") {
-      height: auto;
+  .pageTitle {
+    margin: 0;
+    @include typo.title-1;
+    color: colors.$text-gray-bold;
+
+    @include Size("mobile") {
+      @include typo.title-2;
     }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: spacing.$spacing-16;
+    border-bottom: 1px solid colors.$border-gray-subtle;
+    @include Drag;
   }
 
   .cards {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
   }
-}
-
-.noResults {
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  @include Sub2;
-  color: $gray50;
-  margin-top: 60px;
-  margin-bottom: 200px;
 }
 
 .paginationWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 60px;
-  position: relative;
+  margin-top: spacing.$spacing-32;
 
   @include Size("mobile") {
-    margin-top: 40px;
+    margin-top: 20px;
   }
-}
-
-.uploadBtn {
-  position: absolute;
-  right: 0;
 }

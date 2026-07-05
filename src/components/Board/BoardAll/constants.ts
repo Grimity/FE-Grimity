@@ -12,6 +12,7 @@ export const POSTS_PER_PAGE = {
 
 export const TAB_TYPES = {
   ALL: "all",
+  NORMAL: "normal",
   QUESTION: "question",
   FEEDBACK: "feedback",
 } as const;

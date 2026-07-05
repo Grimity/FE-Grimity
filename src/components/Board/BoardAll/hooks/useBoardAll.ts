@@ -30,7 +30,7 @@ export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
     isLoading,
     refetch,
   } = usePostsLatest({
-    type: currentType.toUpperCase() as "ALL" | "QUESTION" | "FEEDBACK",
+    type: currentType.toUpperCase() as "ALL" | "NORMAL" | "QUESTION" | "FEEDBACK",
     page: currentPage,
     size: postsPerPage,
   });
@@ -76,7 +76,7 @@ export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
     isDetail,
   ]);
 
-  const handleTabChange = (type: "all" | "question" | "feedback") => {
+  const handleTabChange = (type: "all" | "normal" | "question" | "feedback") => {
     const newQuery: { type: string; page: number; searchBy?: string; keyword?: string } = {
       ...query,
       type: type,

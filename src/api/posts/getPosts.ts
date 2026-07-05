@@ -7,7 +7,7 @@ export type { PostResponse };
 export interface PostsLatestRequest {
   size: number;
   page: number;
-  type: "ALL" | "QUESTION" | "FEEDBACK";
+  type: "ALL" | "NORMAL" | "QUESTION" | "FEEDBACK";
 }
 
 export async function getPostsLatest({
