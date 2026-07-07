@@ -183,7 +183,7 @@ function DefaultCard({
   avatarUrl,
   nickname,
   followerCount = 0,
-  followingCount = 0,
+  followingCount,
   isFollowing: isFollowingProp,
   images = [],
   onClick,
@@ -211,7 +211,7 @@ function DefaultCard({
           profileImage={avatarUrl}
           nickname={nickname}
           followerCount={followerCount.toString()}
-          followingCount={followingCount.toString()}
+          followingCount={followingCount != null ? followingCount.toString() : undefined}
         >
           {isFollowing ? (
             <OutlinedButton size="small" onClick={handleFollowClick}>
