@@ -2,14 +2,15 @@ import { useRouter } from "next/router";
 
 import { subWeeks } from "date-fns";
 
-import DatePicker from "@/components/DatePicker";
-import TabView from "@/components/TabView";
-import Title from "@/components/Layout/Title/Title";
-import FeedCard from "@/components/RankingPage/PopularFeed/FeedCard/FeedCard";
+import DatePicker from "@/components/common/DatePicker";
+import Album from "@/components/common/Card/Album/Album";
+import Tab from "@/components/common/SegmentedControl/Tab/Tab";
 
 import { useRankings } from "@/api/feeds/getRankings";
+import { useAuthStore } from "@/states/authStore";
+import { useFeedsLikeMutation } from "@/queries/feeds/useFeedsLikeMutation";
 
-import { DatePickerMode } from "@/components/DatePicker/DatePicker.types";
+import { DatePickerMode } from "@/components/common/DatePicker/DatePicker.types";
 
 import { formattedDate } from "@/utils/formatDate";
 
@@ -18,6 +19,9 @@ import styles from "@/components/RankingPage/PopularFeed/PopularFeed.module.scss
 export default function PopularFeed() {
   const router = useRouter();
   const { query } = router;
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { mutate: toggleLike } = useFeedsLikeMutation();
 
   const mode = (query.mode as DatePickerMode) || DatePickerMode.WEEK;
   const date = (query.date as string) ? new Date(query.date as string) : new Date();
@@ -50,26 +54,53 @@ export default function PopularFeed() {
   return (
     <div className={styles.container}>
       <div className={styles.titleContainer}>
-        <Title>인기 그림 순위</Title>
+        <p className={styles.title}>인기 그림 순위</p>
+        <p className={styles.description}>
+          랭킹 40위까지 노출됩니다.
+        </p>
       </div>
 
-      <TabView
-        tabs={[
-          { label: "주간", key: DatePickerMode.WEEK },
-          { label: "월간", key: DatePickerMode.MONTH },
-        ]}
-        activeTab={mode}
-        onTabChange={handleTabChange}
-      />
+      <div className={styles.tabs}>
+        <Tab
+          title="주간"
+          showNumber={false}
+          active={mode === DatePickerMode.WEEK}
+          onClick={() => handleTabChange(DatePickerMode.WEEK)}
+        />
+        <Tab
+          title="월간"
+          showNumber={false}
+          active={mode === DatePickerMode.MONTH}
+          onClick={() => handleTabChange(DatePickerMode.MONTH)}
+        />
+      </div>
 
       <div className={styles.datePickerContainer}>
         <DatePicker mode={mode} selectedDate={date} onDateChange={handleDateChange} />
       </div>
 
       <section className={styles.feedContainer}>
-        {data?.feeds.map((feed) => (
-          <FeedCard key={feed.id} {...feed} />
-        ))}
+        {data?.feeds.map((feed) => {
+          const isLiked = feed.isLike ?? false;
+          const authorUrl = feed.author?.url;
+
+          return (
+            <Album
+              key={feed.id}
+              variant="mainTitle"
+              imageUrl={feed.thumbnail}
+              title={feed.title}
+              nickname={feed.author?.name ?? ""}
+              likeCount={feed.likeCount}
+              viewCount={feed.viewCount}
+              isLiked={isLoggedIn ? isLiked : undefined}
+              feedHref={`/feeds/${feed.id}`}
+              profileHref={authorUrl ? `/${authorUrl}` : undefined}
+              authorUrl={authorUrl ?? undefined}
+              onLikeClick={isLoggedIn ? () => toggleLike({ id: feed.id, isLiked }) : undefined}
+            />
+          );
+        })}
       </section>
     </div>
   );

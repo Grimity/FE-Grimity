@@ -1,4 +1,7 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
@@ -7,37 +10,46 @@
 .titleContainer {
   width: 100%;
   display: flex;
-  gap: 24px;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
 
-  @include Size("mobile") {
-    align-items: flex-end;
+  .title {
+    @include typo.title-1;
+    color: colors.$text-gray-bold;
+
+    @include bp.breakpoint-down("xs") {
+      @include typo.title-2;
+    }
+  }
+  
+  .description {
+    @include typo.label-6;
+    color: colors.$text-gray-subtle;
+  }
+}
+
+.tabs {
+  display: flex;
+  margin-top: spacing.$spacing-24;
+  border-bottom: 1px solid colors.$border-gray-subtle;
+
+  @include bp.breakpoint-down("xs") {
+    margin-top: spacing.$spacing-20;
   }
 }
 
 .datePickerContainer {
-  background-color: $gray20;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 0;
-  margin: 16px 0 24px;
-  border-radius: 10px;
-
-  @include Size("mobile") {
-    padding: 8px 16px 8px 12px;
-  }
+  margin: spacing.$spacing-16 0 spacing.$spacing-24;
 }
 
 .feedContainer {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-column-gap: 16px;
-  grid-row-gap: 40px;
+  grid-template-columns: repeat(5, 1fr);
+  grid-column-gap: spacing.$spacing-16;
+  grid-row-gap: spacing.$spacing-40;
 
-  @include Size("mobile") {
+  @include bp.breakpoint-down("xs") {
     grid-template-columns: repeat(2, 1fr);
-    grid-column-gap: 12px;
-    grid-row-gap: 20px;
+    grid-row-gap: spacing.$spacing-16;
   }
 }

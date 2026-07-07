@@ -89,3 +89,49 @@ export const TextDisabled: Story = {
     return <Filter {...args} value={value} onChange={setValue} />;
   },
 };
+
+// renderDropdown이 주어지면 기본 옵션 리스트 대신 임의의 커스텀 본문을 드롭다운에 렌더한다.
+export const CustomDropdown: Story = {
+  args: {
+    variant: "outline",
+    options: TITLE_OPTIONS,
+    value: "title",
+  },
+  render: function Render(args) {
+    const [value, setValue] = useState(args.value);
+    return (
+      <Filter
+        {...args}
+        value={value}
+        onChange={setValue}
+        renderDropdown={(close) => (
+          <div
+            style={{
+              width: 200,
+              padding: 16,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              background: "var(--surface-base)",
+              borderRadius: 12,
+              boxShadow: "0 0 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            {TITLE_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => {
+                  setValue(option.value);
+                  close();
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
+      />
+    );
+  },
+};

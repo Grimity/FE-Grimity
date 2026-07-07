@@ -1,21 +1,17 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
 
 .container {
   width: 180px;
   flex-shrink: 0;
 
-  @include Size("mobile") {
-    width: 127px;
-  }
-
-  @include Size("tablet") {
-    width: 150px;
-  }
-
   .imageWrapper {
     width: 100%;
     aspect-ratio: 3 / 4;
-    border-radius: 12px;
+    border-radius: radius.$radius-sm;
     overflow: hidden;
     position: relative;
     background-color: rgba(0, 0, 0, 0.02);
@@ -38,15 +34,9 @@
 
   .title {
     position: absolute;
-    bottom: 16px;
-    left: 12px;
-    color: $gray0;
-    @include Sub4;
-    @include Drag;
-
-    @include Size("mobile") {
-      bottom: 8px;
-      left: 8px;
-    }
+    bottom: spacing.$spacing-16;
+    left: spacing.$spacing-12;
+    color: colors.$text-white;
+    @include typo.body-1-sb;
   }
 }

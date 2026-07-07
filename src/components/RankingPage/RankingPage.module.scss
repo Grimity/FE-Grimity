@@ -1,33 +1,37 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/breakpoint" as bp;
+@use "@/styles/tokens/spacing" as spacing;
 
 .container {
   width: 100%;
-  padding-left: 32px;
-  padding-right: 32px;
-  padding-bottom: 80px;
+  padding-left: spacing.$spacing-32;
+  padding-right: spacing.$spacing-32;
+  padding-bottom: spacing.$spacing-72;
 
-  @include Size("mobile") {
-    padding-left: 16px;
-    padding-right: 16px;
+  @include bp.breakpoint-down("xs") {
+    padding-left: spacing.$spacing-16;
+    padding-right: spacing.$spacing-16;
   }
 
-  @include Size("tablet") {
-    padding-left: 16px;
-    padding-right: 16px;
+  @include bp.breakpoint-down("md") {
+    padding-left: spacing.$spacing-16;
+    padding-right: spacing.$spacing-16;
   }
 
   .center {
     max-width: $max-width-container;
-    width: calc(100vw - $sidebar-width - 64px);
+    width: calc(100vw - $sidebar-width - spacing.$spacing-64);
     margin: 0 auto;
-    padding-top: 60px;
+    padding-top: spacing.$spacing-56;
 
-    @include Size("tablet") {
-      width: calc(100vw - $sidebar-width-tablet - 32px);
+    @include bp.breakpoint-down("md") {
+      width: calc(100vw - $sidebar-width-tablet - spacing.$spacing-32);
+      padding-top: spacing.$spacing-48;
     }
 
-    @include Size("mobile") {
-      width: calc(100vw - 32px);
+    @include bp.breakpoint-down("xs") {
+      width: calc(100vw - spacing.$spacing-32);
+      padding-top: spacing.$spacing-16;
     }
   }
 
@@ -36,14 +40,14 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 60px;
+    gap: spacing.$spacing-56;
 
-    @include Size("mobile") {
-      gap: 40px;
+    @include bp.breakpoint-down("md") {
+      gap: spacing.$spacing-48;
     }
 
-    @include Size("tablet") {
-      gap: 50px;
+    @include bp.breakpoint-down("xs") {
+      gap: spacing.$spacing-40;
     }
   }
 }
