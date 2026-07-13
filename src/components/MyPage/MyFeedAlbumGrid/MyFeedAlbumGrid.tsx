@@ -17,9 +17,15 @@ import styles from "./MyFeedAlbumGrid.module.scss";
 interface MyFeedAlbumGridProps {
   query: UseInfiniteQueryResult<InfiniteData<MyLikeFeedsResponse>, Error>;
   emptyTitle: string;
+  /** 카드에 좋아요 버튼 노출 여부 (기본 true) */
+  showLikeButton?: boolean;
 }
 
-export default function MyFeedAlbumGrid({ query, emptyTitle }: MyFeedAlbumGridProps) {
+export default function MyFeedAlbumGrid({
+  query,
+  emptyTitle,
+  showLikeButton = true,
+}: MyFeedAlbumGridProps) {
   const router = useRouter();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { mutate: toggleLike } = useFeedsLikeMutation();
@@ -66,7 +72,9 @@ export default function MyFeedAlbumGrid({ query, emptyTitle }: MyFeedAlbumGridPr
             viewCount={feed.viewCount}
             isLiked
             onLikeClick={
-              isLoggedIn ? () => toggleLike({ id: feed.id, isLiked: true }) : undefined
+              showLikeButton && isLoggedIn
+                ? () => toggleLike({ id: feed.id, isLiked: true })
+                : undefined
             }
           />
         ))}
