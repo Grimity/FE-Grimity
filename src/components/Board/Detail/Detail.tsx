@@ -5,26 +5,25 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import DOMPurify from "dompurify";
 
 import Loader from "@/components/Layout/Loader/Loader";
-import Chip from "@/components/Chip/Chip";
-import Button from "@/components/Button/Button";
-import IconComponent from "@/components/Asset/Icon";
-import Dropdown from "@/components/Dropdown/Dropdown";
+import Chip from "@/components/common/Chip/Chip";
+import Icon from "@/components/common/Icon/Icon";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import Heart from "@/components/common/Control/Heart/Heart";
+import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
+import Menu from "@/components/common/Navigation/Menu/Menu";
+import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 import BoardAll from "@/components/Board/BoardAll/BoardAll";
 import ShareBtn from "@/components/Board/Detail/ShareBtn/ShareBtn";
 import PostComment from "@/components/Board/Detail/Comment/Comment";
 import ProfileCardPopover from "@/components/Layout/ProfileCardPopover/ProfileCardPopover";
-import Icon from "@/components/Asset/IconTemp";
 import { DetailLayout } from "@/components/Layout/DetailLayout";
-import ActionBar from "@/components/ActionBar/ActionBar";
-import { ActionBarConfig } from "@/components/ActionBar/ActionBar.types";
 
 import { useToast } from "@/hooks/useToast";
-import { useDeviceStore } from "@/states/deviceStore";
 import { useProfileCardHover } from "@/hooks/useProfileCardHover";
 import { useReportModal } from "@/hooks/useReportModal";
 
 import { useModalStore } from "@/states/modalStore";
-import { useShareModal } from "@/hooks/useShareModal";
 import { useAuthStore } from "@/states/authStore";
 
 import { usePostsDetails } from "@/api/posts/getPostsId";
@@ -33,6 +32,7 @@ import { usePostsLikeMutation } from "@/queries/posts/usePostsLikeMutation";
 import { deletePostsFeeds } from "@/api/posts/deletePostsId";
 
 import { timeAgo } from "@/utils/timeAgo";
+import { formatCurrency } from "@/utils/formatCurrency";
 import { getTypeLabel } from "@/components/Board/BoardAll/AllCard/AllCard";
 
 import { PATH_ROUTES } from "@/constants/routes";
@@ -50,13 +50,12 @@ export default function PostDetail({ id }: PostDetailProps) {
 
   const { isLoggedIn, user_id } = useAuthStore();
   const { openModal } = useModalStore();
-  const { sharePost } = useShareModal();
   const openReportModal = useReportModal();
 
   const { showToast } = useToast();
-  const { isMobile } = useDeviceStore();
 
   const [isSaved, setIsSaved] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [viewer, setViewer] = useState<{ images: string[]; index: number } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -91,12 +90,6 @@ export default function PostDetail({ id }: PostDetailProps) {
     setIsSaved(posts.isSave ?? false);
   }, [posts]);
 
-  const handleOpenShareModal = useCallback(() => {
-    if (posts) {
-      sharePost({ postId: id, title: posts.title, thumbnail: posts.thumbnail });
-    }
-  }, [posts, sharePost, id]);
-
   const handleOpenReportModal = useCallback(() => {
     if (!posts?.author.id) return;
     openReportModal({ refType: "POST", refId: posts.author.id });
@@ -114,7 +107,7 @@ export default function PostDetail({ id }: PostDetailProps) {
         onError: () => {
           showToast("좋아요 처리 중 오류가 발생했습니다.", "error");
         },
-      }
+      },
     );
   }, [isLoggedIn, id, posts?.isLike, toggleLike, showToast]);
 
@@ -134,10 +127,12 @@ export default function PostDetail({ id }: PostDetailProps) {
     } catch (error) {
       showToast("저장 처리 중 오류가 발생했습니다.", "error");
     }
+    setIsMenuOpen(false);
   }, [isLoggedIn, isSaved, id, showToast]);
 
-  const handleDelete = useCallback(async () => {
+  const handleDelete = useCallback(() => {
     if (!id) return;
+    setIsMenuOpen(false);
 
     openModal({
       type: null,
@@ -158,110 +153,39 @@ export default function PostDetail({ id }: PostDetailProps) {
   }, [id, openModal, router, showToast]);
 
   const handleOpenEditPage = useCallback(() => {
+    setIsMenuOpen(false);
     router.push(`/posts/${id}/edit`);
   }, [router, id]);
 
-  const getAuthorMenuItems = useCallback(
-    () => [
-      { label: "수정하기", onClick: handleOpenEditPage },
-      { label: "삭제하기", onClick: handleDelete, isDelete: true },
-    ],
-    [handleOpenEditPage, handleDelete],
-  );
+  const handleReportClick = useCallback(() => {
+    setIsMenuOpen(false);
+    handleOpenReportModal();
+  }, [handleOpenReportModal]);
 
-  const getGuestMenuItems = useCallback(
-    () => [{ label: "신고하기", onClick: handleOpenReportModal, isDelete: true }],
-    [handleOpenReportModal],
-  );
-
-  const getMobileMenuItems = useCallback(() => {
-    const baseItems = [{ label: "공유하기", onClick: handleOpenShareModal }];
+  const menuItems = useMemo<MenuItem[]>(() => {
+    const items: MenuItem[] = [
+      { label: isSaved ? "저장 취소" : "저장하기", onClick: handleSaveClick },
+    ];
 
     if (isAuthor) {
-      return [...baseItems, ...getAuthorMenuItems()];
+      items.push(
+        { label: "수정하기", onClick: handleOpenEditPage },
+        { label: "삭제하기", onClick: handleDelete, danger: true },
+      );
+    } else if (isLoggedIn) {
+      items.push({ label: "신고하기", onClick: handleReportClick, danger: true });
     }
 
-    if (isLoggedIn) {
-      return [...baseItems, ...getGuestMenuItems()];
-    }
-
-    return baseItems;
-  }, [isAuthor, isLoggedIn, handleOpenShareModal, getAuthorMenuItems, getGuestMenuItems]);
-
-  const getDesktopMenuItems = useCallback(() => {
-    if (isAuthor || !isLoggedIn) {
-      return [{ label: "공유하기", onClick: handleOpenShareModal }];
-    }
-    return [
-      { label: "공유하기", onClick: handleOpenShareModal },
-      { label: "신고하기", onClick: handleOpenReportModal, isDelete: true },
-    ];
-  }, [isAuthor, isLoggedIn, handleOpenShareModal, handleOpenReportModal]);
-
-  const actionBarConfig: ActionBarConfig = useMemo(
-    () => ({
-      like: {
-        isLiked: posts?.isLike ?? false,
-        count: posts?.likeCount ?? 0,
-        iconNameOn: "boardLikeCountOn",
-        iconNameOff: "boardLikeCountOff",
-        onToggle: handleLikeClick,
-        allowSelfLike: true,
-      },
-      save: {
-        isSaved,
-        iconNameOn: "detailSaveOn",
-        iconNameOff: "detailSaveOff",
-        onToggle: handleSaveClick,
-      },
-      dropdown: {
-        menuItems: isMobile ? getMobileMenuItems() : getDesktopMenuItems(),
-        isMobile: true,
-      },
-    }),
-    [
-      posts?.isLike,
-      posts?.likeCount,
-      isSaved,
-      isMobile,
-      handleLikeClick,
-      handleSaveClick,
-      getMobileMenuItems,
-      getDesktopMenuItems,
-    ],
-  );
-
-  const renderDesktopDropdown = () => {
-    if (!isLoggedIn) return null;
-
-    const menuItems = isAuthor ? getAuthorMenuItems() : getGuestMenuItems();
-
-    return (
-      <div className={styles.dropdown}>
-        <Dropdown
-          trigger={<IconComponent name="meatball" padding={8} size={24} isBtn />}
-          menuItems={menuItems}
-        />
-      </div>
-    );
-  };
-
-  const renderCounts = () => (
-    <div className={styles.counts}>
-      <div className={styles.count}>
-        <IconComponent name="boardLikeCount" size={16} />
-        {posts?.likeCount}
-      </div>
-      <div className={styles.count}>
-        <IconComponent name="commentCount" size={16} />
-        {posts?.commentCount}
-      </div>
-      <div className={styles.count}>
-        <IconComponent name="viewCount" size={16} />
-        {posts?.viewCount}
-      </div>
-    </div>
-  );
+    return items;
+  }, [
+    isSaved,
+    isAuthor,
+    isLoggedIn,
+    handleSaveClick,
+    handleOpenEditPage,
+    handleDelete,
+    handleReportClick,
+  ]);
 
   if (isLoading) {
     return <Loader />;
@@ -274,55 +198,84 @@ export default function PostDetail({ id }: PostDetailProps) {
   return (
     <DetailLayout>
       <DetailLayout.Content>
-        <section className={styles.header}>
-          <div className={styles.headerLeft}>
-            <div className={styles.chip}>
-              <Chip
-                size="s"
-                type={posts.type === "NOTICE" ? "filled-secondary" : "filled-assistive"}
-              >
-                {getTypeLabel(posts.type)}
-              </Chip>
-            </div>
-            <h1 className={styles.title}>{posts.title}</h1>
-            <div className={styles.authorCreatedAt}>
-              {posts.type !== "NOTICE" && (
-                <span ref={targetRef as React.RefObject<HTMLSpanElement>} {...triggerProps}>
-                  <Link href={`/${posts.author.url}`} className={styles.author}>
-                    <p>{posts.author.name}</p>
-                  </Link>
-                </span>
-              )}
-              <p className={styles.createdAt}>{timeAgo(posts.createdAt)}</p>
+        <article className={styles.article}>
+          <div className={styles.writing}>
+            <section className={styles.header}>
+              <div className={styles.chip}>
+                <Chip variant={posts.type === "NOTICE" ? "primary" : "assistive"} size="xl">
+                  {getTypeLabel(posts.type)}
+                </Chip>
+              </div>
+              <div className={styles.info}>
+                <div className={styles.titleBlock}>
+                  <h1 className={styles.title}>{posts.title}</h1>
+                  {posts.type !== "NOTICE" && (
+                    <span ref={targetRef as React.RefObject<HTMLSpanElement>} {...triggerProps}>
+                      <Link href={`/${posts.author.url}`}>
+                        <UserInfo type="default" nickname={posts.author.name} />
+                      </Link>
+                    </span>
+                  )}
+                </div>
+                <div className={styles.actions}>
+                  <ShareBtn postId={id} title={posts.title} thumbnail={posts.thumbnail} />
+                </div>
+              </div>
+            </section>
+
+            <div className={styles.body}>
+              <div
+                ref={contentRef}
+                className={styles.content}
+                onClick={handleContentClick}
+                dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+              />
+              <UserInfo
+                type="default"
+                nickname={posts.author.name}
+                showView
+                viewCount={formatCurrency(posts.viewCount)}
+                showTime
+                timeCount={timeAgo(posts.createdAt)}
+              />
             </div>
           </div>
-          {!isMobile && (
-            <div className={styles.dropdownContainer}>
-              {renderDesktopDropdown()}
-              <ShareBtn postId={id} title={posts.title} thumbnail={posts.thumbnail} />
-            </div>
+
+          {viewer && (
+            <ImageViewer
+              images={viewer.images}
+              initialIndex={viewer.index}
+              onClose={() => setViewer(null)}
+            />
           )}
-        </section>
 
-        <div className={styles.bar} />
+          <div className={styles.reaction}>
+            <div className={styles.reactionLeft}>
+              <div className={styles.likeBtn}>
+                <Heart active={posts.isLike} onClick={handleLikeClick} />
+                {posts.likeCount}
+              </div>
+              <span className={styles.commentCount}>
+                <Icon name="chat-round" size={16} color="gray-subtle" />
+                {posts.commentCount}
+              </span>
+            </div>
 
-        <div
-          ref={contentRef}
-          className={styles.content}
-          onClick={handleContentClick}
-          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-        />
-
-        {viewer && (
-          <ImageViewer
-            images={viewer.images}
-            initialIndex={viewer.index}
-            onClose={() => setViewer(null)}
-          />
-        )}
-
-        {renderCounts()}
-        <ActionBar config={actionBarConfig} isAuthor={isAuthor} className={styles.boardActionBar} />
+            <div className={styles.menuAnchor}>
+              <IconButton
+                variant="sm"
+                icon={<Icon name="dotmenu" size={20} />}
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                aria-label="더보기"
+              />
+              {isMenuOpen && (
+                <div className={styles.menuDropdown}>
+                  <Menu items={menuItems} onOpenChange={setIsMenuOpen} />
+                </div>
+              )}
+            </div>
+          </div>
+        </article>
 
         <DetailLayout.HorizontalAd adSlot={CONFIG.MARKETING.AD_SLOTS.BOARD_DETAIL_HORIZONTAL} />
 
@@ -333,9 +286,7 @@ export default function PostDetail({ id }: PostDetailProps) {
         <section className={styles.uploadBtn}>
           {isLoggedIn && (
             <Link href={PATH_ROUTES.BOARD_WRITE}>
-              <Button type="outlined-assistive" leftIcon={<Icon icon="detailWrite" size="xl" />}>
-                글쓰기
-              </Button>
+              <OutlinedButton iconLeft={<Icon name="pen" size={20} />}>글쓰기</OutlinedButton>
             </Link>
           )}
         </section>

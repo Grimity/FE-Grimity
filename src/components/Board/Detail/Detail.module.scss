@@ -1,99 +1,74 @@
 @use "@/styles/globals.scss" as *;
-@use "sass:color";
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
 
-.bar {
-  width: 100%;
-  height: 1px;
-  background-color: $gray30;
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-32;
+}
+
+.writing {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
 }
 
 .header {
-  width: 100%;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding-bottom: 12px;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+  padding-bottom: spacing.$spacing-12;
 
-  .headerLeft {
+  .chip {
+    flex-shrink: 0;
+  }
+
+  .info {
+    display: flex;
+    align-items: flex-end;
+    gap: spacing.$spacing-12;
     width: 100%;
+  }
+
+  .titleBlock {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: spacing.$spacing-8;
+    flex: 1;
+    min-width: 0;
+  }
 
-    .chip {
-      flex-shrink: 0;
-    }
+  .title {
+    margin: 0;
+    @include typo.title-2;
+    color: colors.$text-gray-bold;
+    word-break: break-word;
 
-    .title {
-      @include Title3;
-      color: $gray80;
-
-      @include Size("mobile") {
-        @include Sub2;
-      }
-    }
-
-    .notice {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-
-      .noticeTitle {
-        @include Title3;
-        color: $secandary1;
-      }
-
-      .noticeCreatedAt {
-        @include Label1;
-        color: $gray50;
-        @include Drag;
-      }
-    }
-
-    .authorCreatedAt {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      .author {
-        @include Body1;
-        color: $gray60;
-
-        @include Size("mobile") {
-          @include Label2;
-        }
-      }
-
-      .createdAt {
-        @include Label1;
-        color: $gray50;
-        @include Drag;
-
-        @include Size("mobile") {
-          @include Label2;
-        }
-      }
+    @include Size("mobile") {
+      @include typo.title-3;
     }
   }
 
-  .dropdownContainer {
+  .actions {
     display: flex;
     align-items: center;
-    gap: 16px;
-    position: relative;
-    @include Drag;
+    gap: spacing.$spacing-4;
+    flex-shrink: 0;
   }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-16;
 }
 
 .content {
   width: 100%;
-  padding-top: 20px;
-  padding-bottom: 24px;
-  line-height: 24px;
-  color: $gray70;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-weight: 500;
+  @include typo.body-1-r;
+  color: colors.$text-gray-bold;
   min-height: 120px;
 
   img {
@@ -126,32 +101,54 @@
   }
 }
 
-.counts {
+.reaction {
   display: flex;
   align-items: center;
-  gap: 8px;
-  @include Drag;
-
-  .count {
-    display: flex;
-    gap: 2px;
-    align-items: center;
-    @include Cap2;
-    color: $gray60;
-  }
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
 }
 
-.boardActionBar {
-  margin-top: 28px;
-  margin-bottom: 60px;
+.reactionLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+}
 
-  @include Size("mobile") {
-    margin-bottom: 40px;
-  }
+.likeBtn {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+  @include typo.label-3;
+  color: colors.$text-gray-normal;
+}
+
+.commentCount {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+  @include typo.label-3;
+  color: colors.$text-gray-normal;
+}
+
+.menuAnchor {
+  position: relative;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: calc(100% + #{spacing.$spacing-4});
+  right: 0;
+  z-index: 10;
+}
+
+.bar {
+  width: 100%;
+  height: 1px;
+  background-color: colors.$border-gray-subtle;
 }
 
 .uploadBtn {
-  margin-top: 24px;
+  margin-top: spacing.$spacing-24;
   margin-bottom: 50px;
   width: 100%;
   display: flex;
@@ -161,9 +158,4 @@
     margin-top: 14px;
     margin-bottom: 30px;
   }
-}
-
-.boardPopular {
-  margin-top: 60px;
-  margin-bottom: 50px;
 }

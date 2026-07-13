@@ -70,6 +70,7 @@ export interface UserItemProps {
   commentText?: string;
   mentionName?: string;
   likeCount?: string;
+  isLiked?: boolean;
   isAuthor?: boolean;
   onLikeClick?: () => void;
   onReplyClick?: () => void;

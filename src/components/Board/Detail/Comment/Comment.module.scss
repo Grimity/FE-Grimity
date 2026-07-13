@@ -1,151 +1,67 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
-  padding-bottom: 25px;
-
-  .inputContainer {
-    width: 100%;
-    margin-top: 60px;
-    margin-bottom: 2px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-
-    .submitBtn {
-      flex-shrink: 0;
-    }
-
-    @include Size("tablet") {
-      margin-top: 20px;
-    }
-  }
-
-  .childComments {
-    width: 100%;
-    padding-left: 32px;
-  }
-  .comment {
-    width: 100%;
-  }
-
-  .commentBody {
-    width: 100%;
-  }
-
-  .writerReply {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 20px 0;
-    border-bottom: 1px solid $gray30;
-  }
-  .writerLeft {
-    display: flex;
-    flex-direction: column;
-  }
-  .writerCreatedAt {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .writerName {
-    @include Label1;
-    color: $gray60;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .createdAt {
-    @include Cap2;
-    color: $gray50;
-    @include Drag;
-  }
-
-  .feedWriter {
-    @include Cap3;
-    color: $secandary1;
-    background-color: $secandary2;
-    border-radius: 50px;
-    padding: 2px 8px;
-    @include Drag;
-  }
-
-  .commentText {
-    @include Body1;
-    color: $gray80;
-    white-space: pre-line;
-    margin-top: 6px;
-    margin-bottom: 10px;
-
-    .mentionedUser {
-      color: $secandary1;
-      @include Label1;
-      margin-right: 4px;
-    }
-
-    :global(.comment-link) {
-      color: $secandary1;
-      text-decoration: underline;
-      word-break: break-all;
-
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-  }
-
-  .likeReplyBtn {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .likeButton {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    @include Cap1;
-    color: $gray60;
-    cursor: pointer;
-    @include Drag;
-  }
-  .likeOnButton {
-    @extend .likeButton;
-    color: $secandary1;
-  }
-
-  .replyBtn {
-    @include Label1;
-    line-height: 24px;
-    color: $gray60;
-    cursor: pointer;
-    @include Drag;
-  }
-
-  .viewReplies {
-    width: 100%;
-  }
+  padding-bottom: spacing.$spacing-24;
 }
 
-.deleteComment {
-  color: $gray50;
-  @include Label1;
-}
-
-.replyBtnDropdown {
-  position: relative;
-  @include Drag;
-}
-
-.input {
-  margin-top: 8px;
+.inputContainer {
+  width: 100%;
+  margin-top: spacing.$spacing-56;
+  margin-bottom: spacing.$spacing-2;
   display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  gap: spacing.$spacing-16;
 
-  .submitBtn {
-    flex-shrink: 0;
+  @include bp.breakpoint-down("xs") {
+    margin-top: spacing.$spacing-20;
+  }
+}
+
+.submitBtn {
+  flex-shrink: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.commentRow {
+  width: 100%;
+  padding: spacing.$spacing-20 0;
+  border-bottom: 1px solid colors.$border-gray-subtle;
+}
+
+.childList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-20;
+  margin-top: spacing.$spacing-20;
+}
+
+.menuAnchor {
+  position: relative;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: calc(100% + #{spacing.$spacing-4});
+  right: 0;
+  z-index: 10;
+}
+
+.replyInput {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-12;
+  margin-top: spacing.$spacing-12;
+  padding-left: spacing.$spacing-48;
+
+  &.childReplyInput {
+    padding-left: spacing.$spacing-32;
   }
 }
