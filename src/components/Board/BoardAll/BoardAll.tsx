@@ -56,7 +56,7 @@ export default function BoardAll({ isDetail }: BoardAllProps) {
         </div>
       )}
 
-      {isMobile && currentType === "all" && !isDetail && (
+      {isMobile && !isDetail && (
         <SearchSection
           searchBy={searchBy}
           keyword={keyword}
@@ -69,7 +69,7 @@ export default function BoardAll({ isDetail }: BoardAllProps) {
       {!isDetail && (
         <div className={styles.header}>
           <TabNavigation currentType={currentType} onTabChange={handleTabChange} />
-          {!isMobile && currentType === "all" && (
+          {!isMobile && (
             <SearchSection
               searchBy={searchBy}
               keyword={keyword}

@@ -10,6 +10,7 @@ export interface PostSearchRequest {
   size?: number;
   page?: number;
   keyword: string;
+  type?: "ALL" | "NORMAL" | "QUESTION" | "FEEDBACK";
 }
 
 export async function getPostSearch({
@@ -17,6 +18,7 @@ export async function getPostSearch({
   size,
   page,
   keyword,
+  type,
 }: PostSearchRequest): Promise<PostsResponse> {
   try {
     const response = await axiosInstance.get("/posts/search", {
@@ -25,6 +27,7 @@ export async function getPostSearch({
         size,
         page,
         keyword,
+        type,
       },
     });
 
@@ -45,7 +48,15 @@ export function usePostSearch(params: PostSearchRequest | null) {
 
   return useQuery<PostsResponse>({
     queryKey: params
-      ? ["PostSearch", params.searchBy, params.size, params.page, params.keyword, isLoggedIn]
+      ? [
+          "PostSearch",
+          params.searchBy,
+          params.size,
+          params.page,
+          params.keyword,
+          params.type,
+          isLoggedIn,
+        ]
       : [],
     queryFn: () => (params ? getPostSearch(params) : Promise.reject(undefined)),
 

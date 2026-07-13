@@ -32,10 +32,11 @@ export async function getPostsLatest({
   }
 }
 
-export const usePostsLatest = (params: PostsLatestRequest) => {
+export const usePostsLatest = (params: PostsLatestRequest, enabled = true) => {
   return useQuery<PostsResponse>({
     queryKey: ["postsLatest", params],
     queryFn: () => getPostsLatest(params),
+    enabled,
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
@@ -55,10 +56,11 @@ export async function getPostsNotices(): Promise<PostResponse[]> {
   }
 }
 
-export const usePostsNotices = () => {
+export const usePostsNotices = (enabled = true) => {
   return useQuery<PostResponse[]>({
     queryKey: ["postsNotices"],
     queryFn: () => getPostsNotices(),
+    enabled,
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
