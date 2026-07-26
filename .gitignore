@@ -42,3 +42,6 @@ next-env.d.ts
 
 env/
 *storybook.log
+
+# playwright mcp artifacts
+.playwright-mcp/

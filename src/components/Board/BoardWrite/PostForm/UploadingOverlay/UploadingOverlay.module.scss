@@ -1,0 +1,46 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
+
+.backdrop {
+  overscroll-behavior: contain;
+
+  @include bp.breakpoint-down("xs") {
+    padding: 0 spacing.$spacing-16;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-32;
+  padding: spacing.$spacing-40;
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-xl;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+
+  @include bp.breakpoint-down("xs") {
+    width: 100%;
+  }
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-10;
+  text-align: center;
+}
+
+.title {
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+}
+
+.description {
+  @include typo.body-1-r;
+  color: colors.$text-gray-bold;
+}

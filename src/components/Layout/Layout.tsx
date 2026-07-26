@@ -63,6 +63,8 @@ const SUB_SEARCH_HIDDEN_ROUTES = [
   "/posts/[id]",
   "/direct",
 ];
+// 모바일에서 페이지가 자체 에디터 GNB(뒤로가기·업로드)를 렌더링하는 라우트
+const EDITOR_GNB_ROUTES = ["/board/write", "/posts/[id]/edit"];
 const SETTINGS_GNB_TITLES: Record<string, string> = {
   "/settings": "설정",
   ...Object.fromEntries(SETTINGS_NAV_ITEMS.map((i) => [i.path, i.label])),
@@ -127,7 +129,9 @@ export default function Layout({ children }: LayoutProps) {
   const showUploadBtn = !UPLOAD_HIDDEN_ROUTES.includes(router.pathname);
   const showSubSearch = !SUB_SEARCH_HIDDEN_ROUTES.includes(router.pathname);
   const shouldHideHeader =
-    (router.pathname === "/direct/[chatId]" && isMobile) || router.pathname === "/login";
+    (router.pathname === "/direct/[chatId]" && isMobile) ||
+    router.pathname === "/login" ||
+    (EDITOR_GNB_ROUTES.includes(router.pathname) && isMobile);
   const isMobileSearchPage = isMobile && router.pathname === "/search";
 
   const {

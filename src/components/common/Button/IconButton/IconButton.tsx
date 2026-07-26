@@ -14,6 +14,8 @@ export default function IconButton({
   className,
   type = "button",
   "aria-label": ariaLabel,
+  "aria-expanded": ariaExpanded,
+  "aria-haspopup": ariaHasPopup,
 }: IconButtonProps) {
   return (
     <button
@@ -22,6 +24,8 @@ export default function IconButton({
       onClick={onClick}
       onMouseDown={onMouseDown}
       aria-label={ariaLabel}
+      aria-expanded={ariaExpanded}
+      aria-haspopup={ariaHasPopup}
       className={clsx(
         baseStyles.button,
         styles.iconButton,

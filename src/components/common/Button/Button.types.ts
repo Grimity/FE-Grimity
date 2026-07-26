@@ -8,4 +8,6 @@ export interface ButtonBaseProps {
   className?: string;
   type?: "button" | "submit" | "reset";
   "aria-label"?: string;
+  "aria-expanded"?: boolean;
+  "aria-haspopup"?: boolean | "menu" | "dialog" | "listbox" | "tree" | "grid";
 }

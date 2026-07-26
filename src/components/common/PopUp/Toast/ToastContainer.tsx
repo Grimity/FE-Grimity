@@ -33,7 +33,9 @@ export default function ToastContainer({ target }: ToastContainerProps = {}) {
   useEffect(() => {
     const handleRouteChange = () => {
       toastsRef.current.forEach((toast) => {
-        removeToast(toast.id);
+        if (toast.duration === null) {
+          removeToast(toast.id);
+        }
       });
     };
 

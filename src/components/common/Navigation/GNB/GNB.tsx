@@ -89,6 +89,7 @@ export default function GNB({
   rightActions = [],
   rightLabel,
   onRightLabelClick,
+  rightLabelDisabled = false,
   dmName,
   dmUsername,
   dmProfileImageUrl,
@@ -271,6 +272,7 @@ export default function GNB({
             variant="primary"
             size="regular"
             onClick={onRightLabelClick}
+            disabled={rightLabelDisabled}
             className={styles.trailingText}
           >
             {rightLabel}

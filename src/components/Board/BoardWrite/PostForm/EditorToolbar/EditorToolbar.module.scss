@@ -1,0 +1,126 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-10;
+  height: 50px;
+  padding: spacing.$spacing-12 spacing.$spacing-8;
+  flex-shrink: 0;
+  border-bottom: 1px solid colors.$border-gray-subtler;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-10;
+  flex-shrink: 0;
+}
+
+.divider {
+  width: 1px;
+  height: 22px;
+  flex-shrink: 0;
+  background-color: colors.$border-gray-subtler;
+}
+
+.popoverBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+}
+
+.popover {
+  position: fixed;
+  z-index: 111;
+  background-color: colors.$surface-base;
+  border: 1px solid colors.$border-gray-subtler;
+  border-radius: radius.$radius-md;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  padding: spacing.$spacing-6 0;
+  margin: 0;
+  list-style: none;
+}
+
+.menuItem {
+  @include typo.label-2;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  padding: 0 spacing.$spacing-16;
+  color: colors.$text-gray-bold;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
+  }
+}
+
+.colorPanel {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+  padding: spacing.$spacing-12;
+}
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 24px);
+  gap: spacing.$spacing-8;
+}
+
+.colorSwatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid colors.$border-gray-subtler;
+  border-radius: radius.$radius-full;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+      border-color: colors.$border-gray-bold;
+    }
+  }
+}
+
+.colorClear {
+  @include typo.label-4;
+  padding: spacing.$spacing-4 0;
+  color: colors.$text-gray-normal;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    color: colors.$text-gray-bold;
+  }
+}
