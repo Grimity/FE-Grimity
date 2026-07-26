@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 import UserItem from "@/components/common/Cell/UserItem/UserItem";
@@ -26,8 +25,6 @@ function getTypeLabel(type: string): string {
 }
 
 export default function BoardPostItem({ post }: Pick<AllCardProps, "post">) {
-  const router = useRouter();
-
   if (post.type === "NOTICE") {
     return (
       <Link href={`/posts/${post.id}`}>
@@ -44,26 +41,27 @@ export default function BoardPostItem({ post }: Pick<AllCardProps, "post">) {
   }
 
   return (
-    <UserItem
-      type="communityTitle"
-      tag={getTypeLabel(post.type)}
-      showTag
-      postTitle={
-        post.thumbnail !== null ? (
-          <span className={styles.titleWithIcon}>
-            <Icon name="gallery" size={16} color="gray-subtle" />
-            <span className={styles.titleWithIconText}>{post.title}</span>
-          </span>
-        ) : (
-          post.title
-        )
-      }
-      body={post.content}
-      commentCount={post.commentCount}
-      nickname={post.author?.name ?? undefined}
-      viewCount={formatCurrency(post.viewCount)}
-      timeCount={timeAgo(post.createdAt)}
-      onClick={() => router.push(`/posts/${post.id}`)}
-    />
+    <Link href={`/posts/${post.id}`}>
+      <UserItem
+        type="communityTitle"
+        tag={getTypeLabel(post.type)}
+        showTag
+        postTitle={
+          post.thumbnail !== null ? (
+            <span className={styles.titleWithIcon}>
+              <Icon name="gallery" size={16} color="gray-subtle" />
+              <span className={styles.titleWithIconText}>{post.title}</span>
+            </span>
+          ) : (
+            post.title
+          )
+        }
+        body={post.content}
+        commentCount={post.commentCount}
+        nickname={post.author?.name ?? undefined}
+        viewCount={formatCurrency(post.viewCount)}
+        timeCount={timeAgo(post.createdAt)}
+      />
+    </Link>
   );
 }

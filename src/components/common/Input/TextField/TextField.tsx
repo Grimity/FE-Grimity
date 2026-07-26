@@ -14,6 +14,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
       size = "md",
       status = "default",
       maxCount,
+      prefix,
       onClear,
       className,
       disabled,
@@ -99,6 +100,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
             <Icon name="magnifer" size={20} color="gray-normal"/>
           </span>
         )}
+        {prefix != null && <span className={styles.prefix}>{prefix}</span>}
         <input
           ref={inputRef}
           type="text"

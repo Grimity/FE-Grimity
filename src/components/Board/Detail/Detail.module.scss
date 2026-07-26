@@ -117,17 +117,17 @@
 .likeBtn {
   display: flex;
   align-items: center;
-  gap: spacing.$spacing-2;
-  @include typo.label-3;
-  color: colors.$text-gray-normal;
+  gap: spacing.$spacing-6;
+  @include typo.body-2-r;
+  color: colors.$text-gray-bold;
 }
 
 .commentCount {
   display: flex;
   align-items: center;
-  gap: spacing.$spacing-2;
-  @include typo.label-3;
-  color: colors.$text-gray-normal;
+  gap: spacing.$spacing-6;
+  @include typo.body-2-r;
+  color: colors.$text-gray-bold;
 }
 
 .menuAnchor {

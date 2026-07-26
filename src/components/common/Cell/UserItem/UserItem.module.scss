@@ -2,6 +2,7 @@
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 // ============================================
 // Avatar
@@ -490,9 +491,13 @@
   flex-direction: column;
   align-items: flex-start;
   gap: spacing.$spacing-8;
-  padding: spacing.$spacing-12 0;
+  padding: spacing.$spacing-20 0;
   width: 100%;
   position: relative;
+
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-12 0;
+  }
 }
 
 .titleHeader {

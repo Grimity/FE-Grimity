@@ -11,7 +11,6 @@
 
   @include bp.breakpoint-down("xs") {
     max-width: none;
-    margin-bottom: spacing.$spacing-20;
   }
 }
 

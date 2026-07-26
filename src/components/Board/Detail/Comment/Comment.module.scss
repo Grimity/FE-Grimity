@@ -1,46 +1,77 @@
 @use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
-  padding-bottom: spacing.$spacing-24;
-}
-
-.inputContainer {
-  width: 100%;
-  margin-top: spacing.$spacing-56;
-  margin-bottom: spacing.$spacing-2;
   display: flex;
-  align-items: flex-start;
-  gap: spacing.$spacing-16;
-
-  @include bp.breakpoint-down("xs") {
-    margin-top: spacing.$spacing-20;
-  }
+  flex-direction: column;
+  gap: spacing.$spacing-20;
 }
 
-.submitBtn {
-  flex-shrink: 0;
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-10;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.title {
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+}
+
+.count {
+  @include typo.label-1;
+  color: colors.$text-primary-normal;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+}
+
+.mentionTag {
+  @include typo.label-5;
+  color: colors.$text-primary-normal;
+  white-space: nowrap;
+}
+
+.emptyWrap {
+  display: flex;
+  justify-content: center;
 }
 
 .list {
   display: flex;
   flex-direction: column;
+  gap: spacing.$spacing-12;
 }
 
 .commentRow {
   width: 100%;
-  padding: spacing.$spacing-20 0;
-  border-bottom: 1px solid colors.$border-gray-subtle;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
 }
 
 .childList {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: spacing.$spacing-20;
-  margin-top: spacing.$spacing-20;
+  gap: spacing.$spacing-8;
 }
 
 .menuAnchor {
@@ -56,12 +87,19 @@
 
 .replyInput {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: spacing.$spacing-12;
-  margin-top: spacing.$spacing-12;
   padding-left: spacing.$spacing-48;
 
   &.childReplyInput {
+    padding-left: spacing.$spacing-64;
+  }
+
+  @include bp.breakpoint-down("xs") {
     padding-left: spacing.$spacing-32;
+
+    &.childReplyInput {
+      padding-left: spacing.$spacing-48;
+    }
   }
 }
