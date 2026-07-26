@@ -9,7 +9,7 @@ import Chip from "@/components/common/Chip/Chip";
 import Icon from "@/components/common/Icon/Icon";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
-import Heart from "@/components/common/Control/Heart/Heart";
+import Bookmark from "@/components/common/Control/Bookmark/Bookmark";
 import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
 import Menu from "@/components/common/Navigation/Menu/Menu";
 import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
@@ -55,7 +55,7 @@ export default function PostDetail({ id }: PostDetailProps) {
   const { showToast } = useToast();
 
   const [isSaved, setIsSaved] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<"header" | "reaction" | null>(null);
   const [viewer, setViewer] = useState<{ images: string[]; index: number } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -127,12 +127,12 @@ export default function PostDetail({ id }: PostDetailProps) {
     } catch (error) {
       showToast("저장 처리 중 오류가 발생했습니다.", "error");
     }
-    setIsMenuOpen(false);
+    setOpenMenu(null);
   }, [isLoggedIn, isSaved, id, showToast]);
 
   const handleDelete = useCallback(() => {
     if (!id) return;
-    setIsMenuOpen(false);
+    setOpenMenu(null);
 
     openModal({
       type: null,
@@ -153,12 +153,12 @@ export default function PostDetail({ id }: PostDetailProps) {
   }, [id, openModal, router, showToast]);
 
   const handleOpenEditPage = useCallback(() => {
-    setIsMenuOpen(false);
+    setOpenMenu(null);
     router.push(`/posts/${id}/edit`);
   }, [router, id]);
 
   const handleReportClick = useCallback(() => {
-    setIsMenuOpen(false);
+    setOpenMenu(null);
     handleOpenReportModal();
   }, [handleOpenReportModal]);
 
@@ -195,6 +195,22 @@ export default function PostDetail({ id }: PostDetailProps) {
     return null;
   }
 
+  const renderMenuAnchor = (anchor: "header" | "reaction") => (
+    <div className={styles.menuAnchor}>
+      <IconButton
+        variant="sm"
+        icon={<Icon name="dotmenu" size={20} />}
+        onClick={() => setOpenMenu((prev) => (prev === anchor ? null : anchor))}
+        aria-label="더보기"
+      />
+      {openMenu === anchor && (
+        <div className={styles.menuDropdown}>
+          <Menu items={menuItems} onOpenChange={(open) => !open && setOpenMenu(null)} />
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <DetailLayout>
       <DetailLayout.Content>
@@ -218,6 +234,7 @@ export default function PostDetail({ id }: PostDetailProps) {
                   )}
                 </div>
                 <div className={styles.actions}>
+                  {renderMenuAnchor("header")}
                   <ShareBtn postId={id} title={posts.title} thumbnail={posts.thumbnail} />
                 </div>
               </div>
@@ -252,36 +269,24 @@ export default function PostDetail({ id }: PostDetailProps) {
           <div className={styles.reaction}>
             <div className={styles.reactionLeft}>
               <div className={styles.likeBtn}>
-                <Heart active={posts.isLike} onClick={handleLikeClick} />
+                <Bookmark active={posts.isLike} onClick={handleLikeClick} aria-label="좋아요" />
                 {posts.likeCount}
               </div>
               <span className={styles.commentCount}>
-                <Icon name="chat-round" size={16} color="gray-subtle" />
+                <Icon name="chat-round" size={24} color="gray-bold" />
                 {posts.commentCount}
               </span>
             </div>
 
-            <div className={styles.menuAnchor}>
-              <IconButton
-                variant="sm"
-                icon={<Icon name="dotmenu" size={20} />}
-                onClick={() => setIsMenuOpen((prev) => !prev)}
-                aria-label="더보기"
-              />
-              {isMenuOpen && (
-                <div className={styles.menuDropdown}>
-                  <Menu items={menuItems} onOpenChange={setIsMenuOpen} />
-                </div>
-              )}
-            </div>
+            {renderMenuAnchor("reaction")}
           </div>
         </article>
 
         <DetailLayout.HorizontalAd adSlot={CONFIG.MARKETING.AD_SLOTS.BOARD_DETAIL_HORIZONTAL} />
 
-        <PostComment postId={id} postWriterId={posts.author.id} />
+        <PostComment postId={id} postWriterId={posts.author.id} commentCount={posts.commentCount} />
 
-        {!posts.commentCount && <div className={styles.bar} />}
+        <div className={styles.bar} />
 
         <section className={styles.uploadBtn}>
           {isLoggedIn && (

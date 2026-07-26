@@ -44,7 +44,7 @@ export default function BoardAll({ isDetail }: BoardAllProps) {
   return (
     <div className={styles.container}>
       {isDetail ? (
-        <Title>자유게시판 최신글</Title>
+        <Title>최신 글</Title>
       ) : (
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>자유게시판</h1>

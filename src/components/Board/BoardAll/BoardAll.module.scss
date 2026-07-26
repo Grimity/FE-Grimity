@@ -2,20 +2,24 @@
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: spacing.$spacing-24;
 
   .pageHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    @include Size("mobile") {
-      margin-top: 8px;
+    @include bp.breakpoint-down("sm") {
+      margin-bottom: spacing.$spacing-24;
+    }
+
+    @include bp.breakpoint-down("xs") {
+      margin-bottom: spacing.$spacing-12;
     }
   }
 
@@ -24,7 +28,7 @@
     @include typo.title-1;
     color: colors.$text-gray-bold;
 
-    @include Size("mobile") {
+    @include bp.breakpoint-down("xs") {
       @include typo.title-2;
     }
   }
@@ -36,6 +40,10 @@
     gap: spacing.$spacing-16;
     border-bottom: 1px solid colors.$border-gray-subtle;
     @include Drag;
+
+    @include bp.breakpoint-down("xs") {
+      margin-top: spacing.$spacing-20;
+    }
   }
 
   .cards {
@@ -49,9 +57,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: spacing.$spacing-32;
+  margin-top: spacing.$spacing-24;
 
-  @include Size("mobile") {
-    margin-top: 20px;
+  @include bp.breakpoint-down("xs") {
+    margin-top: spacing.$spacing-20;
+    margin-bottom: spacing.$spacing-40;
   }
 }

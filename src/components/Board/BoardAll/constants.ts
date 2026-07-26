@@ -1,7 +1,7 @@
 export type SortOption = "combined" | "name";
 
 export const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: "combined", label: "제목+내용" },
+  { value: "combined", label: "제목" },
   { value: "name", label: "글쓴이" },
 ];
 

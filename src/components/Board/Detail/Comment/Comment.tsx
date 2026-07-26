@@ -4,8 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import Loader from "@/components/Layout/Loader/Loader";
 import UserItem from "@/components/common/Cell/UserItem/UserItem";
-import TextArea from "@/components/common/Input/TextArea/TextArea";
+import TextField from "@/components/common/Input/TextField/TextField";
+import type { TextFieldHandle } from "@/components/common/Input/TextField/TextField.types";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import Empty from "@/components/common/Empty/Empty";
 import Menu from "@/components/common/Navigation/Menu/Menu";
 import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 
@@ -37,11 +39,12 @@ type ToastType = "success" | "error" | "warning" | "information";
 
 interface ReplyInputProps {
   isChildReply?: boolean;
+  mentionName?: string;
   replyText: string;
-  onReplyTextChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onReplyTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   isLoggedIn: boolean;
-  replyInputRef: React.RefObject<HTMLTextAreaElement | null>;
+  replyInputRef: React.RefObject<TextFieldHandle | null>;
   showToast: (message: string, type: ToastType) => void;
   handleReplySubmit: () => void;
 }
@@ -49,6 +52,7 @@ interface ReplyInputProps {
 const ReplyInput = memo(
   ({
     isChildReply = false,
+    mentionName,
     replyText,
     onReplyTextChange,
     onKeyDown,
@@ -58,10 +62,12 @@ const ReplyInput = memo(
     handleReplySubmit,
   }: ReplyInputProps) => (
     <div className={`${styles.replyInput} ${isChildReply ? styles.childReplyInput : ""}`}>
-      <TextArea
+      <TextField
         ref={replyInputRef}
-        variant="sm"
-        placeholder={isLoggedIn ? "답글 달기" : "회원만 답글 달 수 있어요!"}
+        size="sm"
+        className={styles.field}
+        prefix={mentionName ? <span className={styles.mentionTag}>@{mentionName}</span> : undefined}
+        placeholder={isLoggedIn ? "답글을 입력해주세요" : "회원만 답글 달 수 있어요!"}
         value={replyText}
         maxCount={COMMENT_MAX_COUNT}
         onChange={onReplyTextChange}
@@ -72,18 +78,20 @@ const ReplyInput = memo(
           }
         }}
       />
-      <div className={styles.submitBtn}>
-        <SolidButton size="small" onClick={handleReplySubmit} disabled={!isLoggedIn}>
-          답글
-        </SolidButton>
-      </div>
+      <SolidButton
+        size="regular"
+        onClick={handleReplySubmit}
+        disabled={!isLoggedIn || !replyText.trim()}
+      >
+        등록
+      </SolidButton>
     </div>
   ),
 );
 
 ReplyInput.displayName = "ReplyInput";
 
-export default function PostComment({ postId, postWriterId }: PostCommentProps) {
+export default function PostComment({ postId, postWriterId, commentCount }: PostCommentProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
   const { isMobile } = useDeviceStore();
@@ -96,7 +104,7 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
   const [mentionedUser, setMentionedUser] = useState<PostCommentWriter | null>(null);
   const [isReplyToChild, setIsReplyToChild] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const replyInputRef = useRef<HTMLTextAreaElement>(null);
+  const replyInputRef = useRef<TextFieldHandle>(null);
   const {
     data: commentsData,
     isLoading,
@@ -140,11 +148,11 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
     }
   };
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
 
-  const handleReplyTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleReplyTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReplyText(e.target.value);
   };
 
@@ -291,7 +299,7 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
     };
   }, []);
 
-  const handleReplyEnterKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleReplyEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing) return;
 
     if (event.key === "Enter" && !event.shiftKey) {
@@ -300,7 +308,7 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
     }
   };
 
-  const handleCommentEnterKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleCommentEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing) return;
 
     if (event.key === "Enter" && !event.shiftKey) {
@@ -359,6 +367,7 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
               {activeChildReplyId === reply.id && activeParentReplyId === parentCommentId && (
                 <ReplyInput
                   isChildReply
+                  mentionName={mentionedUser?.name}
                   replyText={replyText}
                   onReplyTextChange={handleReplyTextChange}
                   onKeyDown={handleReplyEnterKeyDown}
@@ -426,30 +435,52 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
     );
   };
 
+  const comments = commentsData?.comments ?? [];
+  const totalCommentCount = commentCount ?? commentsData?.commentCount ?? 0;
+
   return (
     <div className={styles.container}>
-      <section className={styles.inputContainer}>
-        <TextArea
-          placeholder={isLoggedIn ? "댓글 달기" : "회원만 댓글 달 수 있어요!"}
-          value={comment}
-          maxCount={COMMENT_MAX_COUNT}
-          onChange={handleCommentChange}
-          onFocus={() => {
-            if (!isLoggedIn) {
-              showToast("회원만 댓글 달 수 있어요!", "error");
-            }
-          }}
-          onKeyDown={handleCommentEnterKeyDown}
-        />
-        <div className={styles.submitBtn}>
-          <SolidButton onClick={handleCommentSubmit} disabled={!isLoggedIn}>
-            댓글
+      <section className={styles.inputSection}>
+        <div className={styles.titleRow}>
+          <span className={styles.title}>댓글</span>
+          <span className={styles.count}>{totalCommentCount}</span>
+        </div>
+        <div className={styles.inputRow}>
+          <TextField
+            size={isMobile ? "sm" : "md"}
+            className={styles.field}
+            placeholder={isLoggedIn ? "댓글을 입력해주세요" : "회원만 댓글 달 수 있어요!"}
+            value={comment}
+            maxCount={COMMENT_MAX_COUNT}
+            onChange={handleCommentChange}
+            onFocus={() => {
+              if (!isLoggedIn) {
+                showToast("회원만 댓글 달 수 있어요!", "error");
+              }
+            }}
+            onKeyDown={handleCommentEnterKeyDown}
+          />
+          <SolidButton
+            size={isMobile ? "regular" : "large"}
+            onClick={handleCommentSubmit}
+            disabled={!isLoggedIn || !comment.trim()}
+          >
+            등록
           </SolidButton>
         </div>
       </section>
-      <section className={styles.list}>
-        {commentsData?.comments?.map((comment) => renderComment(comment))}
-      </section>
+      {comments.length === 0 ? (
+        <div className={styles.emptyWrap}>
+          <Empty
+            size="xl"
+            iconName="illust-replay"
+            title="아직 댓글이 없어요"
+            content="댓글을 써서 생각을 나눠보세요!"
+          />
+        </div>
+      ) : (
+        <section className={styles.list}>{comments.map((comment) => renderComment(comment))}</section>
+      )}
     </div>
   );
 }

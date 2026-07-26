@@ -11,6 +11,7 @@
   border-color: colors.$border-gray-subtle;
   border-radius: radius.$radius-sm;
   gap: 8px;
+  box-sizing: content-box;
 
   &:focus-within {
     border-color: colors.$status-info;
@@ -84,6 +85,13 @@
   &:focus-within {
     border-bottom-color: colors.$status-positive;
   }
+}
+
+.prefix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: spacing.$spacing-8;
 }
 
 .count {
