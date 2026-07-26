@@ -71,3 +71,9 @@
 .label {
   white-space: nowrap;
 }
+
+.sheetList {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}

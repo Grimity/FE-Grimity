@@ -1,6 +1,8 @@
 import Filter from "@/components/common/Filter/Filter";
 import TextField from "@/components/common/Input/TextField/TextField";
 
+import { useDeviceStore } from "@/states/deviceStore";
+
 import { SortOption, SORT_OPTIONS } from "@/components/Board/BoardAll/constants";
 
 import styles from "@/components/Board/BoardAll/SearchSection/SearchSection.module.scss";
@@ -20,6 +22,8 @@ export default function SearchSection({
   onSearchKeyDown,
   onSortChange,
 }: SearchSectionProps) {
+  const { isMobile } = useDeviceStore();
+
   return (
     <div className={styles.search}>
       <Filter
@@ -27,6 +31,8 @@ export default function SearchSection({
         value={searchBy}
         align="left"
         onChange={(value) => onSortChange(value as SortOption)}
+        displayMode={isMobile ? "bottomSheet" : "menu"}
+        bottomSheetTitle="검색 필터"
       />
       <TextField
         className={styles.textField}
