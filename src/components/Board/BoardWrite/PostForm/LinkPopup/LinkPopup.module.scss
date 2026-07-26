@@ -1,0 +1,7 @@
+@use "@/styles/tokens/spacing" as spacing;
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+}

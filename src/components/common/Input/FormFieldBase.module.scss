@@ -10,6 +10,7 @@
   border: 1px solid colors.$border-gray-subtle;
   border-radius: radius.$radius-sm;
   background-color: colors.$surface-base;
+
   transition:
     border-color 0.15s ease,
     background-color 0.15s ease;
@@ -33,6 +34,8 @@
 }
 
 .md {
+  // Filter와 동일하게 height를 테두리 제외 값으로 맞춘다
+  box-sizing: content-box;
   height: 52px;
   padding: 0 spacing.$spacing-16;
 
@@ -42,6 +45,7 @@
 }
 
 .sm {
+  box-sizing: content-box;
   height: 42px;
   padding: 0 spacing.$spacing-12;
 
