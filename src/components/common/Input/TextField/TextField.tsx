@@ -32,6 +32,10 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
       typeof defaultValue === "string" ? defaultValue.length === 0 : true,
     );
 
+    const controlledLength = rest.value !== undefined ? String(rest.value).length : null;
+    const currentCount = controlledLength ?? charCount;
+    const currentIsEmpty = controlledLength !== null ? controlledLength === 0 : isEmpty;
+
     const isDisabled = disabled || status === "disabled";
     const isSearch = variant === "search";
     const isTitle = variant === "title";
@@ -112,7 +116,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
           onChange={handleChange}
           {...rest}
         />
-        {isSearch && onClear && !isEmpty && (
+        {isSearch && !currentIsEmpty && (
           <button
             type="button"
             onClick={clearContent}
@@ -125,7 +129,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
         )}
         {hasCount && (
           <div className={styles.count}>
-            <span className={styles.currentCount}>{charCount}</span>
+            <span className={styles.currentCount}>{currentCount}</span>
             <span className={styles.maxCount}>/{maxCount}</span>
           </div>
         )}
