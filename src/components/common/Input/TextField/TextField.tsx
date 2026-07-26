@@ -77,8 +77,9 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
 
     const wrapperClass = clsx(
       baseStyles.wrapper,
-      !isSearch && !isTitle && baseStyles[size],
+      !isTitle && baseStyles[size],
       isSearch && styles.search,
+      isSearch && size === "md" && styles.searchMd,
       isTitle && styles.titleVariant,
       status === "error" && baseStyles.error,
       status === "success" && baseStyles.success,
