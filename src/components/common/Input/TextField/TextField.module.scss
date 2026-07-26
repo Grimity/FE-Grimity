@@ -5,7 +5,6 @@
 @use "@/styles/tokens/radius" as radius;
 
 .search {
-  height: 48px;
   padding: 0 spacing.$spacing-16;
   background-color: colors.$surface-gray-subtlest;
   border-color: colors.$border-gray-subtle;
@@ -38,6 +37,10 @@
       color: colors.$icon-gray-normal;
     }
   }
+}
+
+.searchMd {
+  height: 48px;
 }
 
 .titleVariant {
