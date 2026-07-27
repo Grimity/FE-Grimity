@@ -23,7 +23,7 @@ import Chip from "../Chip/Chip";
 import { useModalStore } from "@/states/modalStore";
 import { useShareModal } from "@/hooks/useShareModal";
 import { useReportModal } from "@/hooks/useReportModal";
-import { deleteSave, putSave } from "@/api/feeds/putDeleteFeedsIdSave";
+import { useFeedsSaveMutation } from "@/queries/feeds/useFeedsSaveMutation";
 import Comment from "./Comment/Comment";
 import NewFeed from "../Layout/NewFeed/NewFeed";
 import { usePreventRightClick } from "@/hooks/usePreventRightClick";
@@ -43,6 +43,7 @@ export default function Detail({ id }: DetailProps) {
   const { showToast } = useToast();
   const [isSaved, setIsSaved] = useState(false);
   const { mutate: toggleLike } = useFeedsLikeMutation();
+  const { mutate: toggleSave } = useFeedsSaveMutation();
   const [viewCounted, setViewCounted] = useState(false);
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const imgRef = usePreventRightClick<HTMLImageElement>();
@@ -107,18 +108,13 @@ export default function Detail({ id }: DetailProps) {
     }
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = () => {
     if (!isLoggedIn) {
       showToast("로그인 후 저장할 수 있어요.", "error");
       return;
     }
 
-    if (isSaved) {
-      await deleteSave(id);
-    } else {
-      await putSave(id);
-    }
-    setIsSaved(!isSaved);
+    toggleSave({ id, isSaved }, { onSuccess: () => setIsSaved(!isSaved) });
   };
 
   const handleImageClick = (index: number) => {

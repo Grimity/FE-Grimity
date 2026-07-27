@@ -232,6 +232,7 @@ export default function Layout({ children }: LayoutProps) {
         borderBottom: true,
       },
       { label: "좋아요한 그림", onClick: () => navigate("/mypage?tab=liked-feeds") },
+      { label: "저장한 그림", onClick: () => navigate("/mypage?tab=saved-feeds") },
       {
         label: "저장한 글",
         onClick: () => navigate("/mypage?tab=saved-posts"),

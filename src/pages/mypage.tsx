@@ -17,6 +17,8 @@ export default function Mypage() {
     switch (tab) {
       case "liked-feeds":
         return "좋아요한 그림";
+      case "saved-feeds":
+        return "저장한 그림";
       case "saved-posts":
         return "저장한 글";
       default:

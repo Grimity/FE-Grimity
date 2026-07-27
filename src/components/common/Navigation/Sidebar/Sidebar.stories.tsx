@@ -5,7 +5,9 @@ import type { SidebarProps } from "./Sidebar.types";
 
 function InteractiveSidebar(props: SidebarProps) {
   const [activeRoute, setActiveRoute] = useState("/");
-  const [profileActiveItem, setProfileActiveItem] = useState<"liked" | "saved" | undefined>();
+  const [profileActiveItem, setProfileActiveItem] = useState<
+    "liked" | "savedFeeds" | "saved" | undefined
+  >();
   return (
     <Sidebar
       {...props}
