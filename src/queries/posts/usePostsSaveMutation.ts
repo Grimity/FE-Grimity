@@ -54,8 +54,10 @@ export const usePostsSaveMutation = () => {
       }
     },
 
-    onSettled: (_data, _error, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ["Postsdetails", id] });
+    // 상세는 무효화하지 않는다. GET /posts/{id}가 조회수를 올리기 때문에
+    // 다시 받아오면 저장할 때마다 조회수가 함께 올라간다.
+    // isSave는 onMutate에서 이미 정확한 값으로 써두었다.
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["PostSearch"] });
       queryClient.invalidateQueries({ queryKey: ["MySavePost"] });
     },

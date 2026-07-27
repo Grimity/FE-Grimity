@@ -8,26 +8,27 @@ import Loader from "@/components/Layout/Loader/Loader";
 import Chip from "@/components/common/Chip/Chip";
 import Icon from "@/components/common/Icon/Icon";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
-import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import Bookmark from "@/components/common/Control/Bookmark/Bookmark";
 import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
-import Menu from "@/components/common/Navigation/Menu/Menu";
+import ActionMenu from "@/components/common/Navigation/ActionMenu/ActionMenu";
 import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 import BoardAll from "@/components/Board/BoardAll/BoardAll";
 import ShareBtn from "@/components/Board/Detail/ShareBtn/ShareBtn";
 import PostComment from "@/components/Board/Detail/Comment/Comment";
+import LatestPosts from "@/components/Board/Detail/LatestPosts/LatestPosts";
 import ProfileCardPopover from "@/components/Layout/ProfileCardPopover/ProfileCardPopover";
 import { DetailLayout } from "@/components/Layout/DetailLayout";
 
 import { useToast } from "@/hooks/useToast";
 import { useProfileCardHover } from "@/hooks/useProfileCardHover";
 import { useReportModal } from "@/hooks/useReportModal";
+import { useShareModal } from "@/hooks/useShareModal";
 
 import { useModalStore } from "@/states/modalStore";
 import { useAuthStore } from "@/states/authStore";
+import { useDeviceStore } from "@/states/deviceStore";
 
 import { usePostsDetails } from "@/api/posts/getPostsId";
-import { deletePostsSave, putPostsSave } from "@/api/posts/putDeletePostsIdSave";
 import { usePostsLikeMutation } from "@/queries/posts/usePostsLikeMutation";
 import { deletePostsFeeds } from "@/api/posts/deletePostsId";
 
@@ -35,7 +36,6 @@ import { timeAgo } from "@/utils/timeAgo";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { getTypeLabel } from "@/components/Board/BoardAll/AllCard/AllCard";
 
-import { PATH_ROUTES } from "@/constants/routes";
 import { CONFIG } from "@/config";
 
 import type { PostDetailProps } from "@/components/Board/Detail/Detail.types";
@@ -49,12 +49,13 @@ export default function PostDetail({ id }: PostDetailProps) {
   const { pathname } = router;
 
   const { isLoggedIn, user_id } = useAuthStore();
+  const { isMobile } = useDeviceStore();
   const { openModal } = useModalStore();
   const openReportModal = useReportModal();
+  const { sharePost } = useShareModal();
 
   const { showToast } = useToast();
 
-  const [isSaved, setIsSaved] = useState(false);
   const [openMenu, setOpenMenu] = useState<"header" | "reaction" | null>(null);
   const [viewer, setViewer] = useState<{ images: string[]; index: number } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -85,11 +86,6 @@ export default function PostDetail({ id }: PostDetailProps) {
     refetch();
   }, [pathname, refetch]);
 
-  useEffect(() => {
-    if (!posts) return;
-    setIsSaved(posts.isSave ?? false);
-  }, [posts]);
-
   const handleOpenReportModal = useCallback(() => {
     if (!posts?.author.id) return;
     openReportModal({ refType: "POST", refId: posts.author.id });
@@ -111,28 +107,18 @@ export default function PostDetail({ id }: PostDetailProps) {
     );
   }, [isLoggedIn, id, posts?.isLike, toggleLike, showToast]);
 
-  const handleSaveClick = useCallback(async () => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 저장할 수 있어요.", "error");
-      return;
-    }
+  const handleShare = useCallback(() => {
+    if (!posts) return;
+    sharePost({ postId: id, title: posts.title, thumbnail: posts.thumbnail });
+  }, [sharePost, id, posts]);
 
-    try {
-      if (isSaved) {
-        await deletePostsSave(id);
-      } else {
-        await putPostsSave(id);
-      }
-      setIsSaved(!isSaved);
-    } catch (error) {
-      showToast("저장 처리 중 오류가 발생했습니다.", "error");
-    }
-    setOpenMenu(null);
-  }, [isLoggedIn, isSaved, id, showToast]);
+  const handleGoToAuthorProfile = useCallback(() => {
+    if (!posts?.author.url) return;
+    router.push(`/${posts.author.url}`);
+  }, [router, posts?.author.url]);
 
   const handleDelete = useCallback(() => {
     if (!id) return;
-    setOpenMenu(null);
 
     openModal({
       type: null,
@@ -153,39 +139,43 @@ export default function PostDetail({ id }: PostDetailProps) {
   }, [id, openModal, router, showToast]);
 
   const handleOpenEditPage = useCallback(() => {
-    setOpenMenu(null);
     router.push(`/posts/${id}/edit`);
   }, [router, id]);
 
-  const handleReportClick = useCallback(() => {
-    setOpenMenu(null);
-    handleOpenReportModal();
-  }, [handleOpenReportModal]);
-
-  const menuItems = useMemo<MenuItem[]>(() => {
-    const items: MenuItem[] = [
-      { label: isSaved ? "저장 취소" : "저장하기", onClick: handleSaveClick },
-    ];
-
+  /** 상단 더보기: 본인 글은 수정/삭제, 타인 글은 프로필 이동/신고 */
+  const headerMenuItems = useMemo<MenuItem[]>(() => {
     if (isAuthor) {
-      items.push(
+      return [
         { label: "수정하기", onClick: handleOpenEditPage },
-        { label: "삭제하기", onClick: handleDelete, danger: true },
-      );
-    } else if (isLoggedIn) {
-      items.push({ label: "신고하기", onClick: handleReportClick, danger: true });
+        { label: "삭제하기", onClick: handleDelete },
+      ];
+    }
+
+    const items: MenuItem[] = [];
+
+    if (posts?.author.url) {
+      items.push({ label: "작가 프로필로 이동", onClick: handleGoToAuthorProfile });
+    }
+    if (isLoggedIn) {
+      items.push({ label: "신고하기", onClick: handleOpenReportModal });
     }
 
     return items;
   }, [
-    isSaved,
     isAuthor,
     isLoggedIn,
-    handleSaveClick,
+    posts?.author.url,
     handleOpenEditPage,
     handleDelete,
-    handleReportClick,
+    handleGoToAuthorProfile,
+    handleOpenReportModal,
   ]);
+
+  /** 하단 더보기: 상단 메뉴에 공유하기가 추가된 구성 */
+  const reactionMenuItems = useMemo<MenuItem[]>(
+    () => [{ label: "공유하기", onClick: handleShare }, ...headerMenuItems],
+    [handleShare, headerMenuItems],
+  );
 
   if (isLoading) {
     return <Loader />;
@@ -195,106 +185,111 @@ export default function PostDetail({ id }: PostDetailProps) {
     return null;
   }
 
-  const renderMenuAnchor = (anchor: "header" | "reaction") => (
-    <div className={styles.menuAnchor}>
-      <IconButton
-        variant="sm"
-        icon={<Icon name="dotmenu" size={20} />}
-        onClick={() => setOpenMenu((prev) => (prev === anchor ? null : anchor))}
-        aria-label="더보기"
-      />
-      {openMenu === anchor && (
-        <div className={styles.menuDropdown}>
-          <Menu items={menuItems} onOpenChange={(open) => !open && setOpenMenu(null)} />
-        </div>
-      )}
-    </div>
-  );
+  const renderMenuAnchor = (anchor: "header" | "reaction") => {
+    const items = anchor === "header" ? headerMenuItems : reactionMenuItems;
+
+    if (items.length === 0) return null;
+
+    return (
+      <ActionMenu
+        items={items}
+        open={openMenu === anchor}
+        onOpenChange={(open) => setOpenMenu(open ? anchor : null)}
+        displayMode={isMobile ? "bottomSheet" : "menu"}
+      >
+        <IconButton
+          variant="sm"
+          icon={<Icon name="dotmenu" size={20} />}
+          onClick={() => setOpenMenu((prev) => (prev === anchor ? null : anchor))}
+          aria-label="더보기"
+        />
+      </ActionMenu>
+    );
+  };
 
   return (
     <DetailLayout>
       <DetailLayout.Content>
-        <article className={styles.article}>
-          <div className={styles.writing}>
-            <section className={styles.header}>
-              <div className={styles.chip}>
-                <Chip variant={posts.type === "NOTICE" ? "primary" : "assistive"} size="xl">
-                  {getTypeLabel(posts.type)}
-                </Chip>
-              </div>
-              <div className={styles.info}>
-                <div className={styles.titleBlock}>
-                  <h1 className={styles.title}>{posts.title}</h1>
-                  {posts.type !== "NOTICE" && (
-                    <span ref={targetRef as React.RefObject<HTMLSpanElement>} {...triggerProps}>
-                      <Link href={`/${posts.author.url}`}>
-                        <UserInfo type="default" nickname={posts.author.name} />
-                      </Link>
-                    </span>
-                  )}
+        <div className={styles.contentBlock}>
+          <article className={styles.article}>
+            <div className={styles.writing}>
+              <section className={styles.header}>
+                <div className={styles.chip}>
+                  <Chip variant={posts.type === "NOTICE" ? "primary" : "assistive"} size="xl">
+                    {getTypeLabel(posts.type)}
+                  </Chip>
                 </div>
-                <div className={styles.actions}>
-                  {renderMenuAnchor("header")}
-                  <ShareBtn postId={id} title={posts.title} thumbnail={posts.thumbnail} />
+                <div className={styles.info}>
+                  <div className={styles.titleBlock}>
+                    <h1 className={styles.title}>{posts.title}</h1>
+                    {posts.type !== "NOTICE" && (
+                      <span ref={targetRef as React.RefObject<HTMLSpanElement>} {...triggerProps}>
+                        <Link href={`/${posts.author.url}`}>
+                          <UserInfo type="default" nickname={posts.author.name} />
+                        </Link>
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.actions}>
+                    {renderMenuAnchor("header")}
+                    <ShareBtn postId={id} title={posts.title} thumbnail={posts.thumbnail} />
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
 
-            <div className={styles.body}>
-              <div
-                ref={contentRef}
-                className={styles.content}
-                onClick={handleContentClick}
-                dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-              />
-              <UserInfo
-                type="default"
-                nickname={posts.author.name}
-                showView
-                viewCount={formatCurrency(posts.viewCount)}
-                showTime
-                timeCount={timeAgo(posts.createdAt)}
-              />
+              <div className={styles.body}>
+                <div
+                  ref={contentRef}
+                  className={styles.content}
+                  onClick={handleContentClick}
+                  dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+                />
+                <UserInfo
+                  type="default"
+                  nickname={posts.author.name}
+                  showView
+                  viewCount={formatCurrency(posts.viewCount)}
+                  showTime
+                  timeCount={timeAgo(posts.createdAt)}
+                />
+              </div>
             </div>
-          </div>
 
-          {viewer && (
-            <ImageViewer
-              images={viewer.images}
-              initialIndex={viewer.index}
-              onClose={() => setViewer(null)}
+            {viewer && (
+              <ImageViewer
+                images={viewer.images}
+                initialIndex={viewer.index}
+                onClose={() => setViewer(null)}
+              />
+            )}
+
+            <div className={styles.reaction}>
+              <div className={styles.reactionLeft}>
+                <div className={styles.likeBtn}>
+                  <Bookmark active={posts.isLike} onClick={handleLikeClick} aria-label="좋아요" />
+                  {posts.likeCount}
+                </div>
+                <span className={styles.commentCount}>
+                  <Icon name="chat-round" size={24} color="gray-bold" />
+                  {posts.commentCount}
+                </span>
+              </div>
+
+              {renderMenuAnchor("reaction")}
+            </div>
+          </article>
+
+          <DetailLayout.HorizontalAd adSlot={CONFIG.MARKETING.AD_SLOTS.BOARD_DETAIL_HORIZONTAL} />
+
+          <section className={styles.comments}>
+            <PostComment
+              postId={id}
+              postWriterId={posts.author.id}
+              commentCount={posts.commentCount}
             />
-          )}
-
-          <div className={styles.reaction}>
-            <div className={styles.reactionLeft}>
-              <div className={styles.likeBtn}>
-                <Bookmark active={posts.isLike} onClick={handleLikeClick} aria-label="좋아요" />
-                {posts.likeCount}
-              </div>
-              <span className={styles.commentCount}>
-                <Icon name="chat-round" size={24} color="gray-bold" />
-                {posts.commentCount}
-              </span>
-            </div>
-
-            {renderMenuAnchor("reaction")}
-          </div>
-        </article>
-
-        <DetailLayout.HorizontalAd adSlot={CONFIG.MARKETING.AD_SLOTS.BOARD_DETAIL_HORIZONTAL} />
-
-        <PostComment postId={id} postWriterId={posts.author.id} commentCount={posts.commentCount} />
-
-        <div className={styles.bar} />
-
-        <section className={styles.uploadBtn}>
-          {isLoggedIn && (
-            <Link href={PATH_ROUTES.BOARD_WRITE}>
-              <OutlinedButton iconLeft={<Icon name="pen" size={20} />}>글쓰기</OutlinedButton>
-            </Link>
-          )}
-        </section>
+            <div className={styles.bar} />
+          </section>
+        </div>
 
         <BoardAll isDetail hasChip={true} />
         {isOpen && posts?.author.url && (
@@ -304,6 +299,7 @@ export default function PostDetail({ id }: PostDetailProps) {
 
       <DetailLayout.Sidebar>
         <DetailLayout.VerticalAd adSlot={CONFIG.MARKETING.AD_SLOTS.BOARD_DETAIL_VERTICAL} />
+        <LatestPosts />
       </DetailLayout.Sidebar>
     </DetailLayout>
   );

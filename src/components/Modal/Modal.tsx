@@ -1,10 +1,11 @@
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Modal.module.scss";
 import { useModalStore } from "@/states/modalStore";
 import { usePreventScroll } from "@/hooks/usePreventScroll";
 import IconComponent from "../Asset/Icon";
-import Button from "../Button/Button";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import Login from "./Login/Login";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
@@ -25,6 +26,7 @@ export default function Modal() {
   const modalRef = useRef<EventTarget | null>(null);
   const historyPushedRef = useRef<boolean>(false);
   const closedByPopStateRef = useRef<boolean>(false);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   usePreventScroll(isOpen);
 
@@ -71,6 +73,21 @@ export default function Modal() {
     }
   };
 
+  /** 확인 액션이 끝날 때까지 진행 상태를 보여준 뒤 모달을 닫는다. */
+  const handleConfirm = async () => {
+    if (isConfirming) return;
+
+    setIsConfirming(true);
+    try {
+      await data?.onClick?.();
+    } catch {
+      // 에러 노출은 각 호출부가 담당한다. 모달은 성공/실패와 무관하게 닫는다.
+    } finally {
+      setIsConfirming(false);
+      handleCloseModal();
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       modalRef.current = e.target;
@@ -78,7 +95,7 @@ export default function Modal() {
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
-    if (modalRef.current && modalRef.current === e.target) {
+    if (modalRef.current && modalRef.current === e.target && !isConfirming) {
       handleCloseModal();
     }
     modalRef.current = null;
@@ -149,12 +166,16 @@ export default function Modal() {
                 {data?.subtitle && <p className={styles.subtitle}>{data.subtitle}</p>}
               </div>
               <div className={styles.btnsContainer}>
-                <Button size="l" type="outlined-assistive" onClick={handleCloseModal}>
-                  취소
-                </Button>
-                <Button size="l" type="filled-primary" onClick={data?.onClick}>
-                  {data?.confirmBtn}
-                </Button>
+                <div className={styles.btnWrap}>
+                  <OutlinedButton size="large" onClick={handleCloseModal} disabled={isConfirming}>
+                    취소
+                  </OutlinedButton>
+                </div>
+                <div className={styles.btnWrap}>
+                  <SolidButton size="large" onClick={handleConfirm} loading={isConfirming}>
+                    {data?.confirmBtn}
+                  </SolidButton>
+                </div>
               </div>
             </div>
           ) : (

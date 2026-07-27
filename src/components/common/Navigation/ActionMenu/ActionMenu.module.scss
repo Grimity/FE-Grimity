@@ -1,0 +1,27 @@
+@use "@/styles/tokens/spacing" as spacing;
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + #{spacing.$spacing-8});
+  z-index: 100;
+
+  &.right {
+    right: 0;
+    left: auto;
+  }
+
+  &.left {
+    left: 0;
+    right: auto;
+  }
+}
+
+.sheetList {
+  display: flex;
+  flex-direction: column;
+}

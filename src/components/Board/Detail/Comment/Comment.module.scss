@@ -74,32 +74,14 @@
   gap: spacing.$spacing-8;
 }
 
-.menuAnchor {
-  position: relative;
-}
-
-.menuDropdown {
-  position: absolute;
-  top: calc(100% + #{spacing.$spacing-4});
-  right: 0;
-  z-index: 10;
-}
-
+// 답글 입력창은 스레드 맨 아래, 답글 본문과 같은 들여쓰기에 놓인다.
 .replyInput {
   display: flex;
   align-items: center;
   gap: spacing.$spacing-12;
-  padding-left: spacing.$spacing-48;
-
-  &.childReplyInput {
-    padding-left: spacing.$spacing-64;
-  }
+  padding-left: spacing.$spacing-64;
 
   @include bp.breakpoint-down("xs") {
-    padding-left: spacing.$spacing-32;
-
-    &.childReplyInput {
-      padding-left: spacing.$spacing-48;
-    }
+    padding-left: spacing.$spacing-48;
   }
 }
