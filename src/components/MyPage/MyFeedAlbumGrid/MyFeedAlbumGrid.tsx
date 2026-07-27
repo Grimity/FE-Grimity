@@ -19,12 +19,15 @@ interface MyFeedAlbumGridProps {
   emptyTitle: string;
   /** 카드에 좋아요 버튼 노출 여부 (기본 true) */
   showLikeButton?: boolean;
+  /** 목록 항목의 좋아요 상태 (기본 false). 좋아요 목록처럼 전부 좋아요 상태일 때 true */
+  isLiked?: boolean;
 }
 
 export default function MyFeedAlbumGrid({
   query,
   emptyTitle,
   showLikeButton = true,
+  isLiked = false,
 }: MyFeedAlbumGridProps) {
   const router = useRouter();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -70,10 +73,10 @@ export default function MyFeedAlbumGrid({
             nickname={feed.author?.name ?? ""}
             likeCount={feed.likeCount}
             viewCount={feed.viewCount}
-            isLiked
+            isLiked={isLiked}
             onLikeClick={
               showLikeButton && isLoggedIn
-                ? () => toggleLike({ id: feed.id, isLiked: true })
+                ? () => toggleLike({ id: feed.id, isLiked })
                 : undefined
             }
           />

@@ -7,7 +7,7 @@ export interface SidebarProps {
   onLoginClick?: () => void;
   onLogoutClick?: () => void;
   user?: { username: string; avatarSrc?: string; profileUrl?: string };
-  profileActiveItem?: "liked" | "saved";
+  profileActiveItem?: "liked" | "savedFeeds" | "saved";
   onProfileLikedClick?: () => void;
   onProfileSavedClick?: () => void;
   activeRoute?: string;
