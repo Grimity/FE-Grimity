@@ -82,7 +82,9 @@ export default function BoardAll({ isDetail }: BoardAllProps) {
       )}
 
       {posts.length === 0 ? (
-        <Empty iconName="illust-result-null" title="검색 결과가 없어요" />
+        <section className={styles.empty}>
+          <Empty iconName="illust-result-null" title="검색 결과가 없어요" />
+        </section>
       ) : (
         <section className={styles.cards}>
           {posts.map((post) => (
