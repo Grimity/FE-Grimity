@@ -13,6 +13,7 @@ export default function Filter({
   disabled = false,
   className,
   align = "right",
+  renderDropdown,
 }: FilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find((opt) => opt.value === value);
@@ -39,7 +40,8 @@ export default function Filter({
   return (
     <Menu
       trigger={trigger}
-      items={menuItems}
+      items={renderDropdown ? [] : menuItems}
+      content={renderDropdown ? renderDropdown(() => setIsOpen(false)) : undefined}
       align={align}
       open={isOpen}
       onOpenChange={setIsOpen}

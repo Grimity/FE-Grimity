@@ -1,0 +1,90 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.container {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
+  width: 100%;
+  padding: spacing.$spacing-8 spacing.$spacing-16;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-gray-subtler;
+}
+
+.navButtons {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.date {
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+}
+
+.monthCalendar {
+  width: 229px;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-12;
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-md;
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
+}
+
+.monthCalendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.monthCalendarYear {
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+}
+
+.monthCalendarGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: spacing.$spacing-6;
+}
+
+.monthCalendarSheet {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-16;
+
+  .monthCalendarGrid {
+    gap: spacing.$spacing-8;
+  }
+
+  .monthCellSheet {
+    height: 44px;
+  }
+}
+
+.monthTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  height: 32px;
+  padding: 0 spacing.$spacing-10 0 spacing.$spacing-12;
+  border: none;
+  background: none;
+  cursor: pointer;
+  @include typo.label-3;
+  color: colors.$text-gray-bold;
+}
+
+.monthTriggerLabel {
+  white-space: nowrap;
+}

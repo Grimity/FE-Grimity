@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import clsx from "clsx";
 import Divider from "@/components/common/Divider/Divider";
 import Icon from "@/components/common/Icon/Icon";
@@ -8,6 +8,7 @@ import { MenuProps } from "./Menu.types";
 export default function Menu({
   items,
   trigger,
+  content,
   align = "right",
   className,
   wrapperClassName,
@@ -20,12 +21,15 @@ export default function Menu({
   const isControlled = openProp !== undefined;
   const open = isControlled ? openProp : internalOpen;
 
-  const setOpen = (next: boolean) => {
-    if (!isControlled) {
-      setInternalOpen(next);
-    }
-    onOpenChange?.(next);
-  };
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (!isControlled) {
+        setInternalOpen(next);
+      }
+      onOpenChange?.(next);
+    },
+    [isControlled, onOpenChange],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -43,7 +47,7 @@ export default function Menu({
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [open]);
+  }, [open, setOpen]);
 
   const closeMenu = () => {
     if (trigger) setOpen(false);
@@ -84,7 +88,10 @@ export default function Menu({
     </ul>
   );
 
-  if (!trigger) return list;
+  // content가 주어지면 기본 items 리스트 대신 커스텀 본문을 렌더한다.
+  const body = content ?? list;
+
+  if (!trigger) return <>{body}</>;
 
   if (disabled) {
     return <div className={clsx(styles.wrapper, wrapperClassName)}>{trigger}</div>;
@@ -95,7 +102,7 @@ export default function Menu({
       <div className={styles.triggerWrap} onClick={() => setOpen(!open)}>
         {trigger}
       </div>
-      {open && <div className={clsx(styles.menuContainer, styles[align])}>{list}</div>}
+      {open && <div className={clsx(styles.menuContainer, styles[align])}>{body}</div>}
     </div>
   );
 }
