@@ -1,0 +1,53 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.container {
+  width: 300px;
+  margin-top: spacing.$spacing-40;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-20;
+}
+
+.title {
+  margin: 0;
+  @include typo.title-3;
+  color: colors.$text-gray-bold;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-10;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+}
+
+.postTitle {
+  flex: 1;
+  min-width: 0;
+  @include typo.body-1-sb;
+  color: colors.$text-gray-bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .item:hover & {
+    text-decoration: underline;
+  }
+}
+
+.badge {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 32px;
+}

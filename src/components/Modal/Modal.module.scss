@@ -128,9 +128,19 @@
 
   .btnsContainer {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     gap: 16px;
+
+    .btnWrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+
+      button {
+        width: 100%;
+      }
+    }
   }
 }
 

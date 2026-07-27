@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import Loader from "@/components/Layout/Loader/Loader";
 import UserItem from "@/components/common/Cell/UserItem/UserItem";
@@ -8,7 +7,6 @@ import TextField from "@/components/common/Input/TextField/TextField";
 import type { TextFieldHandle } from "@/components/common/Input/TextField/TextField.types";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import Empty from "@/components/common/Empty/Empty";
-import Menu from "@/components/common/Navigation/Menu/Menu";
 import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 
 import { useAuthStore } from "@/states/authStore";
@@ -20,26 +18,34 @@ import { useReportModal } from "@/hooks/useReportModal";
 import { timeAgo } from "@/utils/timeAgo";
 
 import {
-  deletePostsCommentLike,
-  putPostsCommentLike,
-} from "@/api/posts-comments/putDeletePostsCommentsLike";
-import { deletePostsComments } from "@/api/posts-comments/deletePostsComment";
-import { usePostPostsComments } from "@/api/posts-comments/postPostsComments";
-import {
   useGetPostsComments,
   ParentPostCommentResponse,
 } from "@/api/posts-comments/getPostsComments";
+import { usePostsCommentCreateMutation } from "@/queries/posts-comments/usePostsCommentCreateMutation";
+import { usePostsCommentDeleteMutation } from "@/queries/posts-comments/usePostsCommentDeleteMutation";
+import { usePostsCommentLikeMutation } from "@/queries/posts-comments/usePostsCommentLikeMutation";
 import { PostCommentProps, PostCommentWriter } from "./Comment.types";
 
 import styles from "./Comment.module.scss";
+import { CONFIG } from "@/config";
 
 const COMMENT_MAX_COUNT = 1000;
 
 type ToastType = "success" | "error" | "warning" | "information";
 
+/** 답글 입력창이 붙는 위치와, 멘션 대상이 되는 작성자 */
+interface ReplyTarget {
+  /** 답글이 매달릴 최상위 댓글 id */
+  parentId: string;
+  /** 답글달기를 누른 댓글 id (최상위 댓글 또는 답글) */
+  commentId: string;
+  writer: PostCommentWriter;
+  /** 답글에 다는 답글이면 true */
+  isChild: boolean;
+}
+
 interface ReplyInputProps {
-  isChildReply?: boolean;
-  mentionName?: string;
+  mentionName: string;
   replyText: string;
   onReplyTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -51,7 +57,6 @@ interface ReplyInputProps {
 
 const ReplyInput = memo(
   ({
-    isChildReply = false,
     mentionName,
     replyText,
     onReplyTextChange,
@@ -61,12 +66,12 @@ const ReplyInput = memo(
     showToast,
     handleReplySubmit,
   }: ReplyInputProps) => (
-    <div className={`${styles.replyInput} ${isChildReply ? styles.childReplyInput : ""}`}>
+    <div className={styles.replyInput}>
       <TextField
         ref={replyInputRef}
         size="sm"
         className={styles.field}
-        prefix={mentionName ? <span className={styles.mentionTag}>@{mentionName}</span> : undefined}
+        prefix={<span className={styles.mentionTag}>@{mentionName}</span>}
         placeholder={isLoggedIn ? "답글을 입력해주세요" : "회원만 답글 달 수 있어요!"}
         value={replyText}
         maxCount={COMMENT_MAX_COUNT}
@@ -98,11 +103,9 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
   const { showToast } = useToast();
   const openModal = useModalStore((state) => state.openModal);
   const openReportModal = useReportModal();
-  const queryClient = useQueryClient();
   const [comment, setComment] = useState("");
   const [replyText, setReplyText] = useState("");
-  const [mentionedUser, setMentionedUser] = useState<PostCommentWriter | null>(null);
-  const [isReplyToChild, setIsReplyToChild] = useState(false);
+  const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const replyInputRef = useRef<TextFieldHandle>(null);
   const {
@@ -110,42 +113,30 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
     isLoading,
     refetch: refetchComments,
   } = useGetPostsComments({ postId });
-  const { mutateAsync: postComment, isPending: isPostCommentPending } = usePostPostsComments();
-  const [activeParentReplyId, setActiveParentReplyId] = useState<string | null>(null);
-  const [activeChildReplyId, setActiveChildReplyId] = useState<string | null>(null);
+  const { mutateAsync: postComment, isPending: isPostCommentPending } =
+    usePostsCommentCreateMutation();
+  const { mutateAsync: deleteComment } = usePostsCommentDeleteMutation();
+  const { mutate: toggleCommentLike } = usePostsCommentLikeMutation();
   const { pathname } = useRouter();
 
   useEffect(() => {
     refetchComments();
   }, [pathname, refetchComments]);
 
-  const { mutate: deleteComment } = useMutation({
-    mutationFn: deletePostsComments,
-    onSuccess: () => {
-      showToast("댓글이 삭제되었습니다.", "success");
-      refetchComments();
-    },
-    onError: () => {
-      showToast("댓글 삭제에 실패했습니다.", "error");
-    },
-  });
-
-  const handleLikeClick = async (commentId: string, currentIsLike: boolean) => {
+  const handleLikeClick = (commentId: string, isLiked: boolean) => {
     if (!isLoggedIn) {
       showToast("회원만 좋아요를 할 수 있어요!", "error");
       return;
     }
 
-    try {
-      if (currentIsLike) {
-        await deletePostsCommentLike(commentId);
-      } else {
-        await putPostsCommentLike(commentId);
-      }
-      queryClient.invalidateQueries({ queryKey: ["getPostsComments", postId] });
-    } catch (error) {
-      showToast("좋아요 처리 중 오류가 발생했습니다.", "error");
-    }
+    toggleCommentLike(
+      { postId, commentId, isLiked },
+      {
+        onError: () => {
+          showToast("좋아요 처리 중 오류가 발생했습니다.", "error");
+        },
+      },
+    );
   };
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,54 +147,36 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
     setReplyText(e.target.value);
   };
 
-  const handleParentReply = (commentId: string, writer: PostCommentWriter | null) => {
-    if (!writer) {
-      showToast("삭제된 댓글에는 답글을 달 수 없습니다.", "error");
-      return;
-    }
-
-    if (activeParentReplyId === commentId && !activeChildReplyId) {
-      setActiveParentReplyId(null);
-      setMentionedUser(null);
-      setReplyText("");
-      setIsReplyToChild(false);
-    } else if (!activeChildReplyId) {
-      setActiveParentReplyId(commentId);
-      setMentionedUser(writer);
-      setReplyText("");
-      setIsReplyToChild(false);
-      setTimeout(() => {
-        replyInputRef.current?.focus();
-      }, 0);
-    }
+  const closeReply = () => {
+    setReplyTarget(null);
+    setReplyText("");
   };
 
-  const handleChildReply = (
+  /**
+   * 최상위 댓글과 답글 모두 같은 입력창을 쓴다.
+   * 입력창은 항상 해당 스레드 맨 아래에 열리고, 누른 댓글의 작성자가 멘션된다.
+   */
+  const handleReplyClick = (
     commentId: string,
     parentId: string,
     writer: PostCommentWriter | null,
+    isChild: boolean,
   ) => {
     if (!writer) {
       showToast("삭제된 댓글에는 답글을 달 수 없습니다.", "error");
       return;
     }
 
-    if (activeChildReplyId === commentId) {
-      setActiveChildReplyId(null);
-      setActiveParentReplyId(null);
-      setMentionedUser(null);
-      setReplyText("");
-      setIsReplyToChild(false);
-    } else {
-      setActiveChildReplyId(commentId);
-      setActiveParentReplyId(parentId);
-      setMentionedUser(writer);
-      setReplyText("");
-      setIsReplyToChild(true);
-      setTimeout(() => {
-        replyInputRef.current?.focus();
-      }, 0);
+    if (replyTarget?.commentId === commentId) {
+      closeReply();
+      return;
     }
+
+    setReplyTarget({ commentId, parentId, writer, isChild });
+    setReplyText("");
+    setTimeout(() => {
+      replyInputRef.current?.focus();
+    }, 0);
   };
 
   const handleReport = (id?: string) => {
@@ -225,8 +198,14 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
       data: {
         title: "댓글을 삭제하시겠어요?",
         confirmBtn: "삭제",
-        onClick: () => {
-          deleteComment(id);
+        onClick: async () => {
+          try {
+            await deleteComment({ postId, commentId: id });
+            showToast("댓글이 삭제되었습니다.", "success");
+            refetchComments();
+          } catch (error) {
+            showToast("댓글 삭제에 실패했습니다.", "error");
+          }
         },
       },
       isComfirm: true,
@@ -251,32 +230,16 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
 
   const handleReplySubmit = async () => {
     if (isPostCommentPending) return;
-
-    if (!isLoggedIn || !replyText.trim() || !activeParentReplyId || !mentionedUser) return;
-
-    const actualReplyContent = replyText.trim();
-
-    if (!actualReplyContent) {
-      showToast("답글 내용을 입력해주세요.", "error");
-      return;
-    }
+    if (!isLoggedIn || !replyText.trim() || !replyTarget) return;
 
     try {
       await postComment({
         postId,
         content: replyText,
-        parentCommentId: activeParentReplyId,
-        mentionedUserId: isReplyToChild ? mentionedUser.id : undefined,
+        parentCommentId: replyTarget.parentId,
+        mentionedUserId: replyTarget.isChild ? replyTarget.writer.id : undefined,
       });
-      setReplyText("");
-      if (isReplyToChild) {
-        setActiveChildReplyId(null);
-        setActiveParentReplyId(null);
-      } else {
-        setActiveParentReplyId(null);
-      }
-      setMentionedUser(null);
-      setIsReplyToChild(false);
+      closeReply();
       refetchComments();
     } catch (error) {
       showToast("답글 작성에 실패했습니다.", "error");
@@ -287,8 +250,8 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        setActiveChildReplyId(null);
-        setActiveParentReplyId(null);
+        setReplyTarget(null);
+        setReplyText("");
         setOpenMenuId(null);
       }
     };
@@ -317,18 +280,22 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
     }
   };
 
-  const getMenuItems = (writer: PostCommentWriter | null, commentId: string): MenuItem[] => {
+  const getMenuItems = (
+    writer: PostCommentWriter | null,
+    commentId: string,
+    onReply: () => void,
+  ): MenuItem[] => {
     if (!writer) return [];
 
+    const items: MenuItem[] = [{ label: "답글달기", onClick: onReply }];
+
     if (writer.id === user_id) {
-      return [{ label: "삭제하기", onClick: () => handleCommentDelete(commentId), danger: true }];
+      items.push({ label: "삭제하기", onClick: () => handleCommentDelete(commentId) });
+    } else if (isLoggedIn) {
+      items.push({ label: "신고하기", onClick: () => handleReport(writer.id) });
     }
 
-    if (isLoggedIn) {
-      return [{ label: "신고하기", onClick: () => handleReport(writer.id), danger: true }];
-    }
-
-    return [];
+    return items;
   };
 
   if (isLoading) return <Loader />;
@@ -340,44 +307,29 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
     return (
       <div className={styles.childList}>
         {childComments.map((reply) => {
-          const menuItems = getMenuItems(reply.writer, reply.id);
+          const handleReply = () => handleReplyClick(reply.id, parentCommentId, reply.writer, true);
 
           return (
-            <div key={reply.id}>
-              <div className={styles.menuAnchor}>
-                <UserItem
-                  type={isMobile ? "commentPlusxs" : "commentPlus"}
-                  nickname={reply.writer?.name ?? "(탈퇴한 유저)"}
-                  timeCount={timeAgo(reply.createdAt)}
-                  commentText={reply.content}
-                  mentionName={reply.mentionedUser?.name}
-                  likeCount={String(reply.likeCount)}
-                  isLiked={reply.isLike}
-                  isAuthor={reply.writer?.id === postWriterId}
-                  onLikeClick={() => handleLikeClick(reply.id, reply.isLike)}
-                  onReplyClick={() => handleChildReply(reply.id, parentCommentId, reply.writer)}
-                  onMenuClick={() => setOpenMenuId((prev) => (prev === reply.id ? null : reply.id))}
-                />
-                {openMenuId === reply.id && menuItems.length > 0 && (
-                  <div className={styles.menuDropdown}>
-                    <Menu items={menuItems} onOpenChange={(open) => !open && setOpenMenuId(null)} />
-                  </div>
-                )}
-              </div>
-              {activeChildReplyId === reply.id && activeParentReplyId === parentCommentId && (
-                <ReplyInput
-                  isChildReply
-                  mentionName={mentionedUser?.name}
-                  replyText={replyText}
-                  onReplyTextChange={handleReplyTextChange}
-                  onKeyDown={handleReplyEnterKeyDown}
-                  isLoggedIn={isLoggedIn}
-                  replyInputRef={replyInputRef}
-                  showToast={showToast}
-                  handleReplySubmit={handleReplySubmit}
-                />
-              )}
-            </div>
+            <UserItem
+              key={reply.id}
+              type={isMobile ? "commentPlusxs" : "commentPlus"}
+              nickname={reply.writer?.name ?? "(탈퇴한 유저)"}
+              timeCount={timeAgo(reply.createdAt)}
+              commentText={reply.content}
+              mentionName={reply.mentionedUser?.name}
+              likeCount={String(reply.likeCount)}
+              isLiked={reply.isLike}
+              profileImage={
+                reply.writer ? `${CONFIG.ENV.IMAGE_URL}/${reply.writer.image}` : undefined
+              }
+              isAuthor={reply.writer?.id === postWriterId}
+              onLikeClick={() => handleLikeClick(reply.id, reply.isLike)}
+              onReplyClick={handleReply}
+              menuItems={getMenuItems(reply.writer, reply.id, handleReply)}
+              menuOpen={openMenuId === reply.id}
+              onMenuOpenChange={(open) => setOpenMenuId(open ? reply.id : null)}
+              menuDisplayMode={isMobile ? "bottomSheet" : "menu"}
+            />
           );
         })}
       </div>
@@ -393,35 +345,34 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
       );
     }
 
-    const menuItems = getMenuItems(comment.writer, comment.id);
+    const handleReply = () => handleReplyClick(comment.id, comment.id, comment.writer, false);
 
     return (
       <div key={comment.id} className={styles.commentRow}>
-        <div className={styles.menuAnchor}>
-          <UserItem
-            type={isMobile ? "commentxs" : "comment"}
-            nickname={comment.writer?.name ?? "(탈퇴한 유저)"}
-            timeCount={timeAgo(comment.createdAt)}
-            commentText={comment.content}
-            likeCount={String(comment.likeCount)}
-            isLiked={comment.isLike}
-            isAuthor={comment.writer?.id === postWriterId}
-            onLikeClick={() => handleLikeClick(comment.id, comment.isLike)}
-            onReplyClick={() => handleParentReply(comment.id, comment.writer)}
-            onMenuClick={() => setOpenMenuId((prev) => (prev === comment.id ? null : comment.id))}
-          />
-          {openMenuId === comment.id && menuItems.length > 0 && (
-            <div className={styles.menuDropdown}>
-              <Menu items={menuItems} onOpenChange={(open) => !open && setOpenMenuId(null)} />
-            </div>
-          )}
-        </div>
+        <UserItem
+          type={isMobile ? "commentxs" : "comment"}
+          nickname={comment.writer?.name ?? "(탈퇴한 유저)"}
+          timeCount={timeAgo(comment.createdAt)}
+          commentText={comment.content}
+          likeCount={String(comment.likeCount)}
+          isLiked={comment.isLike}
+          profileImage={
+            comment.writer ? `${CONFIG.ENV.IMAGE_URL}/${comment.writer.image}` : undefined
+          }
+          isAuthor={comment.writer?.id === postWriterId}
+          onLikeClick={() => handleLikeClick(comment.id, comment.isLike)}
+          onReplyClick={handleReply}
+          menuItems={getMenuItems(comment.writer, comment.id, handleReply)}
+          menuOpen={openMenuId === comment.id}
+          onMenuOpenChange={(open) => setOpenMenuId(open ? comment.id : null)}
+          menuDisplayMode={isMobile ? "bottomSheet" : "menu"}
+        />
 
-        {comment.childComments.length > 0 &&
-          renderChildComments(comment.childComments, comment.id)}
+        {comment.childComments.length > 0 && renderChildComments(comment.childComments, comment.id)}
 
-        {activeParentReplyId === comment.id && !isReplyToChild && (
+        {replyTarget?.parentId === comment.id && (
           <ReplyInput
+            mentionName={replyTarget.writer.name}
             replyText={replyText}
             onReplyTextChange={handleReplyTextChange}
             onKeyDown={handleReplyEnterKeyDown}
@@ -479,7 +430,9 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
           />
         </div>
       ) : (
-        <section className={styles.list}>{comments.map((comment) => renderComment(comment))}</section>
+        <section className={styles.list}>
+          {comments.map((comment) => renderComment(comment))}
+        </section>
       )}
     </div>
   );

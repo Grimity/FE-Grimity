@@ -34,12 +34,13 @@ export default function IconButton({
         className
       )}
     >
-      {loading && (
-        <span
-          className={`${baseStyles.spinner} ${baseStyles.spinnerSmall}`}
-        />
-      )}
-      <span className={baseStyles.content}>{icon}</span>
+      <span className={baseStyles.content}>
+        {loading ? (
+          <span className={`${baseStyles.spinner} ${baseStyles.spinnerSmall}`} />
+        ) : (
+          icon
+        )}
+      </span>
       {badge && <span className={styles.badge} />}
     </button>
   );

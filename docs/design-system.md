@@ -25,7 +25,7 @@ Figma 링크와 함께 컴포넌트 구현 요청이 오면, **반드시 `src/co
 | **Empty** | `Empty` |
 | **Filter** | `Filter` |
 | **Loading** | `CircularLoading`, `RefreshDragging` |
-| **Navigation** | `GNB`, `Menu`, `Sidebar` |
+| **Navigation** | `GNB`, `Menu`, `Sidebar`, `ActionMenu` — 데스크탑 드롭다운 / 모바일 바텀시트 자동 전환 |
 | **Pagination** | `Counter`, `Navigation` |
 | **PopUp** | `Alert`, `BottomSheet`, `Modal`, `Toast` |
 | **PushBadge** | `DotBadge`, `NumberBadge` |
