@@ -10,25 +10,14 @@ interface ToastProps {
 }
 
 export default function Toast({ target }: ToastProps = {}) {
-  const { toasts, removeToast } = useToast();
+  const { toasts, removeToast, clearAllToasts } = useToast();
   const router = useRouter();
 
   useEffect(() => {
-    const handleRouteChange = () => {
-      // Remove all toasts on route change
-      toasts.forEach((toast) => {
-        removeToast(toast.id);
-      });
-    };
+    router.events.on("routeChangeStart", clearAllToasts);
+    return () => router.events.off("routeChangeStart", clearAllToasts);
+  }, [router.events, clearAllToasts]);
 
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
-    };
-  }, [toasts, removeToast, router.events]);
-
-  // Filter toasts by target container
   const filteredToasts = toasts.filter((t) => {
     if (target && t.container !== target) {
       return false;
@@ -37,6 +26,8 @@ export default function Toast({ target }: ToastProps = {}) {
   });
 
   if (filteredToasts.length === 0) return null;
+
+  const hasSidebar = router.pathname !== "/login";
 
   return (
     <>
@@ -60,11 +51,15 @@ export default function Toast({ target }: ToastProps = {}) {
               borderColor = "";
           }
 
-          const containerClass = toast.container === "global" ? styles.global : styles.local;
+          const containerClass =
+            toast.container === "global"
+              ? hasSidebar
+                ? styles.global
+                : styles.globalCenter
+              : styles.local;
 
-          // Calculate top position: base offset + (index * spacing)
-          const baseOffset = toast.container === "global" ? 80 : 16; // Header height + padding for global, 16px for local
-          const topPosition = baseOffset + (index * 80); // 80px spacing between toasts
+          const baseOffset = toast.container === "global" ? 80 : 16;
+          const topPosition = baseOffset + (index * 80);
 
           return (
             <div

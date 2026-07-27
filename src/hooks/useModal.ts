@@ -11,10 +11,11 @@ export function useModal() {
     options?: {
       isFill?: boolean;
       title?: string;
+      bare?: boolean;
     },
   ) {
     const id = uuidv4();
-    open(id, content, props, options?.isFill, options?.title);
+    open(id, content, props, options?.isFill, options?.title, options?.bare);
     return () => close(id);
   }
 

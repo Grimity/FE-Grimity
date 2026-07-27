@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { getSubscribe, putSubscribe, SubscriptionType } from "@/api/users/subscribe";
+import { SubscriptionType } from "@/api/users/subscribe";
 import { useGetNotifications } from "@/api/notifications/getNotifications";
 import { deleteNotifications } from "@/api/notifications/deleteNotifications";
 import { putNotifications } from "@/api/notifications/putNotifications";
 import { useDeviceStore } from "@/states/deviceStore";
+import { useSubscriptions } from "@/hooks/useSubscriptions";
 
 import Icon from "@/components/common/Icon/Icon";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
@@ -20,15 +21,6 @@ import type { NotificationsProps } from "./Notifications.types";
 import styles from "./Notifications.module.scss";
 
 type NotificationsView = "list" | "settings";
-
-const ALL_SUBSCRIPTION_TYPES: SubscriptionType[] = [
-  "FOLLOW",
-  "FEED_LIKE",
-  "FEED_COMMENT",
-  "FEED_REPLY",
-  "POST_COMMENT",
-  "POST_REPLY",
-];
 
 interface SettingsOption {
   type: SubscriptionType;
@@ -50,41 +42,10 @@ export default function Notifications({ onClose }: NotificationsProps) {
   const { data = [], refetch } = useGetNotifications();
   const { isMobile } = useDeviceStore();
   const [view, setView] = useState<NotificationsView>("list");
-  const [subscriptions, setSubscriptions] = useState<SubscriptionType[]>([]);
+  const { subscriptions, isAllOn, toggle, toggleAll } = useSubscriptions();
 
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        const response = await getSubscribe();
-        setSubscriptions(response.subscription);
-      } catch (error) {
-        console.error("Failed to fetch subscriptions:", error);
-      }
-    };
-    fetchSubscriptions();
-  }, []);
-
-  const isAllEnabled = subscriptions.length === ALL_SUBSCRIPTION_TYPES.length;
-
-  const handleToggleSubscription = async (type: SubscriptionType, isSubscribed: boolean) => {
-    try {
-      await putSubscribe({ type: isSubscribed ? "ALL" : type });
-      setSubscriptions((prev) =>
-        isSubscribed ? prev.filter((sub) => sub !== type) : [...prev, type],
-      );
-    } catch (error) {
-      console.error("Failed to toggle subscription:", error);
-    }
-  };
-
-  const handleToggleAll = async () => {
-    try {
-      await putSubscribe({ type: "ALL" });
-      setSubscriptions(isAllEnabled ? [] : [...ALL_SUBSCRIPTION_TYPES]);
-    } catch (error) {
-      console.error("Failed to toggle all subscriptions:", error);
-    }
-  };
+  const handleToggleSubscription = (type: SubscriptionType) => toggle(type);
+  const handleToggleAll = () => toggleAll();
 
   const handleMarkAllAsRead = async () => {
     try {
@@ -121,7 +82,7 @@ export default function Notifications({ onClose }: NotificationsProps) {
       type="toggle"
       text={label}
       active={subscriptions.includes(type)}
-      onClick={() => handleToggleSubscription(type, subscriptions.includes(type))}
+      onClick={() => handleToggleSubscription(type)}
     />
   );
 
@@ -186,7 +147,7 @@ export default function Notifications({ onClose }: NotificationsProps) {
                 <ControlItem
                   type="toggle"
                   text="모든 알림"
-                  active={isAllEnabled}
+                  active={isAllOn}
                   onClick={handleToggleAll}
                 />
               </div>
@@ -266,7 +227,7 @@ export default function Notifications({ onClose }: NotificationsProps) {
             <ControlItem
               type="toggle"
               text="모든 알림"
-              active={isAllEnabled}
+              active={isAllOn}
               onClick={handleToggleAll}
             />
             <Divider variant="secondary" />

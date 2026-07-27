@@ -7,10 +7,10 @@ import IconComponent from "@/components/Asset/Icon";
 import ChatLeave from "@/components/Modal/ChatLeave/ChatLeave";
 import SideMenu from "@/components/Layout/SideMenu/SideMenu";
 
-import { useModalStore } from "@/states/modalStore";
 import { useDeviceStore } from "@/states/deviceStore";
 
 import { useModal } from "@/hooks/useModal";
+import { useReportModal } from "@/hooks/useReportModal";
 import useGoBack from "@/hooks/useGoBack";
 
 import type { UserBaseResponse } from "@grimity/dto";
@@ -25,7 +25,7 @@ interface ChatRoomHeaderProps {
 const ChatRoomHeader = ({ chatId, data }: ChatRoomHeaderProps) => {
   const router = useRouter();
   const { openModal } = useModal();
-  const { openModal: openModalStore } = useModalStore();
+  const openReportModal = useReportModal();
   const { isMobile } = useDeviceStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -45,11 +45,8 @@ const ChatRoomHeader = ({ chatId, data }: ChatRoomHeaderProps) => {
   };
 
   const handleOpenReportModal = () => {
-    openModalStore({
-      type: "REPORT",
-      data: { refType: "CHAT", refId: data?.id },
-      isFill: isMobile,
-    });
+    if (!data?.id) return;
+    openReportModal({ refType: "CHAT", refId: data.id });
     setIsDropdownOpen(false);
   };
 

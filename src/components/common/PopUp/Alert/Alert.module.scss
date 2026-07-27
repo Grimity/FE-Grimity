@@ -50,7 +50,7 @@
   color: colors.$text-gray-bold;
   word-break: break-word;
   overflow-wrap: break-word;
-  white-space: normal;
+  white-space: pre-line;
   @include typo.body-2-r;
   display: -webkit-box;
   -webkit-line-clamp: 2;

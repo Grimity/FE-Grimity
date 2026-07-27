@@ -6,23 +6,18 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 import IconComponent from "../Asset/Icon";
 import Button from "../Button/Button";
 import Login from "./Login/Login";
-import Nickname from "./Nickname/Nickname";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
 import ProfileEdit from "./ProfileEdit/ProfileEdit";
 import Background from "./Background/Background";
 import Follow from "./Follow/Follow";
-import Share from "./Share/Share";
 import UploadModal from "./Upload/Upload";
-import SharePost from "./SharePost/SharePost";
 import Like from "./Like/Like";
-import Report from "./Report/Report";
 import AlbumEdit from "./AlbumEdit/AlbumEdit";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
 import AlbumMove from "./AlbumMove/AlbumMove";
 import AlbumDelete from "./AlbumDelete/AlbumDelete";
 import ProfileLink from "./ProfileLink/ProfileLink";
-import ShareProfile from "./ShareProfile/ShareProfile";
 
 export default function Modal() {
   const router = useRouter();
@@ -91,8 +86,6 @@ export default function Modal() {
 
   const renderModalContent = () => {
     switch (type) {
-      case "NICKNAME":
-        return <Nickname />;
       case "PROFILE-ID":
         return <ProfileId />;
       case "JOIN":
@@ -101,8 +94,6 @@ export default function Modal() {
         return <ProfileEdit />;
       case "PROFILE-LINK":
         return <ProfileLink />;
-      case "SHARE-PROFILE":
-        return <ShareProfile {...data} />;
       case "BACKGROUND":
         return (
           <Background
@@ -115,16 +106,10 @@ export default function Modal() {
         return <Follow initialTab="follower" />;
       case "FOLLOWING":
         return <Follow initialTab="following" />;
-      case "SHARE":
-        return <Share {...data} />;
-      case "SHAREPOST":
-        return <SharePost {...data} />;
       case "UPLOAD":
         return <UploadModal {...data} />;
       case "LIKE":
         return <Like />;
-      case "REPORT":
-        return <Report {...data} closeModal={handleCloseModal} />;
       case "ALBUM-EDIT":
         return <AlbumEdit {...data} />;
       case "ALBUM-SELECT":

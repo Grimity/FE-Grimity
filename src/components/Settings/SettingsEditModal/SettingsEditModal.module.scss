@@ -1,0 +1,40 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.fill {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background-color: colors.$surface-base;
+}
+
+.fillGnb {
+  // GNB 는 자체적으로 position: fixed 를 지정하므로, fill 레이아웃 안에서
+  // 일반 흐름(static)으로 배치되도록 강제로 덮어쓴다.
+  position: static !important;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: spacing.$spacing-40 spacing.$spacing-16 spacing.$spacing-20;
+}
+
+.title {
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+  margin-bottom: spacing.$spacing-24;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: spacing.$spacing-16 spacing.$spacing-16 max(spacing.$spacing-24, env(safe-area-inset-bottom));
+}
+
+.saveButton {
+  width: 100%;
+}

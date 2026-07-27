@@ -1,0 +1,27 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/colors/atomic" as atomic;
+@use "@/styles/tokens/radius" as radius;
+
+.fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: none;
+  border-radius: radius.$radius-full;
+  background-color: colors.$surface-primary-normal;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, atomic.$opacity10);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:active {
+    background-color: colors.$surface-black;
+  }
+
+  &:disabled {
+    background-color: colors.$surface-gray-subtle;
+    cursor: not-allowed;
+  }
+}

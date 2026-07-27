@@ -11,6 +11,7 @@ import { linkifyText } from "@/utils/linkifyText";
 import IconComponent from "@/components/Asset/Icon";
 import Button from "@/components/Button/Button";
 import { useModalStore } from "@/states/modalStore";
+import { useReportModal } from "@/hooks/useReportModal";
 import TextArea from "@/components/TextArea/TextArea";
 import {
   deletePostsCommentLike,
@@ -24,7 +25,6 @@ import {
 } from "@/api/posts-comments/getPostsComments";
 import { PostCommentProps, PostCommentWriter } from "./Comment.types";
 import { useRouter } from "next/router";
-import { useDeviceStore } from "@/states/deviceStore";
 
 type ToastType = "success" | "error" | "warning" | "information";
 
@@ -80,6 +80,7 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
   const user_id = useAuthStore((state) => state.user_id);
   const { showToast } = useToast();
   const openModal = useModalStore((state) => state.openModal);
+  const openReportModal = useReportModal();
   const queryClient = useQueryClient();
   const [comment, setComment] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -94,7 +95,6 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
   const { mutateAsync: postComment, isPending: isPostCommentPending } = usePostPostsComments();
   const [activeParentReplyId, setActiveParentReplyId] = useState<string | null>(null);
   const [activeChildReplyId, setActiveChildReplyId] = useState<string | null>(null);
-  const { isMobile } = useDeviceStore();
   const { pathname } = useRouter();
 
   useEffect(() => {
@@ -197,18 +197,7 @@ export default function PostComment({ postId, postWriterId }: PostCommentProps) 
       return;
     }
 
-    if (isMobile) {
-      openModal({
-        type: "REPORT",
-        data: { refType: "POST_COMMENT", refId: id },
-        isFill: true,
-      });
-    } else {
-      openModal({
-        type: "REPORT",
-        data: { refType: "POST_COMMENT", refId: id },
-      });
-    }
+    openReportModal({ refType: "POST_COMMENT", refId: id });
   };
 
   const handleCommentDelete = async (id: string) => {

@@ -1,0 +1,12 @@
+@use "@/styles/tokens/spacing" as spacing;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggleContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0 spacing.$spacing-16;
+}

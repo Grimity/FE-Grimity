@@ -10,11 +10,8 @@ import { useChatStore } from "@/states/chatStore";
 import IconComponent from "@/components/Asset/Icon";
 import Button from "@/components/Button/Button";
 import FooterSection from "@/components/Layout/FooterSection/FooterSection";
-import Login from "@/components/Modal/Login/Login";
 import Icon from "@/components/Asset/IconTemp";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
-
-import { useModal } from "@/hooks/useModal";
 
 import axiosInstance from "@/constants/baseurl";
 
@@ -28,7 +25,6 @@ interface SideMenuProps {
 const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
   const router = useRouter();
   const { data: myData } = useMyData();
-  const { openModal } = useModal();
 
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [activeNav, setActiveNav] = useState("홈");
@@ -90,8 +86,9 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
     setIsSubMenuOpen((prev) => !prev);
   };
 
-  const handleOpenLoginModal = () => {
-    openModal((close) => <Login close={close} />);
+  const handleLoginNavigation = () => {
+    onClose();
+    router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
   };
 
   useEffect(() => {
@@ -134,7 +131,7 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
           </div>
           {!isLoggedIn || !myData ? (
             <>
-              <div className={styles.loginBtn} onClick={handleOpenLoginModal}>
+              <div className={styles.loginBtn} onClick={handleLoginNavigation}>
                 <Button size="m" type="filled-primary" width="200px">
                   로그인
                 </Button>

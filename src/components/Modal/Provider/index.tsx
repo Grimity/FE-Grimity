@@ -61,7 +61,7 @@ function ModalProvider({ children }: PropsWithChildren) {
     <>
       {children}
       <ModalPortal>
-        {modals.map(({ id, content, props, isFill, title }) => {
+        {modals.map(({ id, content, props, isFill, title, bare }) => {
           const handleClose = () => {
             if (
               isFill &&
@@ -76,6 +76,12 @@ function ModalProvider({ children }: PropsWithChildren) {
           };
 
           const node = typeof content === "function" ? content(handleClose) : content;
+
+          // bare 모달은 자체 오버레이/포지셔닝을 갖는 디자인 시스템 컴포넌트를 위해
+          // provider 오버레이 래퍼 없이 그대로 렌더
+          if (bare) {
+            return <React.Fragment key={id}>{node}</React.Fragment>;
+          }
 
           if (isFill) {
             return (

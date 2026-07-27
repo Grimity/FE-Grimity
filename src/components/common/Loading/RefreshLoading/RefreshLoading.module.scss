@@ -1,0 +1,93 @@
+@use "@/styles/tokens/colors/atomic" as atomic;
+
+// 24px 기준 비율
+$spoke-w: 0.125; // 3 / 24
+$spoke-h: 0.3333; // 8 / 24
+$spoke-top: 0.0833; // 2 / 24
+$origin-y: 0.4167; // (12 - 2) / 24
+
+.spinner {
+  position: relative;
+  display: inline-block;
+  width: var(--loader-size, 24px);
+  height: var(--loader-size, 24px);
+  animation: refresh-spin 0.8s steps(8) infinite;
+}
+
+.spoke {
+  position: absolute;
+  top: calc(var(--loader-size, 24px) * #{$spoke-top});
+  left: calc(50% - var(--loader-size, 24px) * #{$spoke-w} / 2);
+  width: calc(var(--loader-size, 24px) * #{$spoke-w});
+  height: calc(var(--loader-size, 24px) * #{$spoke-h});
+  border-radius: 999px;
+  transform-origin: 50% calc(var(--loader-size, 24px) * #{$origin-y});
+}
+
+@for $i from 1 through 8 {
+  .spoke:nth-child(#{$i}) {
+    transform: rotate(#{($i - 1) * 45}deg);
+  }
+}
+
+// 그라데이션 그레이 (어두운 head → 밝은 tail)
+.basic {
+  .spoke:nth-child(1) {
+    background-color: atomic.$gray80;
+  }
+  .spoke:nth-child(2) {
+    background-color: atomic.$gray70;
+  }
+  .spoke:nth-child(3) {
+    background-color: atomic.$gray60;
+  }
+  .spoke:nth-child(4) {
+    background-color: atomic.$gray50;
+  }
+  .spoke:nth-child(5) {
+    background-color: atomic.$gray40;
+  }
+  .spoke:nth-child(6) {
+    background-color: atomic.$gray30;
+  }
+  .spoke:nth-child(7) {
+    background-color: atomic.$gray20;
+  }
+  .spoke:nth-child(8) {
+    background-color: atomic.$gray10;
+  }
+}
+
+// Dark: 화이트 + 그라데이션 알파
+.dark {
+  .spoke:nth-child(1) {
+    background-color: rgba(atomic.$white, 1);
+  }
+  .spoke:nth-child(2) {
+    background-color: rgba(atomic.$white, 0.85);
+  }
+  .spoke:nth-child(3) {
+    background-color: rgba(atomic.$white, 0.7);
+  }
+  .spoke:nth-child(4) {
+    background-color: rgba(atomic.$white, 0.55);
+  }
+  .spoke:nth-child(5) {
+    background-color: rgba(atomic.$white, 0.42);
+  }
+  .spoke:nth-child(6) {
+    background-color: rgba(atomic.$white, 0.3);
+  }
+  .spoke:nth-child(7) {
+    background-color: rgba(atomic.$white, 0.2);
+  }
+  .spoke:nth-child(8) {
+    background-color: rgba(atomic.$white, 0.1);
+  }
+}
+
+@keyframes refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

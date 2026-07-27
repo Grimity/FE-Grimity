@@ -2,20 +2,15 @@ import { ReactNode } from "react";
 import { create } from "zustand";
 
 export type ModalType =
-  | "NICKNAME"
   | "JOIN"
   | "PROFILE-ID"
   | "PROFILE-EDIT"
   | "PROFILE-LINK"
-  | "SHARE-PROFILE"
   | "BACKGROUND"
   | "FOLLOWER"
   | "FOLLOWING"
-  | "SHARE"
-  | "SHAREPOST"
   | "UPLOAD"
   | "LIKE"
-  | "REPORT"
   | "ALBUM-EDIT"
   | "ALBUM-SELECT"
   | "ALBUM-MOVE"
@@ -69,17 +64,25 @@ type NewModalType<T = Record<string, unknown>> = {
   props?: T;
   isFill?: boolean;
   title?: string;
+  bare?: boolean;
 };
 
 interface NewModalState<T = Record<string, unknown>> {
   modals: NewModalType<T>[];
-  openModal: (id: string, content: ModalContent, props?: T, isFill?: boolean, title?: string) => void;
+  openModal: (
+    id: string,
+    content: ModalContent,
+    props?: T,
+    isFill?: boolean,
+    title?: string,
+    bare?: boolean,
+  ) => void;
   closeModal: (id: string) => void;
 }
 
 export const useNewModalStore = create<NewModalState>((set) => ({
   modals: [],
-  openModal: (id, content, props, isFill, title) =>
-    set((state) => ({ modals: [...state.modals, { id, content, props, isFill, title }] })),
+  openModal: (id, content, props, isFill, title, bare) =>
+    set((state) => ({ modals: [...state.modals, { id, content, props, isFill, title, bare }] })),
   closeModal: (id) => set((state) => ({ modals: state.modals.filter((m) => m.id !== id) })),
 }));

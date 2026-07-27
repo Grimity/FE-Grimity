@@ -4,10 +4,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import { usePopular, type PopularUserResponse } from "@/api/users/getPopular";
 import { usePreventRightClick } from "@/hooks/usePreventRightClick";
+import { useGlobalLoading } from "@/hooks/useGlobalLoading";
 import { useDeviceStore } from "@/states/deviceStore";
 
 import Title from "@/components/Layout/Title/Title";
-import Loader from "@/components/Layout/Loader/Loader";
 import User from "@/components/RankingPage/PopularUser/User/User";
 
 import styles from "@/components/RankingPage/PopularUser/PopularUser.module.scss";
@@ -17,6 +17,7 @@ import { useAuthStore } from "@/states/authStore";
 export default function PopularUser() {
   const user_id = useAuthStore((state) => state.user_id);
   const { data, isLoading } = usePopular();
+  useGlobalLoading(isLoading);
   const [randomUsers, setRandomUsers] = useState<PopularUserResponse[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const divRef = usePreventRightClick<HTMLDivElement>();
@@ -57,7 +58,7 @@ export default function PopularUser() {
     }
   }, [data, user_id]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return null;
 
   return (
     <div className={styles.container} ref={divRef}>

@@ -1,0 +1,34 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/breakpoint" as bp;
+@use "@/styles/globals.scss" as g;
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - #{g.$header-height});
+}
+
+.navColumn {
+  flex-shrink: 0;
+  width: 260px;
+  border-right: 1px solid colors.$border-gray-subtle;
+
+  @include bp.breakpoint-down("md") {
+    width: 240px;
+  }
+}
+
+.panel {
+  flex: 1;
+  min-width: 0;
+}
+
+@include bp.breakpoint-down("xs") {
+  .container {
+    min-height: calc(100vh - #{g.$header-height-mobile});
+  }
+
+  .navColumn {
+    display: none;
+  }
+}

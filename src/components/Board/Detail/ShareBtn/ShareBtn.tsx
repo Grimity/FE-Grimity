@@ -1,15 +1,12 @@
-import { useModalStore } from "@/states/modalStore";
+import { useShareModal } from "@/hooks/useShareModal";
 import IconComponent from "@/components/Asset/Icon";
 import { ShareBtnProps } from "./ShareBtn.types";
 
 export default function ShareBtn({ postId, title, thumbnail }: ShareBtnProps) {
-  const openModal = useModalStore((state) => state.openModal);
+  const { sharePost } = useShareModal();
 
   const handleOpenShareModal = () => {
-    openModal({
-      type: "SHAREPOST",
-      data: { postId, title, thumbnail },
-    });
+    sharePost({ postId, title, thumbnail });
   };
 
   return (

@@ -117,6 +117,7 @@ export type IconName =
   | "facebook"
   | "facebook-fill"
   | "kakao"
+  | "kakaotalk"
   | "kakao-fill"
   | "instagram"
   | "instagram-fill"
@@ -130,6 +131,7 @@ export type IconName =
   // Navigation
   | "home"
   | "paint"
+  | "palette"
   | "following"
   | "board"
   | "message"
@@ -166,7 +168,12 @@ export type IconColor =
   | "gray-subtler"
   | "gray-subtlest"
   | "primary-normal"
-  | "primary-subtle";
+  | "primary-subtle"
+  | "graphic-primary"
+  | "graphic-bold"
+  | "graphic-normal"
+  | "graphic-subtle"
+  | "graphic-subtler";
 
 export interface IconProps {
   name: IconName;

@@ -1,0 +1,35 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-32;
+  padding: spacing.$spacing-40;
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-xl;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-10;
+}
+
+.title {
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+  text-align: center;
+}
+
+.description {
+  @include typo.body-1-r;
+  color: colors.$text-gray-normal;
+  text-align: center;
+  white-space: pre-line;
+}

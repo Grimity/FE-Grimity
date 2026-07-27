@@ -108,3 +108,9 @@ Use `@/*` to import from `src/`:
 ```typescript
 import { useAuthStore } from "@/states/authStore";
 ```
+
+## Figma 구현 규칙
+
+Figma 링크와 함께 구현 요청이 오면 `src/components/common` 디자인 시스템 컴포넌트를 우선 사용해야 한다.
+
+→ 상세 규칙 및 컴포넌트 목록: [docs/design-system.md](docs/design-system.md)

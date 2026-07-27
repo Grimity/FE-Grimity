@@ -1,0 +1,194 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
+
+// ── xs (기본, 모바일) ──────────────────────────────────────
+.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - 60px);
+  padding: spacing.$spacing-32 spacing.$spacing-20 spacing.$spacing-20;
+  background: colors.$bg-primary;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.titleSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-32;
+}
+
+.subtitle {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+}
+
+.title {
+  margin: 0;
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+}
+
+.description {
+  margin: 0;
+  @include typo.body-1-r;
+  color: colors.$text-gray-bold;
+}
+
+.form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-24;
+}
+
+.inputField {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+}
+
+.textFieldWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+}
+
+.checkboxLabel {
+  @include typo.body-2-sb;
+  color: colors.$text-gray-bold;
+  cursor: pointer;
+  user-select: none;
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: auto;
+  border-radius: radius.$radius-sm;
+}
+
+.footer {
+  display: none;
+}
+
+// ── sm/lg (768px+) ──────────────────────────────────────
+@include bp.breakpoint-up("sm") {
+  .page {
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: spacing.$spacing-24 spacing.$spacing-20 80px;
+  }
+
+  .content {
+    flex: initial;
+    align-items: center;
+  }
+
+  .titleSection {
+    flex: initial;
+    width: 480px;
+    align-items: center;
+    gap: spacing.$spacing-56;
+  }
+
+  .subtitle {
+    align-items: center;
+  }
+
+  .title {
+    @include typo.title-1;
+  }
+
+  .form {
+    flex: initial;
+    width: 100%;
+    padding: 0 spacing.$spacing-20;
+  }
+
+  .checkboxLabel {
+    @include typo.body-1-sb;
+  }
+
+  .submitBtn {
+    margin-top: 0;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    left: spacing.$spacing-20;
+    right: spacing.$spacing-20;
+    height: 60px;
+    padding: 0 spacing.$spacing-32;
+  }
+}
+
+// ── 푸터 (TextButton 오버라이드 + 기타) ──────────────────────
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+}
+
+.footerBtn {
+  padding: 0 spacing.$spacing-6 0 spacing.$spacing-4;
+  color: colors.$text-gray-normal;
+}
+
+.footerRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+
+  a {
+    @include typo.body-2-r;
+    line-height: 1.4;
+    color: colors.$text-gray-subtle;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: colors.$graphic-subtler;
+}
+
+.copyright {
+  @include typo.body-2-r;
+  line-height: 1.4;
+  color: colors.$text-gray-subtle;
+  margin: 0;
+}

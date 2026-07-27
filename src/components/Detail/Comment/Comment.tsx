@@ -15,6 +15,7 @@ import { deleteCommentLike, putCommentLike } from "@/api/feeds-comments/putDelet
 
 import { useAuthStore } from "@/states/authStore";
 import { useModalStore } from "@/states/modalStore";
+import { useReportModal } from "@/hooks/useReportModal";
 
 import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
@@ -39,6 +40,7 @@ export default function Comment({ feedId, feedWriterId, isFollowingPage }: Comme
   const { data: userData, isLoading } = useMyData();
   const { showToast } = useToast();
   const openModal = useModalStore((state) => state.openModal);
+  const openReportModal = useReportModal();
   const queryClient = useQueryClient();
   const [replyText, setReplyText] = useState("");
   const [mentionedUser, setMentionedUser] = useState<CommentWriter | null>(null);
@@ -154,18 +156,7 @@ export default function Comment({ feedId, feedWriterId, isFollowingPage }: Comme
       return;
     }
 
-    if (isMobile) {
-      openModal({
-        type: "REPORT",
-        data: { refType: "FEED_COMMENT", refId: id },
-        isFill: true,
-      });
-    } else {
-      openModal({
-        type: "REPORT",
-        data: { refType: "FEED_COMMENT", refId: id },
-      });
-    }
+    openReportModal({ refType: "FEED_COMMENT", refId: id });
   };
 
   const handleCommentDelete = async (id: string) => {

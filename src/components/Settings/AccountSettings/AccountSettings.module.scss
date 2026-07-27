@@ -1,0 +1,20 @@
+@use "@/styles/tokens/spacing" as spacing;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 480px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.withdrawal {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  padding-bottom: spacing.$spacing-40;
+}

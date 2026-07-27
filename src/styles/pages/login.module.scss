@@ -1,0 +1,193 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
+
+// ── xs (기본, 모바일) ──────────────────────────────────────
+.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - 60px);
+  padding: spacing.$spacing-32 spacing.$spacing-20 spacing.$spacing-40;
+  background: colors.$bg-primary;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-16;
+}
+
+.logoSection .logo {
+  width: 150px;
+  height: 42px;
+}
+
+.tagline {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+
+  span {
+    display: block;
+  }
+}
+
+.buttons {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+}
+
+.footer {
+  display: none;
+}
+
+// ── sm/lg (768px+, 태블릿·데스크톱) ──────────────────────────
+@include bp.breakpoint-up("sm") {
+  .page {
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: spacing.$spacing-24 spacing.$spacing-20 80px;
+  }
+
+  .content {
+    flex: initial;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: spacing.$spacing-72;
+    width: 480px;
+  }
+
+  .logoSection {
+    align-items: center;
+    gap: spacing.$spacing-24;
+  }
+
+  .logoSection .logo {
+    width: 200px;
+    height: 56px;
+  }
+
+  .tagline {
+    display: block;
+    text-align: center;
+    @include typo.title-1;
+
+    span {
+      display: inline;
+    }
+  }
+
+  .buttons {
+    margin-top: 0;
+    width: 100%;
+    padding: 0 spacing.$spacing-20;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    left: spacing.$spacing-20;
+    right: spacing.$spacing-20;
+    height: 60px;
+    padding: 0 spacing.$spacing-32;
+  }
+}
+
+// ── OAuth 버튼 (SolidButton/OutlinedButton 오버라이드) ──────
+.oauthBtn {
+  width: 100%;
+  border-radius: radius.$radius-md;
+}
+
+.kakao {
+  background-color: #fee500;
+  color: #000000;
+
+  &:hover:not(:disabled) {
+    background-color: #fee500;
+    opacity: 0.85;
+  }
+}
+
+.google {
+  background-color: colors.$surface-gray-subtlest;
+  color: colors.$surface-inverse;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$surface-gray-subtlest;
+    opacity: 0.85;
+  }
+}
+
+.apple {
+  color: colors.$surface-inverse;
+}
+
+// ── 푸터 (TextButton 오버라이드 + 기타) ──────────────────────
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+}
+
+.footerBtn {
+  padding: 0 spacing.$spacing-6 0 spacing.$spacing-4;
+  color: colors.$text-gray-normal;
+}
+
+.footerRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
+
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+
+  a {
+    @include typo.body-2-r;
+    line-height: 1.4;
+    color: colors.$text-gray-subtle;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: colors.$graphic-subtler;
+}
+
+.copyright {
+  @include typo.body-2-r;
+  line-height: 1.4;
+  color: colors.$text-gray-subtle;
+  margin: 0;
+}

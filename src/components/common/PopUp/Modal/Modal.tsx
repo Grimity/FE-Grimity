@@ -1,8 +1,8 @@
 "use client";
 
-import clsx from "clsx";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import Backdrop from "@/components/common/PopUp/Backdrop/Backdrop";
 import styles from "./Modal.module.scss";
 import type { ModalProps } from "./Modal.types";
 import Icon from "@/components/common/Icon/Icon";
@@ -15,8 +15,8 @@ export default function Modal(props: ModalProps) {
     props.buttonType === "double";
 
   return (
-    <div
-      className={clsx(styles.overlay, className)}
+    <Backdrop
+      className={className}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
@@ -55,12 +55,20 @@ export default function Modal(props: ModalProps) {
             {props.buttonType === "double" && (
               <>
                 <div className={styles.buttonWrap}>
-                  <OutlinedButton size="large" onClick={props.onSecondary}>
+                  <OutlinedButton
+                    size="large"
+                    onClick={props.onSecondary}
+                    disabled={props.secondaryDisabled}
+                  >
                     {props.secondaryLabel}
                   </OutlinedButton>
                 </div>
                 <div className={styles.buttonWrap}>
-                  <SolidButton size="large" onClick={props.onPrimary}>
+                  <SolidButton
+                    size="large"
+                    onClick={props.onPrimary}
+                    disabled={props.primaryDisabled}
+                  >
                     {props.primaryLabel}
                   </SolidButton>
                 </div>
@@ -68,14 +76,22 @@ export default function Modal(props: ModalProps) {
             )}
             {props.buttonType === "primary" && (
               <div className={styles.buttonWrap}>
-                <SolidButton size="large" onClick={props.onPrimary}>
+                <SolidButton
+                  size="large"
+                  onClick={props.onPrimary}
+                  disabled={props.primaryDisabled}
+                >
                   {props.primaryLabel}
                 </SolidButton>
               </div>
             )}
             {props.buttonType === "secondary" && (
               <div className={styles.buttonWrap}>
-                <OutlinedButton size="large" onClick={props.onSecondary}>
+                <OutlinedButton
+                  size="large"
+                  onClick={props.onSecondary}
+                  disabled={props.secondaryDisabled}
+                >
                   {props.secondaryLabel}
                 </OutlinedButton>
               </div>
@@ -83,6 +99,6 @@ export default function Modal(props: ModalProps) {
           </footer>
         )}
       </div>
-    </div>
+    </Backdrop>
   );
 }

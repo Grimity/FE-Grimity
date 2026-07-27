@@ -1,0 +1,49 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
+
+.commissionTab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: spacing.$spacing-10;
+  height: 48px;
+  padding: 0 spacing.$spacing-10;
+  border-radius: radius.$radius-sm;
+  border: 1.5px solid transparent;
+  background-color: colors.$surface-gray-subtler;
+  color: colors.$text-gray-bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &.lg {
+    @include typo.body-1-r;
+  }
+
+  &.md {
+    @include typo.body-2-r;
+  }
+
+  &.sm {
+    @include typo.body-2-r;
+  }
+
+  &.active {
+    border-color: colors.$border-primary-normal;
+    background-color: colors.$surface-white;
+
+    &.lg {
+      @include typo.subtitle-1;
+    }
+
+    &.md {
+      @include typo.body-1-sb;
+    }
+
+    &.sm {
+      @include typo.body-2-sb;
+    }
+  }
+}

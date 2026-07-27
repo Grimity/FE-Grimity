@@ -1,0 +1,15 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+
+.group {
+  display: flex;
+  align-items: center;
+  width: 400px;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-gray-subtler;
+
+  > button {
+    flex: 1;
+    white-space: nowrap;
+  }
+}

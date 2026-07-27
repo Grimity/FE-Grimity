@@ -1,4 +1,4 @@
-@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/colors/semantic" as colors;
 
 .overlay {
   position: fixed;
@@ -7,5 +7,5 @@
   align-items: center;
   justify-content: center;
   z-index: 9000;
-  pointer-events: none;
+  background-color: colors.$bg-overlay-black;
 }

@@ -1,0 +1,9 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.prefix {
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+  margin-bottom: spacing.$spacing-12;
+}

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 
 import DOMPurify from "dompurify";
 
@@ -21,8 +21,10 @@ import { ActionBarConfig } from "@/components/ActionBar/ActionBar.types";
 import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useProfileCardHover } from "@/hooks/useProfileCardHover";
+import { useReportModal } from "@/hooks/useReportModal";
 
 import { useModalStore } from "@/states/modalStore";
+import { useShareModal } from "@/hooks/useShareModal";
 import { useAuthStore } from "@/states/authStore";
 
 import { usePostsDetails } from "@/api/posts/getPostsId";
@@ -38,6 +40,8 @@ import { CONFIG } from "@/config";
 
 import type { PostDetailProps } from "@/components/Board/Detail/Detail.types";
 
+import ImageViewer from "@/components/ImageViewer/ImageViewer";
+
 import styles from "./Detail.module.scss";
 
 export default function PostDetail({ id }: PostDetailProps) {
@@ -46,11 +50,15 @@ export default function PostDetail({ id }: PostDetailProps) {
 
   const { isLoggedIn, user_id } = useAuthStore();
   const { openModal } = useModalStore();
+  const { sharePost } = useShareModal();
+  const openReportModal = useReportModal();
 
   const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
 
   const [isSaved, setIsSaved] = useState(false);
+  const [viewer, setViewer] = useState<{ images: string[]; index: number } | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const { data: posts, isLoading, refetch } = usePostsDetails(id as string);
   const { triggerProps, popoverProps, isOpen, targetRef } = useProfileCardHover(posts?.author.url);
@@ -61,6 +69,18 @@ export default function PostDetail({ id }: PostDetailProps) {
     () => (posts ? DOMPurify.sanitize(posts.content) : ""),
     [posts?.content],
   );
+
+  const handleContentClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName !== "IMG") return;
+
+    const imageEls = Array.from(contentRef.current?.querySelectorAll("img") ?? []);
+    const images = imageEls.map((img) => img.currentSrc || img.src);
+    const clickedIndex = imageEls.indexOf(target as HTMLImageElement);
+    if (clickedIndex === -1 || images.length === 0) return;
+
+    setViewer({ images, index: clickedIndex });
+  }, []);
 
   useEffect(() => {
     refetch();
@@ -73,19 +93,14 @@ export default function PostDetail({ id }: PostDetailProps) {
 
   const handleOpenShareModal = useCallback(() => {
     if (posts) {
-      openModal({
-        type: "SHAREPOST",
-        data: { postId: id, title: posts.title },
-      });
+      sharePost({ postId: id, title: posts.title, thumbnail: posts.thumbnail });
     }
-  }, [posts, openModal, id]);
+  }, [posts, sharePost, id]);
 
   const handleOpenReportModal = useCallback(() => {
-    openModal({
-      type: "REPORT",
-      data: { refType: "POST", refId: posts?.author.id },
-    });
-  }, [openModal, posts?.author.id]);
+    if (!posts?.author.id) return;
+    openReportModal({ refType: "POST", refId: posts.author.id });
+  }, [openReportModal, posts?.author.id]);
 
   const handleLikeClick = useCallback(() => {
     if (!isLoggedIn) {
@@ -291,7 +306,20 @@ export default function PostDetail({ id }: PostDetailProps) {
 
         <div className={styles.bar} />
 
-        <div className={styles.content} dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+        <div
+          ref={contentRef}
+          className={styles.content}
+          onClick={handleContentClick}
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
+
+        {viewer && (
+          <ImageViewer
+            images={viewer.images}
+            initialIndex={viewer.index}
+            onClose={() => setViewer(null)}
+          />
+        )}
 
         {renderCounts()}
         <ActionBar config={actionBarConfig} isAuthor={isAuthor} className={styles.boardActionBar} />

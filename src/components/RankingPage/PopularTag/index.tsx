@@ -1,17 +1,18 @@
 import { useTagsPopular } from "@/api/tags/getTagsPopular";
 import styles from "./PopularTag.module.scss";
 import Title from "@/components/Layout/Title/Title";
-import Loader from "@/components/Layout/Loader/Loader";
 import Tag from "./Tag/Tag";
 import Link from "next/link";
 import { useCallback, useEffect, useRef } from "react";
 
 import { useDeviceStore } from "@/states/deviceStore";
+import { useGlobalLoading } from "@/hooks/useGlobalLoading";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
 export default function PopularTag() {
   const { data, isLoading } = useTagsPopular();
+  useGlobalLoading(isLoading);
   const containerRef = useRef<HTMLDivElement>(null);
   const { isMobile, isTablet } = useDeviceStore();
 
@@ -42,7 +43,7 @@ export default function PopularTag() {
     };
   }, [handleWheel, isMobile]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return null;
 
   return (
     <div className={styles.container}>

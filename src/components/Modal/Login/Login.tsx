@@ -1,4 +1,5 @@
 import Script from "next/script";
+import { useRouter } from "next/router";
 
 import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
@@ -8,7 +9,6 @@ import postLogin, { AuthProvider } from "@/api/auth/postLogin";
 import { useMyData } from "@/api/users/getMe";
 
 import { useAuthStore } from "@/states/authStore";
-import { useModalStore } from "@/states/modalStore";
 import { useChatStore } from "@/states/chatStore";
 
 import Icon from "@/components/Asset/IconTemp";
@@ -18,6 +18,8 @@ import { useToast } from "@/hooks/useToast";
 import { CONFIG } from "@/config";
 
 import styles from "./Login.module.scss";
+
+const SIGNUP_OAUTH_KEY = "signup_oauth_data";
 
 interface LoginProps {
   close: () => void;
@@ -47,10 +49,19 @@ export default function Login({ close }: LoginProps) {
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
   const setUserId = useAuthStore((state) => state.setUserId);
-  const openModal = useModalStore((state) => state.openModal);
+  const router = useRouter();
   const { showToast } = useToast();
   const { refetch: fetchMyData } = useMyData();
   const { setHasUnreadMessages } = useChatStore();
+
+  const goToSignup = (accessToken: string, provider: AuthProvider) => {
+    sessionStorage.setItem(
+      SIGNUP_OAUTH_KEY,
+      JSON.stringify({ accessToken, provider }),
+    );
+    close();
+    router.push("/signup/nickname");
+  };
 
   const { mutateAsync: login, isPending } = useMutation({
     mutationFn: postLogin,
@@ -89,11 +100,7 @@ export default function Login({ close }: LoginProps) {
           });
         } catch (error) {
           if (error instanceof AxiosError && error.response?.status === 404) {
-            openModal({
-              type: "NICKNAME",
-              data: { accessToken: authObj.access_token, provider: AuthProvider.KAKAO },
-            });
-            close();
+            goToSignup(authObj.access_token, AuthProvider.KAKAO);
           } else {
             console.error("카카오 로그인 실패", error);
             showToast("로그인 실패", "error");
@@ -116,11 +123,7 @@ export default function Login({ close }: LoginProps) {
         });
       } catch (error) {
         if (error instanceof AxiosError && error.response?.status === 404) {
-          openModal({
-            type: "NICKNAME",
-            data: { accessToken: tokenResponse.access_token, provider: AuthProvider.GOOGLE },
-          });
-          close();
+          goToSignup(tokenResponse.access_token, AuthProvider.GOOGLE);
         } else {
           console.error("구글 로그인 실패", error);
           showToast("로그인에 실패했습니다. 다시 시도해주세요.", "error");
@@ -143,11 +146,7 @@ export default function Login({ close }: LoginProps) {
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 404) {
         const data = error.config?.data ? JSON.parse(error.config.data) : {};
-        openModal({
-          type: "NICKNAME",
-          data: { accessToken: data.providerAccessToken, provider: AuthProvider.APPLE },
-        });
-        close();
+        goToSignup(data.providerAccessToken, AuthProvider.APPLE);
       } else {
         console.error("애플 로그인 실패", error);
         showToast("로그인에 실패했습니다. 다시 시도해주세요.", "error");

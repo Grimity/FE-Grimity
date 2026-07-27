@@ -1,0 +1,7 @@
+@use "@/styles/tokens/spacing" as spacing;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}

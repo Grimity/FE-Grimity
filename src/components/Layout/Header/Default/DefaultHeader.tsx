@@ -11,13 +11,11 @@ import { useChatStore } from "@/states/chatStore";
 import IconComponent from "@/components/Asset/Icon";
 import Button from "@/components/Button/Button";
 import Notifications from "@/components/Notifications/Notifications";
-import Login from "@/components/Modal/Login/Login";
 import SideMenu from "@/components/Layout/SideMenu/SideMenu";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
 
 import { usePreventScroll } from "@/hooks/usePreventScroll";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
-import { useModal } from "@/hooks/useModal";
 
 import axiosInstance from "@/constants/baseurl";
 
@@ -35,7 +33,6 @@ export default function DefaultHeader() {
 
   const { isLoggedIn, setAccessToken, setIsLoggedIn, setUserId, isAuthReady } = useAuthStore();
   const { reset: resetChat } = useChatStore();
-  const { openModal } = useModal();
   const { isMobile } = useDeviceStore();
   usePreventScroll(isMenuOpen || (isMobile && showNotifications));
   useOnClickOutside(notificationRef, () => setShowNotifications(false));
@@ -106,8 +103,8 @@ export default function DefaultHeader() {
     setIsMenuOpen((prev) => !prev);
   };
 
-  const handleOpenLoginModal = () => {
-    openModal((close) => <Login close={close} />);
+  const handleLoginNavigation = () => {
+    router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
   };
 
   const handleCloseNotifications = () => {
@@ -150,7 +147,7 @@ export default function DefaultHeader() {
           {isMobile ? (
             <>
               {isAuthReady && !isLoggedIn && (
-                <div className={styles.loginBtn} onClick={handleOpenLoginModal}>
+                <div className={styles.loginBtn} onClick={handleLoginNavigation}>
                   <Button size="s" type="filled-primary">
                     로그인
                   </Button>
@@ -260,7 +257,7 @@ export default function DefaultHeader() {
                     </div>
                   </div>
                 ) : (
-                  <div className={styles.loginBtn} onClick={handleOpenLoginModal}>
+                  <div className={styles.loginBtn} onClick={handleLoginNavigation}>
                     <Button size="m" type="filled-primary">
                       로그인
                     </Button>

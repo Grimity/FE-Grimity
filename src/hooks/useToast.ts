@@ -1,7 +1,7 @@
 import { useToastStore } from "@/states/toastState";
 
 export function useToast() {
-  const { toasts, showToast, removeToast } = useToastStore();
+  const { toasts, showToast, removeToast, clearAllToasts } = useToastStore();
 
-  return { toasts, showToast, removeToast };
+  return { toasts, showToast, removeToast, clearAllToasts };
 }

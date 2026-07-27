@@ -20,6 +20,7 @@ interface ToastState {
     container?: ToastContainer
   ) => void;
   removeToast: (id: string) => void;
+  clearAllToasts: () => void;
 }
 
 const MAX_TOASTS = 3;
@@ -46,5 +47,9 @@ export const useToastStore = create<ToastState>((set) => ({
     set((state) => ({
       toasts: state.toasts.filter((t) => t.id !== id),
     }));
+  },
+
+  clearAllToasts: () => {
+    set({ toasts: [] });
   },
 }));

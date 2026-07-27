@@ -8,6 +8,7 @@ import { deletePostsSave, putPostsSave } from "@/api/posts/putDeletePostsIdSave"
 import { SearchHighlightContext } from "@/pages/search";
 
 import { useModalStore } from "@/states/modalStore";
+import { useShareModal } from "@/hooks/useShareModal";
 import { useDeviceStore } from "@/states/deviceStore";
 
 import Dropdown from "@/components/Dropdown/Dropdown";
@@ -43,6 +44,7 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
   const { highlight } = useContext(SearchHighlightContext);
   const { isMobile } = useDeviceStore();
   const openModal = useModalStore((state) => state.openModal);
+  const { sharePost } = useShareModal();
   const { showToast } = useToast();
 
   const [isSaved, setIsSaved] = useState(true);
@@ -83,10 +85,7 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
 
   const handleOpenShareModal = () => {
     if (post) {
-      openModal({
-        type: "SHAREPOST",
-        data: { postId: post.id, title: post.title },
-      });
+      sharePost({ postId: post.id, title: post.title, thumbnail: post.thumbnail });
     }
   };
 

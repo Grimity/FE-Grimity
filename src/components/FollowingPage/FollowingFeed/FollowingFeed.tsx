@@ -7,13 +7,10 @@ import Link from "next/link";
 import { putView } from "@/api/feeds/putIdView";
 import { deleteFeeds } from "@/api/feeds/deleteFeedsId";
 import { useRouter } from "next/router";
-import { usePreventScroll } from "@/hooks/usePreventScroll";
-import dynamic from "next/dynamic";
-import "react-medium-image-zoom/dist/styles.css";
 import { timeAgo } from "@/utils/timeAgo";
 
-const Zoom = dynamic(() => import("react-medium-image-zoom"), { ssr: false });
-import { useModalStore } from "@/states/modalStore";
+import { useShareModal } from "@/hooks/useShareModal";
+import { useReportModal } from "@/hooks/useReportModal";
 import { deleteSave, putSave } from "@/api/feeds/putDeleteFeedsIdSave";
 import IconComponent from "@/components/Asset/Icon";
 import Dropdown from "@/components/Dropdown/Dropdown";
@@ -24,12 +21,12 @@ import CommentInput from "@/components/Detail/Comment/CommentInput/CommentInput"
 import Comment from "@/components/Detail/Comment/Comment";
 import { useGetFeedsComments } from "@/api/feeds-comments/getFeedComments";
 import { useMyData } from "@/api/users/getMe";
-import { useDeviceStore } from "@/states/deviceStore";
 import { FollowingFeedsResponse } from "@/api/feeds/getFeedsFollowing";
 import { usePreventRightClick } from "@/hooks/usePreventRightClick";
 import { useProfileCardHover } from "@/hooks/useProfileCardHover";
 import ProfileCardPopover from "@/components/Layout/ProfileCardPopover/ProfileCardPopover";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import ImageViewer from "@/components/ImageViewer/ImageViewer";
 
 interface FollowingFeedProps {
   id: string;
@@ -49,15 +46,15 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
   const [isSaved, setIsSaved] = useState(false);
   const [currentLikeCount, setCurrentLikeCount] = useState(0);
   const [viewCounted, setViewCounted] = useState(false);
-  const [overlayImage, setOverlayImage] = useState<string | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const router = useRouter();
-  const openModal = useModalStore((state) => state.openModal);
+  const { shareFeed } = useShareModal();
+  const openReportModal = useReportModal();
   const { refetch: refetchComments } = useGetFeedsComments({
     feedId: id,
   });
   const [isContentTooLong, setIsContentTooLong] = useState(false);
   const contentRef = useRef<HTMLParagraphElement | null>(null);
-  const { isMobile } = useDeviceStore();
   const imgRef = usePreventRightClick<HTMLImageElement>();
   const divRef = usePreventRightClick<HTMLDivElement>();
   const sectionRef = usePreventRightClick<HTMLElement>();
@@ -65,21 +62,6 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
     details?.author.url,
   );
   const { mutate: toggleLike } = useFeedsLikeMutation();
-
-  usePreventScroll(!!overlayImage);
-
-  useEffect(() => {
-    if (overlayImage) {
-      history.pushState(null, "", location.href);
-      const handlePopstate = () => {
-        setOverlayImage(null);
-      };
-      window.addEventListener("popstate", handlePopstate);
-      return () => {
-        window.removeEventListener("popstate", handlePopstate);
-      };
-    }
-  }, [overlayImage]);
 
   useEffect(() => {
     if (!details) return;
@@ -181,32 +163,19 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
     setIsSaved(!isSaved);
   };
 
-  const handleImageClick = (image: string) => {
-    setOverlayImage(image);
+  const handleImageClick = (index: number) => {
+    setViewerIndex(index);
   };
 
   const handleOpenShareModal = () => {
     if (details) {
-      openModal({
-        type: "SHARE",
-        data: { id, details },
-      });
+      shareFeed({ feedId: id, title: details.title, image: details.thumbnail });
     }
   };
 
   const handleOpenReportModal = () => {
-    if (isMobile) {
-      openModal({
-        type: "REPORT",
-        data: { refType: "FEED", refId: details?.author.id },
-        isFill: true,
-      });
-    } else {
-      openModal({
-        type: "REPORT",
-        data: { refType: "FEED", refId: details?.author.id },
-      });
-    }
+    if (!details?.author.id) return;
+    openReportModal({ refType: "FEED", refId: details.author.id });
   };
 
   return (
@@ -280,7 +249,7 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
                     width={880}
                     height={0}
                     className={styles.cardImage}
-                    onClick={() => handleImageClick(card)}
+                    onClick={() => handleImageClick(index)}
                     loading={index ? "lazy" : "eager"}
                     ref={imgRef}
                     onContextMenu={(e: React.MouseEvent<HTMLImageElement>) => e.preventDefault()}
@@ -308,7 +277,7 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
                       width={600}
                       height={0}
                       className={styles.cardImage}
-                      onClick={() => handleImageClick(card)}
+                      onClick={() => handleImageClick(index + 2)}
                       loading="lazy"
                       ref={imgRef}
                       onContextMenu={(e: React.MouseEvent<HTMLImageElement>) => e.preventDefault()}
@@ -316,25 +285,12 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
                   </div>
                 ))}
             </section>
-            {overlayImage && (
-              <div className={styles.overlay} onClick={() => setOverlayImage(null)}>
-                <div className={styles.overlayContent} ref={divRef}>
-                  <Zoom>
-                    <img
-                      src={overlayImage}
-                      alt="Zoomed Image"
-                      style={{
-                        height: "90vh",
-                        objectFit: "cover",
-                      }}
-                      onClick={(event) => event.stopPropagation()}
-                      loading="lazy"
-                      ref={imgRef}
-                      onContextMenu={(e) => e.preventDefault()}
-                    />
-                  </Zoom>
-                </div>
-              </div>
+            {viewerIndex !== null && (
+              <ImageViewer
+                images={details.cards}
+                initialIndex={viewerIndex}
+                onClose={() => setViewerIndex(null)}
+              />
             )}
             <section className={styles.contentContainer} ref={sectionRef}>
               <h2 className={styles.title}>{details.title}</h2>
