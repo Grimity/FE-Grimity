@@ -1,0 +1,30 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-24;
+  width: 100%;
+  padding-top: spacing.$spacing-12;
+}
+
+.title {
+  margin: 0;
+  color: colors.$text-gray-bold;
+  @include typo.title-1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: spacing.$spacing-16;
+  width: 100%;
+
+  @include bp.breakpoint-down("xs") {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

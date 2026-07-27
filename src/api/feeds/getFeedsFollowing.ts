@@ -1,7 +1,19 @@
 import axiosInstance from "@/constants/baseurl";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import type { FollowingFeedsResponse } from "@grimity/dto";
-export type { FollowingFeedsResponse };
+import type {
+  FollowingFeedsResponse as RawFollowingFeedsResponse,
+  FollowingFeedResponse as RawFollowingFeedResponse,
+  FeedCommentWithWriterResponse,
+} from "@grimity/dto";
+
+// TODO(codegen): OpenAPI 생성 타입으로 대체되면 이 보정 블록 제거
+export type FollowingFeedResponse = Omit<RawFollowingFeedResponse, "comment"> & {
+  comment: FeedCommentWithWriterResponse | null;
+};
+
+export interface FollowingFeedsResponse extends Omit<RawFollowingFeedsResponse, "feeds"> {
+  feeds: FollowingFeedResponse[];
+}
 
 export interface FollowingFeedsRequest {
   size?: number;

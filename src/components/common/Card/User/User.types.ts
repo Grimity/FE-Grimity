@@ -19,6 +19,7 @@ interface BaseUserCardProps {
 
 export interface DefaultUserCardProps extends BaseUserCardProps {
   variant?: "default";
+  avatarUrl?: string;
   nickname: string;
   followerCount?: number;
   followingCount?: number;

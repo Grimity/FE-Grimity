@@ -178,6 +178,7 @@ function SearchCard({
 }
 
 function DefaultCard({
+  avatarUrl,
   nickname,
   followerCount = 0,
   followingCount = 0,
@@ -205,6 +206,7 @@ function DefaultCard({
       <div className={styles.header}>
         <UserItem
           type="follow"
+          profileImage={avatarUrl}
           nickname={nickname}
           followerCount={followerCount.toString()}
           followingCount={followingCount.toString()}
