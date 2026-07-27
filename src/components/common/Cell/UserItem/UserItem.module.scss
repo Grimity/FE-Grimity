@@ -250,9 +250,17 @@
   color: colors.$text-primary-normal;
 }
 
+.notificationCategoryRead {
+  color: colors.$text-gray-normal;
+}
+
 .notificationMessage {
   @include typo.label-4;
   color: colors.$text-gray-bold;
+}
+
+.notificationMessageRead {
+  color: colors.$text-gray-subtle;
 }
 
 .notificationTime {

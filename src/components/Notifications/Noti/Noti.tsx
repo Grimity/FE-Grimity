@@ -49,6 +49,7 @@ export default function Noti({ notification, onClose, onRefetch }: NotiProps) {
       category={getNotificationCategory(notification.message)}
       message={notification.message}
       time={timeAgo(notification.createdAt)}
+      read={notification.isRead}
       onClick={handleClick}
       onClose={handleDelete}
     />
