@@ -8,12 +8,12 @@
   padding-right: spacing.$spacing-32;
   padding-bottom: spacing.$spacing-72;
 
-  @include bp.breakpoint-down("xs") {
+  @include bp.breakpoint-down("md") {
     padding-left: spacing.$spacing-16;
     padding-right: spacing.$spacing-16;
   }
 
-  @include bp.breakpoint-down("md") {
+  @include bp.breakpoint-down("xs") {
     padding-left: spacing.$spacing-16;
     padding-right: spacing.$spacing-16;
   }

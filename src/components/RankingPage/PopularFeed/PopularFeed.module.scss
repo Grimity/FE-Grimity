@@ -21,7 +21,7 @@
       @include typo.title-2;
     }
   }
-  
+
   .description {
     @include typo.label-6;
     color: colors.$text-gray-subtle;
@@ -47,6 +47,10 @@
   grid-template-columns: repeat(5, 1fr);
   grid-column-gap: spacing.$spacing-16;
   grid-row-gap: spacing.$spacing-40;
+
+  @include bp.breakpoint-down("md") {
+    grid-template-columns: repeat(4, 1fr);
+  }
 
   @include bp.breakpoint-down("xs") {
     grid-template-columns: repeat(2, 1fr);

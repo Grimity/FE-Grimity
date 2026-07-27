@@ -6,7 +6,11 @@ import { DatePickerMode } from "@/components/common/DatePicker/DatePicker.types"
 
 import styles from "@/components/common/DatePicker/DatePicker.module.scss";
 
-export default function DatePicker({ mode, selectedDate = new Date(), onDateChange }: DatePickerProps) {
+export default function DatePicker({
+  mode,
+  selectedDate = new Date(),
+  onDateChange,
+}: DatePickerProps) {
   return (
     <div className={styles.container}>
       {mode === DatePickerMode.WEEK ? (

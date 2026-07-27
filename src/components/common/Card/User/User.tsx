@@ -44,7 +44,7 @@ function UserCardImage({ image }: { image: UserCardImageItem }) {
         mobileSize={320}
         desktopSize={640}
       />
-      {image.url && (
+      {image.url && image.onLikeClick && (
         <button
           className={clsx(styles.likeBtn, isLiked && styles.likeBtnActive)}
           onClick={handleLikeClick}

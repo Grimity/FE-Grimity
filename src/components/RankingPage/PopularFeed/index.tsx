@@ -54,13 +54,11 @@ export default function PopularFeed() {
   return (
     <div className={styles.container}>
       <div className={styles.titleContainer}>
-        <p className={styles.title}>인기 그림 순위</p>
-        <p className={styles.description}>
-          랭킹 40위까지 노출됩니다.
-        </p>
+        <h2 className={styles.title}>인기 그림 순위</h2>
+        <p className={styles.description}>랭킹 40위까지 노출됩니다.</p>
       </div>
 
-      <div className={styles.tabs}>
+      <div className={styles.tabs} role="tablist" aria-label="랭킹 기간">
         <Tab
           title="주간"
           showNumber={false}
