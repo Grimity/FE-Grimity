@@ -6,12 +6,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { deleteFeeds } from "@/api/feeds/deleteFeedsId";
+import { putView } from "@/api/feeds/putIdView";
 import { useFeedsLikeMutation } from "@/queries/feeds/useFeedsLikeMutation";
 import { useAuthStore } from "@/states/authStore";
 import { useToast } from "@/hooks/useToast";
 import { useReportModal } from "@/hooks/useReportModal";
 import { usePreventRightClick } from "@/hooks/usePreventRightClick";
 import { useProfileCardHover } from "@/hooks/useProfileCardHover";
+import { useImageAspectRatio } from "@/hooks/useImageAspectRatio";
 
 import Avatar from "@/components/common/Avatar/Avatar";
 import Icon from "@/components/common/Icon/Icon";
@@ -46,9 +48,12 @@ export default function FollowingFeed({ feed }: FollowingFeedProps) {
   const [likeCount, setLikeCount] = useState(feed.likeCount);
 
   const contentRef = useRef<HTMLDivElement>(null);
+  const articleRef = useRef<HTMLElement>(null);
+  const hasViewedRef = useRef(false);
   const mediaRef = usePreventRightClick<HTMLDivElement>();
 
   const { triggerProps, popoverProps, isOpen, targetRef } = useProfileCardHover(feed.author.url);
+  const { aspectRatio, onImageLoad } = useImageAspectRatio(feed.cards[0]);
 
   const detailHref = `${PATH_ROUTES.FEEDS}/${feed.id}`;
   const isMine = user_id === feed.author.id;
@@ -65,6 +70,26 @@ export default function FollowingFeed({ feed }: FollowingFeedProps) {
 
     setIsClamped(element.scrollHeight > element.clientHeight);
   }, [feed.content]);
+
+  // 무한스크롤이라 카드가 실제로 화면에 보일 때 조회수를 1회만 올린다.
+  useEffect(() => {
+    const element = articleRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasViewedRef.current) {
+          hasViewedRef.current = true;
+          putView(feed.id).catch(() => {});
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [feed.id]);
 
   const formattedContent = useMemo(
     () =>
@@ -115,7 +140,7 @@ export default function FollowingFeed({ feed }: FollowingFeedProps) {
   };
 
   return (
-    <article className={styles.feed}>
+    <article className={styles.feed} ref={articleRef}>
       <div className={styles.articleContent}>
         <div className={styles.article}>
           <div className={styles.author}>
@@ -164,7 +189,7 @@ export default function FollowingFeed({ feed }: FollowingFeedProps) {
 
               <div className={styles.media} ref={mediaRef}>
                 {isMultiImage ? (
-                  <div className={styles.imgView}>
+                  <div className={styles.imgView} style={{ aspectRatio }}>
                     <Swiper slidesPerView={1} spaceBetween={20} className={styles.swiper}>
                       {feed.cards.map((card, index) => (
                         <SwiperSlide key={card} className={styles.slide}>
@@ -173,6 +198,7 @@ export default function FollowingFeed({ feed }: FollowingFeedProps) {
                               src={card}
                               alt={`${feed.title} ${index + 1}번째 그림`}
                               className={styles.slideImage}
+                              onLoad={index === 0 ? onImageLoad : undefined}
                             />
                           </Link>
                           <Counter
@@ -186,11 +212,12 @@ export default function FollowingFeed({ feed }: FollowingFeedProps) {
                     </Swiper>
                   </div>
                 ) : (
-                  <Link href={detailHref} className={styles.singleImage}>
+                  <Link href={detailHref} className={styles.singleImage} style={{ aspectRatio }}>
                     <ResponsiveImage
                       src={feed.cards[0]}
                       alt={feed.title}
                       className={styles.singleImageInner}
+                      onLoad={onImageLoad}
                     />
                   </Link>
                 )}
@@ -229,9 +256,9 @@ export default function FollowingFeed({ feed }: FollowingFeedProps) {
         {feed.comment && (
           <Link href={detailHref} className={styles.comments}>
             <Avatar
-              src={feed.comment.writer.image ?? undefined}
+              src={feed.comment.writer?.image ?? undefined}
               size={40}
-              alt={feed.comment.writer.name}
+              alt={feed.comment.writer?.name ?? ""}
             />
             <p className={styles.commentText}>{feed.comment.content}</p>
           </Link>
