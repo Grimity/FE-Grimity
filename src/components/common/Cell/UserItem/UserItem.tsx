@@ -40,6 +40,7 @@ export default function UserItem({
   category,
   message,
   time,
+  read = false,
   onClose,
   brandIcon,
   siteName,
@@ -164,13 +165,27 @@ export default function UserItem({
   if (type === "notification") {
     return (
       <div className={clsx(styles.notification, className)}>
-        <div className={styles.notificationLeft}>
+        <div className={styles.notificationLeft} onClick={onClick}>
           <div className={styles.notificationContent}>
             {category && (
-              <span className={styles.notificationCategory}>{category}</span>
+              <span
+                className={clsx(
+                  styles.notificationCategory,
+                  read && styles.notificationCategoryRead,
+                )}
+              >
+                {category}
+              </span>
             )}
             {message && (
-              <span className={styles.notificationMessage}>{message}</span>
+              <span
+                className={clsx(
+                  styles.notificationMessage,
+                  read && styles.notificationMessageRead,
+                )}
+              >
+                {message}
+              </span>
             )}
           </div>
           {time && <span className={styles.notificationTime}>{time}</span>}
