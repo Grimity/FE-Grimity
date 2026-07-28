@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
+import AvatarComponent from "@/components/common/Avatar/Avatar";
 import RadioButton from "@/components/common/Control/RadioButton/RadioButton";
 import Bookmark from "@/components/common/Control/Bookmark/Bookmark";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
@@ -19,18 +20,7 @@ interface AvatarProps {
 }
 
 function Avatar({ size = "md", image }: AvatarProps) {
-  const sizeClass = size === "md" ? styles.avatarMd : styles.avatarXs;
-  const iconSize = size === "md" ? 20 : 16;
-
-  return (
-    <div className={sizeClass}>
-      {image ? (
-        <img src={image} alt="" className={styles.avatarImage} />
-      ) : (
-        <Icon name="person" size={iconSize} color="gray-subtler" />
-      )}
-    </div>
-  );
+  return <AvatarComponent src={image} size={size} alt="" />;
 }
 
 // ============================================

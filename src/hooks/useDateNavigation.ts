@@ -1,15 +1,17 @@
-import { useState, useEffect } from "react";
 import {
   subDays,
   addDays,
   subMonths,
   addMonths,
-  subYears,
-  addYears,
   isBefore,
+  isAfter,
   startOfDay,
-  isSameDay,
+  startOfMonth,
 } from "date-fns";
+
+import { MIN_SELECTABLE_DATE } from "@/components/common/DatePicker/DatePicker.types";
+
+type DateNavigationUnit = "week" | "month";
 
 interface UseDateNavigationReturn {
   currentDate: Date;
@@ -19,61 +21,29 @@ interface UseDateNavigationReturn {
   onNextWeek: () => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
-  onPrevYear: () => void;
-  onNextYear: () => void;
 }
 
 function useDateNavigation(
   initialDate: Date,
   onDateChange: (date: Date) => void,
+  unit: DateNavigationUnit = "week",
 ): UseDateNavigationReturn {
-  const [currentDate, setCurrentDate] = useState(initialDate);
+  const currentDate = initialDate;
 
   const isPrevDisabled =
-    isBefore(startOfDay(currentDate), startOfDay(new Date(2025, 2, 1))) ||
-    isSameDay(startOfDay(currentDate), startOfDay(new Date(2025, 2, 1)));
+    unit === "month"
+      ? !isAfter(startOfMonth(currentDate), startOfMonth(MIN_SELECTABLE_DATE))
+      : !isAfter(startOfDay(currentDate), startOfDay(MIN_SELECTABLE_DATE));
 
-  const isNextDisabled = !isBefore(startOfDay(currentDate), startOfDay(new Date()));
+  const isNextDisabled =
+    unit === "month"
+      ? !isBefore(startOfMonth(currentDate), startOfMonth(new Date()))
+      : !isBefore(startOfDay(currentDate), startOfDay(new Date()));
 
-  const handlePrevWeek = () => {
-    const prevDate = subDays(currentDate, 7);
-    setCurrentDate(prevDate);
-    onDateChange(prevDate);
-  };
-
-  const handleNextWeek = () => {
-    const nextDate = addDays(currentDate, 7);
-    setCurrentDate(nextDate);
-    onDateChange(nextDate);
-  };
-
-  const handlePrevMonth = () => {
-    const prevMonth = subMonths(currentDate, 1);
-    setCurrentDate(prevMonth);
-    onDateChange(prevMonth);
-  };
-
-  const handleNextMonth = () => {
-    const nextMonth = addMonths(currentDate, 1);
-    setCurrentDate(nextMonth);
-    onDateChange(nextMonth);
-  };
-
-  const handlePrevYear = () => {
-    const prevYear = subYears(currentDate, 1);
-    setCurrentDate(prevYear);
-    onDateChange(prevYear);
-  };
-
-  const handleNextYear = () => {
-    const nextYear = addYears(currentDate, 1);
-    setCurrentDate(nextYear);
-    onDateChange(nextYear);
-  };
-
-  useEffect(() => {
-    setCurrentDate(initialDate);
-  }, [initialDate]);
+  const handlePrevWeek = () => onDateChange(subDays(currentDate, 7));
+  const handleNextWeek = () => onDateChange(addDays(currentDate, 7));
+  const handlePrevMonth = () => onDateChange(subMonths(currentDate, 1));
+  const handleNextMonth = () => onDateChange(addMonths(currentDate, 1));
 
   return {
     currentDate,
@@ -83,8 +53,6 @@ function useDateNavigation(
     onNextWeek: handleNextWeek,
     onPrevMonth: handlePrevMonth,
     onNextMonth: handleNextMonth,
-    onPrevYear: handlePrevYear,
-    onNextYear: handleNextYear,
   };
 }
 

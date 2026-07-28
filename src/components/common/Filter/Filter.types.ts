@@ -13,4 +13,5 @@ export interface FilterProps {
   disabled?: boolean;
   className?: string;
   align?: "left" | "right";
+  renderDropdown?: (close: () => void) => React.ReactNode;
 }
