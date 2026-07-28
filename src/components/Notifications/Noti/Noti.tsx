@@ -7,12 +7,9 @@ import { putNotificationsId } from "@/api/notifications/putNotifications";
 
 import { NotiProps } from "./Noti.types";
 
-/**
- * 알림 메시지 키워드로 카테고리를 추론한다.
- */
+// TODO(codegen): 서버 알림 응답에 type 필드가 추가되면 문자열 추론을 제거한다.
 function getNotificationCategory(message: string): string {
   if (message.includes("팔로우")) return "팔로우";
-  if (message.includes("북마크")) return "북마크";
   if (message.includes("좋아요")) return "좋아요";
   if (message.includes("대댓글")) return "새 대댓글";
   if (message.includes("댓글")) return "새 댓글";

@@ -3,6 +3,7 @@
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/breakpoint" as bp;
+@use "@/styles/globals.scss" as g;
 
 .panel {
   box-sizing: border-box;
@@ -133,8 +134,8 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  // GNB(three-button)가 position: fixed 라 고정 헤더(52px) 아래부터 시작하도록 보정
-  padding-top: 52px;
+  // GNB(three-button)가 position: fixed 라 고정 헤더 높이만큼 아래부터 시작하도록 보정
+  padding-top: g.$header-height-mobile;
 }
 
 .mobileSettings {

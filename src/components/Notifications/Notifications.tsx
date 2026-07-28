@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { SubscriptionType } from "@/api/users/subscribe";
 import { useGetNotifications } from "@/api/notifications/getNotifications";
@@ -6,6 +6,7 @@ import { deleteNotifications } from "@/api/notifications/deleteNotifications";
 import { putNotifications } from "@/api/notifications/putNotifications";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 import Icon from "@/components/common/Icon/Icon";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
@@ -43,6 +44,19 @@ export default function Notifications({ onClose }: NotificationsProps) {
   const { isMobile } = useDeviceStore();
   const [view, setView] = useState<NotificationsView>("list");
   const { subscriptions, isAllOn, toggle, toggleAll } = useSubscriptions();
+
+  const mobileRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(mobileRef, isMobile);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (view === "settings") setView("list");
+      else onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [view, onClose]);
 
   const handleToggleSubscription = (type: SubscriptionType) => toggle(type);
   const handleToggleAll = () => toggleAll();
@@ -92,7 +106,9 @@ export default function Notifications({ onClose }: NotificationsProps) {
       <TextButton
         variant="assistive"
         size="regular"
-        iconRight={<Icon name="eye" size={16} color={!hasNotifications ? "gray-subtler" : "gray-normal"} />}
+        iconRight={
+          <Icon name="eye" size={16} color={!hasNotifications ? "gray-subtler" : "gray-normal"} />
+        }
         onClick={handleMarkAllAsRead}
         disabled={!hasNotifications}
       >
@@ -104,7 +120,13 @@ export default function Notifications({ onClose }: NotificationsProps) {
       <TextButton
         variant="assistive"
         size="regular"
-        iconRight={<Icon name="trash-bin-trash" size={16} color={!hasNotifications ? "gray-subtler" : "gray-normal"} />}
+        iconRight={
+          <Icon
+            name="trash-bin-trash"
+            size={16}
+            color={!hasNotifications ? "gray-subtler" : "gray-normal"}
+          />
+        }
         onClick={handleDeleteAllNotifications}
         disabled={!hasNotifications}
       >
@@ -139,7 +161,13 @@ export default function Notifications({ onClose }: NotificationsProps) {
   if (isMobile) {
     if (view === "settings") {
       return (
-        <div className={styles.mobileFill} role="dialog" aria-modal="true" aria-label="알림 설정">
+        <div
+          ref={mobileRef}
+          className={styles.mobileFill}
+          role="dialog"
+          aria-modal="true"
+          aria-label="알림 설정"
+        >
           <GNB variant="three-button" title="알림 설정" onBack={() => setView("list")} />
           <div className={styles.mobileBody}>
             <div className={styles.mobileSettings}>
@@ -175,7 +203,13 @@ export default function Notifications({ onClose }: NotificationsProps) {
     }
 
     return (
-      <div className={styles.mobileFill} role="dialog" aria-modal="true" aria-label="알림">
+      <div
+        ref={mobileRef}
+        className={styles.mobileFill}
+        role="dialog"
+        aria-modal="true"
+        aria-label="알림"
+      >
         <GNB
           variant="three-button"
           title="알림"
@@ -203,7 +237,7 @@ export default function Notifications({ onClose }: NotificationsProps) {
   // ===========================================================
   if (view === "settings") {
     return (
-      <div className={styles.panel} role="dialog" aria-modal="true" aria-label="알림 설정">
+      <div className={styles.panel} role="dialog" aria-label="알림 설정">
         <header className={styles.header}>
           <div className={styles.headerLeft}>
             <IconButton
@@ -249,7 +283,7 @@ export default function Notifications({ onClose }: NotificationsProps) {
   }
 
   return (
-    <div className={styles.panel} role="dialog" aria-modal="true" aria-label="알림">
+    <div className={styles.panel} role="dialog" aria-label="알림">
       <header className={styles.header}>
         <h2 className={styles.title}>알림</h2>
         <div className={styles.headerActions}>
