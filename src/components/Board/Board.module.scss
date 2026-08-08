@@ -1,9 +1,10 @@
 @use "@/styles/breakpoint" as bp;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/globals.scss" as *;
 
 .container {
   width: 100%;
-  max-width: 800px;
+  max-width: $max-width-content;
   margin: 0 auto;
   padding-top: spacing.$spacing-48;
   padding-right: spacing.$spacing-20;
