@@ -8,7 +8,7 @@ import Loader from "@/components/Layout/Loader/Loader";
 import Chip from "@/components/common/Chip/Chip";
 import Icon from "@/components/common/Icon/Icon";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
-import Bookmark from "@/components/common/Control/Bookmark/Bookmark";
+import Like from "@/components/common/Control/Like/Like";
 import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
 import ActionMenu from "@/components/common/Navigation/ActionMenu/ActionMenu";
 import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
@@ -266,7 +266,11 @@ export default function PostDetail({ id }: PostDetailProps) {
             <div className={styles.reaction}>
               <div className={styles.reactionLeft}>
                 <div className={styles.likeBtn}>
-                  <Bookmark active={posts.isLike} onClick={handleLikeClick} aria-label="좋아요" />
+                  <Like
+                    active={posts.isLike}
+                    onClick={handleLikeClick}
+                    aria-label={posts.isLike ? "좋아요 취소" : "좋아요"}
+                  />
                   {posts.likeCount}
                 </div>
                 <span className={styles.commentCount}>
