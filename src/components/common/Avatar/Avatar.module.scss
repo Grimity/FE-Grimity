@@ -76,7 +76,10 @@
   object-fit: cover;
 }
 
-.logo {
-  width: 50%;
-  height: 50%;
+// logo-g 스프라이트는 viewBox(32x32) 안에 여백이 포함되어 있어
+// 아바타를 100%로 채우면 글리프가 Figma 비율(가로 50% / 세로 53.5%)로 그려진다.
+// Icon 컴포넌트의 .size-* 클래스를 이기기 위해 .avatar로 우선순위를 올린다.
+.avatar .logo {
+  width: 100%;
+  height: 100%;
 }

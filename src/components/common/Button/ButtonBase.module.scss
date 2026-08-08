@@ -28,10 +28,6 @@
 
 .loading {
   pointer-events: none;
-
-  .content {
-    visibility: hidden;
-  }
 }
 
 .content {
@@ -40,13 +36,11 @@
   gap: inherit;
 }
 
+/** 라벨 옆에 나란히 놓이는 진행 표시. 라벨은 계속 보인다. */
 .spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
   border: 2px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
@@ -54,12 +48,18 @@
 }
 
 .spinnerSmall {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 @keyframes spin {
   to {
-    transform: translate(-50%, -50%) rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
   }
 }

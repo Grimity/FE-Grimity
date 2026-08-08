@@ -1,35 +1,36 @@
-import IconComponent from "@/components/Asset/Icon";
+import Tab from "@/components/common/SegmentedControl/Tab/Tab";
+
+import { useDeviceStore } from "@/states/deviceStore";
 
 import styles from "@/components/Board/BoardAll/TabNavigation/TabNavigation.module.scss";
 
 interface TabNavigationProps {
   currentType: string;
-  onTabChange: (type: "all" | "question" | "feedback") => void;
+  onTabChange: (type: "all" | "normal" | "question" | "feedback") => void;
 }
 
+const TABS = [
+  { type: "all", label: "전체" },
+  { type: "normal", label: "일반" },
+  { type: "question", label: "질문" },
+  { type: "feedback", label: "피드백" },
+] as const;
+
 export default function TabNavigation({ currentType, onTabChange }: TabNavigationProps) {
+  const { isMobile } = useDeviceStore();
+
   return (
-    <section className={styles.types}>
-      <button
-        className={`${styles.type} ${currentType === "all" ? styles.active : ""}`}
-        onClick={() => onTabChange("all")}
-      >
-        전체
-      </button>
-      <IconComponent name="dot" size={3} />
-      <button
-        className={`${styles.type} ${currentType === "question" ? styles.active : ""}`}
-        onClick={() => onTabChange("question")}
-      >
-        질문
-      </button>
-      <IconComponent name="dot" size={3} />
-      <button
-        className={`${styles.type} ${currentType === "feedback" ? styles.active : ""}`}
-        onClick={() => onTabChange("feedback")}
-      >
-        피드백
-      </button>
+    <section className={styles.types} role="tablist">
+      {TABS.map(({ type, label }) => (
+        <Tab
+          key={type}
+          size={isMobile ? "sm" : "lg"}
+          title={label}
+          showNumber={false}
+          active={currentType === type}
+          onClick={() => onTabChange(type)}
+        />
+      ))}
     </section>
   );
 }

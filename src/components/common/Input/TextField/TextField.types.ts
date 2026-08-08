@@ -11,11 +11,12 @@ export type TextFieldStatus = "default" | "error" | "success" | "disabled";
 
 export interface TextFieldProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "size" | "type" | "children"
+  "size" | "type" | "children" | "prefix"
 > {
   variant?: TextFieldVariant;
   size?: TextFieldSize;
   status?: TextFieldStatus;
   maxCount?: number;
+  prefix?: React.ReactNode;
   onClear?: () => void;
 }

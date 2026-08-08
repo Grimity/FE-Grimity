@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
+import type { ActionMenuDisplayMode } from "@/components/common/Navigation/ActionMenu/ActionMenu.types";
+
 export type UserItemType =
   | "default"
   | "id"
@@ -70,10 +73,20 @@ export interface UserItemProps {
   commentText?: string;
   mentionName?: string;
   likeCount?: string;
+  isLiked?: boolean;
   isAuthor?: boolean;
   onLikeClick?: () => void;
   onReplyClick?: () => void;
   onMenuClick?: () => void;
+
+  /**
+   * comment 계열 전용. 항목을 넘기면 더보기 버튼에 직접 붙은 메뉴가 열린다.
+   * (넘기지 않으면 `onMenuClick`만 호출하고 메뉴는 호출하는 쪽에서 그린다)
+   */
+  menuItems?: MenuItem[];
+  menuOpen?: boolean;
+  onMenuOpenChange?: (open: boolean) => void;
+  menuDisplayMode?: ActionMenuDisplayMode;
 
   onClick?: () => void;
 

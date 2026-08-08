@@ -14,6 +14,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
       size = "md",
       status = "default",
       maxCount,
+      prefix,
       onClear,
       className,
       disabled,
@@ -30,6 +31,10 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
     const [isEmpty, setIsEmpty] = useState(
       typeof defaultValue === "string" ? defaultValue.length === 0 : true,
     );
+
+    const controlledLength = rest.value !== undefined ? String(rest.value).length : null;
+    const currentCount = controlledLength ?? charCount;
+    const currentIsEmpty = controlledLength !== null ? controlledLength === 0 : isEmpty;
 
     const isDisabled = disabled || status === "disabled";
     const isSearch = variant === "search";
@@ -76,8 +81,9 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
 
     const wrapperClass = clsx(
       baseStyles.wrapper,
-      !isSearch && !isTitle && baseStyles[size],
+      !isTitle && baseStyles[size],
       isSearch && styles.search,
+      isSearch && size === "md" && styles.searchMd,
       isTitle && styles.titleVariant,
       status === "error" && baseStyles.error,
       status === "success" && baseStyles.success,
@@ -99,6 +105,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
             <Icon name="magnifer" size={20} color="gray-normal"/>
           </span>
         )}
+        {prefix != null && <span className={styles.prefix}>{prefix}</span>}
         <input
           ref={inputRef}
           type="text"
@@ -109,7 +116,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
           onChange={handleChange}
           {...rest}
         />
-        {isSearch && onClear && !isEmpty && (
+        {isSearch && !currentIsEmpty && (
           <button
             type="button"
             onClick={clearContent}
@@ -122,7 +129,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
         )}
         {hasCount && (
           <div className={styles.count}>
-            <span className={styles.currentCount}>{charCount}</span>
+            <span className={styles.currentCount}>{currentCount}</span>
             <span className={styles.maxCount}>/{maxCount}</span>
           </div>
         )}

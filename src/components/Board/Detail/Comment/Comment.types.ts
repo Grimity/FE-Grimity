@@ -3,6 +3,7 @@ import { PostsCommentsResponse } from "@/api/posts-comments/getPostsComments";
 export interface PostCommentProps {
   postId: string;
   postWriterId: string;
+  commentCount?: number;
   commentsData?: PostsCommentsResponse;
 }
 

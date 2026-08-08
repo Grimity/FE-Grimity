@@ -1,85 +1,159 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
-.container {
-  padding: 40px 16px;
-  width: 100%;
-  height: 100%;
+.page {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  width: 100%;
 
-  @include Size("mobile") {
-    padding-top: 16px;
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  @include Size("tablet") {
-    padding-top: 32px;
-  }
-
-  .center {
-    max-width: 880px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-
-    .header {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .title {
-        @include Title2;
-        @include Drag;
-
-        @include Size("mobile") {
-          @include Title3;
-        }
-      }
-    }
-
-    .categorys {
-      display: flex;
-      gap: 8px;
-      margin-top: 32px;
-      margin-bottom: 12px;
-
-      @include Size("mobile") {
-        margin-top: 20px;
-      }
-    }
-
-    .editor {
-      width: 100%;
-      min-height: 600px;
-      margin-top: 20px;
-
-      @include Size("mobile") {
-        min-height: 500px;
-      }
-
-      @include Size("tablet") {
-        min-height: 700px;
-      }
-    }
-
-    input[type="file"] {
-      margin-bottom: 10px;
-    }
+  @include bp.breakpoint-down("xs") {
+    // 모바일 전용 고정 GNB(52px) 높이만큼 컨텐츠를 내린다
+    padding-top: 52px;
   }
 }
 
-.buttonContainer {
+.content {
   display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  max-height: 200px;
+  flex-direction: column;
+  gap: spacing.$spacing-20;
+  width: 100%;
+  max-width: 880px;
+  padding: spacing.$spacing-48 spacing.$spacing-20 spacing.$spacing-72;
 
-  .button {
-    width: 100%;
-    max-width: 200px;
+  @include bp.breakpoint-down("xs") {
+    gap: spacing.$spacing-12;
+    padding: spacing.$spacing-8 spacing.$spacing-16 spacing.$spacing-40;
   }
+}
+
+.pageTitle {
+  @include typo.title-1;
+  color: colors.$text-gray-bold;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-32;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+  width: 100%;
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+
+  @include bp.breakpoint-down("xs") {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.categoryFilter {
+  flex-shrink: 0;
+
+  @include bp.breakpoint-down("xs") {
+    align-self: flex-start;
+  }
+}
+
+.titleField {
+  flex: 1;
+  min-width: 0;
+
+  @include bp.breakpoint-down("xs") {
+    flex: auto;
+  }
+}
+
+.editorBox {
+  display: flex;
+  flex-direction: column;
+  height: 320px;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+
+  // 에디터 자체 포커스 링을 제거했으므로 컨테이너가 포커스를 표시한다.
+  // iframe 포커스는 :focus-within으로, 본문 편집 포커스는 TinyMCE가 붙이는 클래스로 잡는다
+  &:focus-within {
+    border-color: colors.$status-info;
+  }
+
+  &:has(:global(.tox-edit-area--focus)) {
+    border-color: colors.$status-info;
+  }
+
+  @include bp.breakpoint-down("xs") {
+    height: 400px;
+  }
+}
+
+.editorArea {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+
+  :global(.tox-tinymce) {
+    height: 100% !important;
+    border: none;
+    border-radius: 0;
+  }
+
+  // 포커스 시 스킨이 그리는 파란 테두리 제거
+  :global(.tox .tox-edit-area::before) {
+    display: none;
+  }
+}
+
+.countRow {
+  @include typo.label-5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  flex-shrink: 0;
+  padding: spacing.$spacing-4 spacing.$spacing-16 spacing.$spacing-10;
+}
+
+.errorMessage {
+  min-width: 0;
+  color: colors.$status-negative;
+}
+
+.countGroup {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.currentCount {
+  color: colors.$text-gray-normal;
+}
+
+.maxCount {
+  color: colors.$text-gray-subtle;
+}
+
+.countError {
+  color: colors.$status-negative;
+}
+
+.submitButton {
+  width: 240px;
+}
+
+.fileInput {
+  display: none;
 }

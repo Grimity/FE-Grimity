@@ -3,6 +3,8 @@ export interface MenuItem {
   onClick?: () => void;
   borderBottom?: boolean;
   selected?: boolean;
+  /** 삭제/신고 등 위험한 동작 (텍스트 강조 색상) */
+  danger?: boolean;
 }
 
 export interface MenuProps {
