@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import DotBadge from "@/components/common/PushBadge/DotBadge/DotBadge";
 import baseStyles from "../ButtonBase.module.scss";
 import styles from "./IconButton.module.scss";
 import { IconButtonProps } from "./IconButton.types";
@@ -37,11 +38,14 @@ export default function IconButton({
       <span className={baseStyles.content}>
         {loading ? (
           <span className={`${baseStyles.spinner} ${baseStyles.spinnerSmall}`} />
+        ) : badge ? (
+          <DotBadge size="medium" position="topRight">
+            {icon}
+          </DotBadge>
         ) : (
           icon
         )}
       </span>
-      {badge && <span className={styles.badge} />}
     </button>
   );
 }

@@ -43,6 +43,8 @@ export interface UserItemProps {
   category?: string;
   message?: string;
   time?: string;
+  /** 읽음 상태 (notification 전용): true 면 카테고리·메시지를 흐리게 표시 */
+  read?: boolean;
   onClose?: () => void;
 
   /** Link */

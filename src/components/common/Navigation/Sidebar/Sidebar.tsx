@@ -184,10 +184,11 @@ export default function Sidebar({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [activeDropdown]);
 
-  const resolvedProfileActiveItem = useMemo<"liked" | "saved" | undefined>(() => {
+  const resolvedProfileActiveItem = useMemo<"liked" | "savedFeeds" | "saved" | undefined>(() => {
     if (profileActiveItem) return profileActiveItem;
     if (router.pathname !== "/mypage") return undefined;
     if (router.query.tab === "liked-feeds") return "liked";
+    if (router.query.tab === "saved-feeds") return "savedFeeds";
     if (router.query.tab === "saved-posts") return "saved";
     return undefined;
   }, [profileActiveItem, router.pathname, router.query.tab]);
@@ -199,6 +200,12 @@ export default function Sidebar({
         label: "좋아요한 그림",
         active: resolvedProfileActiveItem === "liked",
         onClick: onProfileLikedClick ?? (() => navigate("/mypage?tab=liked-feeds")),
+      },
+      {
+        icon: "gallery-fill" as IconName,
+        label: "저장한 그림",
+        active: resolvedProfileActiveItem === "savedFeeds",
+        onClick: () => navigate("/mypage?tab=saved-feeds"),
       },
       {
         icon: "bookmark-fill" as IconName,

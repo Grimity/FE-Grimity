@@ -11,7 +11,7 @@ import { timeAgo } from "@/utils/timeAgo";
 
 import { useShareModal } from "@/hooks/useShareModal";
 import { useReportModal } from "@/hooks/useReportModal";
-import { deleteSave, putSave } from "@/api/feeds/putDeleteFeedsIdSave";
+import { useFeedsSaveMutation } from "@/queries/feeds/useFeedsSaveMutation";
 import IconComponent from "@/components/Asset/Icon";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import ShareBtn from "@/components/Detail/ShareBtn/ShareBtn";
@@ -62,6 +62,7 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
     details?.author.url,
   );
   const { mutate: toggleLike } = useFeedsLikeMutation();
+  const { mutate: toggleSave } = useFeedsSaveMutation();
 
   useEffect(() => {
     if (!details) return;
@@ -149,18 +150,13 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
     );
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = () => {
     if (!isLoggedIn) {
       showToast("로그인 후 저장할 수 있어요.", "error");
       return;
     }
 
-    if (isSaved) {
-      await deleteSave(id);
-    } else {
-      await putSave(id);
-    }
-    setIsSaved(!isSaved);
+    toggleSave({ id, isSaved }, { onSuccess: () => setIsSaved(!isSaved) });
   };
 
   const handleImageClick = (index: number) => {

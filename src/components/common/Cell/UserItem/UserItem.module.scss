@@ -237,6 +237,7 @@
   gap: spacing.$spacing-8;
   flex: 1;
   min-width: 0;
+  cursor: pointer;
 }
 
 .notificationContent {
@@ -250,9 +251,17 @@
   color: colors.$text-primary-normal;
 }
 
+.notificationCategoryRead {
+  color: colors.$text-gray-normal;
+}
+
 .notificationMessage {
   @include typo.label-4;
   color: colors.$text-gray-bold;
+}
+
+.notificationMessageRead {
+  color: colors.$text-gray-subtle;
 }
 
 .notificationTime {

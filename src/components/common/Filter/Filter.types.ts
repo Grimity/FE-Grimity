@@ -17,4 +17,5 @@ export interface FilterProps {
   align?: "left" | "right";
   displayMode?: FilterDisplayMode;
   bottomSheetTitle?: string;
+  renderDropdown?: (close: () => void) => React.ReactNode;
 }

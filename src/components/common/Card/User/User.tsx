@@ -44,28 +44,30 @@ function UserCardImage({ image }: { image: UserCardImageItem }) {
         mobileSize={320}
         desktopSize={640}
       />
-      <button
-        className={clsx(styles.likeBtn, isLiked && styles.likeBtnActive)}
-        onClick={handleLikeClick}
-        aria-pressed={isLiked}
-        aria-label={isLiked ? "좋아요 취소" : "좋아요"}
-      >
-        <span className={styles.heartStack}>
-          {!isLiked && (
+      {image.url && image.onLikeClick && (
+        <button
+          className={clsx(styles.likeBtn, isLiked && styles.likeBtnActive)}
+          onClick={handleLikeClick}
+          aria-pressed={isLiked}
+          aria-label={isLiked ? "좋아요 취소" : "좋아요"}
+        >
+          <span className={styles.heartStack}>
+            {!isLiked && (
+              <Icon
+                name="heart-fill"
+                size={20}
+                color="white"
+                className={styles.heartStackBg}
+              />
+            )}
             <Icon
-              name="heart-fill"
+              name={isLiked ? "heart-fill" : "heart"}
               size={20}
-              color="white"
-              className={styles.heartStackBg}
+              className={styles.heartStackFg}
             />
-          )}
-          <Icon
-            name={isLiked ? "heart-fill" : "heart"}
-            size={20}
-            className={styles.heartStackFg}
-          />
-        </span>
-      </button>
+          </span>
+        </button>
+      )}
     </div>
   );
 }
@@ -178,9 +180,10 @@ function SearchCard({
 }
 
 function DefaultCard({
+  avatarUrl,
   nickname,
   followerCount = 0,
-  followingCount = 0,
+  followingCount,
   isFollowing: isFollowingProp,
   images = [],
   onClick,
@@ -205,9 +208,10 @@ function DefaultCard({
       <div className={styles.header}>
         <UserItem
           type="follow"
+          profileImage={avatarUrl}
           nickname={nickname}
           followerCount={followerCount.toString()}
-          followingCount={followingCount.toString()}
+          followingCount={followingCount != null ? followingCount.toString() : undefined}
         >
           {isFollowing ? (
             <OutlinedButton size="small" onClick={handleFollowClick}>
