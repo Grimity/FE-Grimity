@@ -223,10 +223,8 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
               <div className={styles.imageLeft}>
                 <ProfileImage
                   profileImage={profileImage}
-                  isMobile={isMobile}
                   isMyProfile={isMyProfile}
                   handleFileChange={handleFileChange}
-                  handleDeleteProfileImage={handleDeleteProfileImage}
                 />
                 <div className={styles.detailsContainer}>
                   <ProfileDetails

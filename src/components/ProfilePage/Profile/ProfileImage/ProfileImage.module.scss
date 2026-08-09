@@ -1,64 +1,13 @@
-@use "@/styles/globals.scss" as *;
-
-.button {
-  position: absolute;
-  cursor: pointer;
-  padding: 9px;
-  border: 1px solid $gray30;
-  background-color: $gray0;
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: $gray70;
+.profileImageContainer {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
 }
 
-.profileImageContainer {
-  width: 140px;
-  height: 140px;
-  position: relative;
-  @include Drag;
-
-  @include Size("mobile") {
-    width: 80px;
-    height: 80px;
-  }
-
-  .profileImage {
-    object-fit: cover;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid $gray30;
-    background-color: $gray0;
-
-    @include Size("mobile") {
-      border: 4px solid $gray0;
-    }
-  }
-
-  .deleteImageBtn {
-    @extend .button;
-    visibility: hidden;
-    top: 0;
-    right: 0;
-
-    @include Size("mobile") {
-      top: -16px;
-      right: -16px;
-    }
-  }
-
-  &:hover .deleteImageBtn {
-    visibility: visible;
-  }
-
-  .addProfileImage {
-    @extend .button;
-    bottom: 0;
-    right: 0;
-
-    @include Size("mobile") {
-      right: -16px;
-    }
-  }
+.editBtn {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  border: 2px solid white;
 }

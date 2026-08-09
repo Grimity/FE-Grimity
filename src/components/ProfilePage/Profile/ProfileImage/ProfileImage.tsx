@@ -1,49 +1,47 @@
-import { usePreventRightClick } from "@/hooks/usePreventRightClick";
+import { useRef } from "react";
+
+import Avatar from "@/components/common/Avatar/Avatar";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import Icon from "@/components/common/Icon/Icon";
 
 import styles from "@/components/ProfilePage/Profile/ProfileImage/ProfileImage.module.scss";
-import Icon from "@/components/Asset/IconTemp";
-import { useRef } from "react";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+
+const AVATAR_SIZE = 80;
+const DEFAULT_IMAGE = "/image/default.svg";
 
 interface ProfileImageProps {
   profileImage: string;
-  isMobile: boolean;
   isMyProfile: boolean;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeleteProfileImage: () => void;
 }
 
 export default function ProfileImage({
   profileImage,
-  isMobile,
   isMyProfile,
   handleFileChange,
-  handleDeleteProfileImage,
 }: ProfileImageProps) {
-  const imgRef = usePreventRightClick<HTMLImageElement>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUploadImage = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
+    inputRef.current?.click();
   };
 
   return (
     <div className={styles.profileImageContainer}>
-      <ResponsiveImage
-        src={profileImage}
-        width={isMobile ? 80 : 140}
-        height={isMobile ? 80 : 140}
+      <Avatar
+        src={profileImage === DEFAULT_IMAGE ? undefined : profileImage}
+        size={AVATAR_SIZE}
         alt="프로필 이미지"
-        className={styles.profileImage}
-        ref={imgRef}
       />
       {isMyProfile && (
         <>
-          <button type="button" className={styles.addProfileImage} onClick={handleUploadImage}>
-            <Icon icon="write" size="xl" />
-          </button>
+          <IconButton
+            variant="solid"
+            icon={<Icon name="pen-1" size={16} color="white" />}
+            onClick={handleUploadImage}
+            aria-label="프로필 이미지 변경"
+            className={styles.editBtn}
+          />
           <input
             ref={inputRef}
             id="upload-image"
@@ -52,15 +50,6 @@ export default function ProfileImage({
             hidden
             onChange={handleFileChange}
           />
-          {profileImage !== "/image/default.svg" && (
-            <button
-              type="button"
-              className={styles.deleteImageBtn}
-              onClick={handleDeleteProfileImage}
-            >
-              <Icon icon="close" size="xl" />
-            </button>
-          )}
         </>
       )}
     </div>
