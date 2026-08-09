@@ -150,36 +150,6 @@
         justify-content: flex-end;
         margin-top: 8px;
       }
-
-      .editFeeds {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-        height: 40px;
-        color: $gray70;
-
-        .label {
-          @include Body1;
-          color: $gray70;
-
-          @include Size("mobile") {
-            @include Label2;
-          }
-        }
-
-        @include Size("mobile") {
-          gap: 6px;
-        }
-      }
-
-      .sortWrapper {
-        position: relative;
-        height: 40px;
-      }
     }
   }
 
