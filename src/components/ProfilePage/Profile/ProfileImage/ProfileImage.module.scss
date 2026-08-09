@@ -1,3 +1,5 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+
 .profileImageContainer {
   position: relative;
   width: 80px;
@@ -9,5 +11,5 @@
   position: absolute;
   bottom: -2px;
   right: -2px;
-  border: 2px solid white;
+  border: 2px solid colors.$border-inverse;
 }
