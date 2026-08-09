@@ -1,25 +1,31 @@
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+
 import { useUserDataByUrl } from "@/api/users/getId";
 import { useUserFeeds } from "@/api/users/getIdFeeds";
 import { useUserPosts } from "@/api/users/getIdPosts";
-import Profile from "./Profile/Profile";
-import styles from "./ProfilePage.module.scss";
 import { useModalStore } from "@/states/modalStore";
-import { ProfilePageProps } from "./ProfilePage.types";
-import ProfileCard from "../Layout/ProfileCard/ProfileCard";
-import Dropdown from "../Dropdown/Dropdown";
-import Button from "../Button/Button";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import AllCard from "../Board/BoardAll/AllCard/AllCard";
-import Category from "./Profile/CategoryBar/Category/Category";
-import FeedAlbumEditor from "./FeedAlbumEditor/FeedAlbumEditor";
-import { useDragScroll } from "@/hooks/useDragScroll";
-import Icon from "@/components/Asset/IconTemp";
-import Pagination from "@/components/Pagination";
 import { useDeviceStore } from "@/states/deviceStore";
+import { useDragScroll } from "@/hooks/useDragScroll";
 import useUserBlock from "@/hooks/useUserBlock";
+
+import Profile from "./Profile/Profile";
+import { ProfilePageProps } from "./ProfilePage.types";
+import FeedAlbumEditor from "./FeedAlbumEditor/FeedAlbumEditor";
+import ResponsiveMenu from "./shared/ResponsiveMenu/ResponsiveMenu";
+
+import AllCard from "@/components/Board/BoardAll/AllCard/AllCard";
 import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
+import Icon from "@/components/common/Icon/Icon";
+import Category from "@/components/common/SegmentedControl/Category/Category";
+import Tab from "@/components/common/SegmentedControl/Tab/Tab";
+import Album from "@/components/common/Card/Album/Album";
+import Empty from "@/components/common/Empty/Empty";
+import TextButton from "@/components/common/Button/TextButton/TextButton";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import Navigation from "@/components/common/Pagination/Navigation/Navigation";
+
+import styles from "./ProfilePage.module.scss";
 
 type SortOption = "latest" | "like" | "oldest";
 
@@ -41,16 +47,12 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   const currentPage = Number(query.page) || 1;
 
   const [sortBy, setSortBy] = useState<SortOption>("latest");
-  const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"feeds" | "posts">(
     (query.tab as "feeds" | "posts") || "feeds",
   );
   const [isEditMode, setIsEditMode] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  const feedsTabRef = useRef<HTMLDivElement>(null);
-  const postsTabRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef(null);
   const categoryBarRef = useRef<HTMLDivElement>(null);
 
@@ -133,33 +135,6 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   }, [hasNextPage, isFetchingNextPage, fetchNextPage, feedsData?.pages.length]);
 
   useEffect(() => {
-    const activeTabRef = activeTab === "feeds" ? feedsTabRef : postsTabRef;
-    if (!activeTabRef.current) return;
-
-    const measureTab = () => {
-      if (!activeTabRef.current) return;
-
-      const { offsetWidth, offsetLeft } = activeTabRef.current;
-      setIndicatorStyle({ width: offsetWidth, left: offsetLeft });
-    };
-
-    const resizeObserver = new ResizeObserver(() => {
-      measureTab();
-    });
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        measureTab();
-        resizeObserver.observe(activeTabRef.current!);
-      });
-    });
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [activeTab]);
-
-  useEffect(() => {
     if (query.tab && (query.tab === "feeds" || query.tab === "posts")) {
       if (query.tab === "posts" && !isMyProfile) {
         setActiveTab("feeds");
@@ -188,10 +163,6 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
       undefined,
       { shallow: true },
     );
-  };
-
-  const handleDropdownToggle = (isOpen: boolean) => {
-    setIsDropdownOpen(isOpen);
   };
 
   const handlePageChange = (page: number) => {
@@ -228,32 +199,23 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
           {/* 기본 모드 */}
           <Profile isMyProfile={isMyProfile} id={id} url={url} />
 
-          <div className={styles.barWrapper}>
-            <div className={styles.bar}>
-              <div
-                ref={feedsTabRef}
-                className={`${styles.tab} ${activeTab === "feeds" ? styles.active : ""}`}
-                onClick={() => handleTabChange("feeds")}
-              >
-                그림<p className={styles.feedCount}>{userData?.feedCount}</p>
-              </div>
-              {isMyProfile && (
-                <div
-                  ref={postsTabRef}
-                  className={`${styles.tab} ${activeTab === "posts" ? styles.active : ""}`}
-                  onClick={() => handleTabChange("posts")}
-                >
-                  글<p className={styles.feedCount}>{userData?.postCount}</p>
-                </div>
-              )}
-              <div
-                className={styles.indicator}
-                style={{
-                  width: `${indicatorStyle.width}px`,
-                  left: `${indicatorStyle.left}px`,
-                }}
+          <div className={styles.tabBar}>
+            <Tab
+              size="lg"
+              active={activeTab === "feeds"}
+              title="그림"
+              number={userData?.feedCount}
+              onClick={() => handleTabChange("feeds")}
+            />
+            {isMyProfile && (
+              <Tab
+                size="lg"
+                active={activeTab === "posts"}
+                title="글"
+                number={userData?.postCount}
+                onClick={() => handleTabChange("posts")}
               />
-            </div>
+            )}
           </div>
 
           <div className={styles.feed}>
@@ -261,28 +223,31 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
               {activeTab === "feeds" && (
                 <section className={styles.header}>
                   <div className={styles.categoryContainer}>
-                    <div className={`${styles.categoryBar}`} ref={categoryBarRef}>
+                    <div className={styles.categoryBar} ref={categoryBarRef}>
                       <Category
-                        type={activeCategory === null ? "select" : "unselect"}
+                        active={activeCategory === null}
+                        title="전체"
                         onClick={() => handleCategoryClick(null)}
-                      >
-                        전체
-                      </Category>
+                      />
                       {userData?.albums?.map((album) => (
                         <Category
                           key={album.id}
-                          type={activeCategory === album.id ? "select" : "unselect"}
+                          active={activeCategory === album.id}
+                          title={album.name}
+                          showNumber
+                          number={album.feedCount}
                           onClick={() => handleCategoryClick(album.id)}
-                          quantity={album.feedCount}
-                        >
-                          {album.name}
-                        </Category>
+                        />
                       ))}
                     </div>
                     {isMyProfile && (
-                      <button className={styles.addCategoryBtn} onClick={handleAddCategoryClick}>
-                        <Icon icon="folder" />
-                      </button>
+                      <IconButton
+                        variant="outlined"
+                        icon={<Icon name="folder-edit" size={16} />}
+                        onClick={handleAddCategoryClick}
+                        aria-label="앨범 편집"
+                        className={styles.addCategoryBtn}
+                      />
                     )}
                   </div>
 

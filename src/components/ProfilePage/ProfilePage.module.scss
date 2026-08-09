@@ -1,5 +1,8 @@
 @use "@/styles/globals.scss" as *;
 @use "sass:color";
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
@@ -404,5 +407,23 @@
 
   &.active {
     transform: rotate(180deg);
+  }
+}
+
+.tabBar {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  padding: 0 spacing.$spacing-32;
+  max-width: $max-width-container;
+  margin: spacing.$spacing-32 auto 0;
+
+  @include bp.breakpoint-down("md") {
+    padding: 0 spacing.$spacing-16;
+  }
+
+  @include bp.breakpoint-down("xs") {
+    padding: 0;
+    margin-top: spacing.$spacing-20;
   }
 }
