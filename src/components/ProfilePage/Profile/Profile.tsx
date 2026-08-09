@@ -8,7 +8,6 @@ import { useReportModal } from "@/hooks/useReportModal";
 
 import { useMyData } from "@/api/users/getMe";
 import { useUserDataByUrl } from "@/api/users/getId";
-import { deleteMe } from "@/api/users/deleteMe";
 import { usePutUserBlock } from "@/api/users/putUserBlock";
 import { useDeleteUserBlock } from "@/api/users/deleteUserBlock";
 import { usePostChat } from "@/api/chats/postChat";
@@ -32,10 +31,6 @@ import styles from "./Profile.module.scss";
 
 export default function Profile({ isMyProfile, id, url }: ProfileProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const user_id = useAuthStore((state) => state.user_id);
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
-  const setUserId = useAuthStore((state) => state.setUserId);
   const openModal = useModalStore((state) => state.openModal);
   const { shareProfile } = useShareModal();
   const openReportModal = useReportModal();
@@ -52,7 +47,7 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
     setCoverImage,
     userData,
   );
-  const { handleFileChange, handleDeleteProfileImage } = useProfileImage(
+  const { handleFileChange } = useProfileImage(
     refetchUserData,
     setProfileImage,
     userData?.image || "/image/default.svg",
@@ -109,28 +104,8 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
     openReportModal({ refType: "USER", refId: userData.id });
   };
 
-  const handleWithdrawal = async () => {
-    openModal({
-      type: null,
-      data: {
-        title: "정말 탈퇴하시겠어요?",
-        subtitle: "계정 복구는 어려워요.",
-        confirmBtn: "탈퇴하기",
-        onClick: async () => {
-          try {
-            await deleteMe();
-            setAccessToken("");
-            setIsLoggedIn(false);
-            setUserId("");
-            showToast("회원 탈퇴 되었습니다.", "success");
-            router.push("/");
-          } catch (err) {
-            showToast("탈퇴 중 오류가 발생했습니다.", "error");
-          }
-        },
-      },
-      isComfirm: true,
-    });
+  const handleOpenAccountSettings = () => {
+    router.push("/settings/account");
   };
 
   const handleShareProfile = () => {
@@ -220,42 +195,38 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
           />
           <section className={styles.infoContainer}>
             <div className={styles.infoWrapper}>
-              <div className={styles.imageLeft}>
-                <ProfileImage
-                  profileImage={profileImage}
+              <ProfileImage
+                profileImage={profileImage}
+                isMyProfile={isMyProfile}
+                handleFileChange={handleFileChange}
+              />
+              <div className={styles.detailsContainer}>
+                <ProfileDetails
+                  userData={userData}
                   isMyProfile={isMyProfile}
-                  handleFileChange={handleFileChange}
-                />
-                <div className={styles.detailsContainer}>
-                  <ProfileDetails
-                    userData={userData}
-                    isMyProfile={isMyProfile}
-                    isMobile={isMobile}
-                    handleOpenFollowerModal={handleOpenFollowerModal}
-                    handleOpenFollowingModal={handleOpenFollowingModal}
-                  >
-                    <div className={styles.followEdit}>
-                      {isLoggedIn && (
-                        <ProfileActions
-                          isMyProfile={isMyProfile}
-                          isFollowing={userData.isFollowing}
-                          isBlocked={userData.isBlocked}
-                          isBlocking={userData.isBlocking}
-                          handleOpenEditModal={handleOpenEditModal}
-                          handleUnfollowClick={handleUnfollowClick}
-                          handleFollowClick={handleFollowClick}
-                          handleShareProfile={handleShareProfile}
-                          handleWithdrawal={handleWithdrawal}
-                          handleOpenReportModal={handleOpenReportModal}
-                          handleBlockClick={handleBlockClick}
-                          handleUnblockClick={handleUnblockClick}
-                          handleOpenBlocklistModal={handleOpenBlocklistModal}
-                          handleSendMessage={handleSendMessage}
-                        />
-                      )}
-                    </div>
-                  </ProfileDetails>
-                </div>
+                  isMobile={isMobile}
+                  handleOpenFollowerModal={handleOpenFollowerModal}
+                  handleOpenFollowingModal={handleOpenFollowingModal}
+                >
+                  {isLoggedIn && (
+                    <ProfileActions
+                      isMyProfile={isMyProfile}
+                      isFollowing={userData.isFollowing}
+                      isBlocked={userData.isBlocked}
+                      isBlocking={userData.isBlocking}
+                      handleOpenEditModal={handleOpenEditModal}
+                      handleOpenAccountSettings={handleOpenAccountSettings}
+                      handleUnfollowClick={handleUnfollowClick}
+                      handleFollowClick={handleFollowClick}
+                      handleShareProfile={handleShareProfile}
+                      handleOpenReportModal={handleOpenReportModal}
+                      handleBlockClick={handleBlockClick}
+                      handleUnblockClick={handleUnblockClick}
+                      handleOpenBlocklistModal={handleOpenBlocklistModal}
+                      handleSendMessage={handleSendMessage}
+                    />
+                  )}
+                </ProfileDetails>
               </div>
             </div>
           </section>
