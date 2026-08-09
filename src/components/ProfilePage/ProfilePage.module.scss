@@ -155,20 +155,22 @@
 
   .cardContainer {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    row-gap: 40px;
-    column-gap: 16px;
+    grid-template-columns: repeat(5, 1fr);
+    row-gap: spacing.$spacing-24;
+    column-gap: spacing.$spacing-16;
 
-    @include Size("mobile") {
-      grid-template-columns: repeat(2, 1fr);
-      row-gap: 20px;
-      column-gap: 12px;
+    @include bp.breakpoint-only("sm") {
+      grid-template-columns: repeat(4, 1fr);
     }
 
-    @include Size("tablet") {
-      grid-template-columns: repeat(3, 1fr);
-      row-gap: 30px;
-      column-gap: 16px;
+    @include bp.breakpoint-only("md") {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @include bp.breakpoint-down("xs") {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: spacing.$spacing-20;
+      column-gap: spacing.$spacing-12;
     }
   }
 }

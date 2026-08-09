@@ -286,35 +286,26 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
               )}
               {activeTab === "feeds" ? (
                 allFeeds.length === 0 ? (
-                  isMyProfile ? (
-                    <div className={styles.empty}>
-                      <p className={styles.message}>첫 그림을 업로드해보세요</p>
-                      <Link href="/write">
-                        <Button size="m" type="filled-primary">
-                          그림 업로드
-                        </Button>
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className={styles.empty}>
-                      <p className={styles.message}>아직 업로드한 그림이 없어요</p>
-                    </div>
-                  )
+                  <Empty
+                    size="xl"
+                    iconName={isMyProfile ? "illust-upload-success" : "illust-result-null"}
+                    title={isMyProfile ? "첫 그림을 업로드해보세요" : "업로드한 그림이 없어요"}
+                    buttonLabel={isMyProfile ? "그림 업로드" : undefined}
+                    onButtonClick={isMyProfile ? () => router.push("/write") : undefined}
+                  />
                 ) : (
                   <section className={styles.cardContainer}>
                     {allFeeds.map((feed, index) => (
-                      <div key={`${feed.id}-${index}`}>
-                        <ProfileCard
-                          title={feed.title}
-                          cards={feed.cards}
-                          thumbnail={feed.thumbnail}
-                          likeCount={feed.likeCount}
-                          commentCount={feed.commentCount}
-                          viewCount={feed.viewCount}
-                          createdAt={feed.createdAt}
-                          id={feed.id}
-                        />
-                      </div>
+                      <Album
+                        key={`${feed.id}-${index}`}
+                        variant="mainTitle"
+                        imageUrl={feed.thumbnail}
+                        title={feed.title}
+                        nickname={userData?.name ?? ""}
+                        likeCount={feed.likeCount}
+                        viewCount={feed.viewCount}
+                        feedHref={`/feeds/${feed.id}`}
+                      />
                     ))}
                     {hasNextPage && <div ref={loadMoreRef} />}
                   </section>
