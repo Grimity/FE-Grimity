@@ -1,109 +1,38 @@
-@use "@/styles/globals.scss" as *;
-@use "sass:color";
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
 
-.backgroundImage {
-  width: 100%;
-  height: 400px;
+.cover {
   position: relative;
-
-  @include Size("tablet") {
-    height: 300px;
-  }
-
-  @include Size("mobile") {
-    height: 200px;
-    width: 100%;
-  }
+  width: 100%;
 }
 
-.backgroundDefaultImageContainer {
-  background-color: $primary4;
-  width: 100%;
-  height: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+.thumbnail {
+  border-radius: 0;
 }
 
-.backgroundDefaultImage {
+.emptyCover {
+  width: 100%;
+  aspect-ratio: 4 / 1;
+  background-color: colors.$surface-gray-subtlest;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.backgroundAddMessage {
+.editButtons {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: spacing.$spacing-16;
+  right: spacing.$spacing-16;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  color: $gray0;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: none;
-  cursor: pointer;
-  padding: 16px 24px;
-  border-radius: 12px;
-
-  @include Sub4;
-  padding: 16px 24px;
-
-  &:hover {
-    background-color: color.adjust($gray0, $alpha: -0.6);
-  }
-}
-
-.coverBtns {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
+  gap: spacing.$spacing-8;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  .coverEditBtn {
-    border: 1px solid $gray30;
-    color: $gray70;
-    background-color: $gray0;
-    padding: 11px;
-    border-radius: 50px;
-    @include Btn2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 11px;
-    cursor: pointer;
-    width: 48px;
-    height: 48px;
-
-    @include Size("mobile") {
-      @include Btn3;
-      gap: 4px;
-      width: 40px;
-      height: 40px;
-    }
-
-    &:hover {
-      background-color: color.adjust($gray0, $lightness: 4%);
-      color: $gray50;
-    }
-
-    &:active {
-      background-color: color.adjust($gray0, $lightness: 8%);
-      color: $gray50;
-    }
-  }
 }
 
-.gradientOverlay {
-  position: absolute;
-  top: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0.4) 100%);
+.overlayBtn {
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+
+  &:hover:not(:disabled) {
+    background-color: rgba(0, 0, 0, 0.55);
+  }
 }

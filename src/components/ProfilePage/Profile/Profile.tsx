@@ -214,7 +214,7 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
           <ProfileCover
             userData={userData}
             coverImage={coverImage}
-            userId={user_id}
+            isMyProfile={isMyProfile}
             handleAddCover={handleAddCover}
             handleDeleteImage={handleDeleteImage}
           />

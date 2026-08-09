@@ -1,15 +1,18 @@
-import { usePreventRightClick } from "@/hooks/usePreventRightClick";
+import { useRef } from "react";
+
+import Thumbnail from "@/components/common/Thumbnail/Thumbnail";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import Icon from "@/components/common/Icon/Icon";
 
 import type { UserProfileResponse as UserData } from "@grimity/dto";
 
 import styles from "@/components/ProfilePage/Profile/ProfileCover/ProfileCover.module.scss";
-import Icon from "@/components/Asset/IconTemp";
-import { useRef } from "react";
 
 interface ProfileCoverProps {
   userData: UserData;
   coverImage: string;
-  userId: string;
+  isMyProfile: boolean;
   handleAddCover: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleDeleteImage: () => void;
 }
@@ -17,17 +20,14 @@ interface ProfileCoverProps {
 export default function ProfileCover({
   userData,
   coverImage,
-  userId,
+  isMyProfile,
   handleAddCover,
   handleDeleteImage,
 }: ProfileCoverProps) {
-  const imgRef = usePreventRightClick<HTMLImageElement>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUploadCover = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
+    inputRef.current?.click();
   };
 
   const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -37,45 +37,44 @@ export default function ProfileCover({
   if (!userData) return null;
 
   return (
-    <>
+    <div className={styles.cover}>
       {userData.backgroundImage ? (
-        <div className={styles.backgroundImage}>
-          <img
+        <>
+          <Thumbnail
             src={coverImage}
-            alt="backgroundImage"
-            loading="lazy"
-            style={{
-              objectFit: "cover",
-              width: "100%",
-              height: "100%",
-            }}
-            ref={imgRef}
+            alt="커버 이미지"
+            ratio="4/1"
+            className={styles.thumbnail}
           />
-          {userData.id === userId && (
-            <div className={styles.coverBtns}>
-              <button type="button" className={styles.coverEditBtn} onClick={handleUploadCover}>
-                <Icon icon="pencel" size="xl" />
-              </button>
-              <button type="button" className={styles.coverEditBtn} onClick={handleDeleteImage}>
-                <Icon icon="trash" size="xl" />
-              </button>
+          {isMyProfile && (
+            <div className={styles.editButtons}>
+              <IconButton
+                variant="solid"
+                icon={<Icon name="camera" size={16} color="white" />}
+                onClick={handleUploadCover}
+                aria-label="커버 이미지 변경"
+                className={styles.overlayBtn}
+              />
+              <IconButton
+                variant="solid"
+                icon={<Icon name="x" size={16} color="white" />}
+                onClick={handleDeleteImage}
+                aria-label="커버 이미지 삭제"
+                className={styles.overlayBtn}
+              />
             </div>
           )}
-          <div className={styles.gradientOverlay} />
-        </div>
+        </>
       ) : (
-        <div className={styles.backgroundDefaultImageContainer}>
-          {userData.id === userId && (
-            <>
-              <button
-                type="button"
-                className={styles.backgroundAddMessage}
-                onClick={handleUploadCover}
-              >
-                <Icon icon="plus" size="xl" />
-                커버 추가하기
-              </button>
-            </>
+        <div className={styles.emptyCover}>
+          {isMyProfile && (
+            <SolidButton
+              size="regular"
+              iconLeft={<Icon name="plus" size={16} />}
+              onClick={handleUploadCover}
+            >
+              커버 추가하기
+            </SolidButton>
           )}
         </div>
       )}
@@ -87,6 +86,6 @@ export default function ProfileCover({
         onChange={handleAddCover}
         onClick={handleInputClick}
       />
-    </>
+    </div>
   );
 }
