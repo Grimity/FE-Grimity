@@ -2,6 +2,7 @@
 @use "sass:color";
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/breakpoint" as bp;
 
 .container {
@@ -401,13 +402,19 @@
   }
 }
 
-.dropdownIcon {
-  margin-left: 6px;
-  transition: transform 0.3s ease-in-out;
+.sortTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  height: 40px;
+  padding: 0 spacing.$spacing-12;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: 100000px;
+  background-color: colors.$surface-base;
+  color: colors.$text-gray-normal;
+  cursor: pointer;
 
-  &.active {
-    transform: rotate(180deg);
-  }
+  @include typo.label-5;
 }
 
 .tabBar {

@@ -254,39 +254,32 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                   {allFeeds.length > 0 && (
                     <div className={styles.rightBar}>
                       {isMyProfile && (
-                        <button className={styles.editFeeds} onClick={toggleEditMode}>
-                          <Icon icon="moveAlbum" size="xl" />
-                          <span className={styles.label}>그림 정리</span>
-                        </button>
+                        <TextButton
+                          variant="assistive"
+                          size="regular"
+                          iconLeft={<Icon name="sort-horizontal" size={16} />}
+                          onClick={toggleEditMode}
+                        >
+                          그림 정리
+                        </TextButton>
                       )}
-                      <div className={styles.sortWrapper}>
-                        <Dropdown
-                          menuItems={sortOptions.map((option) => ({
-                            label: option.label,
-                            value: option.value,
-                            onClick: () => handleSortChange(option.value),
-                          }))}
-                          onOpenChange={handleDropdownToggle}
-                          trigger={
-                            <Button
-                              type="text-assistive-category"
-                              size="l"
-                              rightIcon={
-                                <Icon
-                                  className={`${styles.dropdownIcon} ${
-                                    isDropdownOpen ? styles.active : ""
-                                  }`}
-                                  icon="chevronDown"
-                                  size="xl"
-                                />
-                              }
-                            >
-                              {sortOptions.find((option) => option.value === sortBy)?.label ||
+                      <ResponsiveMenu
+                        mobileTitle="정렬"
+                        trigger={
+                          <button type="button" className={styles.sortTrigger}>
+                            <span>
+                              {sortOptions.find((option) => option.value === sortBy)?.label ??
                                 "최신순"}
-                            </Button>
-                          }
-                        />
-                      </div>
+                            </span>
+                            <Icon name="chevron-down" size={16} />
+                          </button>
+                        }
+                        items={sortOptions.map((option) => ({
+                          label: option.label,
+                          selected: sortBy === option.value,
+                          onClick: () => handleSortChange(option.value),
+                        }))}
+                      />
                     </div>
                   )}
                 </section>
