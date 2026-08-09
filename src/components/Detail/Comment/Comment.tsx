@@ -34,7 +34,7 @@ import type { CommentProps, CommentWriter } from "@/components/Detail/Comment/Co
 import styles from "@/components/Detail/Comment/Comment.module.scss";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
 
-export default function Comment({ feedId, feedWriterId, isFollowingPage }: CommentProps) {
+export default function Comment({ feedId, feedWriterId }: CommentProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
   const { data: userData, isLoading } = useMyData();
@@ -481,15 +481,13 @@ export default function Comment({ feedId, feedWriterId, isFollowingPage }: Comme
 
   return (
     <div className={styles.container}>
-      {!isFollowingPage && (
-        <CommentInput
-          feedId={feedId}
-          isLoggedIn={isLoggedIn}
-          userData={userData}
-          showToast={showToast}
-          onCommentSubmitSuccess={handleCommentSubmitSuccess}
-        />
-      )}
+      <CommentInput
+        feedId={feedId}
+        isLoggedIn={isLoggedIn}
+        userData={userData}
+        showToast={showToast}
+        onCommentSubmitSuccess={handleCommentSubmitSuccess}
+      />
       <section>{commentsData?.comments?.map((comment) => renderComment(comment))}</section>
     </div>
   );

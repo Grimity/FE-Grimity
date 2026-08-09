@@ -1,91 +1,31 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   height: 100%;
-  padding-left: 32px;
-  padding-right: 32px;
+  overflow-x: clip;
+}
 
-  @include Size("mobile") {
-    padding-left: 16px;
-    padding-right: 16px;
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  padding: spacing.$spacing-24 spacing.$spacing-20 spacing.$spacing-72;
+
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-24 spacing.$spacing-16 spacing.$spacing-48;
   }
+}
 
-  @include Size("tablet") {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .center {
-    max-width: $max-width-content;
-    height: 100%;
-    margin: 0 auto;
-  }
-
-  .emptyContainer {
-    width: 100%;
-    max-width: $max-width-container;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-
-    .messageContainer {
-      width: 100%;
-      padding: 100px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-
-      @include Size("mobile") {
-        padding: 60px 0;
-      }
-
-      .message {
-        @include Title3;
-        color: $gray70;
-
-        @include Size("mobile") {
-          @include Title4;
-        }
-      }
-      .submessage {
-        @include Sub2;
-        color: $gray50;
-        word-break: keep-all;
-
-        @include Size("mobile") {
-          width: 200px;
-          text-align: center;
-          text-wrap: wrap;
-          @include Sub4;
-        }
-      }
-    }
-
-    .recommendContainer {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-
-      .cards {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        row-gap: 30px;
-        column-gap: 20px;
-
-        @include Size("mobile") {
-          grid-template-columns: repeat(1, 1fr);
-          row-gap: 20px;
-          column-gap: 0px;
-        }
-
-        @include Size("tablet") {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-    }
-  }
+.feedContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
 }
