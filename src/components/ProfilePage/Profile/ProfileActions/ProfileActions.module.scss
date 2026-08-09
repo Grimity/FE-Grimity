@@ -1,75 +1,8 @@
-@use "@/styles/globals.scss" as *;
-@use "sass:color";
+@use "@/styles/tokens/spacing" as spacing;
 
-.button {
-  padding: 0;
-  @include Sub4;
-
-  @include Size("mobile") {
-    @include Btn2;
-  }
-}
-
-.editBtn {
-  width: 120px;
-  height: 54px;
-
-  @extend .button;
-
-  @include Size("mobile") {
-    width: 104px;
-    height: 40px;
-  }
-}
-
-.followBtn {
-  width: 95px;
-
-  @extend .button;
-
-  @include Size("mobile") {
-    width: 77px;
-  }
-}
-
-.menuBtn {
-  display: inline-flex;
-  justify-content: center;
+.actions {
+  display: flex;
   align-items: center;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  @include Drag;
-  border: 1px solid $gray30;
-  color: $gray70;
-  background-color: $gray0;
-  width: 100%;
-  padding: 17px;
-  border-radius: 12px;
-  @include Btn1;
-
-  &:hover {
-    background-color: color.adjust($gray0, $lightness: 4%);
-  }
-
-  &:active {
-    background-color: color.adjust($gray0, $lightness: 8%);
-  }
-
-  @include Size("mobile") {
-    padding: 10px;
-    border-radius: 10px;
-  }
-}
-
-.dropdown {
-  cursor: pointer;
-  position: relative;
-  width: 54px;
-  height: 54px;
-
-  @include Size("mobile") {
-    width: 40px;
-    height: 40px;
-  }
+  gap: spacing.$spacing-8;
+  flex-shrink: 0;
 }

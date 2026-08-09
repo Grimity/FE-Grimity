@@ -1,6 +1,7 @@
-import Button from "@/components/Button/Button";
-import Dropdown from "@/components/Dropdown/Dropdown";
-import Icon from "@/components/Asset/IconTemp";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import Icon from "@/components/common/Icon/Icon";
+import ResponsiveMenu from "@/components/ProfilePage/shared/ResponsiveMenu/ResponsiveMenu";
 
 import styles from "@/components/ProfilePage/Profile/ProfileActions/ProfileActions.module.scss";
 
@@ -10,10 +11,10 @@ interface ProfileActionsProps {
   isBlocked: boolean;
   isBlocking: boolean;
   handleOpenEditModal: () => void;
+  handleOpenAccountSettings: () => void;
   handleUnfollowClick: () => void;
   handleFollowClick: () => void;
   handleShareProfile: () => void;
-  handleWithdrawal: () => void;
   handleOpenReportModal: () => void;
   handleBlockClick: () => void;
   handleUnblockClick: () => void;
@@ -27,116 +28,86 @@ export default function ProfileActions({
   isBlocked,
   isBlocking,
   handleOpenEditModal,
+  handleOpenAccountSettings,
   handleUnfollowClick,
   handleFollowClick,
   handleShareProfile,
-  handleWithdrawal,
   handleOpenReportModal,
   handleBlockClick,
   handleUnblockClick,
   handleOpenBlocklistModal,
   handleSendMessage,
 }: ProfileActionsProps) {
-  const commonDropdownProps = {
-    trigger: (
-      <Button size="m" type="outlined-assistive" className={styles.menuBtn}>
-        <Icon icon="menu" size="xl" />
-      </Button>
-    ),
-  };
+  const moreTrigger = (
+    <OutlinedButton size="regular" iconOnly={<Icon name="dotmenu" size={20} />} aria-label="더보기" />
+  );
 
-  const shareMenuItem = {
-    label: "프로필 공유",
-    onClick: handleShareProfile,
-  };
-
-  const withdrawalMenuItem = {
-    label: "회원 탈퇴",
-    onClick: handleWithdrawal,
-    isDelete: true,
-  };
-
-  const reportMenuItem = {
-    label: "신고하기",
-    onClick: handleOpenReportModal,
-    isDelete: true,
-  };
-
-  const blocklistMenuItem = {
-    label: "차단 목록",
-    onClick: handleOpenBlocklistModal,
-  };
-
+  const shareMenuItem = { label: "프로필 링크 공유", onClick: handleShareProfile };
+  const messageMenuItem = { label: "메시지 보내기", onClick: handleSendMessage };
+  const reportMenuItem = { label: "신고하기", onClick: handleOpenReportModal };
   const blockMenuItem = {
-    label: isBlocking ? "차단 해제" : "차단하기",
+    label: isBlocking ? "차단해제" : "차단하기",
     onClick: isBlocking ? handleUnblockClick : handleBlockClick,
-  };
-
-  const messageMenuItem = {
-    label: "메시지 보내기",
-    onClick: handleSendMessage,
   };
 
   if (isMyProfile) {
     return (
-      <>
-        <Button type="outlined-assistive" className={styles.editBtn} onClick={handleOpenEditModal}>
+      <div className={styles.actions}>
+        <OutlinedButton size="regular" onClick={handleOpenEditModal}>
           프로필 편집
-        </Button>
-
-        <div className={styles.dropdown}>
-          <Dropdown
-            {...commonDropdownProps}
-            menuItems={[shareMenuItem, blocklistMenuItem, withdrawalMenuItem]}
-          />
-        </div>
-      </>
+        </OutlinedButton>
+        <ResponsiveMenu
+          trigger={moreTrigger}
+          mobileTitle="더보기"
+          items={[
+            { label: "내 계정 설정", onClick: handleOpenAccountSettings },
+            { label: "차단 목록", onClick: handleOpenBlocklistModal },
+          ]}
+        />
+      </div>
     );
   }
 
   if (isBlocked) {
     return (
-      <div className={styles.dropdown}>
-        <Dropdown
-          {...commonDropdownProps}
-          menuItems={[shareMenuItem, blockMenuItem, reportMenuItem]}
+      <div className={styles.actions}>
+        <ResponsiveMenu
+          trigger={moreTrigger}
+          mobileTitle="더보기"
+          items={[shareMenuItem, reportMenuItem]}
         />
       </div>
     );
   }
 
-  if (isFollowing) {
+  if (isBlocking) {
     return (
-      <>
-        <Button
-          className={styles.followBtn}
-          type="outlined-assistive"
-          onClick={handleUnfollowClick}
-        >
-          팔로잉
-        </Button>
-
-        <div className={styles.dropdown}>
-          <Dropdown
-            {...commonDropdownProps}
-            menuItems={[shareMenuItem, messageMenuItem, blockMenuItem, reportMenuItem]}
-          />
-        </div>
-      </>
+      <div className={styles.actions}>
+        <ResponsiveMenu
+          trigger={moreTrigger}
+          mobileTitle="더보기"
+          items={[shareMenuItem, blockMenuItem, reportMenuItem]}
+        />
+      </div>
     );
   }
 
   return (
-    <>
-      <Button className={styles.followBtn} type="filled-primary" onClick={handleFollowClick}>
-        팔로우
-      </Button>
-      <div className={styles.dropdown}>
-        <Dropdown
-          {...commonDropdownProps}
-          menuItems={[shareMenuItem, messageMenuItem, blockMenuItem, reportMenuItem]}
-        />
-      </div>
-    </>
+    <div className={styles.actions}>
+      {isFollowing ? (
+        <OutlinedButton size="regular" onClick={handleUnfollowClick}>
+          팔로잉 중
+        </OutlinedButton>
+      ) : (
+        <SolidButton size="regular" onClick={handleFollowClick}>
+          팔로우
+        </SolidButton>
+      )}
+      <ResponsiveMenu
+        trigger={moreTrigger}
+        mobileTitle="더보기"
+        items={[shareMenuItem, messageMenuItem, blockMenuItem, reportMenuItem]}
+      />
+    </div>
   );
 }
