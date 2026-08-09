@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { useModalStore } from "@/states/modalStore";
 import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
 import UserItem from "@/components/common/Cell/UserItem/UserItem";
@@ -51,14 +53,6 @@ export default function ProfileDetails({
     return linkName;
   };
 
-  const handleLinkClick = (link: string) => {
-    if (EMAIL_PATTERN.test(link)) {
-      copyToClipboard(link, "이메일 주소가 복사되었습니다.");
-      return;
-    }
-    window.open(link, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
@@ -81,12 +75,24 @@ export default function ProfileDetails({
       <div className={styles.linkContainer}>
         {userData.links.slice(0, MAX_VISIBLE_LINKS).map(({ linkName, link }, index) => (
           <div key={index} className={styles.linkWrapper}>
-            <UserItem
-              type="link"
-              brandIcon={<Icon name={ICON_MAP_KO[linkName] || "link"} size={20} />}
-              siteName={displayName(linkName, link)}
-              onClick={() => handleLinkClick(link)}
-            />
+            <Link
+              title={link}
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                if (EMAIL_PATTERN.test(link)) {
+                  e.preventDefault();
+                  copyToClipboard(link, "이메일 주소가 복사되었습니다.");
+                }
+              }}
+            >
+              <UserItem
+                type="link"
+                brandIcon={<Icon name={ICON_MAP_KO[linkName] || "link"} size={20} />}
+                siteName={displayName(linkName, link)}
+              />
+            </Link>
             {index === MAX_VISIBLE_LINKS - 1 && userData.links.length > MAX_VISIBLE_LINKS && (
               <span
                 className={styles.moreLinksText}
