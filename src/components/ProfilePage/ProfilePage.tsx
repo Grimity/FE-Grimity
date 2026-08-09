@@ -314,14 +314,12 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                 isMyProfile && (
                   <section>
                     {!postsData || postsData.length === 0 ? (
-                      <div className={styles.empty}>
-                        <p className={styles.message}>첫 글을 업로드해보세요</p>
-                        <Link href="/board">
-                          <Button size="m" type="filled-primary">
-                            자유게시판 바로가기
-                          </Button>
-                        </Link>
-                      </div>
+                      <Empty
+                        size="xl"
+                        title="첫 글을 업로드해보세요"
+                        buttonLabel="글 업로드"
+                        onButtonClick={() => router.push("/board")}
+                      />
                     ) : (
                       <>
                         <div className={styles.postContainer}>
@@ -329,14 +327,15 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                             <AllCard key={post.id} post={post} case="my-posts" />
                           ))}
                         </div>
-                        <section className={styles.pagination}>
-                          <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            postsLength={postsData.length}
-                            onPageChange={handlePageChange}
-                          />
-                        </section>
+                        {totalPages > 1 && (
+                          <section className={styles.pagination}>
+                            <Navigation
+                              currentPage={currentPage}
+                              totalPages={totalPages}
+                              onPageChange={handlePageChange}
+                            />
+                          </section>
+                        )}
                       </>
                     )}
                   </section>
