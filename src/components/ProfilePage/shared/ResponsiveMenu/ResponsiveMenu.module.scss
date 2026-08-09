@@ -1,0 +1,13 @@
+.triggerWrap {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.desktopMenu {
+  min-width: 160px;
+}
