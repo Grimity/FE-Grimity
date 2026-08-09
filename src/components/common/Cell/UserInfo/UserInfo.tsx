@@ -19,6 +19,8 @@ export default function UserInfo({
   followerCount,
   showFollowing = false,
   followingCount,
+  onFollowerClick,
+  onFollowingClick,
   className,
 }: UserInfoProps) {
   if (type === "comment") {
@@ -38,16 +40,29 @@ export default function UserInfo({
   if (type === "follow") {
     return (
       <div className={clsx(styles.userInfo, styles.follow, className)}>
-        <span className={styles.followPair}>
-          <span className={styles.followLabel}>팔로워</span>
-          <span className={styles.followCount}>{followerCount}</span>
-        </span>
-        {showFollowing && (
+        {onFollowerClick ? (
+          <button type="button" className={styles.followPair} onClick={onFollowerClick}>
+            <span className={styles.followLabel}>팔로워</span>
+            <span className={styles.followCount}>{followerCount}</span>
+          </button>
+        ) : (
           <span className={styles.followPair}>
-            <span className={styles.followLabel}>팔로잉</span>
-            <span className={styles.followCount}>{followingCount}</span>
+            <span className={styles.followLabel}>팔로워</span>
+            <span className={styles.followCount}>{followerCount}</span>
           </span>
         )}
+        {showFollowing &&
+          (onFollowingClick ? (
+            <button type="button" className={styles.followPair} onClick={onFollowingClick}>
+              <span className={styles.followLabel}>팔로잉</span>
+              <span className={styles.followCount}>{followingCount}</span>
+            </button>
+          ) : (
+            <span className={styles.followPair}>
+              <span className={styles.followLabel}>팔로잉</span>
+              <span className={styles.followCount}>{followingCount}</span>
+            </span>
+          ))}
       </div>
     );
   }

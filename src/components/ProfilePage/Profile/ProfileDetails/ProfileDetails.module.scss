@@ -1,117 +1,70 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
-.spaceBetween {
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: spacing.$spacing-8;
+}
+
+.headerRow {
   width: 100%;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: spacing.$spacing-16;
 }
 
-.topContainer {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  .name {
-    @include Title2;
-    color: $gray80;
-    margin-bottom: 2px;
-
-    @include Size("mobile") {
-      @include Title4;
-    }
-  }
-}
-
-.leftContainer {
+.nameContainer {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  gap: spacing.$spacing-8;
+  min-width: 0;
+}
 
-  .descriptionContainer {
-    display: flex;
-    flex-direction: column;
-  }
+.name {
+  @include typo.title-1;
+  color: colors.$text-gray-bold;
 
-  .description {
-    @include Body1;
-    color: $gray70;
-    margin-top: 12px;
-    white-space: pre-line;
+  @include bp.breakpoint-down("xs") {
+    @include typo.title-3;
   }
 }
 
-.follow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  @include Drag;
+.actionsSlot {
+  flex-shrink: 0;
 }
 
-.follower {
-  display: flex;
-  gap: 8px;
-  @include Sub4;
-  color: $gray60;
-  @include Drag;
-
-  @include Size("mobile") {
-    @include Body1;
-  }
-}
-
-.myfollower {
-  display: flex;
-  gap: 8px;
-  @include Sub4;
-  color: $gray60;
-  cursor: pointer;
-
-  @include Size("mobile") {
-    @include Body1;
-  }
-}
-
-.followerColor {
-  @include Sub4;
-  color: $gray70;
-
-  @include Size("mobile") {
-    @include Body1;
-  }
+.description {
+  @include typo.label-6;
+  color: colors.$text-gray-subtler;
+  white-space: pre-line;
 }
 
 .linkContainer {
-  margin-top: 12px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
+  gap: spacing.$spacing-12;
 
-  @include Size("mobile") {
+  @include bp.breakpoint-down("xs") {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: spacing.$spacing-6;
   }
+}
 
-  .linkWrapper {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    @include Drag;
-  }
+.linkWrapper {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+}
 
-  .link {
-    @include Label2;
-    color: $gray60;
-    cursor: pointer;
-  }
-
-  .moreLinksText {
-    @include Label2;
-    color: $secandary1;
-    cursor: pointer;
-  }
+.moreLinksText {
+  @include typo.label-6;
+  color: colors.$text-primary-normal;
+  cursor: pointer;
 }

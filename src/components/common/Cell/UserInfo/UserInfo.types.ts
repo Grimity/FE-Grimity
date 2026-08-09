@@ -21,5 +21,7 @@ export interface UserInfoProps {
   followerCount?: string;
   showFollowing?: boolean;
   followingCount?: string;
+  onFollowerClick?: () => void;
+  onFollowingClick?: () => void;
   className?: string;
 }
