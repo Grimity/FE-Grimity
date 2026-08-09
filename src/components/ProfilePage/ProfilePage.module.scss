@@ -247,21 +247,6 @@
   }
 }
 
-.empty {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  align-items: center;
-  justify-content: center;
-  padding: 100px 0;
-
-  .message {
-    @include Sub2;
-    color: $gray50;
-    @include Drag;
-  }
-}
-
 .postContainer {
   padding-top: 32px;
   padding-bottom: 40px;
