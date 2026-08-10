@@ -1,8 +1,7 @@
 @use "@/styles/globals.scss" as *;
-@use "sass:color";
 @use "@/styles/tokens/colors/semantic" as colors;
-@use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/breakpoint" as bp;
 
 .container {
@@ -19,58 +18,38 @@
     max-width: $max-width-container;
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: spacing.$spacing-56;
 
-    padding-bottom: 60px;
-
-    @include Size("mobile") {
-      padding-bottom: 40px;
+    @include bp.breakpoint-down("xs") {
+      padding-bottom: spacing.$spacing-40;
     }
 
     .header {
       width: 100%;
       display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      @include Body1;
       align-items: center;
-      margin-top: 12px;
-      margin-bottom: 16px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      row-gap: spacing.$spacing-12;
+      margin-top: spacing.$spacing-12;
+      margin-bottom: spacing.$spacing-16;
 
-      flex-wrap: nowrap;
-
-      @media (min-width: 1024px) and (max-width: 1500px) {
-        flex-wrap: wrap;
-        row-gap: 12px;
-      }
-
-      @include Size("mobile") {
-        height: auto;
+      @include bp.breakpoint-down("xs") {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: spacing.$spacing-8;
       }
 
       .categoryContainer {
         display: flex;
-        flex-direction: row;
         align-items: center;
         min-width: 0;
         flex: 1 1 auto;
-        min-width: 0;
         max-width: 100%;
-        margin-right: 8px;
-        width: auto;
-        gap: 8px;
+        gap: spacing.$spacing-8;
 
-        @media (min-width: 1024px) and (max-width: 1500px) {
-          max-width: calc(100% - 220px);
+        @include bp.breakpoint-down("xs") {
           width: 100%;
-          margin-right: 0;
-        }
-
-        @include Size("mobile") {
-          width: 100%;
-          margin-right: 0;
           justify-content: space-between;
         }
       }
@@ -79,14 +58,11 @@
         min-width: 0;
         overflow-x: auto;
         display: flex;
-        flex-direction: row;
-        justify-content: baseline;
         align-items: center;
-        gap: 8px;
-        width: auto;
+        gap: spacing.$spacing-8;
 
-        @include Size("mobile") {
-          gap: 4px;
+        @include bp.breakpoint-down("xs") {
+          gap: spacing.$spacing-4;
         }
 
         &::-webkit-scrollbar {
@@ -96,59 +72,23 @@
         & > * {
           flex-shrink: 0;
         }
-
-        &.active {
-          @include Drag;
-        }
       }
 
       .addCategoryBtn {
         flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border-radius: 50px;
-        padding: 14px;
-        background: none;
-        border: 1px solid $gray30;
-        color: $gray70;
-
-        svg {
-          width: 18px;
-          height: 18px;
-        }
-
-        @include Size("mobile") {
-          padding: 12px;
-          svg {
-            width: 16px;
-            height: 16px;
-          }
-        }
       }
     }
 
     .rightBar {
       display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
       align-items: center;
-      @include Body1;
-      gap: 10px;
+      gap: spacing.$spacing-10;
       flex-shrink: 0;
 
-      @media (min-width: 1024px) and (max-width: 1500px) {
-        margin-left: auto;
-        flex: 0 0 auto;
-        width: auto;
-      }
-
-      @include Size("mobile") {
-        @include Label2;
+      @include bp.breakpoint-down("xs") {
         width: 100%;
         justify-content: flex-end;
-        margin-top: 8px;
+        margin-top: spacing.$spacing-8;
       }
     }
   }
@@ -177,13 +117,13 @@
 
 .wrapper {
   width: 100%;
-  padding: 0 32px;
+  padding: 0 spacing.$spacing-32;
 }
 
 .barWrapper {
   @extend .wrapper;
 
-  @include Size("mobile") {
+  @include bp.breakpoint-down("xs") {
     padding: 0;
   }
 }
@@ -191,73 +131,55 @@
 .feed {
   @extend .wrapper;
 
-  @include Size("mobile") {
-    padding: 0 16px;
+  @include bp.breakpoint-down("xs") {
+    padding: 0 spacing.$spacing-16;
   }
 }
 
-.bar {
-  position: relative;
-  width: 100%;
-  height: 1px;
-  background: $gray30;
-  display: flex;
-  margin-top: 80px;
-  margin-bottom: 12px;
-  max-width: $max-width-container;
-  margin-left: auto;
-  margin-right: auto;
-
-  @include Drag;
-
-  .indicator {
-    position: absolute;
-    bottom: -1px;
-    height: 2px;
-    background: #000;
-    transition: width 0.3s ease, left 0.3s ease;
-    z-index: 1;
-    padding: 0 12px;
-  }
-
-  @include Size("mobile") {
-    margin-top: 20px;
-    margin-bottom: 0px;
-  }
-}
-
-.tab {
-  position: relative;
-  margin-top: -40px;
-  padding: 0 18px;
+.tabBar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: spacing.$spacing-4;
+  padding: 0 spacing.$spacing-32;
+  max-width: $max-width-container;
+  margin: spacing.$spacing-32 auto 0;
+
+  @include bp.breakpoint-down("md") {
+    padding: 0 spacing.$spacing-16;
+  }
+
+  @include bp.breakpoint-down("xs") {
+    padding: 0;
+    margin-top: spacing.$spacing-20;
+  }
+}
+
+.sortTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  height: 40px;
+  padding: 0 spacing.$spacing-12;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: 100000px;
+  background-color: colors.$surface-base;
+  color: colors.$text-gray-normal;
   cursor: pointer;
-  color: $gray70;
-  @include Sub2;
 
-  .feedCount {
-    color: $gray50;
-  }
-
-  @include Size("mobile") {
-    @include Sub4;
-    padding: 0 12px;
-  }
+  @include typo.label-5;
 }
 
 .postContainer {
-  padding-top: 32px;
-  padding-bottom: 40px;
+  padding-top: spacing.$spacing-32;
+  padding-bottom: spacing.$spacing-40;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: spacing.$spacing-20;
 
-  @include Size("mobile") {
-    padding-top: 16px;
-    padding-bottom: 16px;
+  @include bp.breakpoint-down("xs") {
+    padding-top: spacing.$spacing-16;
+    padding-bottom: spacing.$spacing-16;
   }
 }
 
@@ -279,15 +201,11 @@
 }
 
 .albumInfo {
-  margin: 24px 0;
-
-  .albumName {
-    margin-bottom: 8px;
-  }
+  margin: spacing.$spacing-24 0;
 
   .feedCount {
-    @include Body1;
-    color: $gray70;
+    @include typo.body-1-r;
+    color: colors.$text-gray-subtle;
   }
 }
 
@@ -297,12 +215,12 @@
   left: 0;
   right: 0;
   height: 64px;
-  background-color: $gray0;
+  background-color: colors.$surface-base;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 spacing.$spacing-24;
   z-index: 100;
 
   .leftActions {
@@ -313,44 +231,11 @@
   .rightActions {
     display: flex;
     align-items: center;
-    gap: 12px;
-  }
-
-  @include Size("mobile") {
-    height: 56px;
-    padding: 0 16px;
-  }
-}
-
-.sortTrigger {
-  display: inline-flex;
-  align-items: center;
-  gap: spacing.$spacing-4;
-  height: 40px;
-  padding: 0 spacing.$spacing-12;
-  border: 1px solid colors.$border-gray-subtle;
-  border-radius: 100000px;
-  background-color: colors.$surface-base;
-  color: colors.$text-gray-normal;
-  cursor: pointer;
-
-  @include typo.label-5;
-}
-
-.tabBar {
-  display: flex;
-  align-items: center;
-  gap: spacing.$spacing-4;
-  padding: 0 spacing.$spacing-32;
-  max-width: $max-width-container;
-  margin: spacing.$spacing-32 auto 0;
-
-  @include bp.breakpoint-down("md") {
-    padding: 0 spacing.$spacing-16;
+    gap: spacing.$spacing-12;
   }
 
   @include bp.breakpoint-down("xs") {
-    padding: 0;
-    margin-top: spacing.$spacing-20;
+    height: 56px;
+    padding: 0 spacing.$spacing-16;
   }
 }
