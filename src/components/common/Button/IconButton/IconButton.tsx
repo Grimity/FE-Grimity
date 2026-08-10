@@ -35,13 +35,10 @@ export default function IconButton({
         className
       )}
     >
-      {loading && (
-        <span
-          className={`${baseStyles.spinner} ${baseStyles.spinnerSmall}`}
-        />
-      )}
       <span className={baseStyles.content}>
-        {badge ? (
+        {loading ? (
+          <span className={`${baseStyles.spinner} ${baseStyles.spinnerSmall}`} />
+        ) : badge ? (
           <DotBadge size="medium" position="topRight">
             {icon}
           </DotBadge>
