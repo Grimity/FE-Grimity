@@ -1,113 +1,13 @@
-@use "@/styles/globals.scss" as *;
-
 .imageWrapper {
   height: fit-content;
-  position: relative;
   width: fit-content;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-
-  &.dragging {
-    opacity: 0.5;
-    transform: scale(1.05);
-  }
-}
-
-.thumbnail {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  cursor: pointer;
-}
-
-.image {
-  width: 240px;
-  height: 240px;
-  object-fit: contain;
-  background-color: $gray20;
-  border-radius: 18px;
-  border: 1px solid $gray30;
+  flex-shrink: 0;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
   cursor: grab;
 
   &:active {
     cursor: grabbing;
-  }
-}
-
-.imageContainer {
-  height: 100%;
-  @include Size("mobile") {
-    height: fit-content;
-  }
-
-  .fileName {
-    margin-top: 12px;
-    width: 240px;
-    @include Body1;
-    color: $gray70;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: break-word;
-  }
-}
-
-.removeImage {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  cursor: pointer;
-}
-
-.loading {
-  width: 240px;
-  height: 240px;
-  background-color: $gray0;
-  border-radius: 12px;
-  padding: 0 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 80px;
-  border: 1px solid $gray30;
-
-  .loadingMsg {
-    @include Title5;
-    color: $gray50;
-    text-align: center;
-  }
-
-  .hidden {
-    visibility: hidden;
-  }
-
-  .loader {
-    width: 100%;
-    height: 8px;
-    display: inline-block;
-    position: relative;
-    background: $gray20;
-    overflow: hidden;
-    border-radius: 0px 10px 10px 0px;
-  }
-  .loader::after {
-    border-radius: 10px 0px 0px 10px;
-    content: "";
-    box-sizing: border-box;
-    width: 0;
-    height: 8px;
-    background: $secandary1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    animation: animFw 3s linear infinite;
-  }
-
-  @keyframes animFw {
-    0% {
-      width: 0;
-    }
-    100% {
-      width: 100%;
-    }
   }
 }

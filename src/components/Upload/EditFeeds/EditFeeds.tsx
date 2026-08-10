@@ -8,10 +8,9 @@ import { useAuthStore } from "@/states/authStore";
 
 import Loader from "@/components/Layout/Loader/Loader";
 import FeedForm from "@/components/Upload/FeedForm/FeedForm";
-import FeedConfirm from "@/components/Modal/FeedConfirm";
 
 import { useToast } from "@/hooks/useToast";
-import { useModal } from "@/hooks/useModal";
+import { useFeedSubmit } from "@/hooks/useFeedSubmit";
 
 import type { FeedData } from "@/components/Upload/FeedForm/FeedForm.types";
 
@@ -29,7 +28,7 @@ export default function EditFeeds({ id }: EditFeedsProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
   const { showToast } = useToast();
-  const { openModal } = useModal();
+  const { submitFeed } = useFeedSubmit();
 
   const { data: feedData, isLoading: isFetching } = useDetails(id);
 
@@ -63,15 +62,12 @@ export default function EditFeeds({ id }: EditFeedsProps) {
   };
 
   const handleSubmit = (data: CreateFeedRequest) => {
-    openModal((close) => (
-      <FeedConfirm
-        isEditMode
-        id={id}
-        data={data}
-        close={close}
-        onSuccessCallback={() => formHandlers?.resetUnsavedChanges()}
-      />
-    ));
+    submitFeed({
+      isEditMode: true,
+      id,
+      data,
+      onSuccess: () => formHandlers?.resetUnsavedChanges(),
+    });
   };
 
   return (

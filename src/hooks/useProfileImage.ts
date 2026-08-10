@@ -6,7 +6,7 @@ import { deleteMyProfileImage } from "@/api/users/deleteMeImage";
 
 import { useToast } from "@/hooks/useToast";
 
-import { convertToWebP } from "@/utils/imageConverter";
+import { convertToWebP } from "@/utils/convertToWebP";
 import { getImageDimensions } from "@/utils/getImageDimensions";
 
 export const useProfileImage = (

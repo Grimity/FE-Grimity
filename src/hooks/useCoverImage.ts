@@ -11,7 +11,7 @@ import type { UserProfileResponse as UserData } from "@grimity/dto";
 
 import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
-import { convertToWebP } from "@/utils/imageConverter";
+import { convertToWebP } from "@/utils/convertToWebP";
 import { getImageDimensions } from "@/utils/getImageDimensions";
 
 export const useCoverImage = (

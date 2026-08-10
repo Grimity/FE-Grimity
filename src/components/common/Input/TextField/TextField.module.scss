@@ -41,10 +41,12 @@
 
 .titleVariant {
   height: auto;
+  align-items: flex-end;
+  gap: spacing.$spacing-8;
   border: none;
   border-bottom: 1px solid colors.$border-gray-subtle;
   border-radius: 0;
-  padding: 0 0 spacing.$spacing-8 0;
+  padding: 0 spacing.$spacing-12 spacing.$spacing-12;
   background-color: transparent;
 
   &:focus-within {
@@ -57,7 +59,7 @@
   color: colors.$text-gray-bold;
 
   &::placeholder {
-    color: colors.$text-gray-subtler;
+    color: colors.$text-gray-subtle;
   }
 }
 

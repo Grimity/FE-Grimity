@@ -1,426 +1,134 @@
-@use "@/styles/globals.scss" as *;
-@use "sass:color";
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .background {
   width: 100%;
   height: 100%;
-  padding-left: 32px;
-  padding-right: 32px;
+}
 
-  @include Size("mobile") {
-    width: 100%;
-    padding-left: 16px;
-    padding-right: 16px;
+// 데스크톱: 콘텐츠 940(이미지 20인셋=900), 폼은 800 밴드 가운데정렬
+// 태블릿 이하: 콘텐츠 폭을 꽉 채움(이미지=폼, 20인셋)
+.container {
+  width: 100%;
+  max-width: 940px;
+  margin: 0 auto;
+  padding: spacing.$spacing-64 spacing.$spacing-20;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-40;
+
+  @include bp.breakpoint-down("md") {
+    padding: spacing.$spacing-32 spacing.$spacing-20;
   }
 
-  @include Size("tablet") {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .container {
-    width: 100%;
-    max-width: $max-width-container;
-    margin: 0 auto;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding-top: 60px;
-    padding-bottom: 60px;
-
-    @include Size("mobile") {
-      padding-top: 16px;
-      padding-bottom: 16px;
-    }
-
-    @include Size("tablet") {
-      padding-top: 32px;
-      padding-bottom: 32px;
-    }
-
-    .uploadBtnContainer {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .sectionContainer {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-
-      @include Size("mobile") {
-        gap: 0px;
-      }
-
-      @include Size("tablet") {
-        gap: 0px;
-      }
-
-      .imageSection {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        gap: 28px;
-
-        @include Size("mobile") {
-          justify-content: flex-start;
-        }
-
-        @include Size("tablet") {
-          justify-content: flex-start;
-        }
-
-        .uploadBtn {
-          border-radius: 12px;
-          cursor: pointer;
-          @include Drag;
-        }
-
-        .imageContainer {
-          $side-padding: 64px;
-          $upload-width: 260px;
-
-          max-width: calc(100vw - $sidebar-width - $side-padding - $upload-width);
-          min-width: 0;
-          display: flex;
-          gap: 20px;
-          overflow-x: auto;
-          overflow-y: hidden;
-          white-space: nowrap;
-          padding-bottom: 8px;
-          @include Drag;
-          height: fit-content;
-
-          &::-webkit-scrollbar {
-            height: 8px;
-          }
-
-          &::-webkit-scrollbar-track {
-            background: $gray20;
-            border-radius: 10px;
-          }
-
-          &::-webkit-scrollbar-thumb {
-            background: $secandary1;
-            border-radius: 10px;
-            cursor: pointer;
-          }
-
-          &::-webkit-scrollbar-thumb:hover {
-            background: color.adjust($secandary1, $lightness: 10%);
-          }
-
-          @include Size("mobile") {
-            min-width: 0;
-            max-width: 100vw;
-
-            &::-webkit-scrollbar {
-              display: none;
-            }
-
-            &::-webkit-scrollbar-thumb {
-              display: none;
-            }
-          }
-
-          @include Size("tablet") {
-            $side-padding: 32px;
-
-            min-width: 0;
-            max-width: calc(100vw - $sidebar-width-tablet - $side-padding);
-
-            &::-webkit-scrollbar {
-              display: none;
-            }
-
-            &::-webkit-scrollbar-thumb {
-              display: none;
-            }
-          }
-        }
-
-        .imageWrapper {
-          position: relative;
-          width: fit-content;
-        }
-
-        .addBtnContainer {
-          display: flex;
-          width: 100%;
-          justify-content: center;
-          gap: 20px;
-          flex-shrink: 0;
-          height: fit-content;
-
-          &.empty {
-            gap: 0;
-          }
-        }
-      }
-
-      .imageAddBtn {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        outline: none;
-        border: none;
-        cursor: pointer;
-        @include Drag;
-        border: 1px solid $gray30;
-        color: $gray70;
-        background-color: $gray0;
-        width: 100%;
-        padding: 11px 16px;
-        border-radius: 12px;
-        @include Btn2;
-
-        &:hover {
-          background-color: color.adjust($gray0, $lightness: 4%);
-        }
-
-        &:active {
-          background-color: color.adjust($gray0, $lightness: 8%);
-        }
-      }
-
-      .writeSection {
-        max-width: $max-width-content;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        padding-top: 16px;
-        padding-bottom: 16px;
-
-        @include Size("mobile") {
-          padding-bottom: 40px;
-          margin-top: 32px;
-        }
-
-        @include Size("tablet") {
-          padding-bottom: 40px;
-          margin-top: 24px;
-        }
-
-        .bar {
-          width: 100%;
-          height: 1px;
-          background-color: $gray30;
-          margin: 24px 0;
-
-          @include Size("mobile") {
-            margin: 20px 0;
-          }
-        }
-
-        .textField {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-
-          .countTotal {
-            display: flex;
-            @include Body1;
-            color: $gray50;
-          }
-
-          .count {
-            color: $gray70;
-          }
-
-          .inputContainer {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-
-            .input {
-              width: 100%;
-              @include Title2;
-              color: $gray80;
-              border: none;
-              outline: none;
-              padding: 0;
-
-              &::placeholder {
-                color: $gray50;
-              }
-
-              @include Size("mobile") {
-                @include Sub4;
-              }
-            }
-          }
-
-          .contentContainer {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-
-            .textareaContainer {
-              width: 100%;
-              height: 200px;
-
-              @include Size("mobile") {
-                height: 170px;
-              }
-
-              .contentCount {
-                width: 100%;
-                display: flex;
-                justify-content: flex-end;
-              }
-
-              .textarea {
-                width: 100%;
-                height: 90%;
-                border: none;
-                outline: none;
-                @include Body1;
-                color: $gray70;
-                resize: none;
-
-                &::placeholder {
-                  color: $gray50;
-                }
-
-                &::-webkit-scrollbar {
-                  width: 6px;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                  background: $gray30;
-                  border-radius: 10px;
-                  cursor: pointer;
-                }
-
-                &::-webkit-scrollbar-thumb:hover {
-                  background: $gray40;
-                }
-              }
-            }
-          }
-
-          .label {
-            @include Sub3;
-            color: $gray80;
-            flex-shrink: 0;
-            @include Drag;
-          }
-
-          .tagContainer {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-
-            .tagInputContainer {
-              display: flex;
-              gap: 65px;
-
-              @include Size("mobile") {
-                flex-direction: column;
-                gap: 12px;
-              }
-
-              .inputContainer {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                gap: 16px;
-
-                .albumClick {
-                  cursor: pointer;
-                  width: fit-content;
-                }
-
-                .text {
-                  color: $gray50;
-                  @include Body1;
-
-                  &:selected {
-                    color: $gray70;
-                  }
-                }
-
-                .textSelected {
-                  color: $gray70;
-                  @include Body1;
-                }
-              }
-
-              .input {
-                width: 100%;
-                @include Body1;
-                color: $gray80;
-                border: none;
-                outline: none;
-                padding: 0;
-
-                &::placeholder {
-                  color: $gray50;
-                }
-              }
-            }
-          }
-
-          .tagList {
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-
-            .deleteTag {
-              height: 100%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              cursor: pointer;
-            }
-          }
-        }
-      }
-
-      .optionContainer {
-        display: flex;
-        align-items: center;
-        gap: 36px;
-        margin-top: 50px;
-        @include Drag;
-
-        @include Size("mobile") {
-          margin-top: 28px;
-          flex-direction: column;
-          gap: 12px;
-          align-items: flex-start;
-        }
-
-        .options {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-          @include Body1;
-          color: $gray70;
-
-          .option {
-            cursor: pointer;
-            transition: opacity 0.3s ease-in-out;
-            line-height: 0;
-          }
-        }
-      }
-    }
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-16 spacing.$spacing-16;
+    gap: spacing.$spacing-32;
   }
 }
 
-.uploadBtn {
+.pageTitle {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 spacing.$spacing-12;
+  @include typo.title-2;
+  color: colors.$text-gray-bold;
+}
+
+.imageSection {
+  width: 100%;
+}
+
+.imageRow {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-20;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  // 가로 스크롤은 유지하되 스크롤바는 육안으로 보이지 않게 숨긴다.
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari
+  }
+}
+
+.imageRowEmpty {
+  justify-content: center;
+}
+
+.imageTrack {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-20;
+  flex-shrink: 0;
+}
+
+.uploadCard {
+  flex-shrink: 0;
+}
+
+.writeSection {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-24;
+}
+
+.contentArea {
+  height: 240px;
+
+  @include bp.breakpoint-down("xs") {
+    height: 200px;
+  }
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-24;
+
+  @include bp.breakpoint-down("xs") {
+    gap: spacing.$spacing-12;
+  }
+}
+
+.label {
+  flex-shrink: 0;
+  width: 40px;
+  @include typo.subtitle-3;
+  color: colors.$text-gray-bold;
+}
+
+.tagSelect {
+  flex: 1;
+  min-width: 0;
+}
+
+.albumButton {
+  padding-left: 0;
+}
+
+.submitRow {
   display: flex;
   justify-content: center;
+
+  @include bp.breakpoint-down("xs") {
+    align-items: stretch;
+  }
+}
+
+.submitButton {
+  width: 240px;
+
+  @include bp.breakpoint-down("xs") {
+    width: 100%;
+  }
 }
