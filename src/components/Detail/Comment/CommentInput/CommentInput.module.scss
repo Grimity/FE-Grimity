@@ -1,27 +1,20 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .inputContainer {
   width: 100%;
-  margin-top: 60px;
-  margin-bottom: 32px;
+  margin-top: spacing.$spacing-10;
+  margin-bottom: spacing.$spacing-20;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: spacing.$spacing-12;
 
-  @include Size("mobile") {
-    margin-top: 40px;
+  @include bp.breakpoint-down("xs") {
+    gap: spacing.$spacing-8;
   }
+}
 
-  .writerImage {
-    object-fit: cover;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 1px solid $gray30;
-    @include Drag;
-  }
-
-  .submitBtn {
-    flex-shrink: 0;
-  }
+.field {
+  flex: 1;
+  min-width: 0;
 }

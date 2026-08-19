@@ -60,7 +60,11 @@ export default function UserItem({
   commentText,
   mentionName,
   likeCount,
+  likeActive = false,
   isAuthor,
+  replyLabel,
+  commentContent,
+  menu,
   onLikeClick,
   onReplyClick,
   onMenuClick,
@@ -412,26 +416,35 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {menu ?? (
+              <IconButton
+                variant="sm"
+                icon={<Icon name="dotmenu" size={16} />}
+                onClick={onMenuClick}
+                aria-label="메뉴"
+              />
+            )}
           </div>
-          {commentText && (
+          {(commentContent ?? commentText) && (
             <p className={clsx(styles.commentContent, styles.commentContentMd)}>
-              {commentText}
+              {commentContent ?? commentText}
             </p>
           )}
         </div>
         <div className={clsx(styles.commentActions, styles.commentActionsMd)}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(
+              styles.commentActionBtn,
+              likeActive && styles.commentActionBtnActive
+            )}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={likeActive ? "heart-fill" : "heart"}
+              size={16}
+              {...(likeActive ? {} : { color: "gray-subtle" as const })}
+            />
             {likeCount}
           </button>
           <button
@@ -440,7 +453,7 @@ export default function UserItem({
             onClick={onReplyClick}
           >
             <Icon name="chat-round" size={16} color="gray-subtle" />
-            답글달기
+            {replyLabel ?? "답글달기"}
           </button>
         </div>
       </div>
@@ -465,26 +478,35 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {menu ?? (
+              <IconButton
+                variant="sm"
+                icon={<Icon name="dotmenu" size={16} />}
+                onClick={onMenuClick}
+                aria-label="메뉴"
+              />
+            )}
           </div>
-          {commentText && (
+          {(commentContent ?? commentText) && (
             <p className={clsx(styles.commentContent, styles.commentContentXs)}>
-              {commentText}
+              {commentContent ?? commentText}
             </p>
           )}
         </div>
         <div className={clsx(styles.commentActions, styles.commentActionsXs)}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(
+              styles.commentActionBtn,
+              likeActive && styles.commentActionBtnActive
+            )}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={likeActive ? "heart-fill" : "heart"}
+              size={16}
+              {...(likeActive ? {} : { color: "gray-subtle" as const })}
+            />
             {likeCount}
           </button>
           <button
@@ -493,7 +515,7 @@ export default function UserItem({
             onClick={onReplyClick}
           >
             <Icon name="chat-round" size={16} color="gray-subtle" />
-            답글달기
+            {replyLabel ?? "답글달기"}
           </button>
         </div>
       </div>
@@ -525,29 +547,42 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {menu ?? (
+              <IconButton
+                variant="sm"
+                icon={<Icon name="dotmenu" size={16} />}
+                onClick={onMenuClick}
+                aria-label="메뉴"
+              />
+            )}
           </div>
           <p className={styles.commentPlusContent}>
-            {mentionName && (
-              <span className={styles.commentPlusMention}>
-                @{mentionName}{" "}
-              </span>
+            {commentContent ?? (
+              <>
+                {mentionName && (
+                  <span className={styles.commentPlusMention}>
+                    @{mentionName}{" "}
+                  </span>
+                )}
+                {commentText}
+              </>
             )}
-            {commentText}
           </p>
         </div>
         <div className={styles.commentPlusActions}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(
+              styles.commentActionBtn,
+              likeActive && styles.commentActionBtnActive
+            )}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={likeActive ? "heart-fill" : "heart"}
+              size={16}
+              {...(likeActive ? {} : { color: "gray-subtle" as const })}
+            />
             {likeCount}
           </button>
           <button
@@ -556,7 +591,7 @@ export default function UserItem({
             onClick={onReplyClick}
           >
             <Icon name="chat-round" size={16} color="gray-subtle" />
-            답글달기
+            {replyLabel ?? "답글달기"}
           </button>
         </div>
       </div>
@@ -588,29 +623,42 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {menu ?? (
+              <IconButton
+                variant="sm"
+                icon={<Icon name="dotmenu" size={16} />}
+                onClick={onMenuClick}
+                aria-label="메뉴"
+              />
+            )}
           </div>
           <p className={styles.commentPlusContent}>
-            {mentionName && (
-              <span className={styles.commentPlusMention}>
-                @{mentionName}{" "}
-              </span>
+            {commentContent ?? (
+              <>
+                {mentionName && (
+                  <span className={styles.commentPlusMention}>
+                    @{mentionName}{" "}
+                  </span>
+                )}
+                {commentText}
+              </>
             )}
-            {commentText}
           </p>
         </div>
         <div className={styles.commentPlusActions}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(
+              styles.commentActionBtn,
+              likeActive && styles.commentActionBtnActive
+            )}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={likeActive ? "heart-fill" : "heart"}
+              size={16}
+              {...(likeActive ? {} : { color: "gray-subtle" as const })}
+            />
             {likeCount}
           </button>
           <button
@@ -619,7 +667,7 @@ export default function UserItem({
             onClick={onReplyClick}
           >
             <Icon name="chat-round" size={16} color="gray-subtle" />
-            답글달기
+            {replyLabel ?? "답글달기"}
           </button>
         </div>
       </div>

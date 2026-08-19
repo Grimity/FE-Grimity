@@ -1,157 +1,116 @@
-@use "sass:color";
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 @use "@/styles/globals.scss" as *;
 
 .container {
   width: 100%;
+  margin-top: spacing.$spacing-32;
+}
 
-  .comment {
-    width: 100%;
-    margin-bottom: 24px;
+.commentHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+}
+
+.commentCount {
+  color: colors.$text-primary-normal;
+}
+
+.comment {
+  width: 100%;
+  margin-bottom: spacing.$spacing-24;
+}
+
+.childComments {
+  width: 100%;
+}
+
+.commentContentBody {
+  .mentionedUser {
+    color: colors.$text-primary-normal;
+    @include typo.label-3;
+    margin-right: spacing.$spacing-4;
   }
 
-  .childCommentBox {
-    width: 100%;
-    display: flex;
-    gap: 8px;
-  }
+  :global(.comment-link) {
+    color: colors.$text-primary-normal;
+    text-decoration: underline;
+    word-break: break-all;
 
-  .commentBox {
-    width: 100%;
-    display: flex;
-    gap: 12px;
-
-    @include Size("mobile") {
-      gap: 8px;
+    &:hover {
+      opacity: 0.8;
     }
-  }
-
-  .writerImage {
-    object-fit: cover;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 1px solid $gray30;
-    @include Drag;
-  }
-
-  .commentBody {
-    width: 100%;
-  }
-  .writerReply {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-  .writerLeft {
-    display: flex;
-    flex-direction: column;
-  }
-  .writerCreatedAt {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .writerName {
-    @include Label1;
-    color: $gray60;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .createdAt {
-    @include Cap2;
-    color: $gray60;
-    @include Drag;
-  }
-
-  .feedWriter {
-    @include Cap3;
-    color: $secandary1;
-    background-color: $secandary2;
-    border: 1px solid color.adjust($secandary1, $lightness: 30%);
-    border-radius: 50px;
-    padding: 3px 8px 1px;
-    @include Drag;
-  }
-
-  .commentText {
-    @include Body1;
-    color: $gray80;
-    white-space: pre-line;
-    margin-top: 2px;
-    margin-bottom: 6px;
-
-    .mentionedUser {
-      color: $secandary1;
-      @include Label1;
-      margin-right: 4px;
-    }
-
-    :global(.comment-link) {
-      color: $secandary1;
-      text-decoration: underline;
-      word-break: break-all;
-
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-  }
-
-  .likeReplyBtn {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .likeButton {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    @include Cap1;
-    color: $gray60;
-    cursor: pointer;
-    @include Drag;
-  }
-
-  .likeOnButton {
-    @extend .likeButton;
-    color: $red;
-  }
-
-  .replyBtn {
-    @include Cap2;
-    color: $gray60;
-    cursor: pointer;
-    @include Drag;
-  }
-
-  .viewReplies {
-    width: 100%;
-    margin-top: 12px;
   }
 }
 
-.replyBtnDropdown {
-  position: relative;
+.viewReplies {
+  width: 100%;
+  margin-top: spacing.$spacing-12;
+}
+
+.menuWrapper {
+  flex-shrink: 0;
+}
+
+// 답글 입력은 스레드 안에서 들여쓰기(자식 댓글 컬럼과 정렬)
+.replyInputWrap {
+  margin-top: spacing.$spacing-8;
+  padding-left: spacing.$spacing-48;
+
+  @include bp.breakpoint-down("xs") {
+    padding-left: spacing.$spacing-32;
+  }
 }
 
 .input {
-  margin-top: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: spacing.$spacing-8;
+}
 
-  .writerImage {
-    object-fit: cover;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 1px solid $gray30;
+// DS TextField(default·md)와 동일한 룩. 멘션 prefix를 필드 내부에 담는 composite
+.replyField {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  height: 52px;
+  padding: 0 spacing.$spacing-16;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-base;
+  cursor: text;
+  transition: border-color 0.15s ease;
+
+  &:focus-within {
+    border-color: colors.$status-info;
   }
+}
 
-  .submitBtn {
-    flex-shrink: 0;
+.replyMention {
+  flex-shrink: 0;
+  color: colors.$text-primary-normal;
+  @include typo.label-5;
+  white-space: nowrap;
+}
+
+.replyInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  @include typo.label-4;
+  color: colors.$text-gray-bold;
+
+  &::placeholder {
+    color: colors.$text-gray-subtle;
   }
 }

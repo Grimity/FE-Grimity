@@ -1,77 +1,51 @@
 import React, { forwardRef } from "react";
 
-import { useMyData } from "@/api/users/getMe";
-
-import TextArea from "@/components/TextArea/TextArea";
-import Button from "@/components/Button/Button";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 
 import styles from "@/components/Detail/Comment/Comment.module.scss";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
 
 type ToastType = "success" | "error" | "warning" | "information";
 
 interface ReplyInputProps {
-  isChildReply?: boolean;
+  mentionName?: string;
   replyText: string;
-  onReplyTextChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onReplyTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   isLoggedIn: boolean;
   showToast: (message: string, type: ToastType) => void;
   handleReplySubmit: () => void;
 }
 
-const ReplyInput = forwardRef<HTMLTextAreaElement, ReplyInputProps>(
+const ReplyInput = forwardRef<HTMLInputElement, ReplyInputProps>(
   (
-    {
-      isChildReply = false,
-      replyText,
-      onReplyTextChange,
-      onKeyDown,
-      isLoggedIn,
-      showToast,
-      handleReplySubmit,
-    }: ReplyInputProps,
-    ref: React.ForwardedRef<HTMLTextAreaElement>,
+    { mentionName, replyText, onReplyTextChange, onKeyDown, isLoggedIn, showToast, handleReplySubmit },
+    ref,
   ) => {
-    const { data: userData } = useMyData();
-
     return (
       <div className={styles.input}>
-        {userData && userData.image !== null ? (
-          <ResponsiveImage
-            src={userData.image}
-            width={24}
-            height={24}
-            alt="내 프로필"
-            className={styles.writerImage}
+        <label className={styles.replyField}>
+          {mentionName && <span className={styles.replyMention}>@{mentionName}</span>}
+          <input
+            ref={ref}
+            className={styles.replyInput}
+            placeholder={isLoggedIn ? "답글을 입력해주세요" : "회원만 답글 달 수 있어요!"}
+            value={replyText}
+            onChange={onReplyTextChange}
+            onKeyDown={onKeyDown}
+            onFocus={() => {
+              if (!isLoggedIn) {
+                showToast("회원만 답글 달 수 있어요!", "error");
+              }
+            }}
           />
-        ) : (
-          <ResponsiveImage
-            src="/image/default.svg"
-            width={24}
-            height={24}
-            alt="내 프로필"
-            className={styles.writerImage}
-          />
-        )}
-        <TextArea
-          ref={ref}
-          placeholder={isLoggedIn ? "답글 달기" : "회원만 답글 달 수 있어요!"}
-          value={replyText}
-          onChange={onReplyTextChange}
-          onKeyDown={onKeyDown}
-          onFocus={() => {
-            if (!isLoggedIn) {
-              showToast("회원만 답글 달 수 있어요!", "error");
-            }
-          }}
-          isReply
-        />
-        <div className={`${styles.submitBtn} ${isChildReply ? styles.childSubmitBtn : ""}`}>
-          <Button size="m" type="filled-primary" onClick={handleReplySubmit} disabled={!isLoggedIn}>
-            답글
-          </Button>
-        </div>
+        </label>
+        <SolidButton
+          size="regular"
+          onClick={handleReplySubmit}
+          disabled={!isLoggedIn || !replyText.trim()}
+        >
+          등록
+        </SolidButton>
       </div>
     );
   },

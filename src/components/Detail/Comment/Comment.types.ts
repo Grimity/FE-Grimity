@@ -3,6 +3,7 @@ import { FeedsCommentsResponse } from "@/api/feeds-comments/getFeedComments";
 export interface CommentProps {
   feedId: string;
   feedWriterId: string;
+  commentCount?: number;
   commentsData?: FeedsCommentsResponse;
   isFollowingPage?: boolean;
   isExpanded?: boolean;

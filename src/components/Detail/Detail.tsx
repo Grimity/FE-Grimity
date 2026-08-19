@@ -1,13 +1,16 @@
 import styles from "./Detail.module.scss";
 import { DetailProps } from "./Detail.types";
 import { useDetails } from "@/api/feeds/getFeedsId";
-import { useState, useEffect, useMemo } from "react";
-import Dropdown from "../Dropdown/Dropdown";
+import { useState, useEffect } from "react";
+import Icon from "@/components/common/Icon/Icon";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import Menu from "@/components/common/Navigation/Menu/Menu";
+import Heart from "@/components/common/Control/Heart/Heart";
+import UserItem from "@/components/common/Cell/UserItem/UserItem";
+import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
 import { useAuthStore } from "@/states/authStore";
 import { useToast } from "@/hooks/useToast";
-import IconComponent from "../Asset/Icon";
 import { useFeedsLikeMutation } from "@/queries/feeds/useFeedsLikeMutation";
-import Button from "../Button/Button";
 import Link from "next/link";
 import { putView } from "@/api/feeds/putIdView";
 import { deleteFeeds } from "@/api/feeds/deleteFeedsId";
@@ -19,11 +22,10 @@ import { useProfileCardHover } from "@/hooks/useProfileCardHover";
 import ProfileCardPopover from "@/components/Layout/ProfileCardPopover/ProfileCardPopover";
 import ShareBtn from "./ShareBtn/ShareBtn";
 import { timeAgo } from "@/utils/timeAgo";
-import Chip from "../Chip/Chip";
+import Tag from "@/components/common/Tag/Tag/Tag";
 import { useModalStore } from "@/states/modalStore";
 import { useShareModal } from "@/hooks/useShareModal";
 import { useReportModal } from "@/hooks/useReportModal";
-import { useFeedsSaveMutation } from "@/queries/feeds/useFeedsSaveMutation";
 import Comment from "./Comment/Comment";
 import NewFeed from "../Layout/NewFeed/NewFeed";
 import { usePreventRightClick } from "@/hooks/usePreventRightClick";
@@ -32,18 +34,13 @@ import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
 import useUserBlock from "@/hooks/useUserBlock";
 import { DetailLayout } from "@/components/Layout/DetailLayout";
 import { CONFIG } from "@/config";
-import ActionBar from "@/components/ActionBar/ActionBar";
-import { ActionBarConfig } from "@/components/ActionBar/ActionBar.types";
 
 export default function Detail({ id }: DetailProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
   const { data: details, isLoading, refetch } = useDetails(id);
-  const [isExpanded, setIsExpanded] = useState(false);
   const { showToast } = useToast();
-  const [isSaved, setIsSaved] = useState(false);
   const { mutate: toggleLike } = useFeedsLikeMutation();
-  const { mutate: toggleSave } = useFeedsSaveMutation();
   const [viewCounted, setViewCounted] = useState(false);
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const imgRef = usePreventRightClick<HTMLImageElement>();
@@ -63,10 +60,6 @@ export default function Detail({ id }: DetailProps) {
   });
 
   const { pathname } = useRouter();
-
-  const handleShowMore = () => {
-    setIsExpanded(!isExpanded);
-  };
 
   const handleDelete = async () => {
     if (!id) return;
@@ -108,15 +101,6 @@ export default function Detail({ id }: DetailProps) {
     }
   };
 
-  const handleSaveClick = () => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 저장할 수 있어요.", "error");
-      return;
-    }
-
-    toggleSave({ id, isSaved }, { onSuccess: () => setIsSaved(!isSaved) });
-  };
-
   const handleImageClick = (index: number) => {
     setViewerIndex(index);
   };
@@ -132,57 +116,11 @@ export default function Detail({ id }: DetailProps) {
     openReportModal({ refType: "FEED", refId: details.author.id });
   };
 
-  const actionBarConfig: ActionBarConfig = useMemo(
-    () => ({
-      like: {
-        isLiked: details?.isLike ?? false,
-        count: details?.likeCount ?? 0,
-        iconNameOn: "detailLikeOn",
-        iconNameOff: "detailLikeOff",
-        onToggle: handleLikeClick,
-        allowSelfLike: false,
-      },
-      save: {
-        isSaved,
-        iconNameOn: "detailSaveOn",
-        iconNameOff: "detailSaveOff",
-        onToggle: handleSaveClick,
-      },
-      dropdown: {
-        menuItems:
-          user_id === details?.author.id || !isLoggedIn
-            ? [{ label: "공유하기", onClick: handleOpenShareModal }]
-            : [
-                { label: "공유하기", onClick: handleOpenShareModal },
-                { label: "신고하기", onClick: handleOpenReportModal, isDelete: true },
-              ],
-        isMobile: true,
-      },
-    }),
-    [
-      details?.isLike,
-      details?.likeCount,
-      isSaved,
-      user_id,
-      details?.author.id,
-      isLoggedIn,
-      handleLikeClick,
-      handleSaveClick,
-      handleOpenShareModal,
-      handleOpenReportModal,
-    ],
-  );
-
   useEffect(() => {
     refetch();
   }, [pathname]);
 
   useAuthRefresh();
-
-  useEffect(() => {
-    if (!details) return;
-    setIsSaved(details.isSave ?? false);
-  }, [details]);
 
   // 새로고침 조회수 증가
   useEffect(() => {
@@ -215,135 +153,65 @@ export default function Detail({ id }: DetailProps) {
       <DetailLayout.Content>
         {details && (
           <>
-            <section className={styles.header}>
-              <div className={styles.profileLeft}>
-                <Link href={`/${details.author.url}`}>
-                  {details.author.image !== null ? (
-                    <ResponsiveImage
-                      src={details.author.image}
-                      alt={details.author.name}
-                      className={styles.authorImage}
-                      width={40}
-                      height={40}
-                      style={{ objectFit: "cover" }}
-                      ref={imgRef}
-                      desktopSize={300}
-                      mobileSize={300}
-                    />
-                  ) : (
-                    <ResponsiveImage
-                      src="/image/default.svg"
-                      width={40}
-                      height={40}
-                      alt="프로필 이미지"
-                      className={styles.authorImage}
-                      style={{ objectFit: "cover" }}
-                      ref={imgRef}
-                      desktopSize={300}
-                      mobileSize={300}
+            <span
+              ref={targetRef as React.RefObject<HTMLSpanElement>}
+              {...triggerProps}
+              className={styles.header}
+            >
+              <UserItem
+                type="default"
+                profileImage={details.author.image ?? undefined}
+                nickname={details.author.name}
+                onClick={() => router.push(`/${details.author.url}`)}
+              >
+                <div className={styles.headerActions} onClick={(e) => e.stopPropagation()}>
+                  {isLoggedIn && (
+                    <Menu
+                      align="right"
+                      trigger={
+                        <IconButton
+                          variant="sm"
+                          icon={<Icon name="dotmenu" size={24} color="gray-bold" />}
+                          aria-label="더보기"
+                        />
+                      }
+                      items={
+                        user_id === details.author.id
+                          ? [
+                              { label: "수정하기", onClick: handleOpenEditPage },
+                              { label: "삭제하기", onClick: handleDelete },
+                            ]
+                          : [
+                              { label: "신고하기", onClick: handleOpenReportModal },
+                              {
+                                label: "프로필로 이동",
+                                onClick: () => router.push(`/${details.author.url}`),
+                              },
+                            ]
+                      }
                     />
                   )}
-                </Link>
-                <div className={styles.authorInfo}>
-                  <span ref={targetRef as React.RefObject<HTMLSpanElement>} {...triggerProps}>
-                    <Link href={`/${details.author.url}`}>
-                      <p className={styles.authorName}>{details.author.name}</p>
-                    </Link>
-                  </span>
-                  <div className={styles.stats}>
-                    <p className={styles.createdAt}>{timeAgo(details.createdAt)}</p>
-                    <div className={styles.stat}>
-                      <IconComponent name="detailLikeCount" size={16} />
-                      {details.likeCount}
-                    </div>
-                    <div className={styles.stat}>
-                      <IconComponent name="detailViewCount" size={16} />
-                      {details.viewCount}
-                    </div>
-                  </div>
+                  <ShareBtn feedId={id} title={details.title} image={details.cards[0]} />
                 </div>
-              </div>
-              <div className={styles.dropdownContainer}>
-                {isLoggedIn &&
-                  (user_id === details.author.id ? (
-                    <div className={styles.dropdown}>
-                      <Dropdown
-                        trigger={<IconComponent name="meatball" padding={8} size={24} isBtn />}
-                        menuItems={[
-                          {
-                            label: "수정하기",
-                            onClick: handleOpenEditPage,
-                          },
-                          {
-                            label: "삭제하기",
-                            onClick: handleDelete,
-                            isDelete: true,
-                          },
-                        ]}
-                      />
-                    </div>
-                  ) : (
-                    <div className={styles.dropdown}>
-                      <Dropdown
-                        trigger={<IconComponent name="meatball" padding={8} size={24} isBtn />}
-                        menuItems={[
-                          {
-                            label: "신고하기",
-                            onClick: handleOpenReportModal,
-                            isDelete: true,
-                          },
-                        ]}
-                      />
-                    </div>
-                  ))}
-                <ShareBtn feedId={id} title={details.title} image={details.cards[0]} />
-              </div>
-            </section>
+              </UserItem>
+            </span>
             <section className={styles.imageGallery} ref={sectionRef}>
-              {details.cards.slice(0, 2).map((card, index) => (
+              {details.cards.map((card, index) => (
                 <div key={index} className={styles.imageWrapper} ref={divRef}>
                   <ResponsiveImage
                     src={card}
                     alt={`Card image ${index + 1}`}
                     width={880}
                     height={0}
-                    loading={index ? "lazy" : "eager"}
+                    loading={index === 0 ? "eager" : "lazy"}
                     className={styles.cardImage}
                     onClick={() => handleImageClick(index)}
                     ref={imgRef}
                     mobileSize={1200}
                     onContextMenu={(e: React.MouseEvent<HTMLImageElement>) => e.preventDefault()}
                   />
-                  {index === 1 && details.cards.length > 2 && !isExpanded && (
-                    <>
-                      <div className={styles.gradient} />
-                      <div onClick={handleShowMore} className={styles.showMore}>
-                        <Button size="l" type="filled-primary">
-                          전체 보기
-                        </Button>
-                      </div>
-                    </>
-                  )}
                 </div>
               ))}
-            </section>
-            <section ref={sectionRef}>
-              {isExpanded &&
-                details.cards.slice(2).map((card, index) => (
-                  <div key={index + 2} className={styles.imageWrapper2} ref={divRef}>
-                    <ResponsiveImage
-                      src={card}
-                      alt={`Card image ${index + 3}`}
-                      width={600}
-                      height={0}
-                      loading="lazy"
-                      className={styles.cardImage}
-                      onClick={() => handleImageClick(index + 2)}
-                      ref={imgRef}
-                      onContextMenu={(e: React.MouseEvent<HTMLImageElement>) => e.preventDefault()}
-                    />
-                  </div>
-                ))}
             </section>
             {viewerIndex !== null && (
               <ImageViewer
@@ -360,27 +228,22 @@ export default function Detail({ id }: DetailProps) {
                   className={styles.content}
                   dangerouslySetInnerHTML={{ __html: formattedContent }}
                 />
-                <div className={styles.stats}>
-                  <p className={styles.createdAt}>{timeAgo(details.createdAt)}</p>
-                  <IconComponent name="dot" size={3} />
-                  <div className={styles.stat}>
-                    <IconComponent name="commentCount" size={16} />
-                    {details.commentCount}
-                  </div>
-                  <div className={styles.stat}>
-                    <IconComponent name="viewCount" size={16} />
-                    {details.viewCount}
-                  </div>
-                </div>
+                <UserInfo
+                  type="default"
+                  showHeart
+                  heartCount={String(details.likeCount)}
+                  showView
+                  viewCount={String(details.viewCount)}
+                  showTime
+                  timeCount={timeAgo(details.createdAt)}
+                />
               </div>
 
               {details.tags.length > 0 && (
                 <div className={styles.tags}>
                   {details.tags.map((tag, index) => (
                     <Link href={`/search?tab=feed&keyword=${tag}`} key={index}>
-                      <Chip size="m" type="filled-assistive">
-                        {tag}
-                      </Chip>
+                      <Tag size="md">{tag}</Tag>
                     </Link>
                   ))}
                 </div>
@@ -389,17 +252,50 @@ export default function Detail({ id }: DetailProps) {
 
             {!details?.author.isBlocked && (
               <>
-                <ActionBar
-                  config={actionBarConfig}
-                  isAuthor={user_id === details.author.id}
-                  className={styles.boardActionBar}
-                />
+                <div className={styles.actionBar}>
+                  <div className={styles.actionLeft}>
+                    <div className={styles.actionStat}>
+                      <Heart active={details.isLike ?? false} onClick={handleLikeClick} />
+                      <span className={styles.actionCount}>{details.likeCount}</span>
+                    </div>
+                    <div className={styles.actionStat}>
+                      <Icon name="chat-round" size={24} color="gray-bold" />
+                      <span className={styles.actionCount}>{details.commentCount}</span>
+                    </div>
+                  </div>
+                  <Menu
+                    align="right"
+                    trigger={
+                      <IconButton
+                        variant="sm"
+                        icon={<Icon name="dotmenu" size={24} color="gray-bold" />}
+                        aria-label="더보기"
+                      />
+                    }
+                    items={
+                      user_id === details.author.id
+                        ? [
+                            { label: "공유하기", onClick: handleOpenShareModal },
+                            { label: "수정하기", onClick: handleOpenEditPage },
+                            { label: "삭제하기", onClick: handleDelete },
+                          ]
+                        : [
+                            { label: "공유하기", onClick: handleOpenShareModal },
+                            { label: "신고하기", onClick: handleOpenReportModal },
+                          ]
+                    }
+                  />
+                </div>
 
                 <DetailLayout.HorizontalAd
                   adSlot={CONFIG.MARKETING.AD_SLOTS.FEED_DETAIL_HORIZONTAL}
                 />
 
-                <Comment feedId={id} feedWriterId={details.author.id} />
+                <Comment
+                  feedId={id}
+                  feedWriterId={details.author.id}
+                  commentCount={details.commentCount}
+                />
               </>
             )}
 

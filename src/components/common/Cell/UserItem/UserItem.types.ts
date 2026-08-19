@@ -26,7 +26,7 @@ export interface UserItemProps {
 
   /** Profile */
   profileImage?: string;
-  nickname?: string;
+  nickname?: ReactNode;
   userId?: string;
 
   /** Follow info */
@@ -70,7 +70,11 @@ export interface UserItemProps {
   commentText?: string;
   mentionName?: string;
   likeCount?: string;
+  likeActive?: boolean;
   isAuthor?: boolean;
+  replyLabel?: ReactNode;
+  commentContent?: ReactNode;
+  menu?: ReactNode;
   onLikeClick?: () => void;
   onReplyClick?: () => void;
   onMenuClick?: () => void;

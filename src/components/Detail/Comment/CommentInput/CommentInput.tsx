@@ -1,15 +1,15 @@
 import { useState } from "react";
-import styles from "./CommentInput.module.scss";
-import Button from "@/components/Button/Button";
+
 import { usePostFeedsComments } from "@/api/feeds-comments/postFeedComments";
-import TextArea from "@/components/TextArea/TextArea";
-import { useDeviceStore } from "@/states/deviceStore";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import TextField from "@/components/common/Input/TextField/TextField";
+
+import styles from "./CommentInput.module.scss";
 
 interface CommentInputProps {
   feedId: string;
   isLoggedIn: boolean;
-  userData?: { image: string | null };
   showToast: (message: string, type: "error" | "success") => void;
   onCommentSubmitSuccess?: () => void;
 }
@@ -17,15 +17,13 @@ interface CommentInputProps {
 export default function CommentInput({
   feedId,
   isLoggedIn,
-  userData,
   showToast,
   onCommentSubmitSuccess,
 }: CommentInputProps) {
-  const { isMobile } = useDeviceStore();
   const [comment, setComment] = useState("");
   const { mutateAsync: postComment, isPending: isPostCommentPending } = usePostFeedsComments();
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
 
@@ -49,36 +47,20 @@ export default function CommentInput({
     }
   };
 
-  const handleEnterKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing) return;
 
     if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       handleCommentSubmit();
     }
   };
 
   return (
     <section className={styles.inputContainer}>
-      {!isMobile &&
-        (isLoggedIn && userData ? (
-          <ResponsiveImage
-            src={userData.image !== null ? userData.image : "/image/default.svg"}
-            width={40}
-            height={40}
-            alt="프로필 이미지"
-            className={styles.writerImage}
-          />
-        ) : (
-          <ResponsiveImage
-            src="/image/default.svg"
-            width={40}
-            height={40}
-            alt="프로필 이미지"
-            className={styles.writerImage}
-          />
-        ))}
-      <TextArea
-        placeholder={isLoggedIn ? "댓글 달기" : "회원만 댓글 달 수 있어요!"}
+      <TextField
+        className={styles.field}
+        placeholder={isLoggedIn ? "댓글을 입력해주세요" : "회원만 댓글 달 수 있어요!"}
         value={comment}
         onChange={handleCommentChange}
         onKeyDown={handleEnterKeyDown}
@@ -88,11 +70,13 @@ export default function CommentInput({
           }
         }}
       />
-      <div className={styles.submitBtn}>
-        <Button size="l" type="filled-primary" onClick={handleCommentSubmit} disabled={!isLoggedIn}>
-          댓글
-        </Button>
-      </div>
+      <SolidButton
+        size="large"
+        onClick={handleCommentSubmit}
+        disabled={!isLoggedIn || !comment.trim()}
+      >
+        등록
+      </SolidButton>
     </section>
   );
 }

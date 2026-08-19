@@ -20,7 +20,6 @@ import Chip from "@/components/Chip/Chip";
 import CommentInput from "@/components/Detail/Comment/CommentInput/CommentInput";
 import Comment from "@/components/Detail/Comment/Comment";
 import { useGetFeedsComments } from "@/api/feeds-comments/getFeedComments";
-import { useMyData } from "@/api/users/getMe";
 import { FollowingFeedsResponse } from "@/api/feeds/getFeedsFollowing";
 import { usePreventRightClick } from "@/hooks/usePreventRightClick";
 import { useProfileCardHover } from "@/hooks/useProfileCardHover";
@@ -37,7 +36,6 @@ interface FollowingFeedProps {
 export default function FollowingFeed({ id, commentCount, details }: FollowingFeedProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
-  const { data: myData } = useMyData();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isContentExpanded, setIsContentExpanded] = useState(false);
   const [isCommentExpanded, setIsCommentExpanded] = useState(false);
@@ -386,7 +384,6 @@ export default function FollowingFeed({ id, commentCount, details }: FollowingFe
             <CommentInput
               feedId={details.id}
               isLoggedIn={isLoggedIn}
-              userData={myData}
               showToast={showToast}
               onCommentSubmitSuccess={handleCommentSubmitSuccess}
             />

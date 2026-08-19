@@ -687,6 +687,23 @@
   }
 }
 
+// 좋아요 활성: 카운트 텍스트는 gray-bold, 하트 아이콘만 red
+.commentActionBtnActive {
+  color: colors.$text-gray-bold;
+
+  svg {
+    color: colors.$status-negative;
+  }
+
+  &:hover {
+    color: colors.$text-gray-bold;
+
+    svg {
+      color: colors.$status-negative;
+    }
+  }
+}
+
 // ============================================
 // Type: commentPlus / commentPlusxs
 // ============================================
