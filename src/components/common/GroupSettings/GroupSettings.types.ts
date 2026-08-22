@@ -15,4 +15,6 @@ export interface GroupSettingsProps extends HTMLAttributes<HTMLDivElement> {
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
   onDelete?: () => void;
   className?: string;
+  /** 지정하면 title 텍스트 대신 렌더 (예: 편집 가능한 입력 필드) */
+  children?: React.ReactNode;
 }

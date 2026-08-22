@@ -10,6 +10,7 @@ export default function GroupSettings({
   dragHandleProps,
   onDelete,
   className,
+  children,
   ...rest
 }: GroupSettingsProps) {
   const isDisabled = state === "disabled";
@@ -33,7 +34,9 @@ export default function GroupSettings({
             className={clsx(styles.penIcon, isDisabled ? styles.iconDisabled : styles.iconDefault)}
           />
         )}
-        <span className={clsx(styles.title, isDisabled && styles.titleDisabled)}>{title}</span>
+        {children ?? (
+          <span className={clsx(styles.title, isDisabled && styles.titleDisabled)}>{title}</span>
+        )}
       </div>
       {hasDelete && (
         <button

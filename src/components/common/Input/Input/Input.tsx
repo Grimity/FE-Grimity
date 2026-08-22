@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import clsx from "clsx";
 
 import Title from "@/components/common/Input/Title/Title";
@@ -52,6 +52,15 @@ export default function Input({
     }
     return 0;
   });
+
+  // 비동기로 채워지는 controlled value(예: API 응답 반영)에도 카운트가 맞도록 동기화한다.
+  useEffect(() => {
+    if (inputType === "textfield" && typeof textFieldProps?.value === "string") {
+      setCharCount(textFieldProps.value.length);
+    } else if (inputType === "textarea" && typeof textAreaProps?.value === "string") {
+      setCharCount(textAreaProps.value.length);
+    }
+  }, [inputType, textFieldProps?.value, textAreaProps?.value]);
 
   return (
     <div className={clsx(styles.input, layout === "horizontal" && styles.horizontal, className)}>

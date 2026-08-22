@@ -18,4 +18,6 @@ export interface TextFieldProps extends Omit<
   status?: TextFieldStatus;
   maxCount?: number;
   onClear?: () => void;
+  /** 입력값 앞에 고정으로 붙는 텍스트 (예: "www.grimity.com/") */
+  prefix?: string;
 }
