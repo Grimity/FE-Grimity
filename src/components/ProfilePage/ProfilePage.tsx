@@ -250,39 +250,45 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                       />
                     )}
                   </div>
-
-                  {allFeeds.length > 0 && (
-                    <div className={styles.rightBar}>
-                      {isMyProfile && (
-                        <TextButton
-                          variant="assistive"
-                          size="regular"
-                          iconLeft={<Icon name="sort-horizontal" size={16} />}
-                          onClick={toggleEditMode}
-                        >
-                          그림 정리
-                        </TextButton>
-                      )}
-                      <ResponsiveMenu
-                        mobileTitle="정렬"
-                        trigger={
-                          <button type="button" className={styles.sortTrigger}>
-                            <span>
-                              {sortOptions.find((option) => option.value === sortBy)?.label ??
-                                "최신순"}
-                            </span>
-                            <Icon name="chevron-down" size={16} />
-                          </button>
-                        }
-                        items={sortOptions.map((option) => ({
-                          label: option.label,
-                          selected: sortBy === option.value,
-                          onClick: () => handleSortChange(option.value),
-                        }))}
-                      />
-                    </div>
-                  )}
                 </section>
+              )}
+              {activeTab === "feeds" && (
+                <div className={styles.resultsBar}>
+                  <div className={styles.resultsLabel}>
+                    <span>게시물</span>
+                    <span className={styles.resultsCount}>{userData?.feedCount ?? 0}건</span>
+                  </div>
+                  <div className={styles.rightBar}>
+                    {isMyProfile && (
+                      <TextButton
+                        variant="assistive"
+                        size="regular"
+                        iconLeft={<Icon name="sort-horizontal" size={16} />}
+                        onClick={toggleEditMode}
+                        disabled={allFeeds.length === 0}
+                      >
+                        그림 정리
+                      </TextButton>
+                    )}
+                    <ResponsiveMenu
+                      mobileTitle="정렬"
+                      trigger={
+                        <button type="button" className={styles.sortTrigger}>
+                          <span>
+                            {sortOptions.find((option) => option.value === sortBy)?.label ??
+                              "최신순"}
+                          </span>
+                          <Icon name="chevron-down" size={16} />
+                        </button>
+                      }
+                      items={sortOptions.map((option) => ({
+                        label: option.label,
+                        selected: sortBy === option.value,
+                        onClick: () => handleSortChange(option.value),
+                      }))}
+                    />
+                  </div>
+                </div>
               )}
               {activeTab === "feeds" ? (
                 allFeeds.length === 0 ? (

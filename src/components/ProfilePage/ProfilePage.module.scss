@@ -18,11 +18,6 @@
     max-width: $max-width-container;
     margin-left: auto;
     margin-right: auto;
-    padding-bottom: spacing.$spacing-56;
-
-    @include bp.breakpoint-down("xs") {
-      padding-bottom: spacing.$spacing-40;
-    }
 
     .header {
       width: 100%;
@@ -79,6 +74,32 @@
       }
     }
 
+    .resultsBar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: spacing.$spacing-12;
+      margin-bottom: spacing.$spacing-12;
+
+      @include bp.breakpoint-down("xs") {
+        flex-wrap: wrap;
+      }
+    }
+
+    .resultsLabel {
+      display: flex;
+      align-items: center;
+      gap: spacing.$spacing-2;
+      color: colors.$text-gray-subtle;
+
+      @include typo.label-4;
+
+      .resultsCount {
+        color: colors.$text-gray-normal;
+      }
+    }
+
     .rightBar {
       display: flex;
       align-items: center;
@@ -98,6 +119,7 @@
     grid-template-columns: repeat(5, 1fr);
     row-gap: spacing.$spacing-24;
     column-gap: spacing.$spacing-16;
+    padding-bottom: spacing.$spacing-72;
 
     @include bp.breakpoint-only("sm") {
       grid-template-columns: repeat(4, 1fr);
@@ -109,8 +131,7 @@
 
     @include bp.breakpoint-down("xs") {
       grid-template-columns: repeat(2, 1fr);
-      row-gap: spacing.$spacing-20;
-      column-gap: spacing.$spacing-12;
+      padding-bottom: spacing.$spacing-40;
     }
   }
 }
