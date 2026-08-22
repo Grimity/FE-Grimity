@@ -2,19 +2,23 @@ import { useEffect, useState } from "react";
 import router from "next/router";
 
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { useMutation } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 
 import { useMyData } from "@/api/users/getMe";
-import { UpdateProfileConflictResponse, putMyInfo } from "@/api/users/putMe";
+import { useMeUpdateProfile } from "@/api/generated/me/me";
+import type { UpdateProfileConflictResponse } from "@/api/generated/model";
 
 import { useModalStore } from "@/states/modalStore";
 
-import TextField from "@/components/TextField/TextField";
-import IconComponent from "@/components/Asset/Icon";
-import Button from "@/components/Button/Button";
 import Loader from "@/components/Layout/Loader/Loader";
-import { SelectBox } from "@/components/SelectBox/SelectBox";
+import Input from "@/components/common/Input/Input/Input";
+import TextField from "@/components/common/Input/TextField/TextField";
+import Title from "@/components/common/Input/Title/Title";
+import Icon from "@/components/common/Icon/Icon";
+import GroupSettings from "@/components/common/GroupSettings/GroupSettings";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import TextButton from "@/components/common/Button/TextButton/TextButton";
 
 import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
@@ -30,7 +34,7 @@ interface LinkItem {
   customName?: string;
 }
 
-// 플랫폼별 기본 URL
+// 플랫폼별 기본 URL(placeholder용)
 const PLATFORM_URLS: Record<string, string> = {
   X: "x.com/",
   인스타그램: "instagram.com/",
@@ -39,6 +43,13 @@ const PLATFORM_URLS: Record<string, string> = {
   이메일: "",
   "직접 입력": "",
 };
+
+const PLATFORM_OPTIONS = Object.keys(PLATFORM_URLS);
+
+// 스킴 없이 도메인만 입력해도(placeholder가 암시하는 형태) 허용하고 내부적으로 보완한다.
+function normalizeUrl(url: string) {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
 
 export default function ProfileEdit() {
   const { data: myData, isLoading, refetch } = useMyData();
@@ -79,21 +90,23 @@ export default function ProfileEdit() {
     }
   }, [myData]);
 
-  const { mutateAsync: updateMyInfo, isPending } = useMutation({
-    mutationFn: putMyInfo,
-    onSuccess: () => {
-      showToast("프로필 정보가 변경되었습니다!", "success");
-      closeModal();
-      refetch();
-      router.reload();
-    },
-    onError: (error: AxiosError<UpdateProfileConflictResponse>) => {
-      if (error.response?.status === 409) {
-        const msg = error.response?.data?.message;
-        if (msg === "NAME") setNameError("이미 사용 중인 닉네임입니다.");
-        else if (msg === "URL") setProfileIdError("이미 사용 중인 프로필 URL입니다.");
-        else showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
-      }
+  const { mutateAsync: updateMyInfo, isPending } = useMeUpdateProfile({
+    mutation: {
+      onSuccess: () => {
+        showToast("프로필 정보가 변경되었습니다!", "success");
+        closeModal();
+        refetch();
+        router.reload();
+      },
+      onError: (error) => {
+        const axiosError = error as unknown as AxiosError<UpdateProfileConflictResponse>;
+        if (axiosError.response?.status === 409) {
+          const msg = axiosError.response?.data?.message;
+          if (msg === "NAME") setNameError("이미 사용 중인 닉네임입니다.");
+          else if (msg === "URL") setProfileIdError("이미 사용 중인 프로필 URL입니다.");
+          else showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
+        }
+      },
     },
   });
 
@@ -117,7 +130,7 @@ export default function ProfileEdit() {
     for (const l of links) {
       if (!l.linkName || !l.link) continue;
 
-      const name = l.linkName === "직접 입력" ? l.customName || "custom" : l.linkName;
+      const linkName = l.linkName === "직접 입력" ? l.customName || "custom" : l.linkName;
       const url = l.link.trim();
 
       if (l.linkName === "이메일") {
@@ -125,11 +138,12 @@ export default function ProfileEdit() {
         if (!emailRegex.test(url)) {
           return showToast("올바른 이메일 형식이 아닙니다.", "error");
         }
-        formattedLinks.push({ linkName: name, link: url });
+        formattedLinks.push({ linkName, link: url });
       } else {
+        const normalized = normalizeUrl(url);
         try {
-          new URL(url);
-          formattedLinks.push({ linkName: name, link: url });
+          new URL(normalized);
+          formattedLinks.push({ linkName, link: normalized });
         } catch {
           return showToast("올바른 URL 형식이 아닙니다.", "error");
         }
@@ -137,10 +151,12 @@ export default function ProfileEdit() {
     }
 
     updateMyInfo({
-      name: trimmedName,
-      description,
-      url: trimmedProfileId,
-      links: formattedLinks,
+      data: {
+        name: trimmedName,
+        description,
+        url: trimmedProfileId,
+        links: formattedLinks,
+      },
     });
   };
 
@@ -149,6 +165,16 @@ export default function ProfileEdit() {
     const newLinks = [...links];
     const [moved] = newLinks.splice(result.source.index, 1);
     newLinks.splice(result.destination.index, 0, moved);
+    setLinks(newLinks);
+  };
+
+  const handlePlatformChange = (index: number, platform: string) => {
+    const newLinks = [...links];
+    newLinks[index] = {
+      ...newLinks[index],
+      linkName: platform,
+      customName: platform === "직접 입력" ? "" : undefined,
+    };
     setLinks(newLinks);
   };
 
@@ -163,118 +189,137 @@ export default function ProfileEdit() {
       )}
       <div className={styles.textBtnContainer}>
         <div className={styles.textContainer}>
-          <TextField
+          <Input
             label="닉네임"
-            placeholder="프로필에 노출될 닉네임을 입력해주세요."
-            maxLength={12}
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-              if (nameError) setNameError("");
+            inputType="textfield"
+            maxCount={12}
+            helperMessage={nameError}
+            helperStatus={nameError ? "error" : "default"}
+            textFieldProps={{
+              placeholder: "프로필에 노출될 닉네임을 입력해주세요.",
+              value: name,
+              disabled: isEditingOrder,
+              onChange: (e) => {
+                setName(e.target.value);
+                if (nameError) setNameError("");
+              },
             }}
-            isError={!!nameError}
-            errorMessage={nameError}
           />
-          <div className={styles.contentContainer}>
-            <label className={styles.label} htmlFor="description">
-              자기 소개
-            </label>
-            <div className={styles.textareaContainer}>
-              <textarea
-                id="description"
-                className={styles.textarea}
-                placeholder="자유롭게 소개해주세요."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                maxLength={200}
-              />
-              {description && (
-                <div className={styles.countTotal}>
-                  <p className={styles.count}>{description.length}</p>/200
-                </div>
-              )}
-            </div>
-          </div>
-          <TextField
-            label="그리미티 URL"
-            placeholder="url을 입력해주세요."
-            maxLength={20}
-            value={profileId}
-            onChange={(e) => {
-              setProfileId(e.target.value.trim());
-              if (profileIdError) setProfileIdError("");
+          <Input
+            label="자기소개"
+            inputType="textarea"
+            textAreaProps={{
+              placeholder: "자유롭게 소개를 작성해보세요",
+              value: description,
+              maxCount: 200,
+              disabled: isEditingOrder,
+              onChange: (e) => setDescription(e.target.value),
             }}
-            isError={!!profileIdError}
-            errorMessage={profileIdError}
-            prefix="www.grimity.com/"
+          />
+          <Input
+            label="그리미티 URL"
+            inputType="textfield"
+            maxCount={20}
+            helperMessage={profileIdError}
+            helperStatus={profileIdError ? "error" : "default"}
+            textFieldProps={{
+              placeholder: "url을 입력해주세요.",
+              value: profileId,
+              disabled: isEditingOrder,
+              prefix: "www.grimity.com/",
+              onChange: (e) => {
+                setProfileId(e.target.value.trim());
+                if (profileIdError) setProfileIdError("");
+              },
+            }}
           />
           <div className={styles.linkContainer}>
             <div className={styles.editBar}>
-              <label className={styles.label}>외부 링크</label>
-              <p
-                className={`${styles.editOrderBtn} ${isEditingOrder ? styles.completeBtn : ""}`}
+              <Title text="외부 링크" />
+              <TextButton
+                variant={isEditingOrder ? "primary" : "assistive"}
+                size="regular"
                 onClick={() => setIsEditingOrder((prev) => !prev)}
               >
                 {isEditingOrder ? "완료" : "순서 편집"}
-              </p>
+              </TextButton>
             </div>
 
             <DragDropContext onDragEnd={handleLinkDragEnd}>
               <Droppable droppableId="links">
                 {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    {links.map((link, index) => {
-                      return (
-                        <Draggable
-                          key={index}
-                          draggableId={`link-${index}`}
-                          index={index}
-                          isDragDisabled={!isEditingOrder}
-                        >
-                          {(provided) => (
-                            <div
-                              className={styles.linkInputContainer}
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                            >
-                              {link.linkName === "직접 입력" ? (
-                                <div className={styles.linkName}>
-                                  <TextField
-                                    placeholder="링크 이름"
-                                    value={link.customName || ""}
-                                    onChange={(e) => {
-                                      const newLinks = [...links];
-                                      newLinks[index].customName = e.target.value;
-                                      setLinks(newLinks);
-                                    }}
-                                    isProfileEdit
-                                  />
-                                </div>
-                              ) : (
-                                <SelectBox
-                                  options={Object.keys(PLATFORM_URLS).map((k) => ({
-                                    value: k,
-                                    label: k,
-                                  }))}
-                                  value={link.linkName}
-                                  onChange={(val) => {
-                                    const newLinks = [...links];
-                                    newLinks[index] = {
-                                      ...newLinks[index],
-                                      linkName: val,
-                                      customName: val === "직접 입력" ? "" : undefined,
-                                    };
-                                    setLinks(newLinks);
-                                  }}
-                                />
-                              )}
+                  <div
+                    className={styles.linkList}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {links.map((link, index) => (
+                      <Draggable
+                        key={index}
+                        draggableId={`link-${index}`}
+                        index={index}
+                        isDragDisabled={!isEditingOrder}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            className={styles.linkRow}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                          >
+                            {link.linkName === "직접 입력" ? (
                               <TextField
+                                className={styles.linkNameField}
+                                placeholder="링크 이름"
+                                value={link.customName || ""}
+                                disabled={isEditingOrder}
+                                onChange={(e) => {
+                                  const newLinks = [...links];
+                                  newLinks[index].customName = e.target.value;
+                                  setLinks(newLinks);
+                                }}
+                              />
+                            ) : (
+                              <div className={styles.platformTrigger}>
+                                <select
+                                  className={styles.platformSelect}
+                                  disabled={isEditingOrder}
+                                  value={link.linkName}
+                                  onChange={(e) => handlePlatformChange(index, e.target.value)}
+                                  aria-label="플랫폼 선택"
+                                >
+                                  <option value="" disabled>
+                                    선택
+                                  </option>
+                                  {PLATFORM_OPTIONS.map((platform) => (
+                                    <option key={platform} value={platform}>
+                                      {platform}
+                                    </option>
+                                  ))}
+                                </select>
+                                <Icon
+                                  name="chevron-down"
+                                  size={16}
+                                  className={styles.platformSelectIcon}
+                                />
+                              </div>
+                            )}
+                            <GroupSettings
+                              className={styles.linkGroupSettings}
+                              title={link.link}
+                              state={isEditingOrder ? "enabled" : "delete"}
+                              isDragging={snapshot.isDragging}
+                              dragHandleProps={provided.dragHandleProps}
+                              onDelete={() => setLinks(links.filter((_, i) => i !== index))}
+                            >
+                              <input
+                                className={styles.linkUrlInput}
                                 placeholder={
                                   link.linkName === "직접 입력"
                                     ? "전체 URL을 입력해주세요."
-                                    : `${PLATFORM_URLS[link.linkName]}`
+                                    : PLATFORM_URLS[link.linkName] || "링크를 입력해주세요."
                                 }
                                 value={link.link}
+                                disabled={isEditingOrder}
                                 onChange={(e) => {
                                   const value = e.target.value.trim();
                                   const newLinks = [...links];
@@ -282,49 +327,34 @@ export default function ProfileEdit() {
                                   setLinks(newLinks);
                                 }}
                               />
-                              {isEditingOrder ? (
-                                <div {...provided.dragHandleProps} className={styles.dragHandle}>
-                                  <IconComponent name="editOrder" size={16} isBtn />
-                                </div>
-                              ) : (
-                                <div
-                                  onClick={() => setLinks(links.filter((_, i) => i !== index))}
-                                  className={styles.removeLinkButton}
-                                >
-                                  <IconComponent name="deleteLink" size={24} isBtn />
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </Draggable>
-                      );
-                    })}
+                            </GroupSettings>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
                     {provided.placeholder}
                   </div>
                 )}
               </Droppable>
             </DragDropContext>
 
-            <div className={styles.addBtn}>
-              <Button
-                type="outlined-assistive"
-                size="m"
-                leftIcon={<IconComponent name="addLink" size={16} isBtn />}
-                onClick={() => setLinks([...links, { linkName: "X", link: "" }])}
-              >
-                링크 추가
-              </Button>
-            </div>
+            <OutlinedButton
+              size="regular"
+              iconLeft={<Icon name="plus" size={16} />}
+              disabled={isEditingOrder}
+              onClick={() => setLinks([...links, { linkName: "", link: "" }])}
+            >
+              링크 추가
+            </OutlinedButton>
           </div>
         </div>
-        <Button
-          size="l"
-          type="filled-primary"
+        <SolidButton
+          size="large"
           onClick={handleSave}
-          disabled={name.trim().length < 2 || isPending || !!profileIdError}
+          disabled={name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder}
         >
-          변경 내용 저장
-        </Button>
+          저장
+        </SolidButton>
       </div>
     </div>
   );
