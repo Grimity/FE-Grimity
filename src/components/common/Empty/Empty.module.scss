@@ -44,6 +44,7 @@
   min-width: 0;
   max-width: 100%;
   color: colors.$text-gray-bold;
+  white-space: pre-line;
   @include typo.body-2-r;
   display: -webkit-box;
   -webkit-line-clamp: 2;

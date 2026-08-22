@@ -1,26 +1,31 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import styles from "./AlbumMove.module.scss";
-import Button from "@/components/Button/Button";
-import IconComponent from "@/components/Asset/Icon";
-import { useToast } from "@/hooks/useToast";
-import { useMyAlbums } from "@/api/me/getMyAlbums";
-import { useModalStore } from "@/states/modalStore";
-import { putFeedsInAlbums } from "@/api/albums/putFeedsInAlbums";
-import { putFeedsNull } from "@/api/albums/putFeedsNull";
 import { useRouter } from "next/router";
+
+import { useMeGetMyAlbums } from "@/api/generated/me/me";
+import { useAlbumInsertFeeds, useAlbumRemoveFeeds } from "@/api/generated/albums/albums";
+
+import { useToast } from "@/hooks/useToast";
+import { useModalStore } from "@/states/modalStore";
 import { useDeviceStore } from "@/states/deviceStore";
 
+import ListItem from "@/components/common/Cell/ListItem/ListItem";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import Empty from "@/components/common/Empty/Empty";
+
+import styles from "./AlbumMove.module.scss";
+
 export default function AlbumMove() {
-  const { data, refetch } = useMyAlbums();
-  const albums = Array.isArray(data) ? data : [];
+  const { data, refetch } = useMeGetMyAlbums();
+  const albums = data ?? [];
   const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
   const closeModal = useModalStore((state) => state.closeModal);
   const modalData = useModalStore((state) => state.data);
   const router = useRouter();
   const queryClient = useQueryClient();
-  const selectedFeedIds = modalData?.selectedFeedIds || [];
+  const selectedFeedIds: string[] = modalData?.selectedFeedIds || [];
   const initialId: string | null = modalData?.currentAlbumId ?? null;
   const [selectedId, setSelectedId] = useState<string | null>(initialId);
 
@@ -28,11 +33,18 @@ export default function AlbumMove() {
     setSelectedId(initialId);
   }, [initialId]);
 
-  const { mutate: updateFeedsAlbum, isPending: isUpdateFeedsAlbumPending } = useMutation({
-    mutationFn: (albumId: string | null) => putFeedsInAlbums(albumId, { ids: selectedFeedIds }),
+  const { mutateAsync: insertFeeds } = useAlbumInsertFeeds();
+  const { mutateAsync: removeFeeds } = useAlbumRemoveFeeds();
+
+  const { mutate: submit, isPending } = useMutation({
+    mutationFn: (albumId: string | null) =>
+      albumId
+        ? insertFeeds({ id: albumId, data: { ids: selectedFeedIds } })
+        : removeFeeds({ data: { ids: selectedFeedIds } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["feeds"] });
       queryClient.invalidateQueries({ queryKey: ["albums"] });
+      showToast("선택한 그림을 이동했어요.", "success");
       modalData?.onComplete?.();
     },
     onError: () => {
@@ -44,24 +56,6 @@ export default function AlbumMove() {
       router.reload();
     },
   });
-
-  const handleSubmit = async () => {
-    if (selectedId === null) {
-      try {
-        await putFeedsNull({ ids: selectedFeedIds });
-        queryClient.invalidateQueries({ queryKey: ["feeds"] });
-        queryClient.invalidateQueries({ queryKey: ["albums"] });
-        modalData?.onComplete?.();
-        closeModal();
-        router.reload();
-      } catch {
-        showToast("앨범 이동에 실패했습니다.", "error");
-      }
-      return;
-    }
-
-    updateFeedsAlbum(selectedId);
-  };
 
   const isEmpty = albums.length === 0;
 
@@ -77,57 +71,40 @@ export default function AlbumMove() {
       )}
 
       {isEmpty ? (
-        <div className={styles.emptyContainer}>
-          <h2 className={styles.title}>아직 생성된 앨범이 없어요</h2>
-          <p className={styles.subtitle}>
-            전체 앨범에 업로드 되며, <br />새 앨범은 프로필 화면에서 추가할 수 있어요
-          </p>
-          <Button size="l" type="filled-primary" onClick={closeModal}>
-            확인
-          </Button>
-        </div>
+        <Empty
+          size="md"
+          iconName="illust-upload-success"
+          title="아직 생성된 앨범이 없어요"
+          content={"전체 앨범에 업로드 되며,\n새 앨범은 프로필 화면에서 추가할 수 있어요"}
+          buttonLabel="확인"
+          onButtonClick={closeModal}
+        />
       ) : (
         <>
           <div className={styles.albumsContainer}>
-            <div
-              className={`${styles.albumItem} ${selectedId === null ? styles.selected : ""}`}
-              onClick={() => setSelectedId((prev) => (prev === null ? null : null))}
-            >
-              전체 앨범
-              <div className={styles.checkIcon}></div>
-              {selectedId === null && <IconComponent name="checkAlbum" size={14} isBtn />}
-            </div>
+            <ListItem
+              type="radio"
+              text="전체 앨범"
+              active={selectedId === null}
+              onClick={() => setSelectedId(null)}
+            />
             {albums.map((album) => (
-              <div key={album.id}>
-                <div
-                  className={`${styles.albumItem} ${
-                    selectedId === album.id ? styles.selected : ""
-                  }`}
-                  onClick={() => setSelectedId((prev) => (prev === album.id ? null : album.id))}
-                >
-                  {album.name}
-                  <div className={styles.checkIcon}></div>
-                  {selectedId === album.id && <IconComponent name="checkAlbum" size={14} isBtn />}
-                </div>
-              </div>
+              <ListItem
+                key={album.id}
+                type="radio"
+                text={album.name}
+                active={selectedId === album.id}
+                onClick={() => setSelectedId(album.id)}
+              />
             ))}
           </div>
           <div className={styles.btns}>
-            <div className={styles.cancleBtn}>
-              <Button size="l" type="outlined-assistive" onClick={closeModal}>
-                취소
-              </Button>
-            </div>
-            <div className={styles.submitBtn}>
-              <Button
-                size="l"
-                type="filled-primary"
-                onClick={handleSubmit}
-                disabled={isUpdateFeedsAlbumPending}
-              >
-                {isUpdateFeedsAlbumPending ? "이동 중..." : "완료"}
-              </Button>
-            </div>
+            <OutlinedButton size="large" onClick={closeModal}>
+              취소
+            </OutlinedButton>
+            <SolidButton size="large" onClick={() => submit(selectedId)} disabled={isPending}>
+              {isPending ? "이동 중..." : "완료"}
+            </SolidButton>
           </div>
         </>
       )}

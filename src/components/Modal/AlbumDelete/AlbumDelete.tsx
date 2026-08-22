@@ -1,9 +1,10 @@
-import Button from "@/components/Button/Button";
+import { useRouter } from "next/router";
+
 import { useModalStore } from "@/states/modalStore";
 import { useToast } from "@/hooks/useToast";
-import { useDeleteBatchFeeds } from "@/api/feeds/deleteFeedsId";
-import styles from "./AlbumDelete.module.scss";
-import { useRouter } from "next/router";
+import { useFeedDeleteMany } from "@/api/generated/feeds/feeds";
+
+import Alert from "@/components/common/PopUp/Alert/Alert";
 
 export default function AlbumDelete() {
   const modalData = useModalStore((state) => state.data);
@@ -11,17 +12,19 @@ export default function AlbumDelete() {
   const { showToast } = useToast();
   const router = useRouter();
 
-  const selectedFeedIds = modalData?.selectedFeedIds ?? [];
+  const selectedFeedIds: string[] = modalData?.selectedFeedIds ?? [];
   const selectedCount = selectedFeedIds.length;
 
-  const { mutate: deleteBatchFeeds, isPending } = useDeleteBatchFeeds();
+  const { mutate: deleteBatchFeeds, isPending } = useFeedDeleteMany();
+
   const handleDelete = () => {
-    if (!selectedFeedIds.length) return;
+    if (!selectedFeedIds.length || isPending) return;
 
     deleteBatchFeeds(
-      { ids: selectedFeedIds },
+      { data: { ids: selectedFeedIds } },
       {
         onSuccess: () => {
+          showToast("선택한 그림을 삭제했어요.", "success");
           modalData?.onComplete?.();
         },
         onError: () => {
@@ -36,23 +39,14 @@ export default function AlbumDelete() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.emptyContainer}>
-        <h2 className={styles.title}>{selectedCount}개의 그림을 삭제할까요?</h2>
-        <p className={styles.subtitle}>삭제 이후 되돌릴 수 없어요</p>
-        <div className={styles.btns}>
-          <div className={styles.cancleBtn}>
-            <Button size="l" type="outlined-assistive" onClick={closeModal}>
-              취소
-            </Button>
-          </div>
-          <div className={styles.submitBtn}>
-            <Button size="l" type="filled-primary" onClick={handleDelete} disabled={isPending}>
-              {isPending ? "삭제 중..." : "삭제"}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Alert
+      variant="content"
+      title={`${selectedCount}개의 그림을 삭제할까요?`}
+      contentText="삭제 이후 되돌릴 수 없어요"
+      secondaryLabel="취소"
+      onSecondary={closeModal}
+      primaryLabel={isPending ? "삭제 중..." : "삭제"}
+      onPrimary={handleDelete}
+    />
   );
 }

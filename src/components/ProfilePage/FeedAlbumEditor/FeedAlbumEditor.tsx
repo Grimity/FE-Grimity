@@ -2,12 +2,17 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 
 import { ModalState, ModalType, useModalStore } from "@/states/modalStore";
-
-import ProfileCard from "@/components/Layout/ProfileCard/ProfileCard";
-import Button from "@/components/Button/Button";
-import Icon from "@/components/Asset/IconTemp";
+import { useAlbumUpdateOne } from "@/api/generated/albums/albums";
 
 import { useDeviceStore } from "@/states/deviceStore";
+import { useToast } from "@/hooks/useToast";
+
+import Album from "@/components/common/Card/Album/Album";
+import Icon from "@/components/common/Icon/Icon";
+import TextButton from "@/components/common/Button/TextButton/TextButton";
+import Empty from "@/components/common/Empty/Empty";
+import PopUpModal from "@/components/common/PopUp/Modal/Modal";
+import Input from "@/components/common/Input/Input/Input";
 
 import styles from "@/components/ProfilePage/FeedAlbumEditor/FeedAlbumEditor.module.scss";
 
@@ -43,23 +48,22 @@ export default function FeedAlbumEditor({
   onExitEditMode,
 }: FeedAlbumEditorProps) {
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState("");
   const openModal = useModalStore((state) => state.openModal);
   const { isMobile } = useDeviceStore();
+  const { showToast } = useToast();
   const router = useRouter();
   const currentAlbum = activeAlbum ? albums.find((album) => album.id === activeAlbum) : null;
   const displayName = currentAlbum ? currentAlbum.name : "전체";
-  const filteredFeeds = feeds;
-  const displayCount = filteredFeeds.length;
+  const displayCount = feeds.length;
 
-  const handleCardSelect = (feedId: string, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const { mutateAsync: updateAlbum, isPending: isRenamePending } = useAlbumUpdateOne();
 
-    if (selectedCards.includes(feedId)) {
-      setSelectedCards(selectedCards.filter((id) => id !== feedId));
-    } else {
-      setSelectedCards([...selectedCards, feedId]);
-    }
+  const handleCardSelect = (feedId: string) => {
+    setSelectedCards((prev) =>
+      prev.includes(feedId) ? prev.filter((id) => id !== feedId) : [...prev, feedId],
+    );
   };
 
   const handleMoveAlbum = () => {
@@ -106,44 +110,73 @@ export default function FeedAlbumEditor({
     }
   };
 
+  const handleOpenRename = () => {
+    if (!currentAlbum) return;
+    setRenameValue(currentAlbum.name);
+    setIsRenaming(true);
+  };
+
+  const handleRename = async () => {
+    if (!currentAlbum) return;
+    const trimmed = renameValue.trim();
+    if (!trimmed) {
+      showToast("앨범명은 비워둘 수 없습니다.", "error");
+      return;
+    }
+    if (trimmed === currentAlbum.name) {
+      setIsRenaming(false);
+      return;
+    }
+
+    try {
+      await updateAlbum({ id: currentAlbum.id, data: { name: trimmed } });
+      showToast("앨범명이 변경되었습니다.", "success");
+      setIsRenaming(false);
+      router.reload();
+    } catch {
+      showToast("앨범명 변경에 실패했습니다.", "error");
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.center}>
-        {/* 헤딩 */}
         <div className={styles.albumInfo}>
-          <h1 className={styles.albumName}>{displayName}</h1>
+          <div className={styles.albumNameRow}>
+            <h1 className={styles.albumName}>{displayName}</h1>
+            {currentAlbum && (
+              <TextButton
+                variant="assistive"
+                size="regular"
+                iconLeft={<Icon name="pen" size={16} />}
+                onClick={handleOpenRename}
+              >
+                앨범명 변경
+              </TextButton>
+            )}
+          </div>
           <p className={styles.feedCountContainer}>
             그림 <span className={styles.feedCount}>{displayCount}</span>
           </p>
         </div>
 
-        {filteredFeeds.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>선택한 앨범에 그림이 없습니다.</p>
-          </div>
+        {feeds.length === 0 ? (
+          <Empty size="xl" iconName="illust-upload-success" title="업로드한 그림이 없어요" />
         ) : (
           <div className={styles.cardGrid}>
-            {filteredFeeds.map((feed) => (
-              <div
+            {feeds.map((feed) => (
+              <Album
                 key={feed.id}
-                className={`${styles.cardWrapper} ${
-                  selectedCards.includes(feed.id) ? styles.selected : ""
-                }`}
-                onClick={(e) => handleCardSelect(feed.id, e)}
-              >
-                <ProfileCard
-                  title={feed.title}
-                  cards={feed.cards}
-                  thumbnail={feed.thumbnail}
-                  likeCount={feed.likeCount}
-                  commentCount={feed.commentCount}
-                  viewCount={feed.viewCount}
-                  createdAt={feed.createdAt}
-                  id={feed.id}
-                  isEditMode
-                  isSelected={selectedCards.includes(feed.id)}
-                />
-              </div>
+                variant="check"
+                imageUrl={feed.thumbnail}
+                title={feed.title}
+                nickname=""
+                likeCount={feed.likeCount}
+                viewCount={feed.viewCount}
+                checked={selectedCards.includes(feed.id)}
+                onClick={() => handleCardSelect(feed.id)}
+                onCheckClick={() => handleCardSelect(feed.id)}
+              />
             ))}
           </div>
         )}
@@ -151,41 +184,66 @@ export default function FeedAlbumEditor({
 
       <div className={styles.footer}>
         <div className={styles.inner}>
-          <div className={styles.leftSection}>
-            <Button
-              className={styles.button}
-              type="text-primary"
-              size="m"
-              leftIcon={<Icon icon="leftArrow" />}
-              onClick={handleGoBack}
-            >
-              돌아가기
-            </Button>
-          </div>
+          <TextButton
+            variant="primary"
+            size="regular"
+            iconLeft={<Icon name="chevron-left" size={20} />}
+            onClick={handleGoBack}
+          >
+            돌아가기
+          </TextButton>
           <div className={styles.rightSection}>
-            <Button
-              className={styles.button}
-              type="text-primary"
-              size="m"
-              leftIcon={<Icon icon="close" />}
+            <TextButton
+              variant="primary"
+              size="regular"
+              iconLeft={<Icon name="trash-bin-trash" size={20} />}
               onClick={handleDeleteSelected}
               disabled={selectedCards.length === 0}
             >
               {isMobile ? "삭제" : "선택 삭제"}
-            </Button>
-            <Button
-              className={styles.button}
-              type="text-primary"
-              size="m"
-              leftIcon={<Icon icon="move" />}
+            </TextButton>
+            <TextButton
+              variant="primary"
+              size="regular"
+              iconLeft={<Icon name="forward-2" size={20} />}
               onClick={handleMoveAlbum}
               disabled={selectedCards.length === 0}
             >
               {isMobile ? "이동" : "앨범 이동"}
-            </Button>
+            </TextButton>
           </div>
         </div>
       </div>
+
+      {isRenaming && (
+        <PopUpModal
+          title="앨범명 변경"
+          onClose={() => setIsRenaming(false)}
+          buttonType="double"
+          secondaryLabel="닫기"
+          onSecondary={() => setIsRenaming(false)}
+          primaryLabel="변경하기"
+          onPrimary={handleRename}
+          primaryDisabled={isRenamePending}
+        >
+          <Input
+            inputType="textfield"
+            maxCount={15}
+            textFieldProps={{
+              value: renameValue,
+              maxLength: 15,
+              onChange: (e) => setRenameValue(e.target.value),
+              onKeyDown: (e) => {
+                if (e.nativeEvent.isComposing) return;
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleRename();
+                }
+              },
+            }}
+          />
+        </PopUpModal>
+      )}
     </div>
   );
 }

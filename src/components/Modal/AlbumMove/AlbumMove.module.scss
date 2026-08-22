@@ -1,4 +1,8 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   display: flex;
@@ -7,53 +11,30 @@
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  gap: 30px;
+  gap: spacing.$spacing-32;
   max-height: 760px;
 
-  @include Size("mobile") {
+  @include bp.breakpoint-down("xs") {
     overflow-y: auto;
   }
 
   .titleContainer {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: spacing.$spacing-12;
 
     .title {
-      @include Title3;
-      color: $gray70;
+      @include typo.title-3;
+      color: colors.$text-gray-normal;
     }
 
     .subtitle {
-      @include Sub4;
-      color: $gray60;
-      text-align: center;
+      @include typo.label-3;
+      color: colors.$text-gray-subtle;
 
       .count {
-        color: $gray70;
+        color: colors.$text-gray-normal;
       }
-    }
-  }
-
-  .emptyContainer {
-    display: flex;
-    width: 100%;
-    height: auto;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-
-    .title {
-      @include Title4;
-      color: $gray70;
-    }
-
-    .subtitle {
-      @include Sub4;
-      color: $gray60;
-      text-align: center;
-      padding-bottom: 30px;
     }
   }
 
@@ -63,78 +44,24 @@
     max-height: 426px;
     overflow-y: auto;
     width: 100%;
-    gap: 10px;
 
-    &::-webkit-scrollbar {
-      width: 7px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(112, 115, 124, 0.16);
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: rgba(57, 58, 61, 0.16);
-    }
-
-    @include Size("mobile") {
+    @include bp.breakpoint-down("xs") {
       height: 100%;
       max-height: 472px;
-      gap: 8px;
-
-      &::-webkit-scrollbar {
-        width: 0;
-        display: none;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        display: none;
-      }
-    }
-
-    .albumItem {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 12px;
-      border: 1px solid $gray30;
-      color: $gray80;
-      width: 100%;
-      height: 52px;
-      padding: 16px 20px;
-      @include Label3;
-      cursor: pointer;
-      transition: all 0.3s;
-
-      &.selected {
-        border-color: $secandary1;
-        background-color: $secandary2;
-
-        &:hover {
-          background-color: $secandary2;
-        }
-      }
-
-      &:hover {
-        background-color: $gray10;
-      }
     }
   }
 
   .btns {
     display: flex;
     flex-direction: row;
-    gap: 8px;
+    gap: spacing.$spacing-8;
     width: 100%;
 
-    .cancleBtn,
-    .submitBtn {
+    > * {
       flex: 1;
     }
 
-    @include Size("mobile") {
+    @include bp.breakpoint-down("xs") {
       @include SafeAreaBottom(56);
     }
   }
