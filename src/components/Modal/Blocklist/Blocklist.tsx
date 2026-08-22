@@ -1,12 +1,15 @@
 import { useDeviceStore } from "@/states/deviceStore";
 
-import Button from "@/components/Button/Button";
-import Icon from "@/components/Asset/IconTemp";
-
-import { useGetMyBlockings } from "@/api/me/getMyBlockings";
-import { useDeleteUserBlock } from "@/api/users/deleteUserBlock";
+import { useMeGetMyBlockings } from "@/api/generated/me/me";
+import { useUserUnblock } from "@/api/generated/users/users";
 
 import { useToast } from "@/hooks/useToast";
+
+import Icon from "@/components/common/Icon/Icon";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import UserItem from "@/components/common/Cell/UserItem/UserItem";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import Empty from "@/components/common/Empty/Empty";
 
 import styles from "./Blocklist.module.scss";
 
@@ -16,8 +19,8 @@ interface BlocklistProps {
 
 export default function Blocklist({ close }: BlocklistProps) {
   const { isMobile } = useDeviceStore();
-  const { data: blockingsData, refetch } = useGetMyBlockings();
-  const { mutate: unblockUser } = useDeleteUserBlock();
+  const { data: blockingsData, refetch } = useMeGetMyBlockings();
+  const { mutate: unblockUser } = useUserUnblock();
   const { showToast } = useToast();
 
   const handleUnblock = (userId: string, userName: string) => {
@@ -35,44 +38,41 @@ export default function Blocklist({ close }: BlocklistProps) {
     );
   };
 
+  const users = blockingsData?.users ?? [];
+
   return (
     <div className={styles.container}>
       {!isMobile && (
         <div className={styles.titleContainer}>
           <h2 className={styles.title}>차단 목록</h2>
-          <button className={styles.closeButton} onClick={close}>
-            <Icon icon="close" size="xl" />
-          </button>
+          <IconButton
+            variant="sm"
+            icon={<Icon name="x" size={20} />}
+            onClick={close}
+            aria-label="닫기"
+          />
         </div>
       )}
       <div className={styles.blocklistContainer}>
-        {blockingsData && blockingsData.users.length > 0 ? (
-          blockingsData.users.map((user) => (
-            <div key={user.id} className={styles.blockItem}>
-              <div className={styles.profile}>
-                <img
-                  src={user.image || "/image/default.svg"}
-                  alt={user.name}
-                  className={styles.profileImage}
-                />
-                <div className={styles.userInfo}>
-                  <span className={styles.userName}>{user.name}</span>
-                </div>
-              </div>
-
-              <Button
-                type="outlined-assistive"
-                size="s"
-                onClick={() => handleUnblock(user.id, user.name)}
-              >
-                차단 해제
-              </Button>
-            </div>
-          ))
+        {users.length === 0 ? (
+          <Empty size="md" iconName="illust-user" title="차단한 작가가 없어요" />
         ) : (
-          <div className={styles.emptyState}>
-            <p>차단한 사용자가 없습니다.</p>
-          </div>
+          <ul className={styles.list}>
+            {users.map((user) => (
+              <li key={user.id}>
+                <UserItem
+                  type="id"
+                  profileImage={user.image ?? undefined}
+                  nickname={user.name}
+                  userId={user.url}
+                >
+                  <OutlinedButton size="small" onClick={() => handleUnblock(user.id, user.name)}>
+                    차단 해제
+                  </OutlinedButton>
+                </UserItem>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

@@ -1,4 +1,7 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
 
 .container {
   display: flex;
@@ -6,9 +9,9 @@
   align-items: flex-start;
   justify-content: space-between;
   max-height: 760px;
-  padding: 40px 32px;
-  gap: 30px;
-  background-color: $gray0;
+  padding: spacing.$spacing-32;
+  gap: spacing.$spacing-20;
+  background-color: colors.$surface-base;
   border-radius: 12px;
   width: 100%;
 
@@ -18,28 +21,13 @@
 
   .titleContainer {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
+
     .title {
-      @include Title3;
-      color: $gray70;
-    }
-  }
-
-  .closeButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $gray70;
-    width: 24px;
-    height: 24px;
-
-    &:hover {
-      color: $gray80;
+      @include typo.title-3;
+      color: colors.$text-gray-normal;
     }
   }
 
@@ -47,57 +35,15 @@
     width: 100%;
     max-height: 280px;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
 
     @include Size("mobile") {
-      overflow-y: auto;
       max-height: fit-content;
     }
   }
 
-  .blockItem {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .profile {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .profileImage {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  .userInfo {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .userName {
-    @include Sub4;
-    color: $gray80;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .emptyState {
-    @include Body2;
-    color: $gray60;
-    text-align: center;
-    padding: 40px 0;
-    width: 100%;
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 }
