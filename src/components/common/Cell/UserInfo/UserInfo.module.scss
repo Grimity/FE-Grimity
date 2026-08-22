@@ -98,7 +98,7 @@
   font: inherit;
   cursor: default;
 
-  button& {
+  &:is(button) {
     cursor: pointer;
   }
 }
