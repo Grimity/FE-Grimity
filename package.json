@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "api:gen": "orval",
+    "api:check": "orval && git diff --exit-code -- src/api/generated"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
@@ -50,6 +52,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9.31.0",
     "eslint-config-next": "^15.4.3",
+    "orval": "^8.25.0",
     "storybook": "^8.6.14",
     "typescript": "^5"
   }
