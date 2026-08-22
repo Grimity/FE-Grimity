@@ -1,4 +1,6 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
 
 .container {
   width: 100%;
@@ -11,8 +13,8 @@
 
   .titleContainer {
     .title {
-      @include Title3;
-      color: $gray70;
+      @include typo.title-3;
+      color: colors.$text-gray-normal;
     }
   }
 
@@ -20,56 +22,12 @@
     width: 100%;
     max-height: 280px;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 
     @include Size("mobile") {
-      overflow-y: auto;
       max-height: fit-content;
     }
-  }
-
-  .linkItem {
-    width: 100%;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    cursor: pointer;
-
-    &:hover .link {
-      text-decoration: underline;
-    }
-  }
-
-  .icon {
-    color: $gray50;
-  }
-
-  .linkInfo {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .linkLabel {
-    @include Sub4;
-    color: $gray80;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .link {
-    @include Label3;
-    color: $gray60;
-    text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2;
   }
 }

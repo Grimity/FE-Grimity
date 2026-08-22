@@ -4,25 +4,15 @@ import { useModalStore } from "@/states/modalStore";
 import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
 import UserItem from "@/components/common/Cell/UserItem/UserItem";
 import Icon from "@/components/common/Icon/Icon";
-import type { IconName } from "@/components/common/Icon/Icon.types";
 
 import type { UserProfileResponse as UserData } from "@grimity/dto";
 
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useClipboard } from "@/utils/copyToClipboard";
+import { EMAIL_PATTERN, getLinkIconName } from "@/utils/profileLinkIcon";
 
 import styles from "./ProfileDetails.module.scss";
 
-const ICON_MAP_KO: Record<string, IconName> = {
-  인스타그램: "instagram",
-  유튜브: "youtube",
-  픽시브: "pixiv",
-  X: "xtwitter",
-  이메일: "email",
-  "직접 입력": "link",
-};
-
-const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
 const MAX_VISIBLE_LINKS = 3;
 
 interface ProfileDetailsProps extends React.PropsWithChildren {
@@ -89,7 +79,7 @@ export default function ProfileDetails({
             >
               <UserItem
                 type="link"
-                brandIcon={<Icon name={ICON_MAP_KO[linkName] || "link"} size={20} />}
+                brandIcon={<Icon name={getLinkIconName(linkName)} size={20} />}
                 siteName={displayName(linkName, link)}
               />
             </Link>
@@ -99,7 +89,7 @@ export default function ProfileDetails({
                 onClick={() =>
                   openModal({
                     type: "PROFILE-LINK",
-                    data: null,
+                    data: { title: "프로필 링크" },
                     isFill: isMobile,
                   })
                 }
