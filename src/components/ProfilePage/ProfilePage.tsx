@@ -10,8 +10,6 @@ import {
 } from "@/api/generated/users/users";
 import { useFeedLike, useFeedUnlike } from "@/api/generated/feeds/feeds";
 import type { UserFeedsResponse } from "@/api/generated/model";
-import { useModalStore } from "@/states/modalStore";
-import { useDeviceStore } from "@/states/deviceStore";
 import { useAuthStore } from "@/states/authStore";
 import { useDragScroll } from "@/hooks/useDragScroll";
 import { useToast } from "@/hooks/useToast";
@@ -20,6 +18,7 @@ import useUserBlock from "@/hooks/useUserBlock";
 import Profile from "./Profile/Profile";
 import { ProfilePageProps } from "./ProfilePage.types";
 import FeedAlbumEditor from "./FeedAlbumEditor/FeedAlbumEditor";
+import AlbumEditor from "./AlbumEditor/AlbumEditor";
 import ResponsiveMenu from "./shared/ResponsiveMenu/ResponsiveMenu";
 
 import AllCard from "@/components/Board/BoardAll/AllCard/AllCard";
@@ -49,8 +48,6 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const openModal = useModalStore((state) => state.openModal);
-  const { isMobile } = useDeviceStore();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { showToast } = useToast();
 
@@ -62,6 +59,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
     (query.tab as "feeds" | "posts") || "feeds",
   );
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditingAlbums, setIsEditingAlbums] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const loadMoreRef = useRef(null);
@@ -85,15 +83,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   };
 
   const handleAddCategoryClick = () => {
-    isMobile
-      ? openModal({
-          type: "ALBUM-EDIT",
-          data: {
-            title: "앨범 편집",
-          },
-          isFill: true,
-        })
-      : openModal({ type: "ALBUM-EDIT" });
+    setIsEditingAlbums(true);
   };
 
   const { data: postsData } = useUserPosts({
@@ -254,6 +244,8 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
           activeAlbum={activeCategory}
           onExitEditMode={toggleEditMode}
         />
+      ) : isEditingAlbums ? (
+        <AlbumEditor onExit={() => setIsEditingAlbums(false)} />
       ) : (
         <>
           {/* 기본 모드 */}

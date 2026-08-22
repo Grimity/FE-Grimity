@@ -13,7 +13,6 @@ import Background from "./Background/Background";
 import Follow from "./Follow/Follow";
 import UploadModal from "./Upload/Upload";
 import Like from "./Like/Like";
-import AlbumEdit from "./AlbumEdit/AlbumEdit";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
 import AlbumMove from "./AlbumMove/AlbumMove";
 import AlbumDelete from "./AlbumDelete/AlbumDelete";
@@ -64,10 +63,6 @@ export default function Modal() {
       window.history.back();
     } else {
       closeModal();
-
-      if (type === "ALBUM-EDIT") {
-        router.reload();
-      }
     }
   };
 
@@ -110,8 +105,6 @@ export default function Modal() {
         return <UploadModal {...data} />;
       case "LIKE":
         return <Like />;
-      case "ALBUM-EDIT":
-        return <AlbumEdit {...data} />;
       case "ALBUM-SELECT":
         return <AlbumSelect {...data} />;
       case "ALBUM-MOVE":
@@ -166,8 +159,6 @@ export default function Modal() {
                   ? styles.profileLinkModal
                   : type === "FOLLOWER" || type === "FOLLOWING" || type === "LIKE"
                   ? styles.followModal
-                  : type == "ALBUM-EDIT"
-                  ? styles.albumEditModal
                   : type == "ALBUM-SELECT" || type == "ALBUM-MOVE"
                   ? styles.albumSelectModal
                   : type == "ALBUM-DELETE"
