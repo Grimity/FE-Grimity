@@ -1,12 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 
 import { useUserDataByUrl } from "@/api/users/getId";
-import { useUserFeeds } from "@/api/users/getIdFeeds";
 import { useUserPosts } from "@/api/users/getIdPosts";
+import {
+  useUserGetFeedsInfinite,
+  getUserGetFeedsInfiniteQueryKey,
+} from "@/api/generated/users/users";
+import { useFeedLike, useFeedUnlike } from "@/api/generated/feeds/feeds";
+import type { UserFeedsResponse } from "@/api/generated/model";
 import { useModalStore } from "@/states/modalStore";
 import { useDeviceStore } from "@/states/deviceStore";
+import { useAuthStore } from "@/states/authStore";
 import { useDragScroll } from "@/hooks/useDragScroll";
+import { useToast } from "@/hooks/useToast";
 import useUserBlock from "@/hooks/useUserBlock";
 
 import Profile from "./Profile/Profile";
@@ -39,9 +47,12 @@ const PAGE_SIZE = 12;
 
 export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const openModal = useModalStore((state) => state.openModal);
   const { isMobile } = useDeviceStore();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { showToast } = useToast();
 
   const { query, pathname } = router;
   const currentPage = Number(query.page) || 1;
@@ -92,18 +103,67 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
     enabled: isMyProfile && activeTab === "posts",
   });
 
+  const feedsParams = {
+    sort: sortBy,
+    size: PAGE_SIZE,
+    albumId: activeCategory ?? undefined,
+  };
+
   const {
     data: feedsData,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useUserFeeds({
-    id,
-    sort: sortBy,
-    size: PAGE_SIZE,
-    albumId: activeCategory,
+  } = useUserGetFeedsInfinite(id, feedsParams, {
+    query: {
+      initialPageParam: undefined,
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    },
   });
+
+  const { mutate: likeFeed } = useFeedLike();
+  const { mutate: unlikeFeed } = useFeedUnlike();
+
+  const handleFeedLikeToggle = (feedId: string, isLiked: boolean) => {
+    if (!isLoggedIn) {
+      showToast("로그인 후 좋아요를 누를 수 있어요.", "error");
+      return;
+    }
+
+    const feedsQueryKey = getUserGetFeedsInfiniteQueryKey(id, feedsParams);
+    const previousData =
+      queryClient.getQueryData<InfiniteData<UserFeedsResponse>>(feedsQueryKey);
+
+    queryClient.setQueryData<InfiniteData<UserFeedsResponse>>(feedsQueryKey, (old) => {
+      if (!old) return old;
+      return {
+        ...old,
+        pages: old.pages.map((page) => ({
+          ...page,
+          feeds: page.feeds.map((feed) =>
+            feed.id === feedId
+              ? {
+                  ...feed,
+                  isLike: !isLiked,
+                  likeCount: isLiked ? feed.likeCount - 1 : feed.likeCount + 1,
+                }
+              : feed,
+          ),
+        })),
+      };
+    });
+
+    const rollback = () => {
+      if (previousData) queryClient.setQueryData(feedsQueryKey, previousData);
+    };
+
+    if (isLiked) {
+      unlikeFeed({ id: feedId }, { onError: rollback });
+    } else {
+      likeFeed({ id: feedId }, { onError: rollback });
+    }
+  };
 
   const totalPages = Math.ceil((userData?.postCount || 0) / 10);
 
@@ -311,6 +371,8 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                         likeCount={feed.likeCount}
                         viewCount={feed.viewCount}
                         feedHref={`/feeds/${feed.id}`}
+                        isLiked={feed.isLike}
+                        onLikeClick={() => handleFeedLikeToggle(feed.id, feed.isLike)}
                       />
                     ))}
                     {hasNextPage && <div ref={loadMoreRef} />}
