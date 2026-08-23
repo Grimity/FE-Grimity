@@ -44,7 +44,7 @@ export default function AlbumMove() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["feeds"] });
       queryClient.invalidateQueries({ queryKey: ["albums"] });
-      showToast("선택한 그림을 이동했어요.", "success");
+      showToast("선택한 그림을 이동했습니다.", "success");
       modalData?.onComplete?.();
     },
     onError: () => {

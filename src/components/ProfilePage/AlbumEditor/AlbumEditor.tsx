@@ -127,7 +127,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
     for (const album of albums) {
       const value = trimmedNames[album.id] ?? album.name;
       if (usedNames.has(value)) {
-        showToast("중복된 이름은 사용하실 수 없어요", "error");
+        showToast("중복된 이름은 사용할 수 없습니다.", "error");
         return;
       }
       usedNames.add(value);

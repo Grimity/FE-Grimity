@@ -24,11 +24,11 @@ export default function AlbumDelete() {
       { data: { ids: selectedFeedIds } },
       {
         onSuccess: () => {
-          showToast("선택한 그림을 삭제했어요.", "success");
+          showToast("선택한 그림을 삭제했습니다.", "success");
           modalData?.onComplete?.();
         },
         onError: () => {
-          showToast("삭제에 실패했습니다", "error");
+          showToast("삭제에 실패했습니다.", "error");
         },
         onSettled: () => {
           closeModal();
