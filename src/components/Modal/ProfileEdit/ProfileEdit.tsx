@@ -105,6 +105,8 @@ export default function ProfileEdit() {
           if (msg === "NAME") setNameError("이미 사용 중인 닉네임입니다.");
           else if (msg === "URL") setProfileIdError("이미 사용 중인 프로필 URL입니다.");
           else showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
+        } else {
+          showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
         }
       },
     },
@@ -131,7 +133,7 @@ export default function ProfileEdit() {
       if (!l.linkName || !l.link) continue;
 
       const linkName = l.linkName === "직접 입력" ? l.customName || "custom" : l.linkName;
-      const url = l.link.trim();
+      let url = l.link.trim();
 
       if (l.linkName === "이메일") {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -140,6 +142,16 @@ export default function ProfileEdit() {
         }
         formattedLinks.push({ linkName, link: url });
       } else {
+        // 플랫폼 도메인이 정해진 경우, 사용자가 핸들만 입력해도(placeholder가 암시하는 형태)
+        // 스킴/도메인을 이미 포함하지 않았다면 도메인을 붙여 완전한 URL로 만든다.
+        const domain = PLATFORM_URLS[l.linkName];
+        if (
+          domain &&
+          !/^https?:\/\//i.test(url) &&
+          !url.toLowerCase().startsWith(domain.toLowerCase())
+        ) {
+          url = `${domain}${url}`;
+        }
         const normalized = normalizeUrl(url);
         try {
           new URL(normalized);
