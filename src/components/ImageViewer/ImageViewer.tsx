@@ -20,7 +20,12 @@ import styles from "./ImageViewer.module.scss";
 
 const MAX_SCALE = 3;
 
-export default function ImageViewer({ images, initialIndex = 0, onClose }: ImageViewerProps) {
+export default function ImageViewer({
+  images,
+  initialIndex = 0,
+  onClose,
+  canDownload = true,
+}: ImageViewerProps) {
   const { isMobile } = useDeviceStore();
   const [mainSwiper, setMainSwiper] = useState<SwiperType | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
@@ -93,7 +98,7 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Image
           variant="image-viewer"
           className={styles.mobileGnb}
           onClose={close}
-          onDownload={handleDownload}
+          onDownload={canDownload ? handleDownload : undefined}
         />
         <div className={styles.mobileBody}>
           <Swiper
@@ -184,15 +189,17 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Image
         >
           <Icon name="minus" size={24} color="white" />
         </button>
-        <button
-          type="button"
-          className={styles.toolbarButton}
-          onClick={handleDownload}
-          disabled={downloading}
-          aria-label="다운로드"
-        >
-          <Icon name="down" size={24} color="white" />
-        </button>
+        {canDownload && (
+          <button
+            type="button"
+            className={styles.toolbarButton}
+            onClick={handleDownload}
+            disabled={downloading}
+            aria-label="다운로드"
+          >
+            <Icon name="down" size={24} color="white" />
+          </button>
+        )}
       </div>
 
       {hasMultiple && renderThumbnails(styles.thumbSlide, styles.thumbnails)}

@@ -318,6 +318,7 @@ export default function PostDetail({ id }: PostDetailProps) {
             images={viewer.images}
             initialIndex={viewer.index}
             onClose={() => setViewer(null)}
+            canDownload={isAuthor}
           />
         )}
 

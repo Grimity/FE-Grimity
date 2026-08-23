@@ -352,12 +352,14 @@ export default function GNB({
             aria-label="닫기"
           />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="down" size={24} color="gray-bold" />}
-              onClick={onDownload}
-              aria-label="다운로드"
-            />
+            {onDownload && (
+              <IconButton
+                variant="sm"
+                icon={<Icon name="down" size={24} color="gray-bold" />}
+                onClick={onDownload}
+                aria-label="다운로드"
+              />
+            )}
           </div>
         </nav>
       );

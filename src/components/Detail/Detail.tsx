@@ -350,6 +350,7 @@ export default function Detail({ id }: DetailProps) {
                 images={details.cards}
                 initialIndex={viewerIndex}
                 onClose={() => setViewerIndex(null)}
+                canDownload={user_id === details.author.id}
               />
             )}
 
