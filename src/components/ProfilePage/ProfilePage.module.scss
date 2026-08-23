@@ -114,6 +114,12 @@
     }
   }
 
+  .emptyWrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
   .cardContainer {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -158,6 +164,7 @@
 }
 
 .tabBar {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: spacing.$spacing-4;

@@ -344,13 +344,15 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
               )}
               {activeTab === "feeds" ? (
                 allFeeds.length === 0 ? (
-                  <Empty
-                    size="xl"
-                    iconName={isMyProfile ? "illust-upload-success" : "illust-result-null"}
-                    title={isMyProfile ? "첫 그림을 업로드해보세요" : "업로드한 그림이 없어요"}
-                    buttonLabel={isMyProfile ? "그림 업로드" : undefined}
-                    onButtonClick={isMyProfile ? () => router.push("/write") : undefined}
-                  />
+                  <div className={styles.emptyWrap}>
+                    <Empty
+                      size="xl"
+                      iconName={isMyProfile ? "illust-upload-success" : "illust-result-null"}
+                      title={isMyProfile ? "첫 그림을 업로드해보세요" : "업로드한 그림이 없어요"}
+                      buttonLabel={isMyProfile ? "그림 업로드" : undefined}
+                      onButtonClick={isMyProfile ? () => router.push("/write") : undefined}
+                    />
+                  </div>
                 ) : (
                   <section className={styles.cardContainer}>
                     {allFeeds.map((feed, index) => (
@@ -374,12 +376,14 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                 isMyProfile && (
                   <section>
                     {!postsData || postsData.length === 0 ? (
-                      <Empty
-                        size="xl"
-                        title="첫 글을 업로드해보세요"
-                        buttonLabel="글 업로드"
-                        onButtonClick={() => router.push("/board")}
-                      />
+                      <div className={styles.emptyWrap}>
+                        <Empty
+                          size="xl"
+                          title="첫 글을 업로드해보세요"
+                          buttonLabel="글 업로드"
+                          onButtonClick={() => router.push("/board")}
+                        />
+                      </div>
                     ) : (
                       <>
                         <div className={styles.postContainer}>
