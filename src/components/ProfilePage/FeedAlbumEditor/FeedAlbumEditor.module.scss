@@ -90,6 +90,12 @@
   }
 }
 
+.emptyWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .cardGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

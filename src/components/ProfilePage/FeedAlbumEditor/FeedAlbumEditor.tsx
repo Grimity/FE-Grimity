@@ -161,7 +161,9 @@ export default function FeedAlbumEditor({
         </div>
 
         {feeds.length === 0 ? (
-          <Empty size="xl" iconName="illust-upload-success" title="업로드한 그림이 없어요" />
+          <div className={styles.emptyWrap}>
+            <Empty size="xl" iconName="illust-upload-success" title="업로드한 그림이 없어요" />
+          </div>
         ) : (
           <div className={styles.cardGrid}>
             {feeds.map((feed) => (
