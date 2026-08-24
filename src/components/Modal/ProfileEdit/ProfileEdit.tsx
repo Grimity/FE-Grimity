@@ -51,6 +51,18 @@ function normalizeUrl(url: string) {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;
 }
 
+// 저장된 값은 스킴+도메인이 포함된 완전한 URL이므로, 입력 시 보여줬던 것과 동일하게
+// 편집 필드에서는 플랫폼 도메인을 다시 벗겨내 핸들만 보이도록 한다.
+function stripPlatformDomain(linkName: string, link: string) {
+  const domain = PLATFORM_URLS[linkName];
+  if (!domain) return link;
+
+  const withoutScheme = link.replace(/^https?:\/\//i, "");
+  return withoutScheme.toLowerCase().startsWith(domain.toLowerCase())
+    ? withoutScheme.slice(domain.length)
+    : link;
+}
+
 export default function ProfileEdit() {
   const { data: myData, isLoading, refetch } = useMyData();
   const [name, setName] = useState("");
@@ -77,7 +89,7 @@ export default function ProfileEdit() {
           const known = Object.keys(PLATFORM_URLS);
           return !known.includes(link.linkName)
             ? { ...link, customName: link.linkName, linkName: "직접 입력" }
-            : link;
+            : { ...link, link: stripPlatformDomain(link.linkName, link.link) };
         }) || [];
 
       setLinks(processed);
