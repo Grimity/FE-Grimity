@@ -53,8 +53,9 @@ export default function AccountSettings() {
             resetChat();
             showToast("회원 탈퇴 되었습니다.", "success");
             router.push("/");
-          } catch {
+          } catch (err) {
             showToast("탈퇴 중 오류가 발생했습니다.", "error");
+            throw err;
           }
         },
       },

@@ -131,6 +131,7 @@ export default function PostDetail({ id }: PostDetailProps) {
             router.push("/board");
           } catch (err) {
             showToast("삭제 중 오류가 발생했습니다.", "error");
+            throw err;
           }
         },
       },

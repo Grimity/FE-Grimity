@@ -73,18 +73,18 @@ export default function Modal() {
     }
   };
 
-  /** 확인 액션이 끝날 때까지 진행 상태를 보여준 뒤 모달을 닫는다. */
+  /** 확인 액션이 끝날 때까지 진행 상태를 보여준 뒤, 성공한 경우에만 모달을 닫는다. */
   const handleConfirm = async () => {
     if (isConfirming) return;
 
     setIsConfirming(true);
     try {
       await data?.onClick?.();
+      handleCloseModal();
     } catch {
-      // 에러 노출은 각 호출부가 담당한다. 모달은 성공/실패와 무관하게 닫는다.
+      // 에러 토스트 등 실패 노출은 각 호출부가 담당한다. 모달은 열어둔 채 재시도할 수 있게 한다.
     } finally {
       setIsConfirming(false);
-      handleCloseModal();
     }
   };
 

@@ -205,6 +205,7 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
             refetchComments();
           } catch (error) {
             showToast("댓글 삭제에 실패했습니다.", "error");
+            throw error;
           }
         },
       },

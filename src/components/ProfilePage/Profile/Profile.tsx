@@ -126,6 +126,7 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
             router.push("/");
           } catch (err) {
             showToast("탈퇴 중 오류가 발생했습니다.", "error");
+            throw err;
           }
         },
       },
