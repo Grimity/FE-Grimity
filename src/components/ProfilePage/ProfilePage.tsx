@@ -317,7 +317,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                       <TextButton
                         variant="assistive"
                         size="regular"
-                        iconLeft={<Icon name="sort-horizontal" size={16} />}
+                        iconRight={<Icon name="sort-horizontal" size={16} />}
                         onClick={toggleEditMode}
                         disabled={allFeeds.length === 0}
                       >
