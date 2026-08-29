@@ -261,7 +261,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
       <div className={styles.footer}>
         <div className={styles.footerInner}>
           <TextButton
-            variant="primary"
+            variant="assistive"
             size="regular"
             iconLeft={<Icon name="chevron-left" size={20} />}
             onClick={onExit}

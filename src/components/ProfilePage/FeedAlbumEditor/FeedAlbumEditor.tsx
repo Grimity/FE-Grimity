@@ -187,7 +187,7 @@ export default function FeedAlbumEditor({
       <div className={styles.footer}>
         <div className={styles.inner}>
           <TextButton
-            variant="primary"
+            variant="assistive"
             size="regular"
             iconLeft={<Icon name="chevron-left" size={20} />}
             onClick={handleGoBack}
@@ -196,7 +196,7 @@ export default function FeedAlbumEditor({
           </TextButton>
           <div className={styles.rightSection}>
             <TextButton
-              variant="primary"
+              variant="assistive"
               size="regular"
               iconLeft={<Icon name="trash-bin-trash" size={20} />}
               onClick={handleDeleteSelected}
@@ -205,7 +205,7 @@ export default function FeedAlbumEditor({
               {isMobile ? "삭제" : "선택 삭제"}
             </TextButton>
             <TextButton
-              variant="primary"
+              variant="assistive"
               size="regular"
               iconLeft={<Icon name="forward-2" size={20} />}
               onClick={handleMoveAlbum}
