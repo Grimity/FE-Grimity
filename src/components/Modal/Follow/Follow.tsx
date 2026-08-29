@@ -12,6 +12,7 @@ import { useUserFollow, useUserUnfollow } from "@/api/generated/users/users";
 import type { MyFollowersResponse, MyFollowingsResponse } from "@/api/generated/model";
 import { useModalStore } from "@/states/modalStore";
 import { useAuthStore } from "@/states/authStore";
+import { useDeviceStore } from "@/states/deviceStore";
 import { useToast } from "@/hooks/useToast";
 import { useUserCardFollow } from "@/hooks/useCardInteraction";
 import { PATH_ROUTES } from "@/constants/routes";
@@ -20,6 +21,8 @@ import Tab from "@/components/common/SegmentedControl/Tab/Tab";
 import UserItem from "@/components/common/Cell/UserItem/UserItem";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import Icon from "@/components/common/Icon/Icon";
 import Empty from "@/components/common/Empty/Empty";
 import Divider from "@/components/common/Divider/Divider";
 
@@ -56,7 +59,7 @@ function FollowToggleButton({
   );
 }
 
-export default function Follow({ initialTab }: FollowProps) {
+export default function Follow({ initialTab, title }: FollowProps) {
   const [activeTab, setActiveTab] = useState<"follower" | "following">(initialTab);
   const observerRef = useRef<HTMLDivElement | null>(null);
   const closeModal = useModalStore((state) => state.closeModal);
@@ -65,6 +68,7 @@ export default function Follow({ initialTab }: FollowProps) {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { isMobile } = useDeviceStore();
 
   const followersParams = { size: PAGE_SIZE };
   const followingsParams = { size: PAGE_SIZE };
@@ -220,62 +224,75 @@ export default function Follow({ initialTab }: FollowProps) {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.tabs} role="tablist">
-        <Tab
-          size="lg"
-          active={activeTab === "follower"}
-          title="팔로워"
-          showNumber={false}
-          onClick={() => handleTabChange("follower")}
-        />
-        <Tab
-          size="lg"
-          active={activeTab === "following"}
-          title="팔로잉"
-          showNumber={false}
-          onClick={() => handleTabChange("following")}
-        />
-      </div>
-      <Divider />
-      <div className={styles.tabContent}>
-        {data.length === 0 ? (
-          <Empty
-            size="md"
-            iconName="illust-user"
-            title={
-              activeTab === "follower"
-                ? "빛나는 나를 알아본 사람이 아직 없어요"
-                : "팔로우한 작가가 없어요"
-            }
-            buttonLabel={activeTab === "follower" ? "그림 올리기" : "인기 그림 둘러보기"}
-            onButtonClick={() => {
-              route.push(activeTab === "follower" ? "/write" : PATH_ROUTES.RANKING);
-              closeModal();
-            }}
+    <>
+      {!isMobile && title && (
+        <div className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+          <IconButton
+            variant="sm"
+            icon={<Icon name="x" size={20} />}
+            onClick={closeModal}
+            aria-label="닫기"
           />
-        ) : (
-          <ul className={styles.list}>
-            {data.map((user, index) => (
-              <li key={`${user.id}-${index}`}>
-                <UserItem
-                  type="id"
-                  profileImage={user.image ?? undefined}
-                  nickname={user.name}
-                  userId={user.url}
-                  onClick={() => handleClickUser(user.url)}
-                >
-                  <FollowToggleButton
-                    isFollowing={user.isFollowing}
-                    onToggle={() => handleToggleFollow(user.id, user.isFollowing)}
-                  />
-                </UserItem>
-              </li>
-            ))}
-            {hasNextPage && <div ref={observerRef} style={{ height: "20px" }} />}
-          </ul>
-        )}
+        </div>
+      )}
+      <div className={styles.container}>
+        <div className={styles.tabs} role="tablist">
+          <Tab
+            size="lg"
+            active={activeTab === "following"}
+            title="팔로잉"
+            showNumber={false}
+            onClick={() => handleTabChange("following")}
+          />
+          <Tab
+            size="lg"
+            active={activeTab === "follower"}
+            title="팔로워"
+            showNumber={false}
+            onClick={() => handleTabChange("follower")}
+          />
+        </div>
+        <Divider />
+        <div className={styles.tabContent}>
+          {data.length === 0 ? (
+            <Empty
+              size="md"
+              iconName="illust-user"
+              title={
+                activeTab === "follower"
+                  ? "빛나는 나를 알아본 사람이 아직 없어요"
+                  : "팔로우한 작가가 없어요"
+              }
+              buttonLabel={activeTab === "follower" ? "그림 올리기" : "인기 그림 둘러보기"}
+              onButtonClick={() => {
+                route.push(activeTab === "follower" ? "/write" : PATH_ROUTES.RANKING);
+                closeModal();
+              }}
+            />
+          ) : (
+            <ul className={styles.list}>
+              {data.map((user, index) => (
+                <li key={`${user.id}-${index}`}>
+                  <UserItem
+                    type="id"
+                    profileImage={user.image ?? undefined}
+                    nickname={user.name}
+                    userId={user.url}
+                    onClick={() => handleClickUser(user.url)}
+                  >
+                    <FollowToggleButton
+                      isFollowing={user.isFollowing}
+                      onToggle={() => handleToggleFollow(user.id, user.isFollowing)}
+                    />
+                  </UserItem>
+                </li>
+              ))}
+              {hasNextPage && <div ref={observerRef} style={{ height: "20px" }} />}
+            </ul>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

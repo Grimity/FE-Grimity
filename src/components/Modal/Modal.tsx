@@ -98,9 +98,9 @@ export default function Modal() {
           />
         );
       case "FOLLOWER":
-        return <Follow initialTab="follower" />;
+        return <Follow initialTab="follower" title={data?.title} />;
       case "FOLLOWING":
-        return <Follow initialTab="following" />;
+        return <Follow initialTab="following" title={data?.title} />;
       case "UPLOAD":
         return <UploadModal {...data} />;
       case "LIKE":
@@ -157,7 +157,9 @@ export default function Modal() {
                   ? styles.profileEditModal
                   : type === "PROFILE-LINK"
                   ? styles.profileLinkModal
-                  : type === "FOLLOWER" || type === "FOLLOWING" || type === "LIKE"
+                  : type === "FOLLOWER" || type === "FOLLOWING"
+                  ? styles.followListModal
+                  : type === "LIKE"
                   ? styles.followModal
                   : type == "ALBUM-SELECT" || type == "ALBUM-MOVE"
                   ? styles.albumSelectModal

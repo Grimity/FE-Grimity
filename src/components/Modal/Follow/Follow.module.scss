@@ -1,15 +1,36 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/breakpoint" as bp;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 56px;
+  padding: 0 spacing.$spacing-20;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  .title {
+    @include typo.title-3;
+    color: colors.$text-gray-normal;
+  }
+}
 
 .container {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: spacing.$spacing-16;
+  padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
+  box-sizing: border-box;
 
   @include bp.breakpoint-down("xs") {
     height: calc($full-height - 64px - 130px);
+    padding: 0;
   }
 }
 

@@ -47,6 +47,12 @@
   width: 540px;
 }
 
+.followListModal {
+  @extend .modal;
+  width: 400px;
+  padding: 0;
+}
+
 .albumSelectModal {
   @extend .modal;
   max-width: 500px;
