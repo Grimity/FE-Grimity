@@ -11,6 +11,7 @@ import {
 import { useFeedLike, useFeedUnlike } from "@/api/generated/feeds/feeds";
 import type { UserFeedsResponse } from "@/api/generated/model";
 import { useAuthStore } from "@/states/authStore";
+import { useDeviceStore } from "@/states/deviceStore";
 import { useDragScroll } from "@/hooks/useDragScroll";
 import { useToast } from "@/hooks/useToast";
 import useUserBlock from "@/hooks/useUserBlock";
@@ -49,6 +50,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   const queryClient = useQueryClient();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { isTablet } = useDeviceStore();
   const { showToast } = useToast();
 
   const { query, pathname } = router;
@@ -253,7 +255,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
 
           <div className={styles.tabBar}>
             <Tab
-              size="lg"
+              size={isTablet ? "md" : "lg"}
               active={activeTab === "feeds"}
               title="그림"
               number={userData?.feedCount}
@@ -261,7 +263,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
             />
             {isMyProfile && (
               <Tab
-                size="lg"
+                size={isTablet ? "md" : "lg"}
                 active={activeTab === "posts"}
                 title="글"
                 number={userData?.postCount}
