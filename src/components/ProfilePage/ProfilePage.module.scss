@@ -185,9 +185,9 @@
 .sortTrigger {
   display: inline-flex;
   align-items: center;
-  gap: spacing.$spacing-4;
-  height: 40px;
-  padding: 0 spacing.$spacing-12;
+  gap: spacing.$spacing-8;
+  height: 32px;
+  padding: 0 spacing.$spacing-10 0 spacing.$spacing-12;
   border: 1px solid colors.$border-gray-subtle;
   border-radius: 100000px;
   background-color: colors.$surface-base;
@@ -195,6 +195,12 @@
   cursor: pointer;
 
   @include typo.label-5;
+
+  &:disabled {
+    cursor: not-allowed;
+    color: colors.$text-gray-subtler;
+    border-color: colors.$border-gray-subtler;
+  }
 }
 
 .postContainer {

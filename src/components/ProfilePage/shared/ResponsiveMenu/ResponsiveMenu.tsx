@@ -14,6 +14,7 @@ export default function ResponsiveMenu({
   items,
   mobileTitle,
   align = "right",
+  disabled = false,
 }: ResponsiveMenuProps) {
   const { isMobile } = useDeviceStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +22,13 @@ export default function ResponsiveMenu({
   if (isMobile) {
     return (
       <>
-        <div className={styles.triggerWrap} onClick={() => setIsOpen(true)}>
+        <div
+          className={styles.triggerWrap}
+          onClick={() => {
+            if (disabled) return;
+            setIsOpen(true);
+          }}
+        >
           {trigger}
         </div>
         <BottomSheet
@@ -55,6 +62,7 @@ export default function ResponsiveMenu({
       items={items.map(({ label, onClick, selected }) => ({ label, onClick, selected }))}
       align={align}
       className={clsx(styles.desktopMenu)}
+      disabled={disabled}
     />
   );
 }

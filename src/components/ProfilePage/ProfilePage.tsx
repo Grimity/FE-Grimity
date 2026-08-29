@@ -326,8 +326,13 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                     )}
                     <ResponsiveMenu
                       mobileTitle="정렬"
+                      disabled={allFeeds.length === 0}
                       trigger={
-                        <button type="button" className={styles.sortTrigger}>
+                        <button
+                          type="button"
+                          className={styles.sortTrigger}
+                          disabled={allFeeds.length === 0}
+                        >
                           <span>
                             {sortOptions.find((option) => option.value === sortBy)?.label ??
                               "최신순"}

@@ -11,4 +11,5 @@ export interface ResponsiveMenuProps {
   items: ResponsiveMenuItem[];
   mobileTitle?: string;
   align?: "left" | "right";
+  disabled?: boolean;
 }
