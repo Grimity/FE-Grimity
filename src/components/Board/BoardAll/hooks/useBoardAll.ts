@@ -10,13 +10,14 @@ interface UseBoardAllProps {
 }
 
 export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
-  const [searchBy, setSearchBy] = useState<SortOption>("combined");
   const [keyword, setKeyword] = useState("");
 
   const router = useRouter();
   const { query, pathname } = router;
   const { showToast } = useToast();
 
+  // 표시용 정렬 값은 URL 쿼리에서 직접 파생시켜, 실제 검색 조건과 항상 일치하도록 한다.
+  const searchBy = (query.searchBy as SortOption) || "combined";
   const currentType = (query.type as string) || "all";
   const currentPage = Number(query.page) || 1;
   const postsPerPage = isDetail ? POSTS_PER_PAGE.DETAIL : POSTS_PER_PAGE.NORMAL;
@@ -137,7 +138,6 @@ export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
   };
 
   const handleSortChange = (option: SortOption) => {
-    setSearchBy(option);
     router.push({
       pathname: "/board",
       query: { ...query, searchBy: option, page: 1 },
