@@ -69,7 +69,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
       return;
     }
     if (albums.some((a) => a.name === trimmed)) {
-      setCreateError("중복된 이름은 사용하실 수 없어요");
+      setCreateError("중복된 이름은 사용할 수 없습니다.");
       return;
     }
     if (albums.length >= MAX_ALBUMS) {
@@ -170,10 +170,15 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
               textFieldProps={{
                 placeholder: "예시 : '크로키' 또는 '일러스트'",
                 value: newName,
-                maxLength: MAX_NAME_LENGTH,
                 onChange: (e) => {
+                  const value = e.target.value;
+                  if (value.length > MAX_NAME_LENGTH) {
+                    setCreateError(`앨범명은 최대 ${MAX_NAME_LENGTH}자까지만 가능해요.`);
+                    setNewName(value.slice(0, MAX_NAME_LENGTH));
+                    return;
+                  }
                   setCreateError("");
-                  setNewName(e.target.value);
+                  setNewName(value);
                 },
                 onKeyDown: (e) => {
                   if (e.nativeEvent.isComposing) return;
