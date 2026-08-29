@@ -44,7 +44,7 @@ export default function Blocklist({ close }: BlocklistProps) {
     <div className={styles.container}>
       {!isMobile && (
         <div className={styles.titleContainer}>
-          <h2 className={styles.title}>차단 목록</h2>
+          <h2 className={styles.title}>차단</h2>
           <IconButton
             variant="sm"
             icon={<Icon name="x" size={20} />}

@@ -159,7 +159,7 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
     newModalOpen(
       (close) => <Blocklist close={close} />,
       { className: styles.blacklist },
-      { isFill: isMobile, title: "차단 목록" },
+      { isFill: isMobile, title: "차단" },
     );
   };
 
