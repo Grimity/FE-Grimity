@@ -72,7 +72,6 @@
     }
 
     .platformTrigger {
-      position: relative;
       flex: 0 0 140px;
       min-width: 0;
       height: 52px;
@@ -81,20 +80,23 @@
       background-color: colors.$surface-base;
 
       @include bp.breakpoint-down("xs") {
-        flex-basis: 100px;
+        flex-basis: 124px;
       }
     }
 
     .platformSelect {
       width: 100%;
       height: 100%;
-      padding: 0 spacing.$spacing-32 0 spacing.$spacing-16;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: spacing.$spacing-4;
+      padding: 0 spacing.$spacing-16;
       border: none;
       border-radius: radius.$radius-sm;
       background-color: transparent;
       color: colors.$text-gray-bold;
       cursor: pointer;
-      appearance: none;
 
       @include typo.label-2;
 
@@ -102,14 +104,21 @@
         color: colors.$text-gray-subtler;
         cursor: not-allowed;
       }
+
+      @include bp.breakpoint-down("xs") {
+        padding: 0 spacing.$spacing-12;
+      }
+    }
+
+    .platformSelectLabel {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
     }
 
     .platformSelectIcon {
-      position: absolute;
-      top: 50%;
-      right: spacing.$spacing-16;
-      transform: translateY(-50%);
-      pointer-events: none;
+      flex-shrink: 0;
       color: colors.$icon-gray-normal;
     }
 
@@ -118,7 +127,7 @@
       min-width: 0;
 
       @include bp.breakpoint-down("xs") {
-        flex-basis: 100px;
+        flex-basis: 124px;
       }
     }
 

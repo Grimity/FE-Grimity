@@ -15,6 +15,7 @@ import Input from "@/components/common/Input/Input/Input";
 import TextField from "@/components/common/Input/TextField/TextField";
 import Title from "@/components/common/Input/Title/Title";
 import Icon from "@/components/common/Icon/Icon";
+import Menu from "@/components/common/Navigation/Menu/Menu";
 import GroupSettings from "@/components/common/GroupSettings/GroupSettings";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
@@ -37,9 +38,9 @@ interface LinkItem {
 // 플랫폼별 기본 URL(placeholder용)
 const PLATFORM_URLS: Record<string, string> = {
   X: "x.com/",
+  픽시브: "pixiv.net/users/",
   인스타그램: "instagram.com/",
   유튜브: "youtube.com/",
-  픽시브: "pixiv.net/users/",
   이메일: "",
   "직접 입력": "",
 };
@@ -303,29 +304,33 @@ export default function ProfileEdit() {
                                 }}
                               />
                             ) : (
-                              <div className={styles.platformTrigger}>
-                                <select
-                                  className={styles.platformSelect}
-                                  disabled={isEditingOrder}
-                                  value={link.linkName}
-                                  onChange={(e) => handlePlatformChange(index, e.target.value)}
-                                  aria-label="플랫폼 선택"
-                                >
-                                  <option value="" disabled>
-                                    선택
-                                  </option>
-                                  {PLATFORM_OPTIONS.map((platform) => (
-                                    <option key={platform} value={platform}>
-                                      {platform}
-                                    </option>
-                                  ))}
-                                </select>
-                                <Icon
-                                  name="chevron-down"
-                                  size={16}
-                                  className={styles.platformSelectIcon}
-                                />
-                              </div>
+                              <Menu
+                                wrapperClassName={styles.platformTrigger}
+                                align="left"
+                                disabled={isEditingOrder}
+                                trigger={
+                                  <button
+                                    type="button"
+                                    className={styles.platformSelect}
+                                    disabled={isEditingOrder}
+                                    aria-label="플랫폼 선택"
+                                  >
+                                    <span className={styles.platformSelectLabel}>
+                                      {link.linkName || "선택"}
+                                    </span>
+                                    <Icon
+                                      name="chevron-down"
+                                      size={16}
+                                      className={styles.platformSelectIcon}
+                                    />
+                                  </button>
+                                }
+                                items={PLATFORM_OPTIONS.map((platform) => ({
+                                  label: platform,
+                                  selected: link.linkName === platform,
+                                  onClick: () => handlePlatformChange(index, platform),
+                                }))}
+                              />
                             )}
                             <GroupSettings
                               className={styles.linkGroupSettings}
