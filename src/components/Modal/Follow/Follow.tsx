@@ -243,10 +243,14 @@ export default function Follow({ initialTab }: FollowProps) {
           <Empty
             size="md"
             iconName="illust-user"
-            title={activeTab === "follower" ? "아직 팔로워가 없어요" : "팔로우한 작가가 없어요"}
-            buttonLabel="인기 그림 둘러보기"
+            title={
+              activeTab === "follower"
+                ? "빛나는 나를 알아본 사람이 아직 없어요"
+                : "팔로우한 작가가 없어요"
+            }
+            buttonLabel={activeTab === "follower" ? "그림 올리기" : "인기 그림 둘러보기"}
             onButtonClick={() => {
-              route.push(PATH_ROUTES.RANKING);
+              route.push(activeTab === "follower" ? "/write" : PATH_ROUTES.RANKING);
               closeModal();
             }}
           />
