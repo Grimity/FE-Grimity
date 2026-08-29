@@ -226,7 +226,7 @@ export default function FeedAlbumEditor({
           onSecondary={() => setIsRenaming(false)}
           primaryLabel="변경하기"
           onPrimary={handleRename}
-          primaryDisabled={isRenamePending}
+          primaryDisabled={isRenamePending || renameValue.trim().length === 0}
         >
           <Input
             inputType="textfield"
