@@ -388,7 +388,8 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
   };
 
   const comments = commentsData?.comments ?? [];
-  const totalCommentCount = commentCount ?? commentsData?.commentCount ?? 0;
+  // commentCount는 유일한 호출부(Detail.tsx)에서 항상 서버 값을 전달하므로 이 값을 그대로 쓴다.
+  const totalCommentCount = commentCount ?? 0;
 
   return (
     <div className={styles.container}>
