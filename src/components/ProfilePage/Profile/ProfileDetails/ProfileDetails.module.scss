@@ -64,7 +64,7 @@
 }
 
 .moreLinksText {
-  @include typo.label-6;
+  @include typo.label-5;
   color: colors.$text-primary-normal;
   cursor: pointer;
 }
