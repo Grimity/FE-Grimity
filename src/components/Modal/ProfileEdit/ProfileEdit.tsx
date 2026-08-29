@@ -209,7 +209,7 @@ export default function ProfileEdit() {
     <div className={styles.container}>
       {!isMobile && (
         <div className={styles.titleContainer}>
-          <h2 className={styles.title}>프로필 편집</h2>
+          <h2 className={styles.title}>프로필 수정</h2>
         </div>
       )}
       <div className={styles.textBtnContainer}>

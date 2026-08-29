@@ -40,7 +40,7 @@
   .textContainer {
     display: flex;
     flex-direction: column;
-    gap: spacing.$spacing-24;
+    gap: spacing.$spacing-20;
 
     @include bp.breakpoint-down("xs") {
       max-height: 100%;

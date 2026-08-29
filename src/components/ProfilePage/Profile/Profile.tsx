@@ -82,17 +82,25 @@ export default function Profile({ isMyProfile, id, url }: ProfileProps) {
   const handleOpenEditModal = () => {
     openModal({
       type: isMobile ? "PROFILE-EDIT" : "PROFILE-EDIT",
-      data: isMobile ? { title: "프로필 편집" } : null,
+      data: isMobile ? { title: "프로필 수정" } : null,
       isFill: isMobile,
     });
   };
 
   const handleOpenFollowerModal = () => {
-    openModal({ type: "FOLLOWER", data: null, isFill: isMobile });
+    openModal({
+      type: "FOLLOWER",
+      data: { title: userData?.name, hideCloseButton: true },
+      isFill: isMobile,
+    });
   };
 
   const handleOpenFollowingModal = () => {
-    openModal({ type: "FOLLOWING", data: null, isFill: isMobile });
+    openModal({
+      type: "FOLLOWING",
+      data: { title: userData?.name, hideCloseButton: true },
+      isFill: isMobile,
+    });
   };
 
   const handleOpenReportModal = () => {
