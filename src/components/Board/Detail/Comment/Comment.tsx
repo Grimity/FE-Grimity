@@ -291,9 +291,9 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
     const items: MenuItem[] = [{ label: "답글달기", onClick: onReply }];
 
     if (writer.id === user_id) {
-      items.push({ label: "삭제하기", onClick: () => handleCommentDelete(commentId) });
+      items.push({ label: "삭제하기", onClick: () => handleCommentDelete(commentId), danger: true });
     } else if (isLoggedIn) {
-      items.push({ label: "신고하기", onClick: () => handleReport(writer.id) });
+      items.push({ label: "신고하기", onClick: () => handleReport(writer.id), danger: true });
     }
 
     return items;

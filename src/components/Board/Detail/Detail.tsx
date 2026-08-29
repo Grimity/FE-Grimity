@@ -148,7 +148,7 @@ export default function PostDetail({ id }: PostDetailProps) {
     if (isAuthor) {
       return [
         { label: "수정하기", onClick: handleOpenEditPage },
-        { label: "삭제하기", onClick: handleDelete },
+        { label: "삭제하기", onClick: handleDelete, danger: true },
       ];
     }
 
@@ -158,7 +158,7 @@ export default function PostDetail({ id }: PostDetailProps) {
       items.push({ label: "작가 프로필로 이동", onClick: handleGoToAuthorProfile });
     }
     if (isLoggedIn) {
-      items.push({ label: "신고하기", onClick: handleOpenReportModal });
+      items.push({ label: "신고하기", onClick: handleOpenReportModal, danger: true });
     }
 
     return items;
