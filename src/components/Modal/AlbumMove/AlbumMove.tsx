@@ -100,10 +100,10 @@ export default function AlbumMove() {
           </div>
           <div className={styles.btns}>
             <OutlinedButton size="large" onClick={closeModal}>
-              취소
+              닫기
             </OutlinedButton>
             <SolidButton size="large" onClick={() => submit(selectedId)} disabled={isPending}>
-              {isPending ? "이동 중..." : "완료"}
+              {isPending ? "이동 중..." : "이동하기"}
             </SolidButton>
           </div>
         </>

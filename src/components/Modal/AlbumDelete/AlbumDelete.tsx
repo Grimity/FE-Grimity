@@ -43,9 +43,9 @@ export default function AlbumDelete() {
       variant="content"
       title={`${selectedCount}개의 그림을 삭제할까요?`}
       contentText="삭제 이후 되돌릴 수 없어요"
-      secondaryLabel="취소"
+      secondaryLabel="아니요"
       onSecondary={closeModal}
-      primaryLabel={isPending ? "삭제 중..." : "삭제"}
+      primaryLabel={isPending ? "삭제 중..." : "삭제하기"}
       onPrimary={handleDelete}
     />
   );
