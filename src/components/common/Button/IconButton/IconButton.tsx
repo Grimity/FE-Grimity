@@ -15,6 +15,8 @@ export default function IconButton({
   className,
   type = "button",
   "aria-label": ariaLabel,
+  "aria-expanded": ariaExpanded,
+  "aria-haspopup": ariaHasPopup,
 }: IconButtonProps) {
   return (
     <button
@@ -23,6 +25,8 @@ export default function IconButton({
       onClick={onClick}
       onMouseDown={onMouseDown}
       aria-label={ariaLabel}
+      aria-expanded={ariaExpanded}
+      aria-haspopup={ariaHasPopup}
       className={clsx(
         baseStyles.button,
         styles.iconButton,
@@ -31,13 +35,10 @@ export default function IconButton({
         className
       )}
     >
-      {loading && (
-        <span
-          className={`${baseStyles.spinner} ${baseStyles.spinnerSmall}`}
-        />
-      )}
       <span className={baseStyles.content}>
-        {badge ? (
+        {loading ? (
+          <span className={`${baseStyles.spinner} ${baseStyles.spinnerSmall}`} />
+        ) : badge ? (
           <DotBadge size="medium" position="topRight">
             {icon}
           </DotBadge>

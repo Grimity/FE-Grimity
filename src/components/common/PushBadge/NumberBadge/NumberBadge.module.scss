@@ -17,13 +17,13 @@
   }
 
   &.outline {
-    background-color: colors.$surface-white;
+    background-color: colors.$surface-base;
     border: 1px solid colors.$border-gray-subtler;
     color: colors.$status-notification;
   }
 
   &.text {
-    background-color: colors.$surface-white;
+    background-color: colors.$surface-base;
     color: colors.$text-gray-bold;
   }
 }

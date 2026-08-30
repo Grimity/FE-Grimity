@@ -1,151 +1,87 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
-  padding-bottom: 25px;
-
-  .inputContainer {
-    width: 100%;
-    margin-top: 60px;
-    margin-bottom: 2px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-
-    .submitBtn {
-      flex-shrink: 0;
-    }
-
-    @include Size("tablet") {
-      margin-top: 20px;
-    }
-  }
-
-  .childComments {
-    width: 100%;
-    padding-left: 32px;
-  }
-  .comment {
-    width: 100%;
-  }
-
-  .commentBody {
-    width: 100%;
-  }
-
-  .writerReply {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 20px 0;
-    border-bottom: 1px solid $gray30;
-  }
-  .writerLeft {
-    display: flex;
-    flex-direction: column;
-  }
-  .writerCreatedAt {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .writerName {
-    @include Label1;
-    color: $gray60;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .createdAt {
-    @include Cap2;
-    color: $gray50;
-    @include Drag;
-  }
-
-  .feedWriter {
-    @include Cap3;
-    color: $secandary1;
-    background-color: $secandary2;
-    border-radius: 50px;
-    padding: 2px 8px;
-    @include Drag;
-  }
-
-  .commentText {
-    @include Body1;
-    color: $gray80;
-    white-space: pre-line;
-    margin-top: 6px;
-    margin-bottom: 10px;
-
-    .mentionedUser {
-      color: $secandary1;
-      @include Label1;
-      margin-right: 4px;
-    }
-
-    :global(.comment-link) {
-      color: $secandary1;
-      text-decoration: underline;
-      word-break: break-all;
-
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-  }
-
-  .likeReplyBtn {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .likeButton {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    @include Cap1;
-    color: $gray60;
-    cursor: pointer;
-    @include Drag;
-  }
-  .likeOnButton {
-    @extend .likeButton;
-    color: $secandary1;
-  }
-
-  .replyBtn {
-    @include Label1;
-    line-height: 24px;
-    color: $gray60;
-    cursor: pointer;
-    @include Drag;
-  }
-
-  .viewReplies {
-    width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-20;
 }
 
-.deleteComment {
-  color: $gray50;
-  @include Label1;
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-10;
 }
 
-.replyBtnDropdown {
-  position: relative;
-  @include Drag;
-}
-
-.input {
-  margin-top: 8px;
+.titleRow {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: spacing.$spacing-4;
+}
 
-  .submitBtn {
-    flex-shrink: 0;
+.title {
+  @include typo.label-1;
+  color: colors.$text-gray-bold;
+}
+
+.count {
+  @include typo.label-1;
+  color: colors.$text-primary-normal;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+}
+
+.mentionTag {
+  @include typo.label-5;
+  color: colors.$text-primary-normal;
+  white-space: nowrap;
+}
+
+.emptyWrap {
+  display: flex;
+  justify-content: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+}
+
+.commentRow {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+.childList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+// 답글 입력창은 스레드 맨 아래, 답글 본문과 같은 들여쓰기에 놓인다.
+.replyInput {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding-left: spacing.$spacing-64;
+
+  @include bp.breakpoint-down("xs") {
+    padding-left: spacing.$spacing-48;
   }
 }

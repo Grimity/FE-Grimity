@@ -10,38 +10,41 @@ interface UseBoardAllProps {
 }
 
 export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
-  const [searchBy, setSearchBy] = useState<SortOption>("combined");
-  const [posts, setPosts] = useState<PostResponse[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [keyword, setKeyword] = useState("");
 
   const router = useRouter();
   const { query, pathname } = router;
   const { showToast } = useToast();
 
+  // 표시용 정렬 값은 URL 쿼리에서 직접 파생시켜, 실제 검색 조건과 항상 일치하도록 한다.
+  const searchBy = (query.searchBy as SortOption) || "combined";
   const currentType = (query.type as string) || "all";
   const currentPage = Number(query.page) || 1;
   const postsPerPage = isDetail ? POSTS_PER_PAGE.DETAIL : POSTS_PER_PAGE.NORMAL;
-  const totalPages = Math.ceil(totalCount / postsPerPage);
+  const isSearching = !!query.keyword;
 
-  const { data: noticesData } = usePostsNotices();
+  const { data: noticesData } = usePostsNotices(!isSearching);
   const {
     data: latestData,
     isLoading,
     refetch,
-  } = usePostsLatest({
-    type: currentType.toUpperCase() as "ALL" | "QUESTION" | "FEEDBACK",
-    page: currentPage,
-    size: postsPerPage,
-  });
+  } = usePostsLatest(
+    {
+      type: currentType.toUpperCase() as "ALL" | "NORMAL" | "QUESTION" | "FEEDBACK",
+      page: currentPage,
+      size: postsPerPage,
+    },
+    !isSearching,
+  );
 
   const { data: searchData, isLoading: isSearchLoading } = usePostSearch(
-    query.keyword
+    isSearching
       ? {
           searchBy: (query.searchBy as "combined" | "name") || "combined",
           size: postsPerPage,
           page: currentPage,
           keyword: query.keyword as string,
+          type: currentType.toUpperCase() as "ALL" | "NORMAL" | "QUESTION" | "FEEDBACK",
         }
       : null,
   );
@@ -50,33 +53,25 @@ export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
     refetch();
   }, [pathname, refetch]);
 
-  useEffect(() => {
-    if (!router.isReady) return;
+  const posts: PostResponse[] = !router.isReady
+    ? []
+    : isSearching
+      ? (searchData?.posts ?? [])
+      : noticesData && latestData
+        ? currentPage === 1 && !isDetail
+          ? [...noticesData, ...latestData.posts]
+          : latestData.posts
+        : [];
 
-    if (query.keyword) {
-      if (searchData) {
-        setPosts(searchData.posts);
-        setTotalCount(searchData.totalCount);
-      }
-    } else if (noticesData && latestData) {
-      const mergedPosts =
-        currentPage === 1 && !isDetail ? [...noticesData, ...latestData.posts] : latestData.posts;
+  const totalCount = !router.isReady
+    ? 0
+    : isSearching
+      ? (searchData?.totalCount ?? 0)
+      : (latestData?.totalCount ?? 0);
 
-      setPosts(mergedPosts);
-      setTotalCount(latestData.totalCount);
-    }
-  }, [
-    currentType,
-    currentPage,
-    query.keyword,
-    router.isReady,
-    noticesData,
-    latestData,
-    searchData,
-    isDetail,
-  ]);
+  const totalPages = Math.ceil(totalCount / postsPerPage);
 
-  const handleTabChange = (type: "all" | "question" | "feedback") => {
+  const handleTabChange = (type: "all" | "normal" | "question" | "feedback") => {
     const newQuery: { type: string; page: number; searchBy?: string; keyword?: string } = {
       ...query,
       type: type,
@@ -86,6 +81,7 @@ export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
     delete newQuery.searchBy;
     delete newQuery.keyword;
 
+    setKeyword("");
     router.push({ query: newQuery });
   };
 
@@ -142,7 +138,6 @@ export const useBoardAll = ({ isDetail }: UseBoardAllProps) => {
   };
 
   const handleSortChange = (option: SortOption) => {
-    setSearchBy(option);
     router.push({
       pathname: "/board",
       query: { ...query, searchBy: option, page: 1 },
