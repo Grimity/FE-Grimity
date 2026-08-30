@@ -8,8 +8,9 @@
   align-items: center;
   text-align: center;
   min-width: 0;
-  width: 375px;
-  padding: spacing.$spacing-72 0;
+  width: 100%;
+  max-width: 375px;
+  padding: spacing.$spacing-72 spacing.$spacing-20;
 }
 
 .iconWrap {

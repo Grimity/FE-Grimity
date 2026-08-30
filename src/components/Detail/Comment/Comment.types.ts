@@ -5,15 +5,13 @@ export interface CommentProps {
   feedWriterId: string;
   commentCount?: number;
   commentsData?: FeedsCommentsResponse;
-  isFollowingPage?: boolean;
-  isExpanded?: boolean;
 }
 
 export interface CommentWriter {
   id: string;
   url: string;
   name: string;
-  image: string;
+  image: string | null;
 }
 
 export interface Comment {

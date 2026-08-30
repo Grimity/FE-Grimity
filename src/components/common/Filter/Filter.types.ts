@@ -5,6 +5,8 @@ export interface FilterOption {
   value: string;
 }
 
+export type FilterDisplayMode = "menu" | "bottomSheet";
+
 export interface FilterProps {
   variant?: FilterVariant;
   options: FilterOption[];
@@ -14,4 +16,6 @@ export interface FilterProps {
   className?: string;
   align?: "left" | "right";
   renderDropdown?: (close: () => void) => React.ReactNode;
+  displayMode?: FilterDisplayMode;
+  bottomSheetTitle?: string;
 }

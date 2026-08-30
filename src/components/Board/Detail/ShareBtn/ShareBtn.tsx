@@ -1,5 +1,6 @@
 import { useShareModal } from "@/hooks/useShareModal";
-import IconComponent from "@/components/Asset/Icon";
+import Icon from "@/components/common/Icon/Icon";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
 import { ShareBtnProps } from "./ShareBtn.types";
 
 export default function ShareBtn({ postId, title, thumbnail }: ShareBtnProps) {
@@ -10,8 +11,11 @@ export default function ShareBtn({ postId, title, thumbnail }: ShareBtnProps) {
   };
 
   return (
-    <div onClick={handleOpenShareModal}>
-      <IconComponent name="share" size={24} padding={8} isBtn />
-    </div>
+    <IconButton
+      variant="sm"
+      icon={<Icon name="share" size={20} />}
+      onClick={handleOpenShareModal}
+      aria-label="공유하기"
+    />
   );
 }

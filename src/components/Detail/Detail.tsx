@@ -76,6 +76,7 @@ export default function Detail({ id }: DetailProps) {
               router.push("/");
             } catch (err) {
               showToast("삭제 중 오류가 발생했습니다.", "error");
+              throw err;
             }
           },
         },
@@ -218,6 +219,7 @@ export default function Detail({ id }: DetailProps) {
                 images={details.cards}
                 initialIndex={viewerIndex}
                 onClose={() => setViewerIndex(null)}
+                canDownload={user_id === details.author.id}
               />
             )}
 

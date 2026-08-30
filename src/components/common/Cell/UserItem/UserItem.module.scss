@@ -2,6 +2,7 @@
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 // ============================================
 // Avatar
@@ -462,7 +463,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
   min-width: 0;
 }
 
@@ -500,9 +500,13 @@
   flex-direction: column;
   align-items: flex-start;
   gap: spacing.$spacing-8;
-  padding: spacing.$spacing-12 0;
+  padding: spacing.$spacing-20 0;
   width: 100%;
   position: relative;
+
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-12 0;
+  }
 }
 
 .titleHeader {
@@ -687,20 +691,11 @@
   }
 }
 
-// 좋아요 활성: 카운트 텍스트는 gray-bold, 하트 아이콘만 red
 .commentActionBtnActive {
-  color: colors.$text-gray-bold;
-
-  svg {
-    color: colors.$status-negative;
-  }
+  color: colors.$status-negative;
 
   &:hover {
-    color: colors.$text-gray-bold;
-
-    svg {
-      color: colors.$status-negative;
-    }
+    color: colors.$status-negative;
   }
 }
 

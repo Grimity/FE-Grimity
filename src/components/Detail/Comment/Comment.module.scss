@@ -1,116 +1,87 @@
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
-@use "@/styles/tokens/radius" as radius;
 @use "@/styles/breakpoint" as bp;
-@use "@/styles/globals.scss" as *;
 
 .container {
   width: 100%;
-  margin-top: spacing.$spacing-32;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-20;
 }
 
-.commentHeader {
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-10;
+}
+
+.titleRow {
   display: flex;
   align-items: center;
   gap: spacing.$spacing-4;
+}
+
+.title {
   @include typo.label-1;
   color: colors.$text-gray-bold;
 }
 
-.commentCount {
+.count {
+  @include typo.label-1;
   color: colors.$text-primary-normal;
 }
 
-.comment {
-  width: 100%;
-  margin-bottom: spacing.$spacing-24;
-}
-
-.childComments {
-  width: 100%;
-}
-
-.commentContentBody {
-  .mentionedUser {
-    color: colors.$text-primary-normal;
-    @include typo.label-3;
-    margin-right: spacing.$spacing-4;
-  }
-
-  :global(.comment-link) {
-    color: colors.$text-primary-normal;
-    text-decoration: underline;
-    word-break: break-all;
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-}
-
-.viewReplies {
-  width: 100%;
-  margin-top: spacing.$spacing-12;
-}
-
-.menuWrapper {
-  flex-shrink: 0;
-}
-
-// 답글 입력은 스레드 안에서 들여쓰기(자식 댓글 컬럼과 정렬)
-.replyInputWrap {
-  margin-top: spacing.$spacing-8;
-  padding-left: spacing.$spacing-48;
-
-  @include bp.breakpoint-down("xs") {
-    padding-left: spacing.$spacing-32;
-  }
-}
-
-.input {
+.inputRow {
   display: flex;
   align-items: center;
-  gap: spacing.$spacing-8;
+  gap: spacing.$spacing-12;
 }
 
-// DS TextField(default·md)와 동일한 룩. 멘션 prefix를 필드 내부에 담는 composite
-.replyField {
+.field {
   flex: 1;
   min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: spacing.$spacing-8;
-  height: 52px;
-  padding: 0 spacing.$spacing-16;
-  border: 1px solid colors.$border-gray-subtle;
-  border-radius: radius.$radius-sm;
-  background-color: colors.$surface-base;
-  cursor: text;
-  transition: border-color 0.15s ease;
-
-  &:focus-within {
-    border-color: colors.$status-info;
-  }
 }
 
-.replyMention {
-  flex-shrink: 0;
-  color: colors.$text-primary-normal;
+.mentionTag {
   @include typo.label-5;
+  color: colors.$text-primary-normal;
   white-space: nowrap;
 }
 
-.replyInput {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  @include typo.label-4;
-  color: colors.$text-gray-bold;
+.emptyWrap {
+  display: flex;
+  justify-content: center;
+}
 
-  &::placeholder {
-    color: colors.$text-gray-subtle;
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-12;
+}
+
+.commentRow {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+.childList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+// 답글 입력창은 스레드 맨 아래, 답글 본문과 같은 들여쓰기에 놓인다.
+.replyInput {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  padding-left: spacing.$spacing-64;
+
+  @include bp.breakpoint-down("xs") {
+    padding-left: spacing.$spacing-48;
   }
 }

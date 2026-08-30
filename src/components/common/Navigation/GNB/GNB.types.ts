@@ -44,7 +44,7 @@ export interface GNBProps {
   /** text-button / editor 변형의 우측 텍스트 레이블 */
   rightLabel?: string;
   onRightLabelClick?: () => void;
-  /** text-button 변형의 우측 텍스트 버튼 비활성화 여부 */
+  /** text-button / editor 변형의 우측 텍스트 레이블 비활성화 여부 */
   rightLabelDisabled?: boolean;
   /** DM 변형에서 표시되는 상대방 이름 */
   dmName?: string;
