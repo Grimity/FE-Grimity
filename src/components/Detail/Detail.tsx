@@ -23,7 +23,8 @@ import ImageViewer from "@/components/ImageViewer/ImageViewer";
 import ShareBtn from "./ShareBtn/ShareBtn";
 import { timeAgo } from "@/utils/timeAgo";
 import Tag from "@/components/common/Tag/Tag/Tag";
-import { useModalStore } from "@/states/modalStore";
+import Alert from "@/components/common/PopUp/Alert/Alert";
+import { useModal } from "@/hooks/useModal";
 import { useShareModal } from "@/hooks/useShareModal";
 import { useReportModal } from "@/hooks/useReportModal";
 import { useProfileCardHover } from "@/hooks/useProfileCardHover";
@@ -51,7 +52,7 @@ export default function Detail({ id }: DetailProps) {
   const divRef = usePreventRightClick<HTMLDivElement>();
   const sectionRef = usePreventRightClick<HTMLElement>();
   const router = useRouter();
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal: openDsModal } = useModal();
   const { shareFeed } = useShareModal();
   const openReportModal = useReportModal();
   const { triggerProps, popoverProps, isOpen, targetRef } = useProfileCardHover(
@@ -70,23 +71,26 @@ export default function Detail({ id }: DetailProps) {
   const handleDelete = () => {
     if (!id) return;
 
-    openModal({
-      type: null,
-      data: {
-        title: "그림을 정말 삭제하시겠어요?",
-        confirmBtn: "삭제하기",
-        onClick: async () => {
+    openDsModal((close) => (
+      <Alert
+        variant="content"
+        size="xl"
+        title="그림을 정말 삭제하시겠어요?"
+        contentText="삭제한 그림은 복구할 수 없어요"
+        secondaryLabel="취소"
+        onSecondary={close}
+        primaryLabel="삭제하기"
+        onPrimary={async () => {
           try {
             await deleteFeeds(id);
+            close();
             router.push("/");
-          } catch (err) {
+          } catch {
             showToast("삭제 중 오류가 발생했습니다.", "error");
-            throw err;
           }
-        },
-      },
-      isComfirm: true,
-    });
+        }}
+      />
+    ));
   };
 
   const handleOpenEditPage = () => {
