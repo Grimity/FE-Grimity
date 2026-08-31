@@ -27,7 +27,6 @@ import { usePostsCommentLikeMutation } from "@/queries/posts-comments/usePostsCo
 import { PostCommentProps, PostCommentWriter } from "./Comment.types";
 
 import styles from "./Comment.module.scss";
-import { CONFIG } from "@/config";
 
 const COMMENT_MAX_COUNT = 1000;
 
@@ -320,9 +319,7 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
               mentionName={reply.mentionedUser?.name}
               likeCount={String(reply.likeCount)}
               isLiked={reply.isLike}
-              profileImage={
-                reply.writer ? `${CONFIG.ENV.IMAGE_URL}/${reply.writer.image}` : undefined
-              }
+              profileImage={reply.writer?.image ?? undefined}
               isAuthor={reply.writer?.id === postWriterId}
               onLikeClick={() => handleLikeClick(reply.id, reply.isLike)}
               onReplyClick={handleReply}
@@ -357,9 +354,7 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
           commentText={comment.content}
           likeCount={String(comment.likeCount)}
           isLiked={comment.isLike}
-          profileImage={
-            comment.writer ? `${CONFIG.ENV.IMAGE_URL}/${comment.writer.image}` : undefined
-          }
+          profileImage={comment.writer?.image ?? undefined}
           isAuthor={comment.writer?.id === postWriterId}
           onLikeClick={() => handleLikeClick(comment.id, comment.isLike)}
           onReplyClick={handleReply}
