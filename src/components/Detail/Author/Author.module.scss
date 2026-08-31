@@ -1,11 +1,12 @@
+@use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/typography/semantic" as typo;
-@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
 @use "@/styles/breakpoint" as bp;
-@use "@/styles/globals.scss" as *;
 
 .container {
   width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: spacing.$spacing-20;
@@ -15,85 +16,64 @@
     margin-top: spacing.$spacing-24;
   }
 
-  .spaceBetween {
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-
-    .seeMore {
-      @include typo.label-1;
-      color: colors.$text-gray-subtle;
-      cursor: pointer;
-      @include Drag;
-    }
-  }
-
-  .profileContainer {
+  .actions {
     display: flex;
     align-items: center;
+    gap: spacing.$spacing-8;
+    flex-shrink: 0;
+  }
+
+  .slide {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .slideItem {
+    width: 180px;
+    height: auto;
 
     @include bp.breakpoint-down("xs") {
-      width: 100%;
-      justify-content: space-between;
-    }
-
-    .profileLeft {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-
-      .authorImage {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 1px solid colors.$border-gray-subtle;
-        @include Drag;
-      }
-
-      .authorInfo {
-        display: flex;
-        flex-direction: column;
-        margin-left: spacing.$spacing-16;
-        margin-right: spacing.$spacing-24;
-
-        .authorName {
-          @include typo.subtitle-1;
-          color: colors.$text-gray-bold;
-
-          @include bp.breakpoint-down("xs") {
-            @include typo.label-1;
-          }
-        }
-
-        .follower {
-          @include typo.label-1;
-          color: colors.$text-gray-subtle;
-          display: flex;
-          gap: spacing.$spacing-8;
-          @include Drag;
-
-          .followerColor {
-            color: colors.$text-gray-normal;
-          }
-
-          @include bp.breakpoint-down("xs") {
-            @include typo.label-3;
-          }
-        }
-      }
+      width: 140px;
     }
   }
 
-  .cardList {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-column-gap: spacing.$spacing-16;
-    grid-row-gap: spacing.$spacing-20;
+  .moreSlide {
+    width: 56px;
 
     @include bp.breakpoint-down("xs") {
-      grid-template-columns: repeat(2, 1fr);
+      width: 48px;
     }
+  }
+
+  .moreButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: spacing.$spacing-8;
+    width: 100%;
+    height: 180px;
+
+    @include bp.breakpoint-down("xs") {
+      height: 140px;
+    }
+  }
+
+  .moreCircle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: radius.$radius-full;
+    background-color: colors.$surface-primary-subtlest;
+    flex-shrink: 0;
+  }
+
+  .moreLabel {
+    @include typo.label-6;
+    color: colors.$text-primary-normal;
+    white-space: nowrap;
+    text-align: center;
   }
 }

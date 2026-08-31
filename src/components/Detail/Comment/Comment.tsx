@@ -126,7 +126,8 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
       showToast("댓글 삭제에 실패했습니다.", "error");
     },
   });
-  const { pathname } = useRouter();
+  const router = useRouter();
+  const { pathname } = router;
 
   useEffect(() => {
     refetchComments();
@@ -146,7 +147,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
       }
 
       queryClient.invalidateQueries({ queryKey: ["getFeedsComments", feedId] });
-    } catch (error) {
+    } catch {
       showToast("좋아요 처리 중 오류가 발생했습니다.", "error");
     }
   };
@@ -224,7 +225,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
       });
       setComment("");
       refetchComments();
-    } catch (error) {
+    } catch {
       showToast("댓글 작성에 실패했습니다.", "error");
     }
   };
@@ -242,7 +243,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
       });
       closeReply();
       refetchComments();
-    } catch (error) {
+    } catch {
       showToast("답글 작성에 실패했습니다.", "error");
     }
   };
@@ -263,23 +264,15 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
     };
   }, []);
 
-  const handleReplyEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.nativeEvent.isComposing) return;
+  const handleEnterKeyDown =
+    (submit: () => void) => (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.nativeEvent.isComposing) return;
 
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleReplySubmit();
-    }
-  };
-
-  const handleCommentEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.nativeEvent.isComposing) return;
-
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleCommentSubmit();
-    }
-  };
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        submit();
+      }
+    };
 
   const getMenuItems = (
     writer: CommentWriter,
@@ -322,6 +315,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
               isAuthor={reply.writer.id === feedWriterId}
               onLikeClick={() => handleLikeClick(reply.id, reply.isLike)}
               onReplyClick={handleReply}
+              onProfileClick={() => router.push(`/${reply.writer.url}`)}
               menuItems={getMenuItems(reply.writer, reply.id, handleReply)}
               menuOpen={openMenuId === reply.id}
               onMenuOpenChange={(open) => setOpenMenuId(open ? reply.id : null)}
@@ -349,6 +343,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
           isAuthor={comment.writer.id === feedWriterId}
           onLikeClick={() => handleLikeClick(comment.id, comment.isLike)}
           onReplyClick={handleReply}
+          onProfileClick={() => router.push(`/${comment.writer.url}`)}
           menuItems={getMenuItems(comment.writer, comment.id, handleReply)}
           menuOpen={openMenuId === comment.id}
           onMenuOpenChange={(open) => setOpenMenuId(open ? comment.id : null)}
@@ -362,7 +357,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
             mentionName={replyTarget.writer.name}
             replyText={replyText}
             onReplyTextChange={handleReplyTextChange}
-            onKeyDown={handleReplyEnterKeyDown}
+            onKeyDown={handleEnterKeyDown(handleReplySubmit)}
             isLoggedIn={isLoggedIn}
             replyInputRef={replyInputRef}
             showToast={showToast}
@@ -400,7 +395,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
                 showToast("회원만 댓글 달 수 있어요!", "error");
               }
             }}
-            onKeyDown={handleCommentEnterKeyDown}
+            onKeyDown={handleEnterKeyDown(handleCommentSubmit)}
           />
           <SolidButton
             size={isMobile ? "regular" : "large"}

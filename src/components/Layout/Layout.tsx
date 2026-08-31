@@ -58,6 +58,8 @@ const BOARD_WRITE_ROUTES = [
   "/posts/[id]",
   "/posts/[id]/edit",
 ];
+// 모바일에서 뒤로가기 + 검색·알림·프로필 헤더(depth-2)를 쓰는 라우트
+const DEPTH2_ROUTES = ["/mypage", "/feeds/[id]"];
 const SUB_SEARCH_HIDDEN_ROUTES = [
   "/search",
   "/feeds/[id]",
@@ -161,7 +163,7 @@ export default function Layout({ children }: LayoutProps) {
   const gnbVariant: GNBVariant = useMemo(() => {
     if (isMobileSearchPage) return "search";
     if (isSubRoute) {
-      if (router.pathname === "/mypage") return "depth-2";
+      if (DEPTH2_ROUTES.includes(router.pathname)) return "depth-2";
       if (isUploadRoute) return "text-button";
       return "three-button";
     }

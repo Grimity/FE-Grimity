@@ -638,6 +638,10 @@
   min-width: 0;
 }
 
+.headerLeftClickable {
+  cursor: pointer;
+}
+
 .commentContent {
   @include typo.body-2-r;
   color: colors.$text-gray-bold;

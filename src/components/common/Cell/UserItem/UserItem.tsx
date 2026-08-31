@@ -52,6 +52,7 @@ export default function UserItem({
   isAuthor,
   onLikeClick,
   onReplyClick,
+  onProfileClick,
   onMenuClick,
   menuItems,
   menuOpen = false,
@@ -401,7 +402,10 @@ export default function UserItem({
       <div className={clsx(styles.comment, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentHeader}>
-            <div className={styles.commentHeaderLeft}>
+            <div
+              className={clsx(styles.commentHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Avatar size="md" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
@@ -447,7 +451,10 @@ export default function UserItem({
       <div className={clsx(styles.comment, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentHeader}>
-            <div className={styles.commentHeaderLeft}>
+            <div
+              className={clsx(styles.commentHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
@@ -493,7 +500,10 @@ export default function UserItem({
       <div className={clsx(styles.commentPlus, styles.commentPlusMd, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
-            <div className={styles.commentPlusHeaderLeft}>
+            <div
+              className={clsx(styles.commentPlusHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Icon name="reply-branch" size={12} color="gray-subtler" />
               <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo
@@ -541,7 +551,10 @@ export default function UserItem({
       <div className={clsx(styles.commentPlus, styles.commentPlusXs, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
-            <div className={styles.commentPlusHeaderLeft}>
+            <div
+              className={clsx(styles.commentPlusHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Icon name="reply-branch" size={12} color="gray-subtler" />
               <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo

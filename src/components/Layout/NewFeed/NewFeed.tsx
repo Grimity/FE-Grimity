@@ -51,7 +51,7 @@ export default function NewFeed({ isDetail = false }: NewFeedProps) {
 
   return (
     <div className={styles.container}>
-      <Title>{isDetail ? "추천 작품" : "최신 그림"}</Title>
+      <Title>최신 그림</Title>
       <div className={styles.grid}>
         {data?.pages.map((page) =>
           page.feeds.map((feed) => {

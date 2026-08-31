@@ -77,6 +77,8 @@ export interface UserItemProps {
   isAuthor?: boolean;
   onLikeClick?: () => void;
   onReplyClick?: () => void;
+  /** 댓글 변형: 프로필(아바타+닉네임) 클릭 시 호출 */
+  onProfileClick?: () => void;
   onMenuClick?: () => void;
 
   /**
