@@ -14,10 +14,12 @@ import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 import { useAuthStore } from "@/states/authStore";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useToast } from "@/hooks/useToast";
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
+import Alert from "@/components/common/PopUp/Alert/Alert";
 import { useReportModal } from "@/hooks/useReportModal";
 
 import { timeAgo } from "@/utils/timeAgo";
+import { linkifyText } from "@/utils/linkifyText";
 
 import {
   useGetFeedsComments,
@@ -25,12 +27,17 @@ import {
 } from "@/api/feeds-comments/getFeedComments";
 import { usePostFeedsComments } from "@/api/feeds-comments/postFeedComments";
 import { deleteComments } from "@/api/feeds-comments/deleteFeedComment";
-import { deleteCommentLike, putCommentLike } from "@/api/feeds-comments/putDeleteCommentsLike";
+import { useFeedsCommentLikeMutation } from "@/queries/feeds-comments/useFeedsCommentLikeMutation";
 import type { CommentProps, CommentWriter } from "./Comment.types";
 
 import styles from "./Comment.module.scss";
 
 const COMMENT_MAX_COUNT = 1000;
+
+// 댓글 본문 내 URL을 클릭 가능한 링크로 렌더한다(linkifyText가 DOMPurify로 살균).
+const renderCommentText = (text: string) => (
+  <span dangerouslySetInnerHTML={{ __html: linkifyText(text) }} />
+);
 
 type ToastType = "success" | "error" | "warning" | "information";
 
@@ -97,15 +104,70 @@ const ReplyInput = memo(
 
 ReplyInput.displayName = "ReplyInput";
 
+interface CommentInputProps {
+  isLoggedIn: boolean;
+  isMobile: boolean;
+  isPending: boolean;
+  showToast: (message: string, type: ToastType) => void;
+  /** 성공 시 true를 반환하면 입력창을 비운다. */
+  onSubmit: (content: string) => Promise<boolean>;
+}
+
+// 입력 state를 자체 소유해, 타이핑이 댓글 목록 전체를 리렌더시키지 않도록 격리한다.
+const CommentInput = memo(
+  ({ isLoggedIn, isMobile, isPending, showToast, onSubmit }: CommentInputProps) => {
+    const [value, setValue] = useState("");
+
+    const submit = async () => {
+      if (isPending || !isLoggedIn || !value.trim()) return;
+      const ok = await onSubmit(value);
+      if (ok) setValue("");
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.nativeEvent.isComposing) return;
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        submit();
+      }
+    };
+
+    return (
+      <div className={styles.inputRow}>
+        <TextField
+          size={isMobile ? "sm" : "md"}
+          className={styles.field}
+          placeholder={isLoggedIn ? "댓글을 입력해주세요" : "회원만 댓글 달 수 있어요!"}
+          value={value}
+          maxCount={COMMENT_MAX_COUNT}
+          onChange={(e) => setValue(e.target.value)}
+          onFocus={() => {
+            if (!isLoggedIn) showToast("회원만 댓글 달 수 있어요!", "error");
+          }}
+          onKeyDown={handleKeyDown}
+        />
+        <SolidButton
+          size={isMobile ? "regular" : "large"}
+          onClick={submit}
+          disabled={!isLoggedIn || !value.trim()}
+        >
+          등록
+        </SolidButton>
+      </div>
+    );
+  },
+);
+
+CommentInput.displayName = "CommentInput";
+
 export default function Comment({ feedId, feedWriterId, commentCount }: CommentProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
   const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal: openDsModal } = useModal();
   const openReportModal = useReportModal();
   const queryClient = useQueryClient();
-  const [comment, setComment] = useState("");
   const [replyText, setReplyText] = useState("");
   const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -116,44 +178,28 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
     refetch: refetchComments,
   } = useGetFeedsComments({ feedId });
   const { mutateAsync: postComment, isPending: isPostCommentPending } = usePostFeedsComments();
+  const { mutate: likeComment } = useFeedsCommentLikeMutation();
   const { mutate: deleteComment } = useMutation({
     mutationFn: deleteComments,
     onSuccess: () => {
       showToast("댓글이 삭제되었습니다.", "success");
       refetchComments();
+      // 상세 헤더/리액션바의 댓글 수(details.commentCount) 갱신
+      queryClient.invalidateQueries({ queryKey: ["details", feedId] });
     },
     onError: () => {
       showToast("댓글 삭제에 실패했습니다.", "error");
     },
   });
   const router = useRouter();
-  const { pathname } = router;
 
-  useEffect(() => {
-    refetchComments();
-  }, [pathname, refetchComments]);
-
-  const handleLikeClick = async (commentId: string, isLiked: boolean) => {
+  const handleLikeClick = (commentId: string, isLiked: boolean) => {
     if (!isLoggedIn) {
       showToast("회원만 좋아요를 할 수 있어요!", "error");
       return;
     }
 
-    try {
-      if (isLiked) {
-        await deleteCommentLike(commentId);
-      } else {
-        await putCommentLike(commentId);
-      }
-
-      queryClient.invalidateQueries({ queryKey: ["getFeedsComments", feedId] });
-    } catch {
-      showToast("좋아요 처리 중 오류가 발생했습니다.", "error");
-    }
-  };
-
-  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setComment(e.target.value);
+    likeComment({ feedId, commentId, isLiked });
   };
 
   const handleReplyTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,32 +247,34 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
   const handleCommentDelete = (id: string) => {
     setOpenMenuId(null);
 
-    openModal({
-      type: null,
-      data: {
-        title: "댓글을 삭제하시겠어요?",
-        confirmBtn: "삭제",
-        onClick: () => {
+    openDsModal((close) => (
+      <Alert
+        variant="content"
+        size="xl"
+        title="댓글을 삭제하시겠어요?"
+        contentText="삭제한 댓글은 복구할 수 없어요"
+        secondaryLabel="취소"
+        onSecondary={close}
+        primaryLabel="삭제"
+        onPrimary={() => {
+          close();
           deleteComment(id);
-        },
-      },
-      isComfirm: true,
-    });
+        }}
+      />
+    ));
   };
 
-  const handleCommentSubmit = async () => {
-    if (isPostCommentPending) return;
-    if (!isLoggedIn || !comment.trim()) return;
+  const handleCommentSubmit = async (content: string): Promise<boolean> => {
+    if (isPostCommentPending || !isLoggedIn || !content.trim()) return false;
 
     try {
-      await postComment({
-        feedId,
-        content: comment,
-      });
-      setComment("");
+      await postComment({ feedId, content });
       refetchComments();
+      queryClient.invalidateQueries({ queryKey: ["details", feedId] });
+      return true;
     } catch {
       showToast("댓글 작성에 실패했습니다.", "error");
+      return false;
     }
   };
 
@@ -243,6 +291,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
       });
       closeReply();
       refetchComments();
+      queryClient.invalidateQueries({ queryKey: ["details", feedId] });
     } catch {
       showToast("답글 작성에 실패했습니다.", "error");
     }
@@ -307,7 +356,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
               type={isMobile ? "commentPlusxs" : "commentPlus"}
               nickname={reply.writer.name}
               timeCount={timeAgo(reply.createdAt)}
-              commentText={reply.content}
+              commentText={renderCommentText(reply.content)}
               mentionName={reply.mentionedUser?.name}
               likeCount={String(reply.likeCount)}
               isLiked={reply.isLike}
@@ -336,7 +385,7 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
           type={isMobile ? "commentxs" : "comment"}
           nickname={comment.writer.name}
           timeCount={timeAgo(comment.createdAt)}
-          commentText={comment.content}
+          commentText={renderCommentText(comment.content)}
           likeCount={String(comment.likeCount)}
           isLiked={comment.isLike}
           profileImage={comment.writer.image ?? undefined}
@@ -382,29 +431,13 @@ export default function Comment({ feedId, feedWriterId, commentCount }: CommentP
           <span className={styles.title}>댓글</span>
           <span className={styles.count}>{totalCommentCount}</span>
         </div>
-        <div className={styles.inputRow}>
-          <TextField
-            size={isMobile ? "sm" : "md"}
-            className={styles.field}
-            placeholder={isLoggedIn ? "댓글을 입력해주세요" : "회원만 댓글 달 수 있어요!"}
-            value={comment}
-            maxCount={COMMENT_MAX_COUNT}
-            onChange={handleCommentChange}
-            onFocus={() => {
-              if (!isLoggedIn) {
-                showToast("회원만 댓글 달 수 있어요!", "error");
-              }
-            }}
-            onKeyDown={handleEnterKeyDown(handleCommentSubmit)}
-          />
-          <SolidButton
-            size={isMobile ? "regular" : "large"}
-            onClick={handleCommentSubmit}
-            disabled={!isLoggedIn || !comment.trim()}
-          >
-            등록
-          </SolidButton>
-        </div>
+        <CommentInput
+          isLoggedIn={isLoggedIn}
+          isMobile={isMobile}
+          isPending={isPostCommentPending}
+          showToast={showToast}
+          onSubmit={handleCommentSubmit}
+        />
       </section>
       {comments.length === 0 ? (
         <div className={styles.emptyWrap}>

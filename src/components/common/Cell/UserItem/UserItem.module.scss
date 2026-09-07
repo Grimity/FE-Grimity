@@ -87,9 +87,20 @@
 .defaultLeft {
   display: flex;
   align-items: center;
-  gap: spacing.$spacing-8;
   flex: 1;
   min-width: 0;
+}
+
+.defaultProfile {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.defaultProfileClickable {
+  cursor: pointer;
 }
 
 .defaultNickname {

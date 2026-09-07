@@ -1,7 +1,7 @@
 import styles from "./Detail.module.scss";
 import { DetailProps } from "./Detail.types";
 import { useDetails } from "@/api/feeds/getFeedsId";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/common/Icon/Icon";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
 import ActionMenu from "@/components/common/Navigation/ActionMenu/ActionMenu";
@@ -17,6 +17,7 @@ import Link from "next/link";
 import { putView } from "@/api/feeds/putIdView";
 import { deleteFeeds } from "@/api/feeds/deleteFeedsId";
 import { useRouter } from "next/router";
+import useGoBack from "@/hooks/useGoBack";
 import Loader from "../Layout/Loader/Loader";
 import Author from "./Author/Author";
 import ImageViewer from "@/components/ImageViewer/ImageViewer";
@@ -46,12 +47,13 @@ export default function Detail({ id }: DetailProps) {
   const { data: details, isLoading, refetch } = useDetails(id);
   const { showToast } = useToast();
   const { mutate: toggleLike } = useFeedsLikeMutation();
-  const [viewCounted, setViewCounted] = useState(false);
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const viewCountedIdRef = useRef<string | null>(null);
   const imgRef = usePreventRightClick<HTMLImageElement>();
   const divRef = usePreventRightClick<HTMLDivElement>();
   const sectionRef = usePreventRightClick<HTMLElement>();
   const router = useRouter();
+  const { goBack } = useGoBack();
   const { openModal: openDsModal } = useModal();
   const { shareFeed } = useShareModal();
   const openReportModal = useReportModal();
@@ -84,7 +86,7 @@ export default function Detail({ id }: DetailProps) {
           try {
             await deleteFeeds(id);
             close();
-            router.push("/");
+            goBack();
           } catch {
             showToast("삭제 중 오류가 발생했습니다.", "error");
           }
@@ -127,25 +129,38 @@ export default function Detail({ id }: DetailProps) {
 
   // 새로고침 시 조회수 증가
   useEffect(() => {
-    const incrementViewCount = async () => {
-      if (!id || viewCounted) return;
+    // StrictMode 이중 실행/비동기 경합으로 조회수가 두 번 오르지 않도록 ref로 동기 가드한다.
+    if (!id || viewCountedIdRef.current === id) return;
+    viewCountedIdRef.current = id;
 
-      try {
-        await putView(id);
-        setViewCounted(true);
-      } catch (error) {
-        console.error("조회수 증가 에러", error);
-      }
-    };
-
-    incrementViewCount();
-  }, [id, viewCounted]);
+    putView(id).catch((error) => {
+      console.error("조회수 증가 에러", error);
+    });
+  }, [id]);
 
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const formattedContent = (details?.content ?? "").replace(
     urlRegex,
     '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
   );
+
+  // 헤더 메뉴 = base, 리액션바 메뉴 = [공유하기, ...base]
+  const buildMenuItems = (withShare: boolean): MenuItem[] => {
+    if (!details) return [];
+
+    const base: MenuItem[] =
+      user_id === details.author.id
+        ? [
+            { label: "수정하기", onClick: handleOpenEditPage },
+            { label: "삭제하기", onClick: handleDelete },
+          ]
+        : [
+            { label: "작가 프로필로 이동", onClick: goToAuthor },
+            { label: "신고하기", onClick: handleOpenReportModal },
+          ];
+
+    return withShare ? [{ label: "공유하기", onClick: handleOpenShareModal }, ...base] : base;
+  };
 
   const renderMenu = (anchor: "header" | "reaction", items: MenuItem[]) => (
     <ActionMenu
@@ -174,32 +189,19 @@ export default function Detail({ id }: DetailProps) {
         {details && (
           <>
             <div className={styles.header}>
-              <span
-                ref={targetRef as React.RefObject<HTMLSpanElement>}
-                {...triggerProps}
-                className={styles.headerTrigger}
-              >
+              <div className={styles.headerTrigger}>
                 <UserItem
                   type="default"
                   profileImage={details.author.image ?? undefined}
                   nickname={details.author.name}
                   onClick={goToAuthor}
+                  profileRef={targetRef as React.Ref<HTMLDivElement>}
+                  onProfileMouseEnter={triggerProps.onMouseEnter}
+                  onProfileMouseLeave={triggerProps.onMouseLeave}
                 />
-              </span>
+              </div>
               <div className={styles.headerActions}>
-                {isLoggedIn &&
-                  renderMenu(
-                    "header",
-                    user_id === details.author.id
-                      ? [
-                          { label: "수정하기", onClick: handleOpenEditPage },
-                          { label: "삭제하기", onClick: handleDelete },
-                        ]
-                      : [
-                          { label: "작가 프로필로 이동", onClick: goToAuthor },
-                          { label: "신고하기", onClick: handleOpenReportModal },
-                        ],
-                  )}
+                {isLoggedIn && renderMenu("header", buildMenuItems(false))}
                 <ShareBtn feedId={id} title={details.title} image={details.cards[0]} />
               </div>
             </div>
@@ -273,20 +275,7 @@ export default function Detail({ id }: DetailProps) {
                       <span className={styles.actionCount}>{details.commentCount}</span>
                     </div>
                   </div>
-                  {renderMenu(
-                    "reaction",
-                    user_id === details.author.id
-                      ? [
-                          { label: "공유하기", onClick: handleOpenShareModal },
-                          { label: "수정하기", onClick: handleOpenEditPage },
-                          { label: "삭제하기", onClick: handleDelete },
-                        ]
-                      : [
-                          { label: "공유하기", onClick: handleOpenShareModal },
-                          { label: "작가 프로필로 이동", onClick: goToAuthor },
-                          { label: "신고하기", onClick: handleOpenReportModal },
-                        ],
-                  )}
+                  {renderMenu("reaction", buildMenuItems(true))}
                 </div>
 
                 <DetailLayout.HorizontalAd

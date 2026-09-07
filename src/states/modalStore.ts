@@ -9,7 +9,6 @@ export type ModalType =
   | "BACKGROUND"
   | "FOLLOWER"
   | "FOLLOWING"
-  | "UPLOAD"
   | "LIKE"
   | "ALBUM-EDIT"
   | "ALBUM-SELECT"

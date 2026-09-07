@@ -6,7 +6,7 @@ import { useFeedSubmit } from "@/hooks/useFeedSubmit";
 import type { CreateFeedRequest } from "@grimity/dto";
 
 export default function Upload() {
-  const { submitFeed } = useFeedSubmit();
+  const { submitFeed, isSubmitting } = useFeedSubmit();
   const [formHandlers, setFormHandlers] = useState<{ resetUnsavedChanges: () => void } | null>(
     null,
   );
@@ -19,5 +19,12 @@ export default function Upload() {
     });
   };
 
-  return <FeedForm isEditMode={false} onSubmit={handleSubmit} onStateUpdate={setFormHandlers} />;
+  return (
+    <FeedForm
+      isEditMode={false}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      onStateUpdate={setFormHandlers}
+    />
+  );
 }

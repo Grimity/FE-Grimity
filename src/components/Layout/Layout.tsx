@@ -128,7 +128,10 @@ export default function Layout({ children }: LayoutProps) {
     else setIsProfileDropdownOpen((prev) => !prev);
   }, [isMobile, toggleMobileSidebar]);
 
-  const uploadHeader = useUploadHeaderStore();
+  // 스토어 전체 구독 시 업로드 폼 입력마다 Layout이 리렌더되므로 필요한 값만 좁게 구독한다.
+  // submit(핸들러 참조)은 입력마다 바뀌므로 구독하지 않고 클릭 시점에 getState로 읽는다.
+  const uploadLabel = useUploadHeaderStore((s) => s.label);
+  const uploadDisabled = useUploadHeaderStore((s) => s.disabled);
 
   const isSubRoute = isMobile && !MAIN_ROUTES.includes(router.pathname);
   const isUploadRoute =
@@ -244,7 +247,6 @@ export default function Layout({ children }: LayoutProps) {
         borderBottom: true,
       },
       { label: "좋아요한 그림", onClick: () => navigate("/mypage?tab=liked-feeds") },
-      { label: "저장한 그림", onClick: () => navigate("/mypage?tab=saved-feeds") },
       {
         label: "저장한 글",
         onClick: () => navigate("/mypage?tab=saved-posts"),
@@ -388,9 +390,11 @@ export default function Layout({ children }: LayoutProps) {
             onMenu={toggleMobileSidebar}
             onClose={toggleMobileSidebar}
             onBack={isMobileSearchPage || isSubRoute ? goBack : undefined}
-            rightLabel={isUploadRoute ? uploadHeader.label : undefined}
-            onRightLabelClick={isUploadRoute ? uploadHeader.submit : undefined}
-            rightLabelDisabled={isUploadRoute ? uploadHeader.disabled : undefined}
+            rightLabel={isUploadRoute ? uploadLabel : undefined}
+            onRightLabelClick={
+              isUploadRoute ? () => useUploadHeaderStore.getState().submit() : undefined
+            }
+            rightLabelDisabled={isUploadRoute ? uploadDisabled : undefined}
             rightActions={subRightActions}
             searchValue={isMobileSearchPage ? mobileSearchValue : undefined}
             searchPlaceholder="그림, 작가, 글을 검색해보세요."

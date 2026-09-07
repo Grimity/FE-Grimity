@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 
 import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 import type { ActionMenuDisplayMode } from "@/components/common/Navigation/ActionMenu/ActionMenu.types";
@@ -70,7 +70,7 @@ export interface UserItemProps {
   chattingCount?: string;
 
   /** Comment props */
-  commentText?: string;
+  commentText?: ReactNode;
   mentionName?: string;
   likeCount?: string;
   isLiked?: boolean;
@@ -91,6 +91,11 @@ export interface UserItemProps {
   menuDisplayMode?: ActionMenuDisplayMode;
 
   onClick?: () => void;
+
+  /** `default` 전용: 프로필(아바타+닉네임) 영역에 붙는 ref/hover 핸들러 (호버 프로필 카드용) */
+  profileRef?: Ref<HTMLDivElement>;
+  onProfileMouseEnter?: () => void;
+  onProfileMouseLeave?: () => void;
 
   /** `title` · `image` 전용: 카드 하단 Divider 표시 여부 (기본 true) */
   showTrailingDivider?: boolean;

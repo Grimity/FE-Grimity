@@ -59,6 +59,9 @@ export default function UserItem({
   onMenuOpenChange,
   menuDisplayMode,
   onClick,
+  profileRef,
+  onProfileMouseEnter,
+  onProfileMouseLeave,
   showTrailingDivider = true,
 }: UserItemProps) {
   const hasAnchoredMenu = !!menuItems?.length;
@@ -95,10 +98,19 @@ export default function UserItem({
   // ------------------------------------------
   if (type === "default") {
     return (
-      <div className={clsx(styles.default, className)} onClick={onClick}>
+      <div className={clsx(styles.default, className)}>
         <div className={styles.defaultLeft}>
-          <Avatar size="md" src={profileImage} alt="profile" />
-          <span className={styles.defaultNickname}>{nickname}</span>
+          {/* 클릭/커서/호버 영역을 프로필 이미지+닉네임으로 한정(빈 공간 오작동 방지) */}
+          <div
+            ref={profileRef}
+            className={clsx(styles.defaultProfile, onClick && styles.defaultProfileClickable)}
+            onClick={onClick}
+            onMouseEnter={onProfileMouseEnter}
+            onMouseLeave={onProfileMouseLeave}
+          >
+            <Avatar size="md" src={profileImage} alt="profile" />
+            <span className={styles.defaultNickname}>{nickname}</span>
+          </div>
         </div>
         {children && <div className={styles.defaultRight}>{children}</div>}
       </div>

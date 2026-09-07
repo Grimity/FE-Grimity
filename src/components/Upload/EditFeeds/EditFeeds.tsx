@@ -28,7 +28,7 @@ export default function EditFeeds({ id }: EditFeedsProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
   const { showToast } = useToast();
-  const { submitFeed } = useFeedSubmit();
+  const { submitFeed, isSubmitting } = useFeedSubmit();
 
   const { data: feedData, isLoading: isFetching } = useDetails(id);
 
@@ -75,6 +75,7 @@ export default function EditFeeds({ id }: EditFeedsProps) {
       isEditMode
       initialValues={initialValues}
       onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
       onStateUpdate={setFormHandlers}
     />
   );

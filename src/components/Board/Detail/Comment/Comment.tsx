@@ -12,7 +12,8 @@ import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 import { useAuthStore } from "@/states/authStore";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useToast } from "@/hooks/useToast";
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
+import Alert from "@/components/common/PopUp/Alert/Alert";
 import { useReportModal } from "@/hooks/useReportModal";
 
 import { timeAgo } from "@/utils/timeAgo";
@@ -101,7 +102,7 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
   const user_id = useAuthStore((state) => state.user_id);
   const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal: openDsModal } = useModal();
   const openReportModal = useReportModal();
   const [comment, setComment] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -193,24 +194,27 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
   const handleCommentDelete = (id: string) => {
     setOpenMenuId(null);
 
-    openModal({
-      type: null,
-      data: {
-        title: "댓글을 삭제하시겠어요?",
-        confirmBtn: "삭제",
-        onClick: async () => {
+    openDsModal((close) => (
+      <Alert
+        variant="content"
+        size="xl"
+        title="댓글을 삭제하시겠어요?"
+        contentText="삭제한 댓글은 복구할 수 없어요"
+        secondaryLabel="취소"
+        onSecondary={close}
+        primaryLabel="삭제"
+        onPrimary={async () => {
           try {
             await deleteComment({ postId, commentId: id });
             showToast("댓글이 삭제되었습니다.", "success");
             refetchComments();
-          } catch (error) {
+            close();
+          } catch {
             showToast("댓글 삭제에 실패했습니다.", "error");
-            throw error;
           }
-        },
-      },
-      isComfirm: true,
-    });
+        }}
+      />
+    ));
   };
 
   const handleCommentSubmit = async () => {

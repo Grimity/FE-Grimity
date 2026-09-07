@@ -10,6 +10,7 @@ import Icon from "@/components/common/Icon/Icon";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import TextField from "@/components/common/Input/TextField/TextField";
+import type { TextFieldHandle } from "@/components/common/Input/TextField/TextField.types";
 import TextArea from "@/components/common/Input/TextArea/TextArea";
 import TagSelect from "@/components/common/Tag/TagSelect/TagSelect";
 import ImgUpload from "@/components/common/Card/ImgUpload/ImgUpload";
@@ -41,6 +42,7 @@ export default function FeedForm({
   isEditMode,
   initialValues,
   onSubmit,
+  isSubmitting = false,
   onStateUpdate,
 }: FeedFormProps) {
   const [images, setImages] = useState<{ name: string; originalName: string; url: string }[]>([]);
@@ -62,6 +64,7 @@ export default function FeedForm({
   const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<TextFieldHandle>(null);
   const imagesRef = useRef(images);
 
   useEffect(() => {
@@ -102,6 +105,11 @@ export default function FeedForm({
     );
   };
 
+  // 업로드(신규 작성) 진입 시 제목 input에 자동 포커스
+  useEffect(() => {
+    if (!isEditMode) titleInputRef.current?.focus();
+  }, [isEditMode]);
+
   useEffect(() => {
     if (initialValues) {
       setTitle(initialValues.title || "");
@@ -123,7 +131,11 @@ export default function FeedForm({
       }
       return;
     }
-    const stillExists = images.some((img) => img.url === thumbnailUrl);
+    // url이 전체 경로/카드명으로 섞여 들어올 수 있어 정규화 후 비교한다.
+    // (수정 모드에서 저장했던 썸네일이 첫 이미지로 덮어써지는 것 방지)
+    const stillExists = images.some(
+      (img) => removeUrlPrefix(img.url) === removeUrlPrefix(thumbnailUrl),
+    );
     if (!stillExists) {
       setThumbnailUrl(images[0].url);
       setThumbnailName(images[0].name);
@@ -410,9 +422,9 @@ export default function FeedForm({
     }
     useUploadHeaderStore
       .getState()
-      .setHeader({ label: buttonText, disabled: isDisabled, submit: handleSubmit });
+      .setHeader({ label: buttonText, disabled: isDisabled || isSubmitting, submit: handleSubmit });
     return () => useUploadHeaderStore.getState().clear();
-  }, [isMobile, isDisabled, buttonText, handleSubmit]);
+  }, [isMobile, isDisabled, isSubmitting, buttonText, handleSubmit]);
 
   const handleImageUpload = () => {
     fileInputRef.current?.click();
@@ -482,6 +494,7 @@ export default function FeedForm({
 
         <section className={styles.writeSection}>
           <TextField
+            ref={titleInputRef}
             variant="title"
             size={isMobile ? "sm" : "md"}
             maxCount={32}
@@ -529,7 +542,8 @@ export default function FeedForm({
             <SolidButton
               size="large"
               className={styles.submitButton}
-              disabled={isDisabled}
+              disabled={isDisabled || isSubmitting}
+              loading={isSubmitting}
               onClick={handleSubmit}
             >
               {buttonText}

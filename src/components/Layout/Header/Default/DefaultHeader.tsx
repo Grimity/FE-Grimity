@@ -238,9 +238,6 @@ export default function DefaultHeader() {
                           <Link href="/mypage?tab=liked-feeds">
                             <div className={styles.dropdownItem}>좋아요한 그림</div>
                           </Link>
-                          <Link href="/mypage?tab=saved-feeds">
-                            <div className={styles.dropdownItem}>저장한 그림</div>
-                          </Link>
                           <div className={styles.divider} />
                           <Link href="/mypage?tab=saved-posts">
                             <div className={styles.dropdownItem}>저장한 글</div>
