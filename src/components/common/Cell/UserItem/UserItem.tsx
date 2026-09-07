@@ -52,12 +52,16 @@ export default function UserItem({
   isAuthor,
   onLikeClick,
   onReplyClick,
+  onProfileClick,
   onMenuClick,
   menuItems,
   menuOpen = false,
   onMenuOpenChange,
   menuDisplayMode,
   onClick,
+  profileRef,
+  onProfileMouseEnter,
+  onProfileMouseLeave,
   showTrailingDivider = true,
 }: UserItemProps) {
   const hasAnchoredMenu = !!menuItems?.length;
@@ -94,10 +98,19 @@ export default function UserItem({
   // ------------------------------------------
   if (type === "default") {
     return (
-      <div className={clsx(styles.default, className)} onClick={onClick}>
+      <div className={clsx(styles.default, className)}>
         <div className={styles.defaultLeft}>
-          <Avatar size="md" src={profileImage} alt="profile" />
-          <span className={styles.defaultNickname}>{nickname}</span>
+          {/* 클릭/커서/호버 영역을 프로필 이미지+닉네임으로 한정(빈 공간 오작동 방지) */}
+          <div
+            ref={profileRef}
+            className={clsx(styles.defaultProfile, onClick && styles.defaultProfileClickable)}
+            onClick={onClick}
+            onMouseEnter={onProfileMouseEnter}
+            onMouseLeave={onProfileMouseLeave}
+          >
+            <Avatar size="md" src={profileImage} alt="profile" />
+            <span className={styles.defaultNickname}>{nickname}</span>
+          </div>
         </div>
         {children && <div className={styles.defaultRight}>{children}</div>}
       </div>
@@ -401,7 +414,10 @@ export default function UserItem({
       <div className={clsx(styles.comment, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentHeader}>
-            <div className={styles.commentHeaderLeft}>
+            <div
+              className={clsx(styles.commentHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Avatar size="md" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
@@ -447,7 +463,10 @@ export default function UserItem({
       <div className={clsx(styles.comment, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentHeader}>
-            <div className={styles.commentHeaderLeft}>
+            <div
+              className={clsx(styles.commentHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
@@ -493,7 +512,10 @@ export default function UserItem({
       <div className={clsx(styles.commentPlus, styles.commentPlusMd, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
-            <div className={styles.commentPlusHeaderLeft}>
+            <div
+              className={clsx(styles.commentPlusHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Icon name="reply-branch" size={12} color="gray-subtler" />
               <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo
@@ -541,7 +563,10 @@ export default function UserItem({
       <div className={clsx(styles.commentPlus, styles.commentPlusXs, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
-            <div className={styles.commentPlusHeaderLeft}>
+            <div
+              className={clsx(styles.commentPlusHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Icon name="reply-branch" size={12} color="gray-subtler" />
               <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo

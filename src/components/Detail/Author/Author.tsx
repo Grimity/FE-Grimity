@@ -1,33 +1,33 @@
 import styles from "./Author.module.scss";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { FreeMode, Mousewheel } from "swiper/modules";
 import { useAuthStore } from "@/states/authStore";
 import { usePutFollow } from "@/api/users/putIdFollow";
 import { useDeleteFollow } from "@/api/users/deleteIdFollow";
 import { useToast } from "@/hooks/useToast";
-import Link from "next/link";
 import { AuthorProps } from "./Author.types";
 import { useUserData } from "@/api/users/getId";
-import Button from "@/components/Button/Button";
 import { useUserForDetail } from "@/api/users/getIdFeeds";
-import SquareCard from "@/components/Layout/SquareCard/SquareCard";
-import { usePreventRightClick } from "@/hooks/usePreventRightClick";
 import Loader from "@/components/Layout/Loader/Loader";
-import { useDeviceStore } from "@/states/deviceStore";
 import { useRouter } from "next/router";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import Link from "next/link";
+import UserItem from "@/components/common/Cell/UserItem/UserItem";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import Icon from "@/components/common/Icon/Icon";
+import Album from "@/components/common/Card/Album/Album";
 
-export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
+export default function Author({ authorId, authorUrl }: AuthorProps) {
   const { data: userData } = useUserData(authorId);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
-  const imgRef = usePreventRightClick<HTMLImageElement>();
-  const divRef = usePreventRightClick<HTMLDivElement>();
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const { showToast } = useToast();
-  const { isMobile } = useDeviceStore();
-  const { pathname } = useRouter();
+  const router = useRouter();
+  const profileHref = `/${authorUrl}`;
 
   useEffect(() => {
     if (userData && userData.isFollowing !== undefined) {
@@ -35,10 +35,10 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
       setFollowerCount(userData.followerCount);
     }
   }, [userData]);
-  const size = isMobile ? 2 : 4;
+
   const { data, isLoading, refetch } = useUserForDetail({
     id: authorId,
-    size: size,
+    size: 6,
     sort: "latest",
   });
   const { mutateAsync: putFollow } = usePutFollow();
@@ -46,7 +46,7 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
 
   useEffect(() => {
     refetch();
-  }, [pathname]);
+  }, [router.pathname]);
 
   const feeds = data?.feeds || [];
 
@@ -59,7 +59,7 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
       await putFollow({ id });
       setIsFollowing(true);
       setFollowerCount((prev) => prev + 1);
-    } catch (error) {
+    } catch {
       showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
     }
   };
@@ -69,7 +69,7 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
       await deleteFollow({ id });
       setIsFollowing(false);
       setFollowerCount((prev) => prev - 1);
-    } catch (error) {
+    } catch {
       showToast("오류가 발생했습니다. 다시 시도해주세요.", "error");
     }
   };
@@ -78,85 +78,65 @@ export default function Author({ authorId, authorUrl, feedId }: AuthorProps) {
     <div className={styles.container}>
       {userData && (
         <>
-          <div className={styles.spaceBetween}>
-            <div className={styles.profileContainer}>
-              <Link href={`/${authorUrl}`}>
-                <div className={styles.profileLeft}>
-                  {userData.image !== null ? (
-                    <ResponsiveImage
-                      src={userData.image}
-                      alt={userData.name}
-                      className={styles.authorImage}
-                      width={40}
-                      height={40}
-                      style={{ objectFit: "cover" }}
-                      desktopSize={300}
-                      mobileSize={300}
-                      ref={imgRef}
-                    />
-                  ) : (
-                    <ResponsiveImage
-                      src="/image/default.svg"
-                      width={40}
-                      height={40}
-                      alt="프로필 이미지"
-                      className={styles.authorImage}
-                      style={{ objectFit: "cover" }}
-                      desktopSize={300}
-                      mobileSize={300}
-                      ref={imgRef}
-                    />
-                  )}
-                  <div className={styles.authorInfo}>
-                    <p className={styles.authorName}>{userData.name}</p>
-                    <div className={styles.follower}>
-                      팔로워
-                      <p className={styles.followerColor}>{formatCurrency(followerCount)}</p>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+          <UserItem
+            type="follow"
+            profileImage={userData.image ?? undefined}
+            nickname={userData.name}
+            followerCount={formatCurrency(followerCount)}
+            onClick={() => router.push(profileHref)}
+          >
+            <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
+              <OutlinedButton size="regular" onClick={() => router.push(profileHref)}>
+                작품 보기
+              </OutlinedButton>
               {isLoggedIn &&
                 user_id !== userData.id &&
                 (isFollowing ? (
-                  <Button
-                    size="m"
-                    type="outlined-assistive"
-                    onClick={() => handleUnfollowClick(userData.id)}
-                  >
+                  <SolidButton size="regular" onClick={() => handleUnfollowClick(userData.id)}>
                     팔로잉
-                  </Button>
+                  </SolidButton>
                 ) : (
-                  <Button
-                    size="m"
-                    type="filled-primary"
-                    onClick={() => handleFollowClick(userData.id)}
-                  >
+                  <SolidButton size="regular" onClick={() => handleFollowClick(userData.id)}>
                     팔로우
-                  </Button>
+                  </SolidButton>
                 ))}
             </div>
-            {!isMobile && (
-              <Link href={`/${authorUrl}`}>
-                <p className={styles.seeMore}>작품 더보기</p>
-              </Link>
-            )}
-          </div>
-          <div className={styles.cardList} ref={divRef}>
+          </UserItem>
+          <Swiper
+            className={styles.slide}
+            modules={[FreeMode, Mousewheel]}
+            slidesPerView="auto"
+            spaceBetween={16}
+            freeMode
+            grabCursor
+            mousewheel={{ forceToAxis: true }}
+          >
             {feeds.map((feed) => (
-              <SquareCard
-                key={feed.id}
-                id={feed.id}
-                title={feed.title}
-                thumbnail={feed.thumbnail}
-                cards={feed.cards}
-                author={userData}
-                likeCount={feed.likeCount}
-                viewCount={feed.viewCount}
-                isSame={feed.id === feedId}
-              />
+              <SwiperSlide key={feed.id} className={styles.slideItem}>
+                <Album
+                  variant="mainTitle"
+                  imageUrl={feed.thumbnail}
+                  title={feed.title}
+                  nickname={userData.name}
+                  likeCount={feed.likeCount}
+                  viewCount={feed.viewCount}
+                  feedHref={`/feeds/${feed.id}`}
+                  profileHref={profileHref}
+                  authorUrl={authorUrl}
+                />
+              </SwiperSlide>
             ))}
-          </div>
+            {feeds.length >= 4 && (
+              <SwiperSlide className={styles.moreSlide}>
+                <Link href={profileHref} className={styles.moreButton}>
+                  <span className={styles.moreCircle}>
+                    <Icon name="chevron-right" size={24} color="primary-normal" />
+                  </span>
+                  <span className={styles.moreLabel}>작품 더보기</span>
+                </Link>
+              </SwiperSlide>
+            )}
+          </Swiper>
         </>
       )}
     </div>

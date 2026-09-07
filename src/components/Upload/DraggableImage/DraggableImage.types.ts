@@ -2,7 +2,7 @@ export interface DraggableImageProps {
   image: { name: string; url: string };
   index: number;
   name: string;
-  moveImage: (dragIndex: number, hoverIndex: number) => void;
+  size?: "lg" | "md";
   removeImage: (index: number) => void;
   isThumbnail: boolean;
   onThumbnailSelect: () => void;

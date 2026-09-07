@@ -7,6 +7,7 @@ import { useMyData } from "@/api/users/getMe";
 import { useAuthStore } from "@/states/authStore";
 import { useChatStore } from "@/states/chatStore";
 import { useDeviceStore } from "@/states/deviceStore";
+import { useUploadHeaderStore } from "@/states/uploadHeaderStore";
 
 import { useSocket } from "@/hooks/useSocket";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
@@ -57,6 +58,8 @@ const BOARD_WRITE_ROUTES = [
   "/posts/[id]",
   "/posts/[id]/edit",
 ];
+// 모바일에서 뒤로가기 + 검색·알림·프로필 헤더(depth-2)를 쓰는 라우트
+const DEPTH2_ROUTES = ["/mypage", "/feeds/[id]"];
 const SUB_SEARCH_HIDDEN_ROUTES = [
   "/search",
   "/feeds/[id]",
@@ -125,7 +128,14 @@ export default function Layout({ children }: LayoutProps) {
     else setIsProfileDropdownOpen((prev) => !prev);
   }, [isMobile, toggleMobileSidebar]);
 
+  // 스토어 전체 구독 시 업로드 폼 입력마다 Layout이 리렌더되므로 필요한 값만 좁게 구독한다.
+  // submit(핸들러 참조)은 입력마다 바뀌므로 구독하지 않고 클릭 시점에 getState로 읽는다.
+  const uploadLabel = useUploadHeaderStore((s) => s.label);
+  const uploadDisabled = useUploadHeaderStore((s) => s.disabled);
+
   const isSubRoute = isMobile && !MAIN_ROUTES.includes(router.pathname);
+  const isUploadRoute =
+    router.pathname === "/write" || router.pathname === "/feeds/[id]/edit";
   const showUploadBtn = !UPLOAD_HIDDEN_ROUTES.includes(router.pathname);
   const showSubSearch = !SUB_SEARCH_HIDDEN_ROUTES.includes(router.pathname);
   const shouldHideHeader =
@@ -156,7 +166,8 @@ export default function Layout({ children }: LayoutProps) {
   const gnbVariant: GNBVariant = useMemo(() => {
     if (isMobileSearchPage) return "search";
     if (isSubRoute) {
-      if (router.pathname === "/mypage") return "depth-2";
+      if (DEPTH2_ROUTES.includes(router.pathname)) return "depth-2";
+      if (isUploadRoute) return "text-button";
       return "three-button";
     }
     if (isMobile) {
@@ -166,7 +177,7 @@ export default function Layout({ children }: LayoutProps) {
       return "main";
     }
     return isLoggedIn ? "pc-main" : "pc-guest";
-  }, [isMobileSearchPage, isSubRoute, isMobile, isAuthReady, isLoggedIn, isMobileSidebarOpen, router.pathname]);
+  }, [isMobileSearchPage, isSubRoute, isUploadRoute, isMobile, isAuthReady, isLoggedIn, isMobileSidebarOpen, router.pathname]);
 
   const isMyProfilePage =
     router.pathname === "/[url]" && !!myData?.url && router.query.url === myData.url;
@@ -236,7 +247,6 @@ export default function Layout({ children }: LayoutProps) {
         borderBottom: true,
       },
       { label: "좋아요한 그림", onClick: () => navigate("/mypage?tab=liked-feeds") },
-      { label: "저장한 그림", onClick: () => navigate("/mypage?tab=saved-feeds") },
       {
         label: "저장한 글",
         onClick: () => navigate("/mypage?tab=saved-posts"),
@@ -360,7 +370,13 @@ export default function Layout({ children }: LayoutProps) {
         <>
           <GNB
             variant={gnbVariant}
-            title={SETTINGS_GNB_TITLES[router.pathname]}
+            title={
+              isUploadRoute
+                ? router.pathname === "/write"
+                  ? "그림 올리기"
+                  : "그림 수정"
+                : SETTINGS_GNB_TITLES[router.pathname]
+            }
             hasNotification={Boolean(myData?.hasNotification)}
             profileImageUrl={myData?.image ?? undefined}
             onSearch={goToSearch}
@@ -374,6 +390,11 @@ export default function Layout({ children }: LayoutProps) {
             onMenu={toggleMobileSidebar}
             onClose={toggleMobileSidebar}
             onBack={isMobileSearchPage || isSubRoute ? goBack : undefined}
+            rightLabel={isUploadRoute ? uploadLabel : undefined}
+            onRightLabelClick={
+              isUploadRoute ? () => useUploadHeaderStore.getState().submit() : undefined
+            }
+            rightLabelDisabled={isUploadRoute ? uploadDisabled : undefined}
             rightActions={subRightActions}
             searchValue={isMobileSearchPage ? mobileSearchValue : undefined}
             searchPlaceholder="그림, 작가, 글을 검색해보세요."

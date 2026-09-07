@@ -1,156 +1,241 @@
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/router";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { usePostFeedsComments } from "@/api/feeds-comments/postFeedComments";
-import {
-  useGetFeedsComments,
-  ParentFeedCommentResponse,
-} from "@/api/feeds-comments/getFeedComments";
-import { useMyData } from "@/api/users/getMe";
-import { deleteComments } from "@/api/feeds-comments/deleteFeedComment";
-import { deleteCommentLike, putCommentLike } from "@/api/feeds-comments/putDeleteCommentsLike";
+import Loader from "@/components/Layout/Loader/Loader";
+import UserItem from "@/components/common/Cell/UserItem/UserItem";
+import TextField from "@/components/common/Input/TextField/TextField";
+import type { TextFieldHandle } from "@/components/common/Input/TextField/TextField.types";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import Empty from "@/components/common/Empty/Empty";
+import type { MenuItem } from "@/components/common/Navigation/Menu/Menu.types";
 
 import { useAuthStore } from "@/states/authStore";
-import { useModalStore } from "@/states/modalStore";
-import { useReportModal } from "@/hooks/useReportModal";
-
-import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
-
-import Loader from "@/components/Layout/Loader/Loader";
-import Dropdown from "@/components/Dropdown/Dropdown";
-import IconComponent from "@/components/Asset/Icon";
-import ReplyInput from "@/components/Detail/Comment/ReplyInput/ReplyInput";
-import CommentInput from "@/components/Detail/Comment/CommentInput/CommentInput";
+import { useToast } from "@/hooks/useToast";
+import { useModal } from "@/hooks/useModal";
+import Alert from "@/components/common/PopUp/Alert/Alert";
+import { useReportModal } from "@/hooks/useReportModal";
 
 import { timeAgo } from "@/utils/timeAgo";
 import { linkifyText } from "@/utils/linkifyText";
 
-import type { CommentProps, CommentWriter } from "@/components/Detail/Comment/Comment.types";
+import {
+  useGetFeedsComments,
+  ParentFeedCommentResponse,
+} from "@/api/feeds-comments/getFeedComments";
+import { usePostFeedsComments } from "@/api/feeds-comments/postFeedComments";
+import { deleteComments } from "@/api/feeds-comments/deleteFeedComment";
+import { useFeedsCommentLikeMutation } from "@/queries/feeds-comments/useFeedsCommentLikeMutation";
+import type { CommentProps, CommentWriter } from "./Comment.types";
 
-import styles from "@/components/Detail/Comment/Comment.module.scss";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import styles from "./Comment.module.scss";
 
-export default function Comment({ feedId, feedWriterId }: CommentProps) {
+const COMMENT_MAX_COUNT = 1000;
+
+// 댓글 본문 내 URL을 클릭 가능한 링크로 렌더한다(linkifyText가 DOMPurify로 살균).
+const renderCommentText = (text: string) => (
+  <span dangerouslySetInnerHTML={{ __html: linkifyText(text) }} />
+);
+
+type ToastType = "success" | "error" | "warning" | "information";
+
+/** 답글 입력창이 붙는 위치와, 멘션 대상이 되는 작성자 */
+interface ReplyTarget {
+  /** 답글이 매달릴 최상위 댓글 id */
+  parentId: string;
+  /** 답글달기를 누른 댓글 id (최상위 댓글 또는 답글) */
+  commentId: string;
+  writer: CommentWriter;
+  /** 답글에 다는 답글이면 true */
+  isChild: boolean;
+}
+
+interface ReplyInputProps {
+  mentionName: string;
+  replyText: string;
+  onReplyTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  isLoggedIn: boolean;
+  replyInputRef: React.RefObject<TextFieldHandle | null>;
+  showToast: (message: string, type: ToastType) => void;
+  handleReplySubmit: () => void;
+}
+
+const ReplyInput = memo(
+  ({
+    mentionName,
+    replyText,
+    onReplyTextChange,
+    onKeyDown,
+    isLoggedIn,
+    replyInputRef,
+    showToast,
+    handleReplySubmit,
+  }: ReplyInputProps) => (
+    <div className={styles.replyInput}>
+      <TextField
+        ref={replyInputRef}
+        size="sm"
+        className={styles.field}
+        prefix={<span className={styles.mentionTag}>@{mentionName}</span>}
+        placeholder={isLoggedIn ? "답글을 입력해주세요" : "회원만 답글 달 수 있어요!"}
+        value={replyText}
+        maxCount={COMMENT_MAX_COUNT}
+        onChange={onReplyTextChange}
+        onKeyDown={onKeyDown}
+        onFocus={() => {
+          if (!isLoggedIn) {
+            showToast("회원만 답글 달 수 있어요!", "error");
+          }
+        }}
+      />
+      <SolidButton
+        size="regular"
+        onClick={handleReplySubmit}
+        disabled={!isLoggedIn || !replyText.trim()}
+      >
+        등록
+      </SolidButton>
+    </div>
+  ),
+);
+
+ReplyInput.displayName = "ReplyInput";
+
+interface CommentInputProps {
+  isLoggedIn: boolean;
+  isMobile: boolean;
+  isPending: boolean;
+  showToast: (message: string, type: ToastType) => void;
+  /** 성공 시 true를 반환하면 입력창을 비운다. */
+  onSubmit: (content: string) => Promise<boolean>;
+}
+
+// 입력 state를 자체 소유해, 타이핑이 댓글 목록 전체를 리렌더시키지 않도록 격리한다.
+const CommentInput = memo(
+  ({ isLoggedIn, isMobile, isPending, showToast, onSubmit }: CommentInputProps) => {
+    const [value, setValue] = useState("");
+
+    const submit = async () => {
+      if (isPending || !isLoggedIn || !value.trim()) return;
+      const ok = await onSubmit(value);
+      if (ok) setValue("");
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.nativeEvent.isComposing) return;
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        submit();
+      }
+    };
+
+    return (
+      <div className={styles.inputRow}>
+        <TextField
+          size={isMobile ? "sm" : "md"}
+          className={styles.field}
+          placeholder={isLoggedIn ? "댓글을 입력해주세요" : "회원만 댓글 달 수 있어요!"}
+          value={value}
+          maxCount={COMMENT_MAX_COUNT}
+          onChange={(e) => setValue(e.target.value)}
+          onFocus={() => {
+            if (!isLoggedIn) showToast("회원만 댓글 달 수 있어요!", "error");
+          }}
+          onKeyDown={handleKeyDown}
+        />
+        <SolidButton
+          size={isMobile ? "regular" : "large"}
+          onClick={submit}
+          disabled={!isLoggedIn || !value.trim()}
+        >
+          등록
+        </SolidButton>
+      </div>
+    );
+  },
+);
+
+CommentInput.displayName = "CommentInput";
+
+export default function Comment({ feedId, feedWriterId, commentCount }: CommentProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user_id = useAuthStore((state) => state.user_id);
-  const { data: userData, isLoading } = useMyData();
+  const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal: openDsModal } = useModal();
   const openReportModal = useReportModal();
   const queryClient = useQueryClient();
   const [replyText, setReplyText] = useState("");
-  const [mentionedUser, setMentionedUser] = useState<CommentWriter | null>(null);
-  const [isReplyToChild, setIsReplyToChild] = useState(false);
-  const replyInputRef = useRef<HTMLTextAreaElement>(null);
-  const { data: commentsData, refetch: refetchComments } = useGetFeedsComments({
-    feedId,
-  });
-  const { mutateAsync: postComment, isPending: isPostCommentLoading } = usePostFeedsComments();
-  const [activeParentReplyId, setActiveParentReplyId] = useState<string | null>(null);
-  const [activeChildReplyId, setActiveChildReplyId] = useState<string | null>(null);
-  const { isMobile } = useDeviceStore();
-  const { pathname } = useRouter();
-
-  useEffect(() => {
-    refetchComments();
-  }, [pathname, refetchComments]);
-
+  const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const replyInputRef = useRef<TextFieldHandle>(null);
+  const {
+    data: commentsData,
+    isLoading,
+    refetch: refetchComments,
+  } = useGetFeedsComments({ feedId });
+  const { mutateAsync: postComment, isPending: isPostCommentPending } = usePostFeedsComments();
+  const { mutate: likeComment } = useFeedsCommentLikeMutation();
   const { mutate: deleteComment } = useMutation({
     mutationFn: deleteComments,
     onSuccess: () => {
       showToast("댓글이 삭제되었습니다.", "success");
       refetchComments();
+      // 상세 헤더/리액션바의 댓글 수(details.commentCount) 갱신
+      queryClient.invalidateQueries({ queryKey: ["details", feedId] });
     },
     onError: () => {
       showToast("댓글 삭제에 실패했습니다.", "error");
     },
   });
+  const router = useRouter();
 
-  const handleCommentSubmitSuccess = () => {
-    refetchComments();
-  };
-
-  const handleLikeClick = async (commentId: string, currentIsLike: boolean) => {
+  const handleLikeClick = (commentId: string, isLiked: boolean) => {
     if (!isLoggedIn) {
       showToast("회원만 좋아요를 할 수 있어요!", "error");
       return;
     }
 
-    try {
-      if (currentIsLike) {
-        await deleteCommentLike(commentId);
-      } else {
-        await putCommentLike(commentId);
-      }
-
-      queryClient.invalidateQueries({ queryKey: ["getFeedsComments", feedId] });
-    } catch (error) {
-      showToast("좋아요 처리 중 오류가 발생했습니다.", "error");
-    }
+    likeComment({ feedId, commentId, isLiked });
   };
 
-  const handleReplyTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleReplyTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReplyText(e.target.value);
   };
 
-  const handleParentReply = (
-    commentId: string,
-    writer: { id: string; name: string; url: string; image: string } | null,
-  ) => {
-    if (!writer) {
-      showToast("삭제된 댓글에는 답글을 달 수 없습니다.", "error");
-      return;
-    }
-
-    if (activeParentReplyId === commentId) {
-      setActiveParentReplyId(null);
-      setMentionedUser(null);
-      setReplyText("");
-      setIsReplyToChild(false);
-    } else {
-      setActiveParentReplyId(commentId);
-      setActiveChildReplyId(null);
-      setMentionedUser(writer);
-      setReplyText("");
-      setIsReplyToChild(false);
-      setTimeout(() => {
-        replyInputRef.current?.focus();
-      }, 0);
-    }
+  const closeReply = () => {
+    setReplyTarget(null);
+    setReplyText("");
   };
 
-  const handleChildReply = (
+  /**
+   * 최상위 댓글과 답글 모두 같은 입력창을 쓴다.
+   * 입력창은 항상 해당 스레드 맨 아래에 열리고, 누른 댓글의 작성자가 멘션된다.
+   */
+  const handleReplyClick = (
     commentId: string,
-    parentCommentId: string,
-    writer: { id: string; name: string; url: string; image: string } | null,
+    parentId: string,
+    writer: CommentWriter,
+    isChild: boolean,
   ) => {
-    if (!writer) {
-      showToast("삭제된 댓글에는 답글을 달 수 없습니다.", "error");
+    if (replyTarget?.commentId === commentId) {
+      closeReply();
       return;
     }
 
-    if (activeChildReplyId === commentId) {
-      setActiveChildReplyId(null);
-      setMentionedUser(null);
-      setReplyText("");
-      setIsReplyToChild(false);
-    } else {
-      setActiveChildReplyId(commentId);
-      setActiveParentReplyId(parentCommentId);
-      setMentionedUser(writer);
-      setReplyText("");
-      setIsReplyToChild(true);
-      setTimeout(() => {
-        replyInputRef.current?.focus();
-      }, 0);
-    }
+    setReplyTarget({ commentId, parentId, writer, isChild });
+    setReplyText("");
+    setTimeout(() => {
+      replyInputRef.current?.focus();
+    }, 0);
   };
 
   const handleReport = (id?: string) => {
+    setOpenMenuId(null);
+
     if (!id) {
       showToast("신고할 대상을 찾을 수 없습니다.", "error");
       return;
@@ -159,47 +244,55 @@ export default function Comment({ feedId, feedWriterId }: CommentProps) {
     openReportModal({ refType: "FEED_COMMENT", refId: id });
   };
 
-  const handleCommentDelete = async (id: string) => {
-    openModal({
-      type: null,
-      data: {
-        title: "댓글을 삭제하시겠어요?",
-        confirmBtn: "삭제",
-        onClick: () => {
+  const handleCommentDelete = (id: string) => {
+    setOpenMenuId(null);
+
+    openDsModal((close) => (
+      <Alert
+        variant="content"
+        size="xl"
+        title="댓글을 삭제하시겠어요?"
+        contentText="삭제한 댓글은 복구할 수 없어요"
+        secondaryLabel="취소"
+        onSecondary={close}
+        primaryLabel="삭제"
+        onPrimary={() => {
+          close();
           deleteComment(id);
-        },
-      },
-      isComfirm: true,
-    });
+        }}
+      />
+    ));
+  };
+
+  const handleCommentSubmit = async (content: string): Promise<boolean> => {
+    if (isPostCommentPending || !isLoggedIn || !content.trim()) return false;
+
+    try {
+      await postComment({ feedId, content });
+      refetchComments();
+      queryClient.invalidateQueries({ queryKey: ["details", feedId] });
+      return true;
+    } catch {
+      showToast("댓글 작성에 실패했습니다.", "error");
+      return false;
+    }
   };
 
   const handleReplySubmit = async () => {
-    if (isPostCommentLoading) return;
-    if (!isLoggedIn || !replyText.trim() || !mentionedUser) return;
-
-    const actualReplyContent = replyText.trim();
-
-    if (!actualReplyContent) {
-      showToast("답글 내용을 입력해주세요.", "error");
-      return;
-    }
-
-    if (!activeParentReplyId) return;
+    if (isPostCommentPending) return;
+    if (!isLoggedIn || !replyText.trim() || !replyTarget) return;
 
     try {
       await postComment({
         feedId,
         content: replyText,
-        parentCommentId: activeParentReplyId,
-        mentionedUserId: isReplyToChild ? mentionedUser.id : undefined,
+        parentCommentId: replyTarget.parentId,
+        mentionedUserId: replyTarget.isChild ? replyTarget.writer.id : undefined,
       });
-      setReplyText("");
-      setActiveParentReplyId(null);
-      setActiveChildReplyId(null);
-      setMentionedUser(null);
-      setIsReplyToChild(false);
+      closeReply();
       refetchComments();
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ["details", feedId] });
+    } catch {
       showToast("답글 작성에 실패했습니다.", "error");
     }
   };
@@ -208,8 +301,9 @@ export default function Comment({ feedId, feedWriterId }: CommentProps) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        setActiveChildReplyId(null);
-        setActiveParentReplyId(null);
+        setReplyTarget(null);
+        setReplyText("");
+        setOpenMenuId(null);
       }
     };
 
@@ -219,276 +313,146 @@ export default function Comment({ feedId, feedWriterId }: CommentProps) {
     };
   }, []);
 
-  const handleEnterKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.nativeEvent.isComposing) return;
+  const handleEnterKeyDown =
+    (submit: () => void) => (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.nativeEvent.isComposing) return;
 
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleReplySubmit();
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        submit();
+      }
+    };
+
+  const getMenuItems = (
+    writer: CommentWriter,
+    commentId: string,
+    onReply: () => void,
+  ): MenuItem[] => {
+    const items: MenuItem[] = [{ label: "답글달기", onClick: onReply }];
+
+    if (writer.id === user_id) {
+      items.push({ label: "삭제하기", onClick: () => handleCommentDelete(commentId), danger: true });
+    } else if (isLoggedIn) {
+      items.push({ label: "신고하기", onClick: () => handleReport(writer.id), danger: true });
     }
+
+    return items;
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return <Loader />;
 
   const renderChildComments = (
     childComments: ParentFeedCommentResponse["childComments"],
     parentCommentId: string,
   ) => {
     return (
-      <div className={styles.childComments}>
-        {childComments.map((reply) => (
-          <div key={reply.id} className={styles.comment}>
-            <div className={styles.childCommentBox}>
-              <Link href={`/${reply.writer.url}`}>
-                {reply.writer.image !== null ? (
-                  <ResponsiveImage
-                    src={reply.writer.image}
-                    width={24}
-                    height={24}
-                    alt="답글 프로필"
-                    className={styles.writerImage}
-                  />
-                ) : (
-                  <ResponsiveImage
-                    src="/image/default.svg"
-                    width={24}
-                    height={24}
-                    alt="답글 프로필"
-                    className={styles.writerImage}
-                  />
-                )}
-              </Link>
-              <div className={styles.commentBody}>
-                <div className={styles.writerReply}>
-                  <div className={styles.writerLeft}>
-                    <div className={styles.writerCreatedAt}>
-                      <Link href={`/${reply.writer.url}`}>
-                        <div className={styles.writerName}>
-                          {reply.writer.name}
-                          {reply.writer.id === feedWriterId && (
-                            <div className={styles.feedWriter}>작성자</div>
-                          )}
-                        </div>
-                      </Link>
-                      <p className={styles.createdAt}>{timeAgo(reply.createdAt)}</p>
-                    </div>
-                    <div className={styles.commentText}>
-                      {reply.mentionedUser && (
-                        <span className={styles.mentionedUser}>@{reply.mentionedUser.name}</span>
-                      )}
-                      <span dangerouslySetInnerHTML={{ __html: linkifyText(reply.content) }} />
-                    </div>
-                    <div className={styles.likeReplyBtn}>
-                      <span
-                        className={reply.isLike ? styles.likeOnButton : styles.likeButton}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLikeClick(reply.id, reply.isLike);
-                        }}
-                      >
-                        <IconComponent
-                          name={reply.isLike ? "commentLikeOn" : "commentLikeOff"}
-                          size={16}
-                          isBtn
-                        />
-                        {reply.likeCount}
-                      </span>
-                      <p
-                        onClick={() =>
-                          handleChildReply(reply.id, parentCommentId, {
-                            id: reply.writer.id,
-                            name: reply.writer.name,
-                            url: reply.writer.url,
-                            image: reply.writer.image || "/image/default.svg",
-                          })
-                        }
-                        className={styles.replyBtn}
-                      >
-                        {activeChildReplyId === reply.id ? "취소" : "답글"}
-                      </p>
-                    </div>
-                  </div>
-                  {isLoggedIn && (
-                    <div className={styles.replyBtnDropdown}>
-                      {reply.writer.id === user_id ? (
-                        <Dropdown
-                          trigger={<IconComponent name="kebab" padding={8} size={24} isBtn />}
-                          menuItems={[
-                            {
-                              label: "삭제하기",
-                              onClick: () => handleCommentDelete(reply.id),
-                              isDelete: true,
-                            },
-                          ]}
-                        />
-                      ) : (
-                        <Dropdown
-                          trigger={<IconComponent name="kebab" padding={8} size={24} isBtn />}
-                          menuItems={[
-                            {
-                              label: "신고하기",
-                              onClick: () => handleReport(reply.writer?.id),
-                              isDelete: true,
-                            },
-                          ]}
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-                {activeChildReplyId === reply.id && (
-                  <ReplyInput
-                    isChildReply={true}
-                    replyText={replyText}
-                    onReplyTextChange={handleReplyTextChange}
-                    onKeyDown={handleEnterKeyDown}
-                    isLoggedIn={isLoggedIn}
-                    ref={replyInputRef}
-                    showToast={showToast}
-                    handleReplySubmit={handleReplySubmit}
-                  />
-                )}
-                <div className={styles.bar} />
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className={styles.childList}>
+        {childComments.map((reply) => {
+          const handleReply = () => handleReplyClick(reply.id, parentCommentId, reply.writer, true);
+
+          return (
+            <UserItem
+              key={reply.id}
+              type={isMobile ? "commentPlusxs" : "commentPlus"}
+              nickname={reply.writer.name}
+              timeCount={timeAgo(reply.createdAt)}
+              commentText={renderCommentText(reply.content)}
+              mentionName={reply.mentionedUser?.name}
+              likeCount={String(reply.likeCount)}
+              isLiked={reply.isLike}
+              profileImage={reply.writer.image ?? undefined}
+              isAuthor={reply.writer.id === feedWriterId}
+              onLikeClick={() => handleLikeClick(reply.id, reply.isLike)}
+              onReplyClick={handleReply}
+              onProfileClick={() => router.push(`/${reply.writer.url}`)}
+              menuItems={getMenuItems(reply.writer, reply.id, handleReply)}
+              menuOpen={openMenuId === reply.id}
+              onMenuOpenChange={(open) => setOpenMenuId(open ? reply.id : null)}
+              menuDisplayMode={isMobile ? "bottomSheet" : "menu"}
+            />
+          );
+        })}
       </div>
     );
   };
 
   const renderComment = (comment: ParentFeedCommentResponse) => {
+    const handleReply = () => handleReplyClick(comment.id, comment.id, comment.writer, false);
+
     return (
-      <div key={comment.id} className={styles.comment}>
-        <div className={styles.commentBox}>
-          <Link href={`/${comment.writer.url}`}>
-            {comment.writer.image !== null ? (
-              <ResponsiveImage
-                src={comment.writer.image}
-                width={isMobile ? 24 : 40}
-                height={isMobile ? 24 : 40}
-                alt="댓글 프로필"
-                className={styles.writerImage}
-              />
-            ) : (
-              <ResponsiveImage
-                src="/image/default.svg"
-                width={isMobile ? 24 : 40}
-                height={isMobile ? 24 : 40}
-                alt="댓글 프로필"
-                className={styles.writerImage}
-              />
-            )}
-          </Link>
-          <div className={styles.commentBody}>
-            <div className={styles.writerReply}>
-              <div className={styles.writerLeft}>
-                <div className={styles.writerCreatedAt}>
-                  <Link href={`/${comment.writer.url}`}>
-                    <div className={styles.writerName}>{comment.writer.name}</div>
-                  </Link>
-                  {comment.writer.id === feedWriterId && (
-                    <div className={styles.feedWriter}>작성자</div>
-                  )}
-                  <p className={styles.createdAt}>{timeAgo(comment.createdAt)}</p>
-                </div>
-                <div
-                  className={styles.commentText}
-                  dangerouslySetInnerHTML={{ __html: linkifyText(comment.content) }}
-                />
-                <div className={styles.likeReplyBtn}>
-                  <span
-                    className={comment.isLike ? styles.likeOnButton : styles.likeButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLikeClick(comment.id, comment.isLike);
-                    }}
-                  >
-                    <IconComponent
-                      name={comment.isLike ? "commentLikeOn" : "commentLikeOff"}
-                      size={16}
-                      isBtn
-                    />
-                    {comment.likeCount}
-                  </span>
-                  <p
-                    onClick={() =>
-                      handleParentReply(comment.id, {
-                        id: comment.writer.id,
-                        name: comment.writer.name,
-                        url: comment.writer.url,
-                        image: comment.writer.image || "/image/default.svg",
-                      })
-                    }
-                    className={styles.replyBtn}
-                  >
-                    {activeParentReplyId === comment.id ? "취소" : "답글"}
-                  </p>
-                </div>
-              </div>
-              {isLoggedIn && (
-                <div className={styles.replyBtnDropdown}>
-                  {comment.writer.id === user_id ? (
-                    <Dropdown
-                      trigger={<IconComponent name="kebab" padding={8} size={24} isBtn />}
-                      menuItems={[
-                        {
-                          label: "삭제하기",
-                          onClick: () => handleCommentDelete(comment.id),
-                          isDelete: true,
-                        },
-                      ]}
-                    />
-                  ) : (
-                    <Dropdown
-                      trigger={<IconComponent name="kebab" padding={8} size={24} isBtn />}
-                      menuItems={[
-                        {
-                          label: "신고하기",
-                          onClick: () => handleReport(comment.writer?.id),
-                          isDelete: true,
-                        },
-                      ]}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-            {comment.childComments.length > 0 && (
-              <div className={styles.viewReplies}>
-                {renderChildComments(comment.childComments, comment.id)}
-              </div>
-            )}
-            {activeParentReplyId === comment.id && !isReplyToChild && (
-              <ReplyInput
-                isChildReply={false}
-                replyText={replyText}
-                onReplyTextChange={handleReplyTextChange}
-                onKeyDown={handleEnterKeyDown}
-                isLoggedIn={isLoggedIn}
-                ref={replyInputRef}
-                showToast={showToast}
-                handleReplySubmit={handleReplySubmit}
-              />
-            )}
-          </div>
-        </div>
+      <div key={comment.id} className={styles.commentRow}>
+        <UserItem
+          type={isMobile ? "commentxs" : "comment"}
+          nickname={comment.writer.name}
+          timeCount={timeAgo(comment.createdAt)}
+          commentText={renderCommentText(comment.content)}
+          likeCount={String(comment.likeCount)}
+          isLiked={comment.isLike}
+          profileImage={comment.writer.image ?? undefined}
+          isAuthor={comment.writer.id === feedWriterId}
+          onLikeClick={() => handleLikeClick(comment.id, comment.isLike)}
+          onReplyClick={handleReply}
+          onProfileClick={() => router.push(`/${comment.writer.url}`)}
+          menuItems={getMenuItems(comment.writer, comment.id, handleReply)}
+          menuOpen={openMenuId === comment.id}
+          onMenuOpenChange={(open) => setOpenMenuId(open ? comment.id : null)}
+          menuDisplayMode={isMobile ? "bottomSheet" : "menu"}
+        />
+
+        {comment.childComments.length > 0 && renderChildComments(comment.childComments, comment.id)}
+
+        {replyTarget?.parentId === comment.id && (
+          <ReplyInput
+            mentionName={replyTarget.writer.name}
+            replyText={replyText}
+            onReplyTextChange={handleReplyTextChange}
+            onKeyDown={handleEnterKeyDown(handleReplySubmit)}
+            isLoggedIn={isLoggedIn}
+            replyInputRef={replyInputRef}
+            showToast={showToast}
+            handleReplySubmit={handleReplySubmit}
+          />
+        )}
       </div>
     );
   };
 
+  const comments = commentsData?.comments ?? [];
+  // 피드 응답에는 commentCount 필드가 없어, 호출부(Detail.tsx)가 넘긴 값을 우선 쓰고
+  // 없으면 로드된 데이터(댓글 + 답글)로 폴백 계산한다.
+  const totalCommentCount =
+    commentCount ??
+    comments.reduce((sum, c) => sum + 1 + (c.childComments?.length ?? 0), 0);
+
   return (
     <div className={styles.container}>
-      <CommentInput
-        feedId={feedId}
-        isLoggedIn={isLoggedIn}
-        userData={userData}
-        showToast={showToast}
-        onCommentSubmitSuccess={handleCommentSubmitSuccess}
-      />
-      <section>{commentsData?.comments?.map((comment) => renderComment(comment))}</section>
+      <section className={styles.inputSection}>
+        <div className={styles.titleRow}>
+          <span className={styles.title}>댓글</span>
+          <span className={styles.count}>{totalCommentCount}</span>
+        </div>
+        <CommentInput
+          isLoggedIn={isLoggedIn}
+          isMobile={isMobile}
+          isPending={isPostCommentPending}
+          showToast={showToast}
+          onSubmit={handleCommentSubmit}
+        />
+      </section>
+      {comments.length === 0 ? (
+        <div className={styles.emptyWrap}>
+          <Empty
+            size="xl"
+            iconName="illust-replay"
+            title="아직 댓글이 없어요"
+            content="댓글을 써서 생각을 나눠보세요!"
+          />
+        </div>
+      ) : (
+        <section className={styles.list}>
+          {comments.map((comment) => renderComment(comment))}
+        </section>
+      )}
     </div>
   );
 }

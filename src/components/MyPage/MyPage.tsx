@@ -1,17 +1,15 @@
 import { useRouter } from "next/router";
 import LikedFeeds from "./LikedFeeds/LikedFeeds";
-import SavedFeeds from "./SavedFeeds/SavedFeeds";
 import SavedPosts from "./SavedPosts/SavedPosts";
 
 import UnderlineTabs from "@/components/UnderlineTabs/UnderlineTabs";
 
 import styles from "./MyPage.module.scss";
 
-type TabKey = "liked-feeds" | "saved-feeds" | "saved-posts";
+type TabKey = "liked-feeds" | "saved-posts";
 
 const TABS: { key: TabKey; label: string; hasSeparatorAfter?: boolean }[] = [
   { key: "liked-feeds", label: "좋아요한 그림" },
-  { key: "saved-feeds", label: "저장한 그림" },
   { key: "saved-posts", label: "저장한 글" },
 ];
 
@@ -28,8 +26,6 @@ export default function MyPage() {
     switch (activeTab) {
       case "liked-feeds":
         return <LikedFeeds />;
-      case "saved-feeds":
-        return <SavedFeeds />;
       case "saved-posts":
         return <SavedPosts />;
       default:

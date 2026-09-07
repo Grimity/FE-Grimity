@@ -281,8 +281,8 @@ export default function GNB({
           <TextButton
             variant="primary"
             size="regular"
-            onClick={onRightLabelClick}
             disabled={rightLabelDisabled}
+            onClick={onRightLabelClick}
             className={styles.trailingText}
           >
             {rightLabel}

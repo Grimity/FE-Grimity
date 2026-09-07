@@ -1,106 +1,33 @@
 @use "@/styles/globals.scss" as *;
 @use "@/styles/tokens/spacing" as spacing;
-@use "sass:color";
+@use "@/styles/tokens/colors" as colors;
+@use "@/styles/tokens/typography" as typo;
+@use "@/styles/breakpoint" as bp;
 
 .header {
-  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-bottom: 30px;
+  width: 100%;
+  margin-bottom: spacing.$spacing-8;
 
-  @include Size("mobile") {
-    padding-bottom: 24px;
+  @include bp.breakpoint-down("xs") {
+    margin-bottom: spacing.$spacing-24;
   }
+}
 
-  .profileLeft {
-    display: flex;
-    align-items: center;
+.headerTrigger {
+  flex: 1;
+  min-width: 0;
+}
 
-    .authorImage {
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 1px solid $gray30;
-      cursor: pointer;
-      @include Drag;
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-16;
+  flex-shrink: 0;
 
-      @include Size("mobile") {
-        width: 32px;
-        height: 32px;
-      }
-    }
-
-    .authorInfo {
-      display: flex;
-      flex-direction: column;
-      margin-left: 16px;
-      margin-right: 24px;
-
-      .authorName {
-        @include Sub2;
-        color: $gray80;
-        cursor: pointer;
-
-        @include Size("mobile") {
-          @include Sub4;
-        }
-      }
-    }
-
-    .stats {
-      display: flex;
-      align-items: center;
-      height: 20px;
-      gap: 8px;
-      line-height: 0;
-      @include Drag;
-
-      .createdAt {
-        @include Label1;
-        color: $gray50;
-
-        @include Size("mobile") {
-          @include Cap2;
-        }
-      }
-
-      .statIcon {
-        width: 16px;
-        height: 16px;
-        object-fit: cover;
-      }
-
-      .stat {
-        height: 16px;
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        color: $gray50;
-        @include Cap2;
-        line-height: 12px;
-      }
-    }
-  }
-
-  .dropdownContainer {
-    width: fit-content;
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-
-    @include Size("mobile") {
-      gap: 0;
-    }
-
-    .dropdown {
-      position: relative;
-      width: 24px;
-      height: 24px;
-      margin: 8px;
-      cursor: pointer;
-    }
+  @include bp.breakpoint-down("xs") {
+    gap: 0;
   }
 }
 
@@ -113,41 +40,11 @@
 
 .imageWrapper {
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: spacing.$spacing-20;
 
   &:last-child {
     margin-bottom: 0;
   }
-}
-
-.imageWrapper2 {
-  width: 100%;
-  margin-top: 30px;
-}
-
-.showMore {
-  width: 200px;
-  cursor: pointer;
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-}
-
-.gradient {
-  width: 100%;
-  height: 95px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 1) 100%
-  );
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 0;
 }
 
 .cardImage {
@@ -160,95 +57,86 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
+  margin-top: spacing.$spacing-20;
 
   .tags {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    margin-top: 16px;
+    gap: spacing.$spacing-8;
+    margin-top: spacing.$spacing-24;
   }
 }
 
 .contentWrapper {
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
+  row-gap: spacing.$spacing-20;
 
-  @include Size("mobile") {
-    row-gap: 16px;
+  @include bp.breakpoint-down("xs") {
+    row-gap: spacing.$spacing-16;
   }
 
   .title {
-    color: $gray80;
-    @include Title3;
+    color: colors.$text-gray-bold;
+    @include typo.title-2;
 
-    @include Size("mobile") {
-      @include Sub1;
+    @include bp.breakpoint-down("xs") {
+      @include typo.subtitle-1;
     }
   }
 
   .content {
-    @include Body1;
-    color: $gray70;
+    @include typo.label-2;
+    color: colors.$text-gray-normal;
     white-space: pre-line;
     word-break: break-word;
     overflow-wrap: break-word;
-  }
-
-  .stats {
-    display: flex;
-    align-items: center;
-    height: 20px;
-    gap: 8px;
-    line-height: 0;
-    @include Drag;
-
-    .createdAt {
-      @include Label1;
-      color: $gray60;
-    }
-
-    .statIcon {
-      width: 16px;
-      height: 16px;
-      object-fit: cover;
-    }
-
-    .stat {
-      height: 16px;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      color: $gray60;
-      @include Cap2;
-      line-height: 12px;
-    }
   }
 }
 
 .cards {
   width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: spacing.$spacing-40;
 
-  @include Size("mobile") {
-    gap: 50px;
+  @include bp.breakpoint-down("xs") {
+    gap: spacing.$spacing-32;
   }
 }
 
 .bar {
   margin-top: spacing.$spacing-20;
-  border-top: 1px solid $gray30;
+  border-top: 1px solid colors.$border-gray-subtle;
 }
 
-.boardActionBar {
-  margin-top: 28px;
-  margin-bottom: 60px;
+.actionBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: spacing.$spacing-32 0;
 
-  @include Size("mobile") {
-    margin-bottom: 40px;
+  @include bp.breakpoint-down("xs") {
+    margin-bottom: spacing.$spacing-40;
   }
+}
+
+.actionLeft {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-16;
+}
+
+.actionStat {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+  color: colors.$text-gray-bold;
+  @include typo.label-3;
+}
+
+.actionCount {
+  min-width: 8px;
 }

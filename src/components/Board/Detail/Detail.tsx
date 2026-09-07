@@ -24,7 +24,8 @@ import { useProfileCardHover } from "@/hooks/useProfileCardHover";
 import { useReportModal } from "@/hooks/useReportModal";
 import { useShareModal } from "@/hooks/useShareModal";
 
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
+import Alert from "@/components/common/PopUp/Alert/Alert";
 import { useAuthStore } from "@/states/authStore";
 import { useDeviceStore } from "@/states/deviceStore";
 
@@ -50,7 +51,7 @@ export default function PostDetail({ id }: PostDetailProps) {
 
   const { isLoggedIn, user_id } = useAuthStore();
   const { isMobile } = useDeviceStore();
-  const { openModal } = useModalStore();
+  const { openModal: openDsModal } = useModal();
   const openReportModal = useReportModal();
   const { sharePost } = useShareModal();
 
@@ -120,24 +121,27 @@ export default function PostDetail({ id }: PostDetailProps) {
   const handleDelete = useCallback(() => {
     if (!id) return;
 
-    openModal({
-      type: null,
-      data: {
-        title: "글을 정말 삭제하시겠어요?",
-        confirmBtn: "삭제하기",
-        onClick: async () => {
+    openDsModal((close) => (
+      <Alert
+        variant="content"
+        size="xl"
+        title="글을 정말 삭제하시겠어요?"
+        contentText="삭제한 글은 복구할 수 없어요"
+        secondaryLabel="취소"
+        onSecondary={close}
+        primaryLabel="삭제하기"
+        onPrimary={async () => {
           try {
             await deletePostsFeeds(id);
+            close();
             router.push("/board");
-          } catch (err) {
+          } catch {
             showToast("삭제 중 오류가 발생했습니다.", "error");
-            throw err;
           }
-        },
-      },
-      isComfirm: true,
-    });
-  }, [id, openModal, router, showToast]);
+        }}
+      />
+    ));
+  }, [id, openDsModal, router, showToast]);
 
   const handleOpenEditPage = useCallback(() => {
     router.push(`/posts/${id}/edit`);

@@ -6,13 +6,11 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 import IconComponent from "../Asset/Icon";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
-import Login from "./Login/Login";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
 import ProfileEdit from "./ProfileEdit/ProfileEdit";
 import Background from "./Background/Background";
 import Follow from "./Follow/Follow";
-import UploadModal from "./Upload/Upload";
 import Like from "./Like/Like";
 import AlbumEdit from "./AlbumEdit/AlbumEdit";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
@@ -123,8 +121,6 @@ export default function Modal() {
         return <Follow initialTab="follower" />;
       case "FOLLOWING":
         return <Follow initialTab="following" />;
-      case "UPLOAD":
-        return <UploadModal {...data} />;
       case "LIKE":
         return <Like />;
       case "ALBUM-EDIT":
