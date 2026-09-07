@@ -86,6 +86,7 @@ export default function GNB({
   onClose,
   onDownload,
   onUpload,
+  uploadLabel = "그림 올리기",
   onLogin,
   onMenu,
   onTitleMenuClick,
@@ -117,7 +118,7 @@ export default function GNB({
           <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
             <SolidButton onClick={onUpload} size="regular">
-              그림 올리기
+              {uploadLabel}
             </SolidButton>
             <div className={clsx(styles.flexRow, styles.gap8)}>
               <SearchButton variant="normal" onClick={onSearch} />

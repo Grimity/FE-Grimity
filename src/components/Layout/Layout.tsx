@@ -386,6 +386,7 @@ export default function Layout({ children }: LayoutProps) {
             }}
             onProfile={onProfileClick}
             onUpload={showUploadBtn ? goToUpload : undefined}
+            uploadLabel={BOARD_WRITE_ROUTES.includes(router.pathname) ? "글쓰기" : "그림 올리기"}
             onLogin={goToLogin}
             onMenu={toggleMobileSidebar}
             onClose={toggleMobileSidebar}

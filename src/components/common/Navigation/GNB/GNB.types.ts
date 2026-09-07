@@ -22,6 +22,8 @@ export interface GNBProps {
   onClose?: () => void;
   onDownload?: () => void;
   onUpload?: () => void;
+  /** pc-main 업로드 버튼 텍스트 (기본 "그림 올리기", 자유게시판에선 "글쓰기") */
+  uploadLabel?: string;
   onLogin?: () => void;
   onMenu?: () => void;
   /** editor: 제목 옆 드롭다운 클릭 */

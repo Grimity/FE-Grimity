@@ -325,7 +325,9 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
               likeCount={String(reply.likeCount)}
               isLiked={reply.isLike}
               profileImage={
-                reply.writer ? `${CONFIG.ENV.IMAGE_URL}/${reply.writer.image}` : undefined
+                reply.writer?.image
+                  ? `${CONFIG.ENV.IMAGE_URL}/${reply.writer.image}`
+                  : undefined
               }
               isAuthor={reply.writer?.id === postWriterId}
               onLikeClick={() => handleLikeClick(reply.id, reply.isLike)}
@@ -362,7 +364,9 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
           likeCount={String(comment.likeCount)}
           isLiked={comment.isLike}
           profileImage={
-            comment.writer ? `${CONFIG.ENV.IMAGE_URL}/${comment.writer.image}` : undefined
+            comment.writer?.image
+              ? `${CONFIG.ENV.IMAGE_URL}/${comment.writer.image}`
+              : undefined
           }
           isAuthor={comment.writer?.id === postWriterId}
           onLikeClick={() => handleLikeClick(comment.id, comment.isLike)}
