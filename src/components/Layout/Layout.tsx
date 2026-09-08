@@ -41,6 +41,7 @@ const MAIN_ROUTES = [
   "/ranking",
   "/board",
   "/following",
+  "/direct",
   "/login",
   "/signup/nickname",
   "/signup/profile-url",

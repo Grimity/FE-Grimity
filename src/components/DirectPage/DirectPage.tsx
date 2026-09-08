@@ -99,11 +99,11 @@ const DirectPage = () => {
     return (
       <section className={styles.container}>
         <DMHeader
+          isChatEmpty={!chatList.length}
           isEditMode={isEditMode}
           onSearch={handleSearch}
           onEditMode={handleEditMode}
           onNewMessage={handleNewMessage}
-          onCloseEditMode={handleCloseEditMode}
         />
         <ChatListSkeleton count={5} />
       </section>
@@ -119,28 +119,28 @@ const DirectPage = () => {
         onSearch={handleSearch}
         onEditMode={handleEditMode}
         onNewMessage={handleNewMessage}
-        onCloseEditMode={handleCloseEditMode}
       />
 
       {chatList.length === 0 ? (
         <EmptyState onNewMessage={handleNewMessage} />
       ) : (
         <div className={styles.chatContainer}>
-          <div className={`${styles.controls} ${isEditMode ? styles.editModeControls : ""}`}>
+          {isEditMode && (
             <DMControls
-              isEditMode={isEditMode}
               isAllSelected={isAllSelected}
               selectedChatIds={selectedChatIds}
-              onEditMode={handleEditMode}
               onCloseEditMode={handleCloseEditMode}
               onSelectAll={handleSelectAll}
             />
-          </div>
+          )}
 
           <ChatList
             chatList={chatList}
             isEditMode={isEditMode}
             selectedChatIds={selectedChatIds}
+            activeChatId={
+              typeof router.query.chatId === "string" ? router.query.chatId : undefined
+            }
             searchKeyword={searchValue}
             onChatClick={handleChatClick}
             onToggleSelect={handleToggleSelect}

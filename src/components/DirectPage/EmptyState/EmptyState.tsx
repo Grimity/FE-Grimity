@@ -1,4 +1,4 @@
-import Button from "@/components/Button/Button";
+import Empty from "@/components/common/Empty/Empty";
 
 import styles from "./EmptyState.module.scss";
 
@@ -9,10 +9,15 @@ interface EmptyStateProps {
 const EmptyState = ({ onNewMessage }: EmptyStateProps) => {
   return (
     <div className={styles.empty}>
-      <p className={styles.emptyText}>아직 주고 받은 메세지가 없어요</p>
-      <Button type="filled-primary" size="m" className={styles.emptyButton} onClick={onNewMessage}>
-        새 메시지 보내기
-      </Button>
+      <Empty
+        size="xl"
+        iconName="illust-replay"
+        title="아직 주고 받은 메시지가 없어요"
+        content="다른 작가에게 사진과 메시지를 보낼 수 있어요"
+        buttonLabel="새 메시지 보내기"
+        buttonVariant="outline"
+        onButtonClick={onNewMessage}
+      />
     </div>
   );
 };

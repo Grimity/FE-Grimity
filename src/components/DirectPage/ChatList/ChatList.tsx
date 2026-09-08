@@ -8,6 +8,7 @@ interface ChatListProps {
   chatList: ChatResponse[];
   isEditMode: boolean;
   selectedChatIds: string[];
+  activeChatId?: string;
   searchKeyword?: string;
   onChatClick: (chatId: string) => void;
   onToggleSelect: (chatId: string) => void;
@@ -17,24 +18,26 @@ const ChatList = ({
   chatList,
   isEditMode,
   selectedChatIds,
+  activeChatId,
   searchKeyword,
   onChatClick,
   onToggleSelect,
 }: ChatListProps) => {
   return (
-    <ul className={styles.chatList}>
+    <div className={styles.chatList}>
       {chatList.map((chat) => (
         <ChatListItem
           key={chat.id}
           chat={chat}
           isEditMode={isEditMode}
           isSelected={selectedChatIds.includes(chat.id)}
+          isActive={chat.id === activeChatId}
           searchKeyword={searchKeyword}
           onChatClick={onChatClick}
           onToggleSelect={onToggleSelect}
         />
       ))}
-    </ul>
+    </div>
   );
 };
 
