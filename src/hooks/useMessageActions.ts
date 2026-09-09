@@ -1,9 +1,10 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 import { usePutChatMessageLike } from "@/api/chat-messages/putChatMessageLike";
 import { useDeleteChatMessageLike } from "@/api/chat-messages/deleteChatMessageLike";
 import { useToast } from "@/hooks/useToast";
 import { useChatStore } from "@/states/chatStore";
+import { useAuthStore } from "@/states/authStore";
 
 interface ReplyingTo {
   messageId: string;
@@ -24,8 +25,13 @@ export const useMessageActions = ({ chatId }: UseMessageActionsOptions) => {
   const { mutateAsync: deleteChatMessageLike } = useDeleteChatMessageLike();
   const { showToast } = useToast();
   const { updateMessageLike, chatRooms } = useChatStore();
+  const { user_id } = useAuthStore();
 
   const currentRoom = chatRooms[chatId];
+
+  useEffect(() => {
+    setReplyingTo(null);
+  }, [chatId]);
 
   const handleLikeMessage = useCallback(
     async (messageId: string, isCurrentlyLiked: boolean) => {
@@ -53,11 +59,11 @@ export const useMessageActions = ({ chatId }: UseMessageActionsOptions) => {
         setReplyingTo({
           messageId,
           content: targetMessage.content,
-          senderName: targetMessage.userName,
+          senderName: targetMessage.userId === user_id ? "나" : targetMessage.userName,
         });
       }
     },
-    [currentRoom?.messages],
+    [currentRoom?.messages, user_id],
   );
 
   const handleMouseEnterMessage = useCallback((messageId: string) => {

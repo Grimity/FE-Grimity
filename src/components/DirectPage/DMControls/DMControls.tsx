@@ -26,9 +26,7 @@ const DMControls = ({
 
   const handleShowLeaveModal = () => {
     if (disabled) return;
-    openModal((close) => <ChatLeave selectedChatIds={selectedChatIds} close={close} />, {
-      className: styles.leaveModal,
-    });
+    openModal((close) => <ChatLeave selectedChatIds={selectedChatIds} close={close} />);
   };
 
   return (

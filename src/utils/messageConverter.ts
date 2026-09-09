@@ -1,6 +1,14 @@
 import type { ChatMessage } from "@/types/socket.types";
 
-interface ApiMessage {
+export interface ApiMessageImageFields {
+  images?: string[] | null;
+  image?: string | null;
+}
+
+export const resolveImages = ({ images, image }: ApiMessageImageFields): string[] =>
+  images ?? (image ? [image] : []);
+
+interface ApiMessage extends ApiMessageImageFields {
   id: string;
   user: {
     id: string;
@@ -8,16 +16,14 @@ interface ApiMessage {
     image: string | null;
     url: string;
   };
-  image: string | null;
   content: string | null;
   createdAt: Date;
   isLike: boolean;
-  replyTo?: {
+  replyTo?: ({
     id: string;
     content: string | null;
-    image: string | null;
     createdAt: Date;
-  } | null;
+  } & ApiMessageImageFields) | null;
 }
 
 export const convertApiMessageToChatMessage = (
@@ -30,13 +36,13 @@ export const convertApiMessageToChatMessage = (
     userId: apiMessage.user.id,
     userName: apiMessage.user.name,
     content: apiMessage.content || "",
-    images: apiMessage.image ? [apiMessage.image] : undefined,
+    images: resolveImages(apiMessage),
     replyToId: apiMessage.replyTo?.id,
     replyTo: apiMessage.replyTo
       ? {
           id: apiMessage.replyTo.id,
           content: apiMessage.replyTo.content || "",
-          image: apiMessage.replyTo.image,
+          image: resolveImages(apiMessage.replyTo)[0] ?? null,
           createdAt: apiMessage.replyTo.createdAt.toString(),
         }
       : undefined,

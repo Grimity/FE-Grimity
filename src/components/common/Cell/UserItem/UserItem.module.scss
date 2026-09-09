@@ -138,6 +138,18 @@
   min-width: 0;
 }
 
+.idProfile {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.idProfileClickable {
+  cursor: pointer;
+}
+
 .idInfo {
   display: flex;
   flex-direction: column;

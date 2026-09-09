@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useLayoutEffect } from "react";
+import { useState, useCallback, useRef, useLayoutEffect, useEffect } from "react";
 import { Socket } from "socket.io-client";
 
 import { usePostChatMessage } from "@/api/chat-messages/postChatMessage";
@@ -16,11 +16,11 @@ import { useAuthStore } from "@/states/authStore";
 
 import ChatRoomHeader from "@/components/ChatRoom/Header/Header";
 import MessageList from "@/components/ChatRoom/MessageList/MessageList";
-import MessageInput from "@/components/ChatRoom/MessageInput/MessageInput";
-import ReplyBar from "@/components/ChatRoom/ReplyBar/ReplyBar";
 import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
-import Icon from "@/components/Asset/IconTemp";
-import Button from "@/components/Button/Button";
+import DmInput from "@/components/common/Dm/DmInput/DmInput";
+import ImageViewer from "@/components/ImageViewer/ImageViewer";
+
+import { resolveImages } from "@/utils/messageConverter";
 
 import type { ChatMessage } from "@/types/socket.types";
 import type { NewChatMessageEventResponse } from "@grimity/dto";
@@ -35,9 +35,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [images, setImages] = useState<{ fileName: string; fullUrl: string }[]>([]);
+  const [viewer, setViewer] = useState<{ images: string[]; index: number } | null>(null);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const isUserSendingRef = useRef<boolean>(false);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -78,11 +78,19 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     }
   }, []);
 
+  const handleReplyAndFocus = useCallback(
+    (messageId: string) => {
+      handleReplyMessage(messageId);
+      messageInputRef.current?.focus();
+    },
+    [handleReplyMessage],
+  );
+
   const handleSendMessage = useCallback(() => {
-    if ((!message.trim() && images.length === 0) || !chatId || isSending) return;
+    if ((!message.trim() && images.length === 0) || !chatId || isSending || userData?.isBlocked)
+      return;
 
     setIsSending(true);
-    isUserSendingRef.current = true;
 
     postChatMessage(
       {
@@ -97,20 +105,26 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
           setImages([]);
           clearReply();
           setIsSending(false);
-          isUserSendingRef.current = false;
 
           setTimeout(() => {
             messageInputRef.current?.focus();
           }, 0);
         },
-        onError: (error) => {
-          console.error("Failed to send message:", error);
+        onError: () => {
           setIsSending(false);
-          isUserSendingRef.current = false;
         },
       },
     );
-  }, [images, message, chatId, isSending, postChatMessage, replyingTo, clearReply]);
+  }, [
+    images,
+    message,
+    chatId,
+    isSending,
+    postChatMessage,
+    replyingTo,
+    clearReply,
+    userData?.isBlocked,
+  ]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -170,12 +184,12 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
               userId: socketResponse.senderId,
               userName: userMap.get(socketResponse.senderId) || "",
               content: socketMessage.content || "",
-              images: socketMessage.image ? [socketMessage.image] : [],
+              images: resolveImages(socketMessage),
               replyTo: socketMessage.replyTo
                 ? {
                     id: socketMessage.replyTo.id,
                     content: socketMessage.replyTo.content || "",
-                    image: socketMessage.replyTo.image,
+                    image: resolveImages(socketMessage.replyTo)[0] ?? null,
                     createdAt: socketMessage.replyTo.createdAt.toString(),
                   }
                 : undefined,
@@ -206,10 +220,15 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         socketInstance.off("unlikeChatMessage", handleUnlikeChatMessage);
       };
     },
-    [chatId, addMessage, user_id, updateMessageLike],
+    [chatId, addMessage, updateMessageLike],
   );
 
   useChatRoom({ chatId, onSetupListeners: setupSocketListeners });
+
+  useEffect(() => {
+    if (userData?.isBlocked) return;
+    messageInputRef.current?.focus();
+  }, [chatId, userData?.isBlocked]);
 
   useLayoutEffect(() => {
     if (currentRoom?.messages.length > 0) {
@@ -232,59 +251,48 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         onMouseEnterMessage={handleMouseEnterMessage}
         onMouseLeaveMessage={handleMouseLeaveMessage}
         onLikeMessage={handleLikeMessage}
-        onReplyMessage={handleReplyMessage}
+        onReplyMessage={handleReplyAndFocus}
+        onCloseReply={clearReply}
+        onImageClick={(imgs, index) => setViewer({ images: imgs, index })}
       />
 
+      {viewer && (
+        <ImageViewer
+          contained
+          images={viewer.images}
+          initialIndex={viewer.index}
+          onClose={() => setViewer(null)}
+        />
+      )}
+
       <footer className={styles.footer}>
-        {replyingTo && (
-          <ReplyBar
-            senderName={replyingTo.senderName}
-            content={replyingTo.content}
-            onCancel={clearReply}
-          />
-        )}
+        <input
+          disabled={userData?.isBlocked}
+          ref={fileInputRef}
+          multiple
+          hidden
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+        />
 
-        <div className={styles.footerContent}>
-          <button
-            disabled={userData?.isBlocked}
-            type="button"
-            className={styles.cameraButton}
-            onClick={handleClickFile}
-          >
-            <Icon icon="cameraAlt" size="2.5xl" />
-            <input
-              disabled={userData?.isBlocked}
-              ref={fileInputRef}
-              multiple
-              hidden
-              type="file"
-              accept="image/*"
-              max={10}
-              onChange={handleImageUpload}
-            />
-          </button>
-
-          <MessageInput
-            disabled={userData?.isBlocked}
-            message={message}
-            inputRef={messageInputRef}
-            onMessageChange={setMessage}
-            onKeyPress={handleKeyPress}
-            images={images}
-            onImagesChange={setImages}
-          />
-
-          <Button
-            type="filled-primary"
-            size="m"
-            className={styles.sendButton}
-            onClick={handleSendMessage}
-            onMouseDown={(e) => e.preventDefault()}
-            disabled={isSending || userData?.isBlocked || (!message.trim() && images.length === 0)}
-          >
-            전송
-          </Button>
-        </div>
+        <DmInput
+          value={message}
+          onChange={setMessage}
+          onSend={handleSendMessage}
+          onImageClick={handleClickFile}
+          onKeyDown={handleKeyPress}
+          inputRef={messageInputRef}
+          images={images}
+          onRemoveImage={(index) => setImages(images.filter((_, i) => i !== index))}
+          replyTo={
+            replyingTo
+              ? { target: replyingTo.senderName, text: replyingTo.content }
+              : undefined
+          }
+          disabled={userData?.isBlocked}
+          isSending={isSending}
+        />
       </footer>
     </section>
   );

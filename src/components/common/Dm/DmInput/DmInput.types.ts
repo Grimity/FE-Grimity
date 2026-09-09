@@ -20,7 +20,6 @@ export interface DmInputProps {
   images?: DmInputAttachedImage[];
   onRemoveImage?: (index: number) => void;
   replyTo?: DmInputReply;
-  onCancelReply?: () => void;
   disabled?: boolean;
   isSending?: boolean;
   placeholder?: string;
