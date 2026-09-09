@@ -3,6 +3,8 @@ import { Fragment } from "react";
 import ChatBubble from "@/components/common/Dm/ChatBubble/ChatBubble";
 import Empty from "@/components/common/Empty/Empty";
 
+import { formatReplyPreview } from "@/utils/formatReplyLabel";
+
 import type { ChatMessage } from "@/types/socket.types";
 
 import styles from "./MessageList.module.scss";
@@ -94,7 +96,12 @@ const MessageList = ({
                 text={msg.content}
                 images={msg.images}
                 replyTo={
-                  msg.replyTo ? { target: replyTarget, text: msg.replyTo.content } : undefined
+                  msg.replyTo
+                    ? {
+                        target: replyTarget,
+                        text: formatReplyPreview(msg.replyTo.content, !!msg.replyTo.image),
+                      }
+                    : undefined
                 }
                 onReplyClick={
                   msg.replyTo ? () => scrollToMessage(msg.replyTo?.id) : undefined

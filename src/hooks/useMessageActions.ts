@@ -6,6 +6,8 @@ import { useToast } from "@/hooks/useToast";
 import { useChatStore } from "@/states/chatStore";
 import { useAuthStore } from "@/states/authStore";
 
+import { formatReplyPreview } from "@/utils/formatReplyLabel";
+
 interface ReplyingTo {
   messageId: string;
   content: string;
@@ -58,7 +60,7 @@ export const useMessageActions = ({ chatId }: UseMessageActionsOptions) => {
       if (targetMessage) {
         setReplyingTo({
           messageId,
-          content: targetMessage.content,
+          content: formatReplyPreview(targetMessage.content, !!targetMessage.images?.length),
           senderName: targetMessage.userId === user_id ? "나" : targetMessage.userName,
         });
       }
