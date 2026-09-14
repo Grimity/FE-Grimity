@@ -1,30 +1,18 @@
-import { useEffect, useState } from "react";
-import router, { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 import { useAuthStore } from "@/states/authStore";
 import { useModalStore } from "@/states/modalStore";
-import { useShareModal } from "@/hooks/useShareModal";
-import { useReportModal } from "@/hooks/useReportModal";
+import { useDeviceStore } from "@/states/deviceStore";
 
-import { useMyData } from "@/api/users/getMe";
 import { useUserDataByUrl } from "@/api/users/getId";
-import { usePutUserBlock } from "@/api/users/putUserBlock";
-import { useDeleteUserBlock } from "@/api/users/deleteUserBlock";
-import { usePostChat } from "@/api/chats/postChat";
 
 import ProfileActions from "@/components/ProfilePage/Profile/ProfileActions/ProfileActions";
 import ProfileCover from "@/components/ProfilePage/Profile/ProfileCover/ProfileCover";
 import ProfileImage from "@/components/ProfilePage/Profile/ProfileImage/ProfileImage";
 import ProfileDetails from "@/components/ProfilePage/Profile/ProfileDetails/ProfileDetails";
-import Blocklist from "@/components/Modal/Blocklist/Blocklist";
 
-import { useToast } from "@/hooks/useToast";
-import { useDeviceStore } from "@/states/deviceStore";
-import { useFollow } from "@/hooks/useFollow";
-import { useCoverImage } from "@/hooks/useCoverImage";
-import { useProfileImage } from "@/hooks/useProfileImage";
-import { useModal } from "@/hooks/useModal";
-
+import { useProfileImages } from "./hooks/useProfileImages";
 import { ProfileProps } from "@/components/ProfilePage/Profile/Profile.types";
 
 import styles from "./Profile.module.scss";
@@ -32,214 +20,64 @@ import styles from "./Profile.module.scss";
 export default function Profile({ isMyProfile, id, url }: ProfileProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const openModal = useModalStore((state) => state.openModal);
-  const { shareProfile } = useShareModal();
-  const openReportModal = useReportModal();
-
-  const { data: myData } = useMyData();
-  const { data: userData, refetch: refetchUserData } = useUserDataByUrl(url);
-  const [profileImage, setProfileImage] = useState<string>("");
-  const [coverImage, setCoverImage] = useState<string>("");
-  const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
-  const { handleFollowClick, handleUnfollowClick } = useFollow(id, refetchUserData);
-  const { handleAddCover, handleDeleteImage } = useCoverImage(
-    refetchUserData,
-    setCoverImage,
-    userData,
-  );
-  const { handleFileChange } = useProfileImage(
-    refetchUserData,
-    setProfileImage,
-    userData?.image || "/image/default.svg",
-  );
-  const { openModal: newModalOpen } = useModal();
-
-  const { mutate: blockUser } = usePutUserBlock();
-  const { mutate: unblockUser } = useDeleteUserBlock();
-  const { mutate: createChat } = usePostChat();
-
   const { pathname } = useRouter();
+
+  const { data: userData, refetch: refetchUserData } = useUserDataByUrl(url);
+
+  const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } =
+    useProfileImages(userData, refetchUserData);
 
   useEffect(() => {
     refetchUserData();
   }, [pathname]);
 
-  useEffect(() => {
-    if (url === myData?.url) {
-      setProfileImage(myData.image || "/image/default.svg");
-      setCoverImage(myData.backgroundImage || "/image/default-cover.png");
-    } else if (url === userData?.id) {
-      setProfileImage(userData.image || "/image/default.svg");
-      setCoverImage(userData.backgroundImage || "/image/default-cover.png");
-    }
-  }, [url, myData, userData]);
-
-  useEffect(() => {
-    setProfileImage(userData?.image || "/image/default.svg");
-    setCoverImage(userData?.backgroundImage || "/image/default-cover.png");
-  }, [userData]);
-
-  const handleOpenEditModal = () => {
+  const openFollowModal = (type: "FOLLOWER" | "FOLLOWING") => {
     openModal({
-      type: isMobile ? "PROFILE-EDIT" : "PROFILE-EDIT",
-      data: isMobile ? { title: "프로필 수정" } : null,
-      isFill: isMobile,
-    });
-  };
-
-  const handleOpenFollowerModal = () => {
-    openModal({
-      type: "FOLLOWER",
+      type,
       data: { title: userData?.name, hideCloseButton: true },
       isFill: isMobile,
     });
   };
 
-  const handleOpenFollowingModal = () => {
-    openModal({
-      type: "FOLLOWING",
-      data: { title: userData?.name, hideCloseButton: true },
-      isFill: isMobile,
-    });
-  };
-
-  const handleOpenReportModal = () => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 가능합니다.", "warning");
-      return;
-    }
-    if (!userData?.id) return;
-    openReportModal({ refType: "USER", refId: userData.id });
-  };
-
-  const handleOpenAccountSettings = () => {
-    router.push("/settings/account");
-  };
-
-  const handleShareProfile = () => {
-    if (!userData) return;
-    shareProfile({ id: userData.url, name: userData.name, image: userData.image });
-  };
-
-  const handleBlockClick = () => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 가능합니다.", "warning");
-      return;
-    }
-
-    blockUser(
-      { id: userData?.id || "" },
-      {
-        onSuccess: () => {
-          refetchUserData();
-        },
-        onError: () => {
-          showToast("차단 해제 중 오류가 발생했습니다.", "error");
-        },
-      },
-    );
-  };
-
-  const handleUnblockClick = () => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 가능합니다.", "warning");
-      return;
-    }
-    unblockUser(
-      { id: userData?.id || "" },
-      {
-        onSuccess: () => {
-          refetchUserData();
-        },
-        onError: () => {
-          showToast("차단 해제 중 오류가 발생했습니다.", "error");
-        },
-      },
-    );
-  };
-
-  const handleOpenBlocklistModal = () => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 가능합니다.", "warning");
-      return;
-    }
-
-    newModalOpen(
-      (close) => <Blocklist close={close} />,
-      { className: styles.blacklist },
-      { isFill: isMobile, title: "차단" },
-    );
-  };
-
-  const handleSendMessage = () => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 가능합니다.", "warning");
-      return;
-    }
-
-    createChat(
-      { targetUserId: userData?.id || "" },
-      {
-        onSuccess: (data) => {
-          router.push(`/direct/${data.id}`);
-        },
-        onError: (error) => {
-          console.error("채팅방 생성 실패:", error);
-        },
-      },
-    );
-  };
+  if (!userData) return <div className={styles.container} />;
 
   return (
     <div className={styles.container}>
-      {userData && (
-        <>
-          <ProfileCover
-            userData={userData}
-            coverImage={coverImage}
+      <ProfileCover
+        userData={userData}
+        coverImage={coverImage}
+        isMyProfile={isMyProfile}
+        handleAddCover={addCover}
+        handleDeleteImage={deleteCover}
+      />
+      <section className={styles.infoContainer}>
+        <div className={styles.infoWrapper}>
+          <ProfileImage
+            profileImage={profileImage}
             isMyProfile={isMyProfile}
-            handleAddCover={handleAddCover}
-            handleDeleteImage={handleDeleteImage}
+            handleFileChange={changeProfileImage}
           />
-          <section className={styles.infoContainer}>
-            <div className={styles.infoWrapper}>
-              <ProfileImage
-                profileImage={profileImage}
-                isMyProfile={isMyProfile}
-                handleFileChange={handleFileChange}
-              />
-              <div className={styles.detailsContainer}>
-                <ProfileDetails
+          <div className={styles.detailsContainer}>
+            <ProfileDetails
+              userData={userData}
+              isMyProfile={isMyProfile}
+              isMobile={isMobile}
+              handleOpenFollowerModal={() => openFollowModal("FOLLOWER")}
+              handleOpenFollowingModal={() => openFollowModal("FOLLOWING")}
+            >
+              {isLoggedIn && (
+                <ProfileActions
+                  userId={id}
                   userData={userData}
                   isMyProfile={isMyProfile}
-                  isMobile={isMobile}
-                  handleOpenFollowerModal={handleOpenFollowerModal}
-                  handleOpenFollowingModal={handleOpenFollowingModal}
-                >
-                  {isLoggedIn && (
-                    <ProfileActions
-                      isMyProfile={isMyProfile}
-                      isFollowing={userData.isFollowing}
-                      isBlocked={userData.isBlocked}
-                      isBlocking={userData.isBlocking}
-                      handleOpenEditModal={handleOpenEditModal}
-                      handleOpenAccountSettings={handleOpenAccountSettings}
-                      handleUnfollowClick={handleUnfollowClick}
-                      handleFollowClick={handleFollowClick}
-                      handleShareProfile={handleShareProfile}
-                      handleOpenReportModal={handleOpenReportModal}
-                      handleBlockClick={handleBlockClick}
-                      handleUnblockClick={handleUnblockClick}
-                      handleOpenBlocklistModal={handleOpenBlocklistModal}
-                      handleSendMessage={handleSendMessage}
-                    />
-                  )}
-                </ProfileDetails>
-              </div>
-            </div>
-          </section>
-        </>
-      )}
+                  refetchUserData={refetchUserData}
+                />
+              )}
+            </ProfileDetails>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

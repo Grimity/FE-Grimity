@@ -1,67 +1,67 @@
+import type { UserProfileResponse } from "@grimity/dto";
+
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import Icon from "@/components/common/Icon/Icon";
 import ResponsiveMenu from "@/components/ProfilePage/shared/ResponsiveMenu/ResponsiveMenu";
 
+import { useProfileActions } from "./hooks/useProfileActions";
+
 import styles from "@/components/ProfilePage/Profile/ProfileActions/ProfileActions.module.scss";
 
 interface ProfileActionsProps {
+  /** 팔로우 API에 사용하는 유저 id */
+  userId: string;
+  userData: UserProfileResponse;
   isMyProfile: boolean;
-  isFollowing: boolean;
-  isBlocked: boolean;
-  isBlocking: boolean;
-  handleOpenEditModal: () => void;
-  handleOpenAccountSettings: () => void;
-  handleUnfollowClick: () => void;
-  handleFollowClick: () => void;
-  handleShareProfile: () => void;
-  handleOpenReportModal: () => void;
-  handleBlockClick: () => void;
-  handleUnblockClick: () => void;
-  handleOpenBlocklistModal: () => void;
-  handleSendMessage: () => void;
+  refetchUserData: () => void;
 }
 
 export default function ProfileActions({
+  userId,
+  userData,
   isMyProfile,
-  isFollowing,
-  isBlocked,
-  isBlocking,
-  handleOpenEditModal,
-  handleOpenAccountSettings,
-  handleUnfollowClick,
-  handleFollowClick,
-  handleShareProfile,
-  handleOpenReportModal,
-  handleBlockClick,
-  handleUnblockClick,
-  handleOpenBlocklistModal,
-  handleSendMessage,
+  refetchUserData,
 }: ProfileActionsProps) {
+  const { isFollowing, isBlocked, isBlocking } = userData;
+
+  const {
+    follow,
+    unfollow,
+    openEditModal,
+    openAccountSettings,
+    shareProfileLink,
+    openReport,
+    block,
+    unblock,
+    openBlocklist,
+    sendMessage,
+  } = useProfileActions({ userId, userData, refetchUserData });
+
   const moreTrigger = (
     <OutlinedButton size="regular" iconOnly={<Icon name="dotmenu" size={20} />} aria-label="더보기" />
   );
 
-  const shareMenuItem = { label: "프로필 링크 공유", onClick: handleShareProfile };
-  const messageMenuItem = { label: "메시지 보내기", onClick: handleSendMessage };
-  const reportMenuItem = { label: "신고하기", onClick: handleOpenReportModal };
+  const shareMenuItem = { label: "프로필 링크 공유", onClick: shareProfileLink };
+  const messageMenuItem = { label: "메시지 보내기", onClick: sendMessage };
+  const reportMenuItem = { label: "신고하기", onClick: openReport };
   const blockMenuItem = {
     label: isBlocking ? "차단해제" : "차단하기",
-    onClick: isBlocking ? handleUnblockClick : handleBlockClick,
+    onClick: isBlocking ? unblock : block,
   };
 
   if (isMyProfile) {
     return (
       <div className={styles.actions}>
-        <OutlinedButton size="regular" onClick={handleOpenEditModal}>
+        <OutlinedButton size="regular" onClick={openEditModal}>
           프로필 편집
         </OutlinedButton>
         <ResponsiveMenu
           trigger={moreTrigger}
           mobileTitle="더보기"
           items={[
-            { label: "내 계정 설정", onClick: handleOpenAccountSettings },
-            { label: "차단 목록", onClick: handleOpenBlocklistModal },
+            { label: "내 계정 설정", onClick: openAccountSettings },
+            { label: "차단 목록", onClick: openBlocklist },
           ]}
         />
       </div>
@@ -95,11 +95,11 @@ export default function ProfileActions({
   return (
     <div className={styles.actions}>
       {isFollowing ? (
-        <OutlinedButton size="regular" onClick={handleUnfollowClick}>
+        <OutlinedButton size="regular" onClick={unfollow}>
           팔로잉 중
         </OutlinedButton>
       ) : (
-        <SolidButton size="regular" onClick={handleFollowClick}>
+        <SolidButton size="regular" onClick={follow}>
           팔로우
         </SolidButton>
       )}
