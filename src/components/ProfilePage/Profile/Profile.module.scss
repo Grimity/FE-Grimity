@@ -1,7 +1,7 @@
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/breakpoint" as bp;
-@use "@/styles/globals.scss" as *;
+@use "@/styles/layout/variables" as layout;
 
 .container {
   width: 100%;
@@ -28,7 +28,7 @@
 }
 
 .infoWrapper {
-  max-width: $max-width-container;
+  max-width: layout.$container-max-width;
   width: 100%;
   margin: 0 auto;
   display: flex;
