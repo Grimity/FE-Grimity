@@ -1,5 +1,6 @@
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .cover {
   position: relative;
@@ -13,10 +14,19 @@
 .emptyCover {
   width: 100%;
   aspect-ratio: 4 / 1;
-  background-color: colors.$surface-gray-subtlest;
+  max-height: 235px;
+  background-color: colors.$bg-overlay-black;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @include bp.breakpoint-down("md") {
+    max-height: 174px;
+  }
+
+  @include bp.breakpoint-down("xs") {
+    max-height: 90px;
+  }
 }
 
 .editButtons {
