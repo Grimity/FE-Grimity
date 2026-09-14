@@ -1,419 +1,82 @@
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import { useState } from "react";
+import dynamic from "next/dynamic";
 
 import { useUserDataByUrl } from "@/api/users/getId";
-import { useUserPosts } from "@/api/users/getIdPosts";
-import {
-  useUserGetFeedsInfinite,
-  getUserGetFeedsInfiniteQueryKey,
-} from "@/api/generated/users/users";
-import { useFeedLike, useFeedUnlike } from "@/api/generated/feeds/feeds";
-import type { UserFeedsResponse } from "@/api/generated/model";
-import { useAuthStore } from "@/states/authStore";
 import { useDeviceStore } from "@/states/deviceStore";
-import { useDragScroll } from "@/hooks/useDragScroll";
-import { useToast } from "@/hooks/useToast";
 import useUserBlock from "@/hooks/useUserBlock";
 
-import Profile from "./Profile/Profile";
-import { ProfilePageProps } from "./ProfilePage.types";
-import FeedAlbumEditor from "./FeedAlbumEditor/FeedAlbumEditor";
-import AlbumEditor from "./AlbumEditor/AlbumEditor";
-import ResponsiveMenu from "./shared/ResponsiveMenu/ResponsiveMenu";
-
-import AllCard from "@/components/Board/BoardAll/AllCard/AllCard";
 import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
-import Icon from "@/components/common/Icon/Icon";
-import Category from "@/components/common/SegmentedControl/Category/Category";
 import Tab from "@/components/common/SegmentedControl/Tab/Tab";
-import Album from "@/components/common/Card/Album/Album";
-import Empty from "@/components/common/Empty/Empty";
-import TextButton from "@/components/common/Button/TextButton/TextButton";
-import IconButton from "@/components/common/Button/IconButton/IconButton";
-import Navigation from "@/components/common/Pagination/Navigation/Navigation";
+
+import Profile from "./Profile/Profile";
+import FeedsSection from "./FeedsSection/FeedsSection";
+import PostsSection from "./PostsSection/PostsSection";
+import { useProfileTab } from "./hooks/useProfileTab";
+import type { ProfilePageProps } from "./ProfilePage.types";
 
 import styles from "./ProfilePage.module.scss";
 
-type SortOption = "latest" | "like" | "oldest";
-
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: "latest", label: "최신순" },
-  { value: "like", label: "좋아요순" },
-  { value: "oldest", label: "오래된순" },
-];
-
-const PAGE_SIZE = 12;
+// 앨범 편집 모드에서만 필요한 컴포넌트라 초기 번들에서 분리한다
+const AlbumEditor = dynamic(() => import("./AlbumEditor/AlbumEditor"));
 
 export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { isTablet } = useDeviceStore();
-  const { showToast } = useToast();
-
-  const { query, pathname } = router;
-  const currentPage = Number(query.page) || 1;
-
-  const [sortBy, setSortBy] = useState<SortOption>("latest");
-  const [activeTab, setActiveTab] = useState<"feeds" | "posts">(
-    (query.tab as "feeds" | "posts") || "feeds",
-  );
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [isEditingAlbums, setIsEditingAlbums] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-
-  const loadMoreRef = useRef(null);
-  const categoryBarRef = useRef<HTMLDivElement>(null);
 
   const { data: userData } = useUserDataByUrl(url);
+  useUserBlock({ identifier: userData?.id, isBlocked: userData?.isBlocked });
 
-  useDragScroll(categoryBarRef as React.RefObject<HTMLElement>, { scrollSpeed: 2 });
-  useUserBlock({
-    identifier: userData?.id,
-    isBlocked: userData?.isBlocked,
-  });
+  const { activeTab, changeTab } = useProfileTab(isMyProfile);
 
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-    refetch();
-  };
-
-  const handleCategoryClick = (categoryId: string | null) => {
-    setActiveCategory(categoryId);
-  };
-
-  const handleAddCategoryClick = () => {
-    setIsEditingAlbums(true);
-  };
-
-  const { data: postsData } = useUserPosts({
-    id,
-    size: 10,
-    page: currentPage,
-    enabled: isMyProfile && activeTab === "posts",
-  });
-
-  const feedsParams = {
-    sort: sortBy,
-    size: PAGE_SIZE,
-    albumId: activeCategory ?? undefined,
-  };
-
-  const {
-    data: feedsData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    refetch,
-  } = useUserGetFeedsInfinite(id, feedsParams, {
-    query: {
-      initialPageParam: undefined,
-      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-    },
-  });
-
-  const { mutate: likeFeed } = useFeedLike();
-  const { mutate: unlikeFeed } = useFeedUnlike();
-
-  const handleFeedLikeToggle = (feedId: string, isLiked: boolean) => {
-    if (!isLoggedIn) {
-      showToast("로그인 후 좋아요를 누를 수 있어요.", "error");
-      return;
-    }
-
-    const feedsQueryKey = getUserGetFeedsInfiniteQueryKey(id, feedsParams);
-    const previousData =
-      queryClient.getQueryData<InfiniteData<UserFeedsResponse>>(feedsQueryKey);
-
-    queryClient.setQueryData<InfiniteData<UserFeedsResponse>>(feedsQueryKey, (old) => {
-      if (!old) return old;
-      return {
-        ...old,
-        pages: old.pages.map((page) => ({
-          ...page,
-          feeds: page.feeds.map((feed) =>
-            feed.id === feedId
-              ? {
-                  ...feed,
-                  isLike: !isLiked,
-                  likeCount: isLiked ? feed.likeCount - 1 : feed.likeCount + 1,
-                }
-              : feed,
-          ),
-        })),
-      };
-    });
-
-    const rollback = () => {
-      if (previousData) queryClient.setQueryData(feedsQueryKey, previousData);
-    };
-
-    if (isLiked) {
-      unlikeFeed({ id: feedId }, { onError: rollback });
-    } else {
-      likeFeed({ id: feedId }, { onError: rollback });
-    }
-  };
-
-  const totalPages = Math.ceil((userData?.postCount || 0) / 10);
-
-  useEffect(() => {
-    refetch();
-  }, [pathname, activeCategory]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      {
-        rootMargin: "100px",
-      },
-    );
-
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-
-    return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current);
-      }
-    };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, feedsData?.pages.length]);
-
-  useEffect(() => {
-    if (query.tab && (query.tab === "feeds" || query.tab === "posts")) {
-      if (query.tab === "posts" && !isMyProfile) {
-        setActiveTab("feeds");
-        router.push(
-          {
-            query: { ...query, tab: "feeds" },
-          },
-          undefined,
-          { shallow: true },
-        );
-      } else {
-        setActiveTab(query.tab);
-      }
-    }
-  }, [query.tab, isMyProfile]);
-
-  const handleTabChange = (tab: "feeds" | "posts") => {
-    if (tab === "posts" && !isMyProfile) return;
-
-    setActiveTab(tab);
-    const { page, ...restQuery } = query;
-    router.push(
-      {
-        query: { ...restQuery, tab },
-      },
-      undefined,
-      { shallow: true },
-    );
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      router.push({ query: { ...query, page } }, undefined, { shallow: true });
-    }
-  };
-
-  const handleSortChange = (option: SortOption) => {
-    setSortBy(option);
-  };
-
-  const allFeeds =
-    feedsData?.pages.flatMap((page) =>
-      page.feeds.map((feed) => ({
-        ...feed,
-        albumId: activeCategory || undefined,
-      })),
-    ) || [];
+  // 두 편집 모드 모두 프로필 헤더를 가리고 화면 전체를 차지한다
+  const [isEditingFeeds, setIsEditingFeeds] = useState(false);
+  const [isEditingAlbums, setIsEditingAlbums] = useState(false);
 
   return (
     <div className={styles.container}>
       <ToastContainer target="local" />
-      {/* 그림 정리 모드 */}
-      {isEditMode ? (
-        <FeedAlbumEditor
-          feeds={allFeeds}
-          albums={userData?.albums || []}
-          activeAlbum={activeCategory}
-          onExitEditMode={toggleEditMode}
-        />
-      ) : isEditingAlbums ? (
+      {isEditingAlbums ? (
         <AlbumEditor onExit={() => setIsEditingAlbums(false)} />
       ) : (
         <>
-          {/* 기본 모드 */}
-          <Profile isMyProfile={isMyProfile} id={id} url={url} />
+          {!isEditingFeeds && (
+            <>
+              <Profile isMyProfile={isMyProfile} id={id} url={url} />
 
-          <div className={styles.tabBar}>
-            <Tab
-              size={isTablet ? "md" : "lg"}
-              active={activeTab === "feeds"}
-              title="그림"
-              number={userData?.feedCount}
-              onClick={() => handleTabChange("feeds")}
+              <div className={styles.tabBar}>
+                <Tab
+                  size={isTablet ? "md" : "lg"}
+                  active={activeTab === "feeds"}
+                  title="그림"
+                  number={userData?.feedCount}
+                  onClick={() => changeTab("feeds")}
+                />
+                {isMyProfile && (
+                  <Tab
+                    size={isTablet ? "md" : "lg"}
+                    active={activeTab === "posts"}
+                    title="글"
+                    number={userData?.postCount}
+                    onClick={() => changeTab("posts")}
+                  />
+                )}
+              </div>
+            </>
+          )}
+
+          {activeTab === "feeds" ? (
+            <FeedsSection
+              userId={id}
+              isMyProfile={isMyProfile}
+              authorName={userData?.name ?? ""}
+              feedCount={userData?.feedCount ?? 0}
+              albums={userData?.albums ?? []}
+              isEditMode={isEditingFeeds}
+              onToggleEditMode={() => setIsEditingFeeds((prev) => !prev)}
+              onEditAlbums={() => setIsEditingAlbums(true)}
             />
-            {isMyProfile && (
-              <Tab
-                size={isTablet ? "md" : "lg"}
-                active={activeTab === "posts"}
-                title="글"
-                number={userData?.postCount}
-                onClick={() => handleTabChange("posts")}
-              />
-            )}
-          </div>
-
-          <div className={styles.feed}>
-            <div className={styles.feedContainer}>
-              {activeTab === "feeds" && (
-                <section className={styles.header}>
-                  <div className={styles.categoryContainer}>
-                    <div className={styles.categoryBar} ref={categoryBarRef}>
-                      <Category
-                        active={activeCategory === null}
-                        title="전체"
-                        onClick={() => handleCategoryClick(null)}
-                      />
-                      {userData?.albums?.map((album) => (
-                        <Category
-                          key={album.id}
-                          active={activeCategory === album.id}
-                          title={album.name}
-                          showNumber
-                          number={album.feedCount}
-                          onClick={() => handleCategoryClick(album.id)}
-                        />
-                      ))}
-                    </div>
-                    {isMyProfile && (
-                      <IconButton
-                        variant="outlined"
-                        icon={<Icon name="folder-edit" size={16} />}
-                        onClick={handleAddCategoryClick}
-                        aria-label="앨범 편집"
-                        className={styles.addCategoryBtn}
-                      />
-                    )}
-                  </div>
-                </section>
-              )}
-              {activeTab === "feeds" && (
-                <div className={styles.resultsBar}>
-                  <div className={styles.resultsLabel}>
-                    <span>게시물</span>
-                    <span className={styles.resultsCount}>{userData?.feedCount ?? 0}건</span>
-                  </div>
-                  <div className={styles.rightBar}>
-                    {isMyProfile && (
-                      <TextButton
-                        variant="assistive"
-                        size="regular"
-                        iconRight={<Icon name="sort-horizontal" size={16} />}
-                        onClick={toggleEditMode}
-                        disabled={allFeeds.length === 0}
-                      >
-                        그림 정리
-                      </TextButton>
-                    )}
-                    <ResponsiveMenu
-                      mobileTitle="정렬"
-                      disabled={allFeeds.length === 0}
-                      trigger={
-                        <button
-                          type="button"
-                          className={styles.sortTrigger}
-                          disabled={allFeeds.length === 0}
-                        >
-                          <span>
-                            {sortOptions.find((option) => option.value === sortBy)?.label ??
-                              "최신순"}
-                          </span>
-                          <Icon name="chevron-down" size={16} />
-                        </button>
-                      }
-                      items={sortOptions.map((option) => ({
-                        label: option.label,
-                        selected: sortBy === option.value,
-                        onClick: () => handleSortChange(option.value),
-                      }))}
-                    />
-                  </div>
-                </div>
-              )}
-              {activeTab === "feeds" ? (
-                allFeeds.length === 0 ? (
-                  <div className={styles.emptyWrap}>
-                    <Empty
-                      size="xl"
-                      iconName={isMyProfile ? "illust-upload-success" : "illust-result-null"}
-                      title={isMyProfile ? "첫 그림을 업로드해보세요" : "업로드한 그림이 없어요"}
-                      buttonLabel={isMyProfile ? "그림 업로드" : undefined}
-                      onButtonClick={isMyProfile ? () => router.push("/write") : undefined}
-                    />
-                  </div>
-                ) : (
-                  <section className={styles.cardContainer}>
-                    {allFeeds.map((feed, index) => (
-                      <Album
-                        key={`${feed.id}-${index}`}
-                        variant="mainTitle"
-                        imageUrl={feed.thumbnail}
-                        title={feed.title}
-                        nickname={userData?.name ?? ""}
-                        likeCount={feed.likeCount}
-                        viewCount={feed.viewCount}
-                        feedHref={`/feeds/${feed.id}`}
-                        isLiked={feed.isLike}
-                        onLikeClick={() => handleFeedLikeToggle(feed.id, feed.isLike)}
-                      />
-                    ))}
-                    {hasNextPage && <div ref={loadMoreRef} />}
-                  </section>
-                )
-              ) : (
-                isMyProfile && (
-                  <section>
-                    {!postsData || postsData.length === 0 ? (
-                      <div className={styles.emptyWrap}>
-                        <Empty
-                          size="xl"
-                          title="첫 글을 업로드해보세요"
-                          buttonLabel="글 업로드"
-                          onButtonClick={() => router.push("/board")}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <div className={styles.postContainer}>
-                          {postsData.map((post) => (
-                            <AllCard key={post.id} post={post} case="my-posts" />
-                          ))}
-                        </div>
-                        {totalPages > 1 && (
-                          <section className={styles.pagination}>
-                            <Navigation
-                              currentPage={currentPage}
-                              totalPages={totalPages}
-                              onPageChange={handlePageChange}
-                            />
-                          </section>
-                        )}
-                      </>
-                    )}
-                  </section>
-                )
-              )}
-            </div>
-          </div>
+          ) : (
+            isMyProfile && <PostsSection userId={id} postCount={userData?.postCount ?? 0} />
+          )}
         </>
       )}
     </div>
