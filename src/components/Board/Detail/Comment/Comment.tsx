@@ -28,9 +28,12 @@ import { usePostsCommentLikeMutation } from "@/queries/posts-comments/usePostsCo
 import { PostCommentProps, PostCommentWriter } from "./Comment.types";
 
 import styles from "./Comment.module.scss";
-import { CONFIG } from "@/config";
+import { imageUrl } from "@/constants/imageUrl";
 
 const COMMENT_MAX_COUNT = 1000;
+
+const buildProfileImage = (image?: string | null) =>
+  image ? `${imageUrl}/${image}` : undefined;
 
 type ToastType = "success" | "error" | "warning" | "information";
 
@@ -324,9 +327,7 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
               mentionName={reply.mentionedUser?.name}
               likeCount={String(reply.likeCount)}
               isLiked={reply.isLike}
-              profileImage={
-                reply.writer ? `${CONFIG.ENV.IMAGE_URL}/${reply.writer.image}` : undefined
-              }
+              profileImage={buildProfileImage(reply.writer?.image)}
               isAuthor={reply.writer?.id === postWriterId}
               onLikeClick={() => handleLikeClick(reply.id, reply.isLike)}
               onReplyClick={handleReply}
@@ -361,9 +362,7 @@ export default function PostComment({ postId, postWriterId, commentCount }: Post
           commentText={comment.content}
           likeCount={String(comment.likeCount)}
           isLiked={comment.isLike}
-          profileImage={
-            comment.writer ? `${CONFIG.ENV.IMAGE_URL}/${comment.writer.image}` : undefined
-          }
+          profileImage={buildProfileImage(comment.writer?.image)}
           isAuthor={comment.writer?.id === postWriterId}
           onLikeClick={() => handleLikeClick(comment.id, comment.isLike)}
           onReplyClick={handleReply}

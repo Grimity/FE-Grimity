@@ -228,7 +228,11 @@ export default function PostDetail({ id }: PostDetailProps) {
                   <div className={styles.titleBlock}>
                     <h1 className={styles.title}>{posts.title}</h1>
                     {posts.type !== "NOTICE" && (
-                      <span ref={targetRef as React.RefObject<HTMLSpanElement>} {...triggerProps}>
+                      <span
+                        ref={targetRef as React.RefObject<HTMLSpanElement>}
+                        {...triggerProps}
+                        className={styles.authorTrigger}
+                      >
                         <Link href={`/${posts.author.url}`}>
                           <UserInfo type="default" nickname={posts.author.name} />
                         </Link>
@@ -275,6 +279,7 @@ export default function PostDetail({ id }: PostDetailProps) {
                   <Like
                     active={posts.isLike}
                     onClick={handleLikeClick}
+                    variant="black"
                     aria-label={posts.isLike ? "좋아요 취소" : "좋아요"}
                   />
                   {posts.likeCount}
