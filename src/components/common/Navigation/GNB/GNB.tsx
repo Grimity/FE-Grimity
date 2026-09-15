@@ -117,9 +117,11 @@ export default function GNB({
         <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
           <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
-            <SolidButton onClick={onUpload} size="regular">
-              {uploadLabel}
-            </SolidButton>
+            {onUpload && (
+              <SolidButton onClick={onUpload} size="regular">
+                {uploadLabel}
+              </SolidButton>
+            )}
             <div className={clsx(styles.flexRow, styles.gap8)}>
               <SearchButton variant="normal" onClick={onSearch} />
               <BellButton variant="normal" hasNotification={hasNotification} onClick={onBell} />

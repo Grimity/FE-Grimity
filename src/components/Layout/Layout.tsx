@@ -110,10 +110,11 @@ export default function Layout({ children }: LayoutProps) {
     router.push("/search");
   }, [router]);
 
+  const isBoardWriteRoute = BOARD_WRITE_ROUTES.includes(router.pathname);
+
   const goToUpload = useCallback(() => {
-    const isBoardPage = BOARD_WRITE_ROUTES.includes(router.pathname);
-    router.push(isBoardPage ? "/board/write" : "/write");
-  }, [router]);
+    router.push(isBoardWriteRoute ? "/board/write" : "/write");
+  }, [router, isBoardWriteRoute]);
 
   const toggleMobileSidebar = useCallback(() => {
     if (!isMobile) return;
@@ -130,7 +131,7 @@ export default function Layout({ children }: LayoutProps) {
 
   // 스토어 전체 구독 시 업로드 폼 입력마다 Layout이 리렌더되므로 필요한 값만 좁게 구독한다.
   // submit(핸들러 참조)은 입력마다 바뀌므로 구독하지 않고 클릭 시점에 getState로 읽는다.
-  const uploadLabel = useUploadHeaderStore((s) => s.label);
+  const editorSubmitLabel = useUploadHeaderStore((s) => s.label);
   const uploadDisabled = useUploadHeaderStore((s) => s.disabled);
 
   const isSubRoute = isMobile && !MAIN_ROUTES.includes(router.pathname);
@@ -386,12 +387,12 @@ export default function Layout({ children }: LayoutProps) {
             }}
             onProfile={onProfileClick}
             onUpload={showUploadBtn ? goToUpload : undefined}
-            uploadLabel={BOARD_WRITE_ROUTES.includes(router.pathname) ? "글쓰기" : "그림 올리기"}
+            uploadLabel={isBoardWriteRoute ? "글쓰기" : "그림 올리기"}
             onLogin={goToLogin}
             onMenu={toggleMobileSidebar}
             onClose={toggleMobileSidebar}
             onBack={isMobileSearchPage || isSubRoute ? goBack : undefined}
-            rightLabel={isUploadRoute ? uploadLabel : undefined}
+            rightLabel={isUploadRoute ? editorSubmitLabel : undefined}
             onRightLabelClick={
               isUploadRoute ? () => useUploadHeaderStore.getState().submit() : undefined
             }
