@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 
 import ChatBubble from "@/components/common/Dm/ChatBubble/ChatBubble";
 import Empty from "@/components/common/Empty/Empty";
@@ -9,12 +9,17 @@ import type { ChatMessage } from "@/types/socket.types";
 
 import styles from "./MessageList.module.scss";
 
+const dateSeparatorFormat = new Intl.DateTimeFormat("ko-KR", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 const formatDateSeparator = (iso: string) => {
-  const date = new Date(iso);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}.${month}.${day}`;
+  const parts = dateSeparatorFormat.formatToParts(new Date(iso));
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}.${get("month")}.${get("day")}`;
 };
 
 interface MessageListProps {
@@ -46,6 +51,8 @@ const MessageList = ({
   onCloseReply,
   onImageClick,
 }: MessageListProps) => {
+  const messageById = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
+
   const handleAreaClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest("button")) return;
     onCloseReply?.();
@@ -82,9 +89,7 @@ const MessageList = ({
             index > 0 ? formatDateSeparator(messages[index - 1].createdAt) : null;
           const showDate = currentDate !== prevDate;
 
-          const repliedTo = msg.replyTo
-            ? messages.find((m) => m.id === msg.replyTo?.id)
-            : undefined;
+          const repliedTo = msg.replyTo ? messageById.get(msg.replyTo.id) : undefined;
           const replyTarget = repliedTo?.userId === userId ? "나" : userData?.name ?? "";
 
           return (

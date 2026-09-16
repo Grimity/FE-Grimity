@@ -24,18 +24,19 @@ const ChatList = ({
   onToggleSelect,
 }: ChatListProps) => {
   return (
-    <div className={styles.chatList}>
+    <div className={styles.chatList} role="list">
       {chatList.map((chat) => (
-        <ChatListItem
-          key={chat.id}
-          chat={chat}
-          isEditMode={isEditMode}
-          isSelected={selectedChatIds.includes(chat.id)}
-          isActive={chat.id === activeChatId}
-          searchKeyword={searchKeyword}
-          onChatClick={onChatClick}
-          onToggleSelect={onToggleSelect}
-        />
+        <div key={chat.id} role="listitem">
+          <ChatListItem
+            chat={chat}
+            isEditMode={isEditMode}
+            isSelected={selectedChatIds.includes(chat.id)}
+            isActive={chat.id === activeChatId}
+            searchKeyword={searchKeyword}
+            onChatClick={onChatClick}
+            onToggleSelect={onToggleSelect}
+          />
+        </div>
       ))}
     </div>
   );

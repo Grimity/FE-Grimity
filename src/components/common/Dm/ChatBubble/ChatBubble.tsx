@@ -32,6 +32,14 @@ export default function ChatBubble({
   const hasText = !!text;
   const isQuotingMine = replyTo?.target === "나";
 
+  const activateOnKey = (action: () => void) => (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      e.stopPropagation();
+      action();
+    }
+  };
+
   const hoverActions = isHovered ? (
     <div className={styles.actions}>
       <button
@@ -88,7 +96,9 @@ export default function ChatBubble({
                   }
                 : undefined
             }
+            onKeyDown={onReplyClick ? activateOnKey(onReplyClick) : undefined}
             role={onReplyClick ? "button" : undefined}
+            tabIndex={onReplyClick ? 0 : undefined}
           >
             <Icon name="forward-2" size={16} className={styles.answerReplyIcon} />
             <div
@@ -128,6 +138,9 @@ export default function ChatBubble({
                         }
                       : undefined
                   }
+                  onKeyDown={onImageClick ? activateOnKey(() => onImageClick(idx)) : undefined}
+                  role={onImageClick ? "button" : undefined}
+                  tabIndex={onImageClick ? 0 : undefined}
                 />
               </div>
             ))}

@@ -73,7 +73,7 @@ const MessageSendModal = ({ onClose }: MessageSendModalProps) => {
     [createChat, onClose, router],
   );
 
-  const showLoading = isLoading && Boolean(debouncedKeyword);
+  const showLoading = isLoading;
   const isEmpty = !showLoading && followingList.length === 0;
 
   return (

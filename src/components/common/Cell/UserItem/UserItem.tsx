@@ -127,6 +127,18 @@ export default function UserItem({
           <div
             className={clsx(styles.idProfile, onProfileClick && styles.idProfileClickable)}
             onClick={onProfileClick}
+            onKeyDown={
+              onProfileClick
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onProfileClick();
+                    }
+                  }
+                : undefined
+            }
+            role={onProfileClick ? "button" : undefined}
+            tabIndex={onProfileClick ? 0 : undefined}
           >
             <Avatar size="md" src={profileImage} alt="profile" />
             <div className={styles.idInfo}>

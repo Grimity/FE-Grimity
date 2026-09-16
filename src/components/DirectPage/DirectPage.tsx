@@ -14,6 +14,7 @@ import { useGetChatsInfinite } from "@/api/chats/getChats";
 
 import { useModal } from "@/hooks/useModal";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { useDebounce } from "@/hooks/useDebounce";
 
 import styles from "./DirectPage.module.scss";
 
@@ -26,8 +27,12 @@ const DirectPage = () => {
   const { openModal } = useModal();
   const { markAsRead } = useChatStore();
 
+  const debouncedSearch = useDebounce(searchValue, 300);
+  const searchQuery =
+    debouncedSearch && debouncedSearch.trim().length >= 2 ? debouncedSearch.trim() : undefined;
+
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetChatsInfinite({
-    keyword: searchValue,
+    keyword: searchQuery,
     size: 20,
   });
 
