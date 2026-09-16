@@ -15,6 +15,7 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 import useGoBack from "@/hooks/useGoBack";
 import { useMobileSearchHeader } from "@/hooks/useMobileSearchHeader";
 import { useLogout } from "@/hooks/useLogout";
+import { useToast } from "@/hooks/useToast";
 
 import IconButton from "@/components/common/Button/IconButton/IconButton";
 import Icon from "@/components/common/Icon/Icon";
@@ -41,6 +42,7 @@ const MAIN_ROUTES = [
   "/ranking",
   "/board",
   "/following",
+  "/direct",
   "/login",
   "/signup/nickname",
   "/signup/profile-url",
@@ -87,6 +89,7 @@ export default function Layout({ children }: LayoutProps) {
   const { currentChatId, setHasUnreadMessages } = useChatStore();
   const { socket, isConnected } = useSocket();
   const logout = useLogout();
+  const { showToast } = useToast();
 
   // ─── 로컬 상태 ─────────────────────────────────────────────────────────
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -305,6 +308,11 @@ export default function Layout({ children }: LayoutProps) {
     const handleNewChatMessage = (newMessage: NewChatMessageEventResponse) => {
       if (newMessage.chatId !== currentChatId) {
         setHasUnreadMessages(true);
+
+        // 접속 중 다른 방에서 상대방 메시지가 오면 토스트로 알린다.
+        if (newMessage.senderId !== user_id) {
+          showToast("새로운 메세지가 도착했어요", "information");
+        }
       }
 
       let shouldRefetch = false;
@@ -331,7 +339,7 @@ export default function Layout({ children }: LayoutProps) {
     return () => {
       socket.off("newChatMessage", handleNewChatMessage);
     };
-  }, [isConnected, currentChatId, setHasUnreadMessages, queryClient, user_id]);
+  }, [isConnected, currentChatId, setHasUnreadMessages, queryClient, user_id, showToast]);
 
   // 로그인 상태 변경 시 프로필 드롭다운·모바일 사이드바 닫기
   useEffect(() => {

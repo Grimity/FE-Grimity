@@ -28,7 +28,7 @@
 
 .local {
   position: absolute;
-  top: spacing.$spacing-16;
+  top: var(--toast-offset, #{spacing.$spacing-16});
   left: 50%;
   transform: translateX(-50%);
 }

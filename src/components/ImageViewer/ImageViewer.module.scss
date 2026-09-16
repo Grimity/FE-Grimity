@@ -12,6 +12,11 @@
   background-color: colors.$bg-overlay-black;
 }
 
+.overlayContained {
+  position: absolute;
+  z-index: 20;
+}
+
 .main {
   flex: 1;
   min-height: 0;

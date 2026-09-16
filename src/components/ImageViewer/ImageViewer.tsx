@@ -25,6 +25,7 @@ export default function ImageViewer({
   initialIndex = 0,
   onClose,
   canDownload = true,
+  contained = false,
 }: ImageViewerProps) {
   const { isMobile } = useDeviceStore();
   const [mainSwiper, setMainSwiper] = useState<SwiperType | null>(null);
@@ -136,7 +137,7 @@ export default function ImageViewer({
   // ===========================================================
   return (
     <div
-      className={styles.overlay}
+      className={clsx(styles.overlay, contained && styles.overlayContained)}
       onClick={close}
       role="dialog"
       aria-modal="true"

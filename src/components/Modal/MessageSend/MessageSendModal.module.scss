@@ -1,170 +1,126 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 .modal {
-  background: $gray0;
-  border-radius: 12px;
-  width: 500px;
-  max-height: 760px;
   display: flex;
   flex-direction: column;
+  width: 400px;
+  height: min(560px, 90vh);
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-xl;
   overflow: hidden;
-  padding: 30px 32px;
 
-  @include Size("mobile") {
+  // 태블릿(768~1024): 높이 760px (iPad Pro 12.9" 세로 1024px 포함)
+  @media (min-width: 768px) and (max-width: 1024px) {
+    height: min(760px, 90vh);
+  }
+
+  // 모바일(<768): 전체 화면
+  @include bp.breakpoint-down("xs") {
     width: 100vw;
-    height: $full-height;
-    max-height: none;
+    height: 100vh;
     border-radius: 0;
-    padding: 16px;
   }
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 56px;
+  padding: 0 spacing.$spacing-20;
+
+  @include bp.breakpoint-down("xs") {
+    justify-content: flex-start;
+    gap: spacing.$spacing-8;
+    padding: 0 spacing.$spacing-16;
+  }
 }
 
 .title {
-  @include Title3;
-  color: $gray70;
+  @include typo.title-3;
+  color: colors.$text-gray-bold;
+
+  @include bp.breakpoint-down("xs") {
+    @include typo.subtitle-2;
+  }
 }
 
-.closeButton {
-  background: none;
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   border: none;
+  background: none;
   cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $gray70;
-
-  &:hover {
-    color: $gray80;
-  }
+  color: colors.$icon-gray-bold;
 }
 
-.searchSection {
-  margin-bottom: 24px;
-}
-
-.userList {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.userListContainer {
+.content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
+  flex: 1;
+  gap: spacing.$spacing-12;
+  padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
+  min-height: 0;
 
-.deliveryIcon {
-  border-radius: 30px;
-  width: 32px;
-  height: 32px;
-  opacity: 0;
-  visibility: hidden;
-  background-color: $gray30;
-  color: $gray70;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-  transition: opacity 0.2s, visibility 0.2s;
-}
-
-.userItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-
-  &:hover {
-    .deliveryIcon {
-      opacity: 1;
-      visibility: visible;
-    }
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-8 spacing.$spacing-16 spacing.$spacing-16;
   }
 }
 
-.userAvatar {
+.search {
+  align-self: stretch;
   flex-shrink: 0;
-
-  img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
 }
 
-.userInfo {
-  flex: 1;
+.list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.nickname {
-  @include Sub4;
-  color: $gray80;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.highlighted {
-  background-color: transparent !important;
-  color: #2bc466 !important;
-  font-weight: 600;
-}
-
-.url {
-  @include Label2;
-  color: $gray60;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.loading {
+.stateWrap {
   display: flex;
-  justify-content: center;
+  flex: 1;
   align-items: center;
-  padding: 40px 24px;
+  justify-content: center;
+  min-height: 0;
+}
 
-  p {
-    @include Sub4;
-    color: $gray50;
-  }
+.userCell {
+  border-radius: radius.$radius-sm;
+  cursor: pointer;
 
-  svg {
-    animation: spin 1s linear infinite;
+  &:hover {
+    background-color: colors.$surface-gray-subtlest;
   }
 }
 
-.empty {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 24px;
-  text-align: center;
+.cellArrow {
+  opacity: 0;
+  color: colors.$icon-gray-bold;
 
-  p {
-    @include Sub4;
-    color: $gray50;
+  .userCell:hover & {
+    opacity: 1;
   }
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.sentinel {
+  height: 20px;
+  flex-shrink: 0;
 }

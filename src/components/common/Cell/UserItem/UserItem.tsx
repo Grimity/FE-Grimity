@@ -122,12 +122,29 @@ export default function UserItem({
   // ------------------------------------------
   if (type === "id") {
     return (
-      <div className={clsx(styles.id, className)} onClick={onClick}>
+      <div className={clsx(styles.id, className)} onClick={onProfileClick ? undefined : onClick}>
         <div className={styles.idLeft}>
-          <Avatar size="md" src={profileImage} alt="profile" />
-          <div className={styles.idInfo}>
-            <span className={styles.idNickname}>{nickname}</span>
-            {userId && <span className={styles.idUserId}>@{userId}</span>}
+          <div
+            className={clsx(styles.idProfile, onProfileClick && styles.idProfileClickable)}
+            onClick={onProfileClick}
+            onKeyDown={
+              onProfileClick
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onProfileClick();
+                    }
+                  }
+                : undefined
+            }
+            role={onProfileClick ? "button" : undefined}
+            tabIndex={onProfileClick ? 0 : undefined}
+          >
+            <Avatar size="md" src={profileImage} alt="profile" />
+            <div className={styles.idInfo}>
+              <span className={styles.idNickname}>{nickname}</span>
+              {userId && <span className={styles.idUserId}>@{userId}</span>}
+            </div>
           </div>
         </div>
         {children && <div className={styles.idRight}>{children}</div>}

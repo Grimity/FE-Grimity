@@ -1,3 +1,4 @@
+@use "@/styles/breakpoint" as bp;
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
@@ -57,34 +58,43 @@
   white-space: nowrap;
 }
 
-.cancelReply {
-  position: absolute;
-  top: spacing.$spacing-8;
-  right: spacing.$spacing-16;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: colors.$icon-gray-subtle;
-  padding: 0;
-
-  &:hover {
-    color: colors.$icon-gray-normal;
-  }
-}
-
 // ─── Image preview list ──────────────────────────────
 .imageList {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  z-index: 1;
   display: flex;
   gap: spacing.$spacing-8;
-  padding: spacing.$spacing-8 spacing.$spacing-16 0;
+  padding: spacing.$spacing-8 spacing.$spacing-16;
+  background-color: rgba(0, 0, 0, 0.8);
   overflow-x: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.6) transparent;
 
   &::-webkit-scrollbar {
-    display: none;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: radius.$radius-full;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  @include bp.breakpoint-down("xs") {
+    box-sizing: border-box;
+    height: 75px;
+
+    .imageItem {
+      width: auto;
+      height: 100%;
+      aspect-ratio: 1;
+    }
   }
 }
 
@@ -105,22 +115,21 @@
 
 .imageRemove {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 20px;
-  height: 20px;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.2);
   border: none;
-  border-radius: radius.$radius-full;
-  color: colors.$text-white;
+  border-radius: radius.$radius-xs;
   cursor: pointer;
   padding: 0;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -173,7 +182,7 @@
   border: 1px solid colors.$border-gray-subtle;
   border-radius: radius.$radius-sm;
   padding: 9px spacing.$spacing-12;
-  background-color: colors.$surface-gray-subtlest;
+  background-color: colors.$surface-base;
   color: colors.$text-gray-bold;
   caret-color: colors.$border-primary-normal;
   outline: none;
@@ -182,10 +191,6 @@
   &::placeholder {
     color: colors.$text-gray-subtle;
   }
-}
-
-.textField {
-  height: 40px;
 }
 
 .textarea {
