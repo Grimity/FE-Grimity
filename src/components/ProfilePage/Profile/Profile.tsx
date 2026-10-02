@@ -63,7 +63,6 @@ export default function ProfileInfo({
         <ProfileDetails
           userData={userData}
           isMyProfile={isMyProfile}
-          isMobile={isMobile}
           handleOpenFollowerModal={() => openFollowModal("FOLLOWER")}
           handleOpenFollowingModal={() => openFollowModal("FOLLOWING")}
         >
