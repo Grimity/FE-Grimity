@@ -6,6 +6,7 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 
 import ModalPortal from "@/components/Modal/Portal";
 import IconComponent from "@/components/Asset/Icon";
+import Icon from "@/components/common/Icon/Icon";
 
 import styles from "@/components/Modal/Modal.module.scss";
 
@@ -84,12 +85,20 @@ function ModalProvider({ children }: PropsWithChildren) {
           }
 
           if (isFill) {
+            // 차단 목록 모달만 Figma의 뒤로가기 헤더를 사용 (title로 구분)
+            const isBlocklist = title === "차단";
             return (
               <React.Fragment key={id}>
                 {/* 모바일 헤더 */}
-                <div className={styles.mobileHeader}>
-                  <button onClick={handleClose}>
-                    <IconComponent name="x" size={24} isBtn />
+                <div
+                  className={`${styles.mobileHeader} ${isBlocklist ? styles.mobileHeaderBack : ""}`}
+                >
+                  <button onClick={handleClose} aria-label={isBlocklist ? "뒤로가기" : undefined}>
+                    {isBlocklist ? (
+                      <Icon name="chevron-left" size={24} />
+                    ) : (
+                      <IconComponent name="x" size={24} isBtn />
+                    )}
                   </button>
                   <h2>{title}</h2>
                 </div>
