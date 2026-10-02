@@ -168,7 +168,7 @@
   gap: spacing.$spacing-24;
 
   @include bp.breakpoint-down("xs") {
-    gap: spacing.$spacing-20;
+    gap: spacing.$spacing-12;
   }
 }
 

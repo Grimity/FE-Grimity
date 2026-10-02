@@ -1,15 +1,31 @@
 @use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
 
 .profileImageContainer {
   position: relative;
-  width: 80px;
-  height: 80px;
+  display: flex;
   flex-shrink: 0;
 }
 
-.editBtn {
+.avatarButton {
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+// Figma: 28px 원형 뱃지(2px 테두리 포함)가 아바타 우측으로 8px 튀어나와 있고,
+// 그만큼 프로필 정보와의 간격도 밀려난다
+.withBadge {
+  margin-right: spacing.$spacing-8;
+}
+
+.profileImageContainer .editBtn {
   position: absolute;
-  bottom: -2px;
-  right: -2px;
+  bottom: 0;
+  right: -(spacing.$spacing-8);
+  width: 28px;
+  height: 28px;
   border: 2px solid colors.$border-inverse;
 }

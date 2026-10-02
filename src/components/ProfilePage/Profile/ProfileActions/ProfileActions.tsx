@@ -5,6 +5,8 @@ import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import Icon from "@/components/common/Icon/Icon";
 import ResponsiveMenu from "@/components/ProfilePage/shared/ResponsiveMenu/ResponsiveMenu";
 
+import { useDeviceStore } from "@/states/deviceStore";
+
 import { useProfileActions } from "./hooks/useProfileActions";
 
 import styles from "@/components/ProfilePage/Profile/ProfileActions/ProfileActions.module.scss";
@@ -24,6 +26,8 @@ export default function ProfileActions({
   refetchUserData,
 }: ProfileActionsProps) {
   const { isFollowing, isBlocked, isBlocking } = userData;
+  const { isMobile } = useDeviceStore();
+  const buttonSize = isMobile ? "small" : "regular";
 
   const {
     follow,
@@ -39,7 +43,11 @@ export default function ProfileActions({
   } = useProfileActions({ userId, userData, refetchUserData });
 
   const moreTrigger = (
-    <OutlinedButton size="regular" iconOnly={<Icon name="dotmenu" size={20} />} aria-label="더보기" />
+    <OutlinedButton
+      size={buttonSize}
+      iconOnly={<Icon name="dotmenu" size={isMobile ? 16 : 20} />}
+      aria-label="더보기"
+    />
   );
 
   const shareMenuItem = { label: "프로필 링크 공유", onClick: shareProfileLink };
@@ -53,7 +61,7 @@ export default function ProfileActions({
   if (isMyProfile) {
     return (
       <div className={styles.actions}>
-        <OutlinedButton size="regular" onClick={openEditModal}>
+        <OutlinedButton size={buttonSize} onClick={openEditModal}>
           프로필 편집
         </OutlinedButton>
         <ResponsiveMenu
@@ -95,11 +103,11 @@ export default function ProfileActions({
   return (
     <div className={styles.actions}>
       {isFollowing ? (
-        <OutlinedButton size="regular" onClick={unfollow}>
+        <OutlinedButton size={buttonSize} onClick={unfollow}>
           팔로잉 중
         </OutlinedButton>
       ) : (
-        <SolidButton size="regular" onClick={follow}>
+        <SolidButton size={buttonSize} onClick={follow}>
           팔로우
         </SolidButton>
       )}
