@@ -97,12 +97,12 @@
       display: flex;
       align-items: center;
       gap: spacing.$spacing-2;
-      color: colors.$text-gray-subtle;
+      color: colors.$surface-gray-normal;
 
       @include typo.label-4;
 
       .resultsCount {
-        color: colors.$text-gray-bold;
+        color: colors.$surface-gray-bold;
       }
     }
 

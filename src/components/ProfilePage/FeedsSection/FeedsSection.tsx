@@ -108,8 +108,9 @@ export default function FeedsSection({
         <div className={styles.resultsBar}>
           <div className={styles.resultsLabel}>
             <span>게시물</span>
-            <span className={styles.resultsCount}>{feedCount}</span>
-            <span>건</span>
+            <span>
+              <span className={styles.resultsCount}>{feedCount}</span>건
+            </span>
           </div>
           <div className={styles.rightBar}>
             {isMyProfile && (
