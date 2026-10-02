@@ -35,7 +35,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
     refetchUserData();
   }, [pathname, refetchUserData]);
 
-  const { activeTab, changeTab } = useProfileTab(isMyProfile);
+  const { activeTab, changeTab } = useProfileTab();
 
   // 두 편집 모드 모두 프로필 헤더를 가리고 화면 전체를 차지한다
   const [isEditingFeeds, setIsEditingFeeds] = useState(false);
@@ -83,15 +83,13 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                     number={userData?.feedCount}
                     onClick={() => changeTab("feeds")}
                   />
-                  {isMyProfile && (
-                    <Tab
-                      size={isTablet ? "md" : "lg"}
-                      active={activeTab === "posts"}
-                      title="글"
-                      number={userData?.postCount}
-                      onClick={() => changeTab("posts")}
-                    />
-                  )}
+                  <Tab
+                    size={isTablet ? "md" : "lg"}
+                    active={activeTab === "posts"}
+                    title="글"
+                    number={userData?.postCount}
+                    onClick={() => changeTab("posts")}
+                  />
                 </div>
               </section>
             )}
@@ -111,7 +109,11 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                 onEditAlbums={() => setIsEditingAlbums(true)}
               />
             ) : (
-              isMyProfile && <PostsSection userId={id} postCount={userData?.postCount ?? 0} />
+              <PostsSection
+                userId={id}
+                isMyProfile={isMyProfile}
+                postCount={userData?.postCount ?? 0}
+              />
             )}
           </div>
         </>
