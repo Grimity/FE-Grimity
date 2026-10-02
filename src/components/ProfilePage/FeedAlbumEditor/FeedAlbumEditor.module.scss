@@ -14,6 +14,13 @@
   padding: 0 spacing.$spacing-20;
 
   @include bp.breakpoint-down("xs") {
+    // 전역 헤더 위를 덮어 Figma처럼 페이지 헤더 1개만 보이게 한다
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    min-height: 0;
+    overflow-y: auto;
+    background-color: colors.$surface-base;
     padding: 0 spacing.$spacing-16;
   }
 }
