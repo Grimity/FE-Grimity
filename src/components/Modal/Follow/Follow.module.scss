@@ -16,7 +16,7 @@
 
   .title {
     @include typo.title-3;
-    color: colors.$text-gray-normal;
+    color: colors.$text-gray-bold;
   }
 }
 
@@ -24,7 +24,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: spacing.$spacing-16;
+  gap: spacing.$spacing-12;
   padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
   box-sizing: border-box;
 
@@ -48,7 +48,7 @@
 }
 
 .tabContent {
-  height: 400px;
+  max-height: 408px;
   overflow-y: auto;
 
   &::-webkit-scrollbar {
@@ -67,10 +67,19 @@
 
   @include bp.breakpoint-down("xs") {
     height: 100%;
+    max-height: none;
 
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+}
+
+.empty {
+  min-height: 324px;
+
+  @include bp.breakpoint-down("xs") {
+    min-height: 0;
   }
 }
 

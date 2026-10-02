@@ -47,7 +47,7 @@ export default function Blocklist({ close }: BlocklistProps) {
           <h2 className={styles.title}>차단</h2>
           <IconButton
             variant="sm"
-            icon={<Icon name="x" size={20} />}
+            icon={<Icon name="x" size={24} />}
             onClick={close}
             aria-label="닫기"
           />
@@ -55,7 +55,12 @@ export default function Blocklist({ close }: BlocklistProps) {
       )}
       <div className={styles.blocklistContainer}>
         {users.length === 0 ? (
-          <Empty size="md" iconName="illust-user" title="차단한 작가가 없어요" />
+          <Empty
+            className={styles.empty}
+            size="md"
+            iconName="illust-warning"
+            title="차단한 작가가 없어요"
+          />
         ) : (
           <ul className={styles.list}>
             {users.map((user) => (
