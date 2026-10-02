@@ -10,8 +10,10 @@ import { useToast } from "@/hooks/useToast";
 import Album from "@/components/common/Card/Album/Album";
 import Icon from "@/components/common/Icon/Icon";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import Empty from "@/components/common/Empty/Empty";
+import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
 import PopUpModal from "@/components/common/PopUp/Modal/Modal";
 import Input from "@/components/common/Input/Input/Input";
 
@@ -139,6 +141,26 @@ export default function FeedAlbumEditor({
     }
   };
 
+  const renameDisabled = isRenamePending || renameValue.trim().length === 0;
+  const renameInput = (
+    <Input
+      inputType="textfield"
+      textFieldProps={{
+        value: renameValue,
+        maxLength: 15,
+        placeholder: "예시 : ‘크로키’ 또는 ‘일러스트’",
+        onChange: (e) => setRenameValue(e.target.value),
+        onKeyDown: (e) => {
+          if (e.nativeEvent.isComposing) return;
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleRename();
+          }
+        },
+      }}
+    />
+  );
+
   return (
     <div className={styles.container}>
       {isMobile && (
@@ -252,7 +274,7 @@ export default function FeedAlbumEditor({
         </div>
       )}
 
-      {isRenaming && (
+      {isRenaming && !isMobile && (
         <PopUpModal
           title="앨범명 변경"
           onClose={() => setIsRenaming(false)}
@@ -261,25 +283,28 @@ export default function FeedAlbumEditor({
           onSecondary={() => setIsRenaming(false)}
           primaryLabel="변경하기"
           onPrimary={handleRename}
-          primaryDisabled={isRenamePending || renameValue.trim().length === 0}
+          primaryDisabled={renameDisabled}
         >
-          <Input
-            inputType="textfield"
-            maxCount={15}
-            textFieldProps={{
-              value: renameValue,
-              maxLength: 15,
-              onChange: (e) => setRenameValue(e.target.value),
-              onKeyDown: (e) => {
-                if (e.nativeEvent.isComposing) return;
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleRename();
-                }
-              },
-            }}
-          />
+          {renameInput}
         </PopUpModal>
+      )}
+      {isMobile && (
+        <BottomSheet
+          isOpen={isRenaming}
+          title="앨범명 변경"
+          showCloseIcon
+          onClose={() => setIsRenaming(false)}
+        >
+          {renameInput}
+          <div className={styles.renameButtons}>
+            <OutlinedButton size="large" onClick={() => setIsRenaming(false)}>
+              닫기
+            </OutlinedButton>
+            <SolidButton size="large" onClick={handleRename} disabled={renameDisabled}>
+              변경하기
+            </SolidButton>
+          </div>
+        </BottomSheet>
       )}
     </div>
   );

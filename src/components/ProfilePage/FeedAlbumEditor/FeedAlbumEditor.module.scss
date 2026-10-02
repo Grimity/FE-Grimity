@@ -155,3 +155,13 @@
     padding-bottom: spacing.$spacing-40;
   }
 }
+
+.renameButtons {
+  display: flex;
+  gap: spacing.$spacing-8;
+  margin-top: spacing.$spacing-20;
+
+  > * {
+    flex: 1;
+  }
+}
