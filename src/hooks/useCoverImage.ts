@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 
@@ -5,7 +6,8 @@ import { postPresignedUrl } from "@/api/images/postPresigned";
 import { putBackgroundImage } from "@/api/users/putMeImage";
 import { deleteMyBackgroundImage } from "@/api/users/deleteMeImage";
 
-import { useModalStore } from "@/states/modalStore";
+import Background from "@/components/Modal/Background/Background";
+import { useModal } from "@/hooks/useModal";
 
 import type { UserProfileResponse as UserData } from "@grimity/dto";
 
@@ -20,8 +22,8 @@ export const useCoverImage = (
   userData: UserData | undefined,
 ) => {
   const { showToast } = useToast();
-  const openModal = useModalStore((state) => state.openModal);
-  const { isMobile, isTablet } = useDeviceStore();
+  const { openModal } = useModal();
+  const { isMobile } = useDeviceStore();
 
   const { mutate: updateBackgroundImage } = useMutation({
     mutationFn: (imageName: string) => putBackgroundImage(imageName),
@@ -31,12 +33,23 @@ export const useCoverImage = (
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!isMobile && !isTablet) {
+    // 모바일 Figma에는 커버 수정 모달이 없어 바로 업로드한다
+    if (!isMobile) {
       const imageUrl = URL.createObjectURL(file);
-      openModal({
-        type: "BACKGROUND",
-        data: { imageSrc: imageUrl, file, onUploadSuccess: refetchUserData },
-      });
+      openModal(
+        (close) =>
+          createElement(Background, {
+            imageSrc: imageUrl,
+            file,
+            onUploadSuccess: refetchUserData,
+            onClose: () => {
+              URL.revokeObjectURL(imageUrl);
+              close();
+            },
+          }),
+        undefined,
+        { bare: true },
+      );
       return;
     }
 
@@ -66,7 +79,7 @@ export const useCoverImage = (
         throw new Error(`Upload failed: ${uploadResponse.status}`);
       }
 
-      showToast("커버 이미지가 변경되었습니다!", "success");
+      showToast("프로필을 수정했어요", "success");
       setCoverImage(data.imageName);
       refetchUserData();
     } catch (error) {

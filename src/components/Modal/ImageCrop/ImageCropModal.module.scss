@@ -1,0 +1,92 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
+
+// Figma 모달 폭은 500px. 공통 Modal이 400px 고정이라 Backdrop 안쪽 패널 폭만 넓힌다.
+.wideModal > div {
+  width: 500px;
+  max-width: calc(100vw - #{spacing.$spacing-32});
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-20;
+  padding-top: spacing.$spacing-8;
+}
+
+.cropArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: colors.$surface-gray-subtle;
+
+  &.cover {
+    border-radius: radius.$radius-lg;
+  }
+
+  // 프로필 이미지는 파란 테두리의 정사각형 영역을 쓴다
+  &.profile :global(.ReactCrop__crop-selection) {
+    border: 2px solid colors.$status-info;
+  }
+
+  & :global(.ReactCrop) {
+    max-width: 100%;
+  }
+}
+
+.image {
+  display: block;
+  max-width: 100%;
+  max-height: 348px;
+  width: auto;
+  height: auto;
+  user-select: none;
+}
+
+.zoom {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+}
+
+.range {
+  flex: 1;
+  min-width: 0;
+  height: 16px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+
+  &::-webkit-slider-runnable-track {
+    height: 16px;
+    border-radius: radius.$radius-full;
+    background-color: colors.$surface-gray-subtler;
+  }
+
+  &::-moz-range-track {
+    height: 16px;
+    border-radius: radius.$radius-full;
+    background-color: colors.$surface-gray-subtler;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    margin-top: -2px;
+    border-radius: radius.$radius-full;
+    background-color: colors.$surface-inverse;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: radius.$radius-full;
+    background-color: colors.$surface-inverse;
+  }
+}
