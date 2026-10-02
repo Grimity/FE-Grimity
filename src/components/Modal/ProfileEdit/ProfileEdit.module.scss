@@ -87,11 +87,17 @@ $cover-overlap: 32px;
   }
 }
 
-.overlayBtn {
+// 공통 IconButton(solid)의 배경보다 우선하도록 선택자를 겹쳐 쓴다
+.overlayBtn.overlayBtn {
   width: 32px;
   height: 32px;
   background-color: colors.$bg-overlay-black;
   backdrop-filter: blur(5px);
+
+  &:disabled {
+    background-color: colors.$bg-overlay-black;
+    opacity: 0.5;
+  }
 }
 
 .textContainer {
