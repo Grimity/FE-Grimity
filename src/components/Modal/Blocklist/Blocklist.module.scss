@@ -3,6 +3,7 @@
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   display: flex;
@@ -13,6 +14,11 @@
   background-color: colors.$surface-base;
   border-radius: radius.$radius-xl;
   width: 100%;
+
+  @include bp.breakpoint-down("xs") {
+    height: 100%;
+    max-height: none;
+  }
 
   .titleContainer {
     display: flex;
@@ -37,8 +43,11 @@
     padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
     box-sizing: border-box;
 
-    @include Size("mobile") {
-      max-height: fit-content;
+    @include bp.breakpoint-down("xs") {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: none;
       padding: spacing.$spacing-8 spacing.$spacing-16 spacing.$spacing-16;
     }
   }
@@ -46,8 +55,9 @@
   .empty {
     min-height: 252px;
 
-    @include Size("mobile") {
-      min-height: calc($full-height - 60px - 24px);
+    @include bp.breakpoint-down("xs") {
+      flex: 1;
+      min-height: 0;
       justify-content: center;
     }
   }
