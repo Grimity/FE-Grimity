@@ -17,7 +17,6 @@ import { usePostChat } from "@/api/chats/postChat";
 
 import Blocklist from "@/components/Modal/Blocklist/Blocklist";
 
-import styles from "../../Profile.module.scss";
 
 interface UseProfileActionsParams {
   userId: string;
@@ -101,7 +100,7 @@ export function useProfileActions({
   const openBlocklist = requireLogin(() => {
     openOverlayModal(
       (close) => <Blocklist close={close} />,
-      { className: styles.blacklist },
+      {},
       { isFill: isMobile, title: "차단", mobileHeader: "back" },
     );
   });
