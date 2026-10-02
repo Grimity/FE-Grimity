@@ -32,6 +32,9 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
       typeof defaultValue === "string" ? defaultValue.length === 0 : true,
     );
 
+    // controlled(value 전달)일 때는 value 길이를, 아니면 내부 state를 글자수로 쓴다.
+    const displayCount = rest.value !== undefined ? String(rest.value).length : charCount;
+
     const isDisabled = disabled || status === "disabled";
     const isSearch = variant === "search";
     const isTitle = variant === "title";
@@ -124,7 +127,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
         )}
         {hasCount && (
           <div className={styles.count}>
-            <span className={styles.currentCount}>{charCount}</span>
+            <span className={styles.currentCount}>{displayCount}</span>
             <span className={styles.maxCount}>/{maxCount}</span>
           </div>
         )}
