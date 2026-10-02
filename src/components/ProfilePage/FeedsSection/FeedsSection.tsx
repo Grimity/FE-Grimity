@@ -72,6 +72,7 @@ export default function FeedsSection({
   }
 
   const isEmpty = feeds.length === 0;
+  const categorySize = isMobile ? "md" : "lg";
 
   return (
     <div className={styles.profileContent}>
@@ -79,6 +80,7 @@ export default function FeedsSection({
         <div className={styles.categoryContainer}>
           <div className={styles.categoryBar} ref={categoryBarRef}>
             <Category
+              size={categorySize}
               active={activeAlbum === null}
               title="전체"
               showNumber={false}
@@ -87,6 +89,7 @@ export default function FeedsSection({
             {albums.map((album) => (
               <Category
                 key={album.id}
+                size={categorySize}
                 active={activeAlbum === album.id}
                 title={album.name}
                 showNumber

@@ -54,10 +54,8 @@
         display: flex;
         align-items: center;
         gap: spacing.$spacing-8;
-
-        @include bp.breakpoint-down("xs") {
-          gap: spacing.$spacing-4;
-        }
+        // 칩이 넘칠 때 오른쪽 끝 40px을 페이드 처리한다
+        mask-image: linear-gradient(to right, black calc(100% - 40px), transparent);
 
         &::-webkit-scrollbar {
           display: none;
