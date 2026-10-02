@@ -1,5 +1,6 @@
 @use "@/styles/globals.scss" as *;
 @use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/radius" as radius;
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/breakpoint" as bp;
 
@@ -56,7 +57,11 @@
 .followListModal {
   @extend .modal;
   width: 400px;
+  min-height: 0;
+  max-height: 560px;
   padding: 0;
+  border-radius: radius.$radius-xl;
+  overflow: hidden;
 }
 
 .albumSelectModal {
