@@ -299,13 +299,16 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
           <div className={styles.editBar}>
             <Title text="앨범 목록" />
             {albums.length > 1 && (
+              // Figma: 웹은 순서 편집 중에도 "순서 편집 ⇆" 유지, 모바일만 "완료"(초록)로 전환
               <TextButton
-                variant={isEditingOrder ? "primary" : "assistive"}
+                variant={isEditingOrder && isMobile ? "primary" : "assistive"}
                 size="regular"
-                iconRight={isEditingOrder ? undefined : <Icon name="sort-horizontal" size={16} />}
+                iconRight={
+                  isEditingOrder && isMobile ? undefined : <Icon name="sort-horizontal" size={16} />
+                }
                 onClick={() => setIsEditingOrder((prev) => !prev)}
               >
-                {isEditingOrder ? "완료" : "순서 편집"}
+                {isEditingOrder && isMobile ? "완료" : "순서 편집"}
               </TextButton>
             )}
           </div>
