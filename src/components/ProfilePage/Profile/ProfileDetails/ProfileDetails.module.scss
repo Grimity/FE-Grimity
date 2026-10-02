@@ -45,6 +45,10 @@
 }
 
 .linkContainer {
+  &:empty {
+    display: none;
+  }
+
   display: flex;
   flex-wrap: wrap;
   align-items: center;
