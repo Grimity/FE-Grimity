@@ -230,7 +230,7 @@ export default function Follow({ initialTab, title }: FollowProps) {
           <h2 className={styles.title}>{title}</h2>
           <IconButton
             variant="sm"
-            icon={<Icon name="x" size={20} />}
+            icon={<Icon name="x" size={24} />}
             onClick={closeModal}
             aria-label="닫기"
           />

@@ -16,7 +16,7 @@
 
   .title {
     @include typo.title-3;
-    color: colors.$text-gray-normal;
+    color: colors.$text-gray-bold;
   }
 }
 

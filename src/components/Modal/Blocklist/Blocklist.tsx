@@ -47,7 +47,7 @@ export default function Blocklist({ close }: BlocklistProps) {
           <h2 className={styles.title}>차단</h2>
           <IconButton
             variant="sm"
-            icon={<Icon name="x" size={20} />}
+            icon={<Icon name="x" size={24} />}
             onClick={close}
             aria-label="닫기"
           />
