@@ -66,9 +66,10 @@ export default function ProfileActions({
         </OutlinedButton>
         <ResponsiveMenu
           trigger={moreTrigger}
-          mobileTitle="더보기"
           items={[
-            { label: "내 계정 설정", onClick: openAccountSettings },
+            shareMenuItem,
+            // 모바일은 상단 설정 아이콘으로 계정 설정에 진입한다
+            ...(isMobile ? [] : [{ label: "내 계정 설정", onClick: openAccountSettings }]),
             { label: "차단 목록", onClick: openBlocklist },
           ]}
         />
