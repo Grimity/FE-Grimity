@@ -50,8 +50,8 @@ export default function ProfileDetails({
           <UserInfo
             type="follow"
             followerCount={formatCurrency(userData.followerCount)}
-            showFollowing={isMyProfile}
-            followingCount={isMyProfile ? formatCurrency(userData.followingCount) : undefined}
+            showFollowing
+            followingCount={formatCurrency(userData.followingCount)}
             onFollowerClick={isMyProfile ? handleOpenFollowerModal : undefined}
             onFollowingClick={isMyProfile ? handleOpenFollowingModal : undefined}
           />
