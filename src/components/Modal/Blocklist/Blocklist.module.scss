@@ -2,6 +2,7 @@
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
 
 .container {
   display: flex;
@@ -10,7 +11,7 @@
   justify-content: space-between;
   max-height: 760px;
   background-color: colors.$surface-base;
-  border-radius: 12px;
+  border-radius: radius.$radius-xl;
   width: 100%;
 
   .titleContainer {
@@ -31,7 +32,7 @@
 
   .blocklistContainer {
     width: 100%;
-    max-height: 280px;
+    max-height: 476px;
     overflow-y: auto;
     padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
     box-sizing: border-box;
@@ -44,6 +45,11 @@
 
   .empty {
     min-height: 252px;
+
+    @include Size("mobile") {
+      min-height: calc($full-height - 60px - 24px);
+      justify-content: center;
+    }
   }
 
   .list {
