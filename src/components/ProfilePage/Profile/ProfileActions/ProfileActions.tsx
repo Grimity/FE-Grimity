@@ -83,7 +83,6 @@ export default function ProfileActions({
       <div className={styles.actions}>
         <ResponsiveMenu
           trigger={moreTrigger}
-          mobileTitle="더보기"
           items={[shareMenuItem, reportMenuItem, blockMenuItem]}
         />
       </div>
@@ -103,7 +102,6 @@ export default function ProfileActions({
       )}
       <ResponsiveMenu
         trigger={moreTrigger}
-        mobileTitle="더보기"
         items={[shareMenuItem, messageMenuItem, reportMenuItem, blockMenuItem]}
       />
     </div>
