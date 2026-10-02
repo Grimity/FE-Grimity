@@ -134,6 +134,7 @@ export default function FeedsSection({
             {isMobile ? (
               <ResponsiveMenu
                 mobileTitle="정렬"
+                mobileItemType="option"
                 disabled={isEmpty}
                 trigger={
                   <button type="button" className={styles.sortTrigger} disabled={isEmpty}>

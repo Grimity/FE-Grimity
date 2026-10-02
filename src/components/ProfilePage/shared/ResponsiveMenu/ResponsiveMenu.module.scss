@@ -1,3 +1,5 @@
+@use "@/styles/tokens/spacing" as spacing;
+
 .triggerWrap {
   display: inline-flex;
   cursor: pointer;
@@ -6,6 +8,12 @@
 .list {
   display: flex;
   flex-direction: column;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
 }
 
 .desktopMenu {
