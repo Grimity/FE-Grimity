@@ -164,7 +164,7 @@ export default function FeedsSection({
               size="xl"
               iconName={isMyProfile ? "illust-upload-success" : "illust-result-null"}
               title={isMyProfile ? "첫 그림을 업로드해보세요" : "업로드한 그림이 없어요"}
-              buttonLabel={isMyProfile ? "그림 올리기" : undefined}
+              buttonLabel={isMyProfile ? "그림 업로드" : undefined}
               onButtonClick={isMyProfile ? () => router.push("/write") : undefined}
             />
           </div>
