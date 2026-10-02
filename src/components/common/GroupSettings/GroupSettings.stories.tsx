@@ -37,6 +37,15 @@ export const Default: Story = {
   },
 };
 
+export const EditableIcon: Story = {
+  args: {
+    title: "Title",
+    state: "editDelete",
+    onEdit: () => {},
+    onDelete: () => {},
+  },
+};
+
 export const States: Story = {
   args: {
     title: "Title",
