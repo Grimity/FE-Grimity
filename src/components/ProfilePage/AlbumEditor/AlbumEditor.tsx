@@ -219,7 +219,10 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
           </div>
 
           {albums.length === 0 ? (
-            <p className={styles.emptyText}>생성된 앨범이 없어요.</p>
+            <div className={styles.empty}>
+              <p className={styles.emptyTitle}>아직 생성된 앨범이 없어요</p>
+              <p className={styles.emptyText}>앨범을 추가하면 그림을 분류할 수 있어요</p>
+            </div>
           ) : isEditingOrder ? (
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="albumList">
