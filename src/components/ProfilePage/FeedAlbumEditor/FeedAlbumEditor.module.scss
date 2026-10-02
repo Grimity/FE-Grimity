@@ -2,6 +2,7 @@
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
 @use "@/styles/breakpoint" as bp;
 
 .container {
@@ -53,9 +54,44 @@
     gap: spacing.$spacing-24;
   }
 
-  @include bp.breakpoint-down("xs") {
-    position: fixed;
-    @include SafeAreaBottom(44);
+}
+
+.mobileHeader {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  height: 56px;
+
+  .backButton {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    background: none;
+    border: none;
+    color: colors.$icon-gray-bold;
+    cursor: pointer;
+  }
+
+  .mobileTitle {
+    @include typo.title-3;
+    color: colors.$text-gray-bold;
+  }
+}
+
+.floatingActions {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(#{spacing.$spacing-24} + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  gap: spacing.$spacing-16;
+  z-index: 3;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+    border-radius: radius.$radius-full;
   }
 }
 

@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/useToast";
 
 import Album from "@/components/common/Card/Album/Album";
 import Icon from "@/components/common/Icon/Icon";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import Empty from "@/components/common/Empty/Empty";
 import PopUpModal from "@/components/common/PopUp/Modal/Modal";
@@ -140,6 +141,19 @@ export default function FeedAlbumEditor({
 
   return (
     <div className={styles.container}>
+      {isMobile && (
+        <header className={styles.mobileHeader}>
+          <button
+            type="button"
+            className={styles.backButton}
+            onClick={handleGoBack}
+            aria-label="돌아가기"
+          >
+            <Icon name="chevron-left" size={24} />
+          </button>
+          <h2 className={styles.mobileTitle}>그림 정리</h2>
+        </header>
+      )}
       <div className={styles.center}>
         <div className={styles.albumInfo}>
           <div className={styles.albumNameRow}>
@@ -184,38 +198,59 @@ export default function FeedAlbumEditor({
         )}
       </div>
 
-      <div className={styles.footer}>
-        <div className={styles.inner}>
-          <TextButton
-            variant="assistive"
-            size="regular"
-            iconLeft={<Icon name="chevron-left" size={20} />}
-            onClick={handleGoBack}
+      {isMobile ? (
+        <div className={styles.floatingActions}>
+          <SolidButton
+            size="large"
+            iconLeft={<Icon name="trash-bin-trash" size={20} />}
+            onClick={handleDeleteSelected}
+            disabled={selectedCards.length === 0}
           >
-            돌아가기
-          </TextButton>
-          <div className={styles.rightSection}>
+            선택 삭제
+          </SolidButton>
+          <SolidButton
+            size="large"
+            iconLeft={<Icon name="forward-2" size={20} />}
+            onClick={handleMoveAlbum}
+            disabled={selectedCards.length === 0}
+          >
+            앨범 이동
+          </SolidButton>
+        </div>
+      ) : (
+        <div className={styles.footer}>
+          <div className={styles.inner}>
             <TextButton
               variant="assistive"
               size="regular"
-              iconLeft={<Icon name="trash-bin-trash" size={20} />}
-              onClick={handleDeleteSelected}
-              disabled={selectedCards.length === 0}
+              iconLeft={<Icon name="chevron-left" size={20} />}
+              onClick={handleGoBack}
             >
-              {isMobile ? "삭제" : "선택 삭제"}
+              돌아가기
             </TextButton>
-            <TextButton
-              variant="assistive"
-              size="regular"
-              iconLeft={<Icon name="forward-2" size={20} />}
-              onClick={handleMoveAlbum}
-              disabled={selectedCards.length === 0}
-            >
-              {isMobile ? "이동" : "앨범 이동"}
-            </TextButton>
+            <div className={styles.rightSection}>
+              <TextButton
+                variant="assistive"
+                size="regular"
+                iconRight={<Icon name="trash-bin-trash" size={20} />}
+                onClick={handleDeleteSelected}
+                disabled={selectedCards.length === 0}
+              >
+                선택 삭제
+              </TextButton>
+              <TextButton
+                variant="assistive"
+                size="regular"
+                iconRight={<Icon name="forward-2" size={20} />}
+                onClick={handleMoveAlbum}
+                disabled={selectedCards.length === 0}
+              >
+                앨범 이동
+              </TextButton>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {isRenaming && (
         <PopUpModal
