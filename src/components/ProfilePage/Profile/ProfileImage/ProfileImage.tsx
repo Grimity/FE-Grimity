@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import clsx from "clsx";
 
 import Avatar from "@/components/common/Avatar/Avatar";
@@ -14,21 +13,15 @@ interface ProfileImageProps {
   profileImage: string;
   isMyProfile: boolean;
   isMobile: boolean;
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onEdit: () => void;
 }
 
 export default function ProfileImage({
   profileImage,
   isMyProfile,
   isMobile,
-  handleFileChange,
+  onEdit,
 }: ProfileImageProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleUploadImage = () => {
-    inputRef.current?.click();
-  };
-
   const avatar = (
     <Avatar
       src={profileImage === DEFAULT_IMAGE ? undefined : profileImage}
@@ -47,7 +40,7 @@ export default function ProfileImage({
       <button
         type="button"
         className={styles.avatarButton}
-        onClick={handleUploadImage}
+        onClick={onEdit}
         aria-label="프로필 이미지 변경"
       >
         {avatar}
@@ -57,14 +50,6 @@ export default function ProfileImage({
           </span>
         )}
       </button>
-      <input
-        ref={inputRef}
-        id="upload-image"
-        type="file"
-        accept="image/*"
-        hidden
-        onChange={handleFileChange}
-      />
     </div>
   );
 }

@@ -23,7 +23,12 @@
   background-color: colors.$surface-gray-subtle;
 
   &.cover {
+    min-height: 237px;
     border-radius: radius.$radius-lg;
+  }
+
+  &.profile {
+    min-height: 348px;
   }
 
   // 프로필 이미지는 파란 테두리의 정사각형 영역을 쓴다
@@ -89,4 +94,10 @@
     border-radius: radius.$radius-full;
     background-color: colors.$surface-inverse;
   }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
 }

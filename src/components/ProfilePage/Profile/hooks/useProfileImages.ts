@@ -28,13 +28,13 @@ export function useProfileImages(
     setCoverImage(userData?.backgroundImage || DEFAULT_COVER_IMAGE);
   }, [userData]);
 
-  const { handleAddCover, handleDeleteImage } = useCoverImage(
+  const { handleAddCover, handleDeleteImage, openCoverEditor } = useCoverImage(
     refetchUserData,
     setCoverImage,
     userData,
   );
 
-  const { handleFileChange } = useProfileImage(
+  const { handleFileChange, openProfileImageEditor } = useProfileImage(
     refetchUserData,
     setProfileImage,
     userData?.image || DEFAULT_PROFILE_IMAGE,
@@ -46,5 +46,7 @@ export function useProfileImages(
     changeProfileImage: handleFileChange,
     addCover: handleAddCover,
     deleteCover: handleDeleteImage,
+    openCoverEditor,
+    openProfileImageEditor,
   };
 }
