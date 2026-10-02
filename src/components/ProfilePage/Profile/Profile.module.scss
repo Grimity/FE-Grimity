@@ -1,34 +1,7 @@
-@use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/breakpoint" as bp;
-@use "@/styles/layout/variables" as layout;
-
-.container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: colors.$surface-base;
-}
-
-.infoContainer {
-  width: 100%;
-  position: relative;
-  padding: 0 spacing.$spacing-32;
-  margin-top: spacing.$spacing-40;
-
-  @include bp.breakpoint-down("md") {
-    padding: 0 spacing.$spacing-16;
-  }
-
-  @include bp.breakpoint-down("xs") {
-    padding: 0 spacing.$spacing-16;
-    margin-top: spacing.$spacing-24;
-  }
-}
 
 .infoWrapper {
-  max-width: layout.$container-max-width;
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -44,9 +17,4 @@
 .detailsContainer {
   flex: 1;
   min-width: 0;
-}
-
-.blacklist {
-  max-width: 400px;
-  width: 100%;
 }

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 
 import { useUserDataByUrl } from "@/api/users/getId";
 import { useDeviceStore } from "@/states/deviceStore";
@@ -8,7 +9,9 @@ import useUserBlock from "@/hooks/useUserBlock";
 import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
 import Tab from "@/components/common/SegmentedControl/Tab/Tab";
 
-import Profile from "./Profile/Profile";
+import ProfileInfo from "./Profile/Profile";
+import ProfileCover from "./Profile/ProfileCover/ProfileCover";
+import { useProfileImages } from "./Profile/hooks/useProfileImages";
 import FeedsSection from "./FeedsSection/FeedsSection";
 import PostsSection from "./PostsSection/PostsSection";
 import { useProfileTab } from "./hooks/useProfileTab";
@@ -21,9 +24,16 @@ const AlbumEditor = dynamic(() => import("./AlbumEditor/AlbumEditor"));
 
 export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) {
   const { isTablet } = useDeviceStore();
+  const { pathname } = useRouter();
 
-  const { data: userData } = useUserDataByUrl(url);
+  const { data: userData, refetch: refetchUserData } = useUserDataByUrl(url);
+  const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } =
+    useProfileImages(userData, refetchUserData);
   useUserBlock({ identifier: userData?.id, isBlocked: userData?.isBlocked });
+
+  useEffect(() => {
+    refetchUserData();
+  }, [pathname, refetchUserData]);
 
   const { activeTab, changeTab } = useProfileTab(isMyProfile);
 
@@ -35,48 +45,75 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
     <div className={styles.container}>
       <ToastContainer target="local" />
       {isEditingAlbums ? (
-        <AlbumEditor onExit={() => setIsEditingAlbums(false)} />
+        <AlbumEditor
+          onExit={() => {
+            setIsEditingAlbums(false);
+            refetchUserData();
+          }}
+        />
       ) : (
         <>
-          {!isEditingFeeds && (
-            <>
-              <Profile isMyProfile={isMyProfile} id={id} url={url} />
-
-              <div className={styles.tabBar}>
-                <Tab
-                  size={isTablet ? "md" : "lg"}
-                  active={activeTab === "feeds"}
-                  title="그림"
-                  number={userData?.feedCount}
-                  onClick={() => changeTab("feeds")}
-                />
-                {isMyProfile && (
-                  <Tab
-                    size={isTablet ? "md" : "lg"}
-                    active={activeTab === "posts"}
-                    title="글"
-                    number={userData?.postCount}
-                    onClick={() => changeTab("posts")}
+          {!isEditingFeeds && userData && (
+            <ProfileCover
+              userData={userData}
+              coverImage={coverImage}
+              isMyProfile={isMyProfile}
+              handleAddCover={addCover}
+              handleDeleteImage={deleteCover}
+            />
+          )}
+          <div className={isEditingFeeds ? styles.editorContent : styles.content}>
+            {!isEditingFeeds && (
+              <section className={styles.profileDetails}>
+                {userData && (
+                  <ProfileInfo
+                    isMyProfile={isMyProfile}
+                    id={id}
+                    userData={userData}
+                    profileImage={profileImage}
+                    onChangeProfileImage={changeProfileImage}
+                    refetchUserData={refetchUserData}
                   />
                 )}
-              </div>
-            </>
-          )}
+                <div className={styles.tabBar}>
+                  <Tab
+                    size={isTablet ? "md" : "lg"}
+                    active={activeTab === "feeds"}
+                    title="그림"
+                    number={userData?.feedCount}
+                    onClick={() => changeTab("feeds")}
+                  />
+                  {isMyProfile && (
+                    <Tab
+                      size={isTablet ? "md" : "lg"}
+                      active={activeTab === "posts"}
+                      title="글"
+                      number={userData?.postCount}
+                      onClick={() => changeTab("posts")}
+                    />
+                  )}
+                </div>
+              </section>
+            )}
 
-          {activeTab === "feeds" ? (
-            <FeedsSection
-              userId={id}
-              isMyProfile={isMyProfile}
-              authorName={userData?.name ?? ""}
-              feedCount={userData?.feedCount ?? 0}
-              albums={userData?.albums ?? []}
-              isEditMode={isEditingFeeds}
-              onToggleEditMode={() => setIsEditingFeeds((prev) => !prev)}
-              onEditAlbums={() => setIsEditingAlbums(true)}
-            />
-          ) : (
-            isMyProfile && <PostsSection userId={id} postCount={userData?.postCount ?? 0} />
-          )}
+            {activeTab === "feeds" ? (
+              <FeedsSection
+                userId={id}
+                isMyProfile={isMyProfile}
+                authorName={userData?.name ?? ""}
+                feedCount={userData?.feedCount ?? 0}
+                albums={userData?.albums ?? []}
+                isEditMode={isEditingFeeds}
+                onToggleEditMode={() => {
+                  setIsEditingFeeds((prev) => !prev);
+                  if (isEditingFeeds) refetchUserData();
+                }}
+                onEditAlbums={() => setIsEditingAlbums(true)}
+              />
+            ) : (
+              isMyProfile && <PostsSection userId={id} postCount={userData?.postCount ?? 0} />
+            )}
+          </div>
         </>
       )}
     </div>

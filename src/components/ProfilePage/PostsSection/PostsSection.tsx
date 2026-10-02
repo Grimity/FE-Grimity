@@ -32,38 +32,36 @@ export default function PostsSection({ userId, postCount }: PostsSectionProps) {
   };
 
   return (
-    <div className={styles.feed}>
-      <div className={styles.feedContainer}>
-        <section>
-          {!posts || posts.length === 0 ? (
-            <div className={styles.emptyWrap}>
-              <Empty
-                size="xl"
-                title="첫 글을 업로드해보세요"
-                buttonLabel="글 업로드"
-                onButtonClick={() => router.push("/board")}
-              />
+    <div className={styles.profileContent}>
+      <section>
+        {!posts || posts.length === 0 ? (
+          <div className={styles.emptyWrap}>
+            <Empty
+              size="xl"
+              title="첫 글을 업로드해보세요"
+              buttonLabel="글 업로드"
+              onButtonClick={() => router.push("/board")}
+            />
+          </div>
+        ) : (
+          <>
+            <div className={styles.postContainer}>
+              {posts.map((post) => (
+                <AllCard key={post.id} post={post} case="my-posts" />
+              ))}
             </div>
-          ) : (
-            <>
-              <div className={styles.postContainer}>
-                {posts.map((post) => (
-                  <AllCard key={post.id} post={post} case="my-posts" />
-                ))}
-              </div>
-              {totalPages > 1 && (
-                <section className={styles.pagination}>
-                  <Navigation
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                </section>
-              )}
-            </>
-          )}
-        </section>
-      </div>
+            {totalPages > 1 && (
+              <section className={styles.pagination}>
+                <Navigation
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </section>
+            )}
+          </>
+        )}
+      </section>
     </div>
   );
 }

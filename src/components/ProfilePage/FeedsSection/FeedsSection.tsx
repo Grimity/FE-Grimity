@@ -71,43 +71,45 @@ export default function FeedsSection({
   const isEmpty = feeds.length === 0;
 
   return (
-    <div className={styles.feed}>
-      <div className={styles.feedContainer}>
-        <section className={styles.header}>
-          <div className={styles.categoryContainer}>
-            <div className={styles.categoryBar} ref={categoryBarRef}>
+    <div className={styles.profileContent}>
+      <section className={styles.header}>
+        <div className={styles.categoryContainer}>
+          <div className={styles.categoryBar} ref={categoryBarRef}>
+            <Category
+              active={activeAlbum === null}
+              title="전체"
+              showNumber={false}
+              onClick={() => changeAlbum(null)}
+            />
+            {albums.map((album) => (
               <Category
-                active={activeAlbum === null}
-                title="전체"
-                onClick={() => changeAlbum(null)}
+                key={album.id}
+                active={activeAlbum === album.id}
+                title={album.name}
+                showNumber
+                number={album.feedCount}
+                onClick={() => changeAlbum(album.id)}
               />
-              {albums.map((album) => (
-                <Category
-                  key={album.id}
-                  active={activeAlbum === album.id}
-                  title={album.name}
-                  showNumber
-                  number={album.feedCount}
-                  onClick={() => changeAlbum(album.id)}
-                />
-              ))}
-            </div>
-            {isMyProfile && (
-              <IconButton
-                variant="outlined"
-                icon={<Icon name="folder-edit" size={16} />}
-                onClick={onEditAlbums}
-                aria-label="앨범 편집"
-                className={styles.addCategoryBtn}
-              />
-            )}
+            ))}
           </div>
-        </section>
+          {isMyProfile && (
+            <IconButton
+              variant="outlined"
+              icon={<Icon name="folder-edit" size={16} />}
+              onClick={onEditAlbums}
+              aria-label="앨범 편집"
+              className={styles.addCategoryBtn}
+            />
+          )}
+        </div>
+      </section>
 
+      <div className={styles.postsContainer}>
         <div className={styles.resultsBar}>
           <div className={styles.resultsLabel}>
             <span>게시물</span>
-            <span className={styles.resultsCount}>{feedCount}건</span>
+            <span className={styles.resultsCount}>{feedCount}</span>
+            <span>건</span>
           </div>
           <div className={styles.rightBar}>
             {isMyProfile && (
