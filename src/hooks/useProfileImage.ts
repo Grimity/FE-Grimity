@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/useToast";
 
 import { getImageDimensions } from "@/utils/getImageDimensions";
 
+const DEFAULT_PROFILE_IMAGE = "/image/default.svg";
+
 export const useProfileImage = (
   refetchUserData: () => void,
   setProfileImage: (url: string) => void,
@@ -60,42 +62,51 @@ export const useProfileImage = (
     }
   };
 
-  // 파일을 고르면 바로 올리지 않고 자르기 모달을 먼저 띄운다
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const validateFile = (file: File) => {
     const fileExt = file.name.split(".").pop()?.toLowerCase();
     if (!fileExt || !["jpg", "jpeg", "png", "webp"].includes(fileExt)) {
       showToast("JPG, JPEG, PNG, WEBP 파일만 업로드 가능합니다.", "error");
-      return;
+      return false;
     }
+    return true;
+  };
 
-    const imageUrl = URL.createObjectURL(file);
+  /** 프로필 이미지 수정 모달을 연다. 파일을 이미 골랐다면 넘기고, 아니면 모달 안에서 고른다 */
+  const openProfileImageEditor = (file?: File) => {
+    if (file && !validateFile(file)) return;
+
+    const hasImage = initialImageUrl !== DEFAULT_PROFILE_IMAGE;
     openModal(
       (close) =>
         createElement(ProfileImageModal, {
-          imageSrc: imageUrl,
-          onSave: async (blob: Blob) => {
-            const webpFile = new File([blob], file.name.replace(/\.[^.]+$/, ".webp"), {
+          initialFile: file,
+          currentImageSrc: hasImage ? initialImageUrl : undefined,
+          validateFile,
+          onSave: async (blob: Blob, picked: File) => {
+            const webpFile = new File([blob], picked.name.replace(/\.[^.]+$/, ".webp"), {
               type: "image/webp",
             });
             setProfileImage(URL.createObjectURL(webpFile));
             return uploadImageToServer(webpFile);
           },
-          onClose: () => {
-            URL.revokeObjectURL(imageUrl);
-            close();
-          },
+          onDelete: hasImage ? handleDeleteProfileImage : undefined,
+          onClose: close,
         }),
       undefined,
       { bare: true },
     );
   };
 
+  /** 파일 입력의 change 이벤트로 프로필 이미지 수정 모달을 연다 */
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    openProfileImageEditor(file);
+  };
+
   const handleDeleteProfileImage = async () => {
     try {
-      setProfileImage("/image/default.svg");
+      setProfileImage(DEFAULT_PROFILE_IMAGE);
       await deleteMyProfileImage();
       refetchUserData();
       showToast("프로필 이미지가 삭제되었습니다.", "success");
@@ -106,5 +117,5 @@ export const useProfileImage = (
     }
   };
 
-  return { handleFileChange, handleDeleteProfileImage };
+  return { handleFileChange, handleDeleteProfileImage, openProfileImageEditor };
 };

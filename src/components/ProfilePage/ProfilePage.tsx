@@ -27,7 +27,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   const { pathname } = useRouter();
 
   const { data: userData, refetch: refetchUserData } = useUserDataByUrl(url);
-  const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } =
+  const { profileImage, coverImage, openCoverEditor, openProfileImageEditor, deleteCover } =
     useProfileImages(userData, refetchUserData);
   useBlockedProfileToast(userData?.id, userData?.isBlocked, userData?.isBlocking);
 
@@ -58,7 +58,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
               userData={userData}
               coverImage={coverImage}
               isMyProfile={isMyProfile}
-              handleAddCover={addCover}
+              onEditCover={() => openCoverEditor()}
               handleDeleteImage={deleteCover}
             />
           )}
@@ -71,7 +71,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                     id={id}
                     userData={userData}
                     profileImage={profileImage}
-                    onChangeProfileImage={changeProfileImage}
+                    onEditProfileImage={() => openProfileImageEditor()}
                     refetchUserData={refetchUserData}
                   />
                 )}

@@ -1,4 +1,3 @@
-import type { ChangeEvent } from "react";
 import type { UserProfileResponse } from "@grimity/dto";
 
 export interface ProfileProps {
@@ -6,6 +5,6 @@ export interface ProfileProps {
   id: string;
   userData: UserProfileResponse;
   profileImage: string;
-  onChangeProfileImage: (event: ChangeEvent<HTMLInputElement>) => void;
+  onEditProfileImage: () => void;
   refetchUserData: () => void;
 }

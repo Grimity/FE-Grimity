@@ -1,5 +1,3 @@
-import { useRef } from "react";
-
 import Thumbnail from "@/components/common/Thumbnail/Thumbnail";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
@@ -13,7 +11,7 @@ interface ProfileCoverProps {
   userData: UserData;
   coverImage: string;
   isMyProfile: boolean;
-  handleAddCover: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  onEditCover: () => void;
   handleDeleteImage: () => void;
 }
 
@@ -21,19 +19,9 @@ export default function ProfileCover({
   userData,
   coverImage,
   isMyProfile,
-  handleAddCover,
+  onEditCover,
   handleDeleteImage,
 }: ProfileCoverProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleUploadCover = () => {
-    inputRef.current?.click();
-  };
-
-  const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    e.currentTarget.value = "";
-  };
-
   if (!userData) return null;
 
   return (
@@ -51,7 +39,7 @@ export default function ProfileCover({
               <IconButton
                 variant="solid"
                 icon={<Icon name="camera" size={16} color="white" />}
-                onClick={handleUploadCover}
+                onClick={onEditCover}
                 aria-label="커버 이미지 변경"
                 className={styles.overlayBtn}
               />
@@ -70,7 +58,7 @@ export default function ProfileCover({
           <SolidButton
             size="regular"
             iconLeft={<Icon name="plus" size={16} />}
-            onClick={handleUploadCover}
+            onClick={onEditCover}
           >
             커버 추가하기
           </SolidButton>
@@ -79,14 +67,6 @@ export default function ProfileCover({
         // 커버가 없는 타 유저는 Thumbnail 기본 상태(로고 플레이스홀더)를 보여준다
         <Thumbnail alt="" ratio="4/1" className={styles.thumbnail} />
       )}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        hidden
-        onChange={handleAddCover}
-        onClick={handleInputClick}
-      />
     </div>
   );
 }

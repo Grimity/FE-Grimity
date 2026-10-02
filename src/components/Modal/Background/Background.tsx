@@ -15,14 +15,25 @@ const COVER_ASPECT = 4;
 const COVER_OUTPUT = { width: 1600, height: 400 };
 
 interface BackgroundProps {
-  imageSrc: string;
-  file: File;
+  /** 이전 모달 시스템이 넘기던 값. 더는 쓰지 않는다 */
+  imageSrc?: string;
+  /** 모달을 열 때 이미 고른 파일 */
+  file?: File;
+  /** 지금 적용된 커버 이미지 */
+  currentImageSrc?: string;
+  onDelete?: () => Promise<void> | void;
   onUploadSuccess?: () => void;
   /** 새 모달 시스템에서 열 때 넘긴다. 없으면 기존 모달 스토어를 닫는다 */
   onClose?: () => void;
 }
 
-export default function Background({ imageSrc, file, onUploadSuccess, onClose }: BackgroundProps) {
+export default function Background({
+  file: initialFile,
+  currentImageSrc,
+  onDelete,
+  onUploadSuccess,
+  onClose,
+}: BackgroundProps) {
   const { refetch } = useMyData();
   const closeLegacyModal = useModalStore((state) => state.closeModal);
   const { showToast } = useToast();
@@ -33,7 +44,7 @@ export default function Background({ imageSrc, file, onUploadSuccess, onClose }:
     mutationFn: (imageName: string) => putBackgroundImage(imageName),
   });
 
-  const handleSave = async (blob: Blob) => {
+  const handleSave = async (blob: Blob, file: File) => {
     try {
       const webpFile = new File([blob], file.name.replace(/\.[^.]+$/, ".webp"), {
         type: "image/webp",
@@ -67,7 +78,9 @@ export default function Background({ imageSrc, file, onUploadSuccess, onClose }:
     <ImageCropModal
       title="프로필 커버 수정"
       saveLabel="커버 저장"
-      imageSrc={imageSrc}
+      initialFile={initialFile}
+      currentImageSrc={currentImageSrc}
+      onDelete={onDelete}
       aspect={COVER_ASPECT}
       output={COVER_OUTPUT}
       variant="cover"

@@ -2,8 +2,6 @@ import { createElement } from "react";
 import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 
-import { postPresignedUrl } from "@/api/images/postPresigned";
-import { putBackgroundImage } from "@/api/users/putMeImage";
 import { deleteMyBackgroundImage } from "@/api/users/deleteMeImage";
 
 import Background from "@/components/Modal/Background/Background";
@@ -12,9 +10,6 @@ import { useModal } from "@/hooks/useModal";
 import type { UserProfileResponse as UserData } from "@grimity/dto";
 
 import { useToast } from "@/hooks/useToast";
-import { useDeviceStore } from "@/states/deviceStore";
-import { convertToWebP } from "@/utils/imageConverter";
-import { getImageDimensions } from "@/utils/getImageDimensions";
 
 export const useCoverImage = (
   refetchUserData: () => void,
@@ -23,72 +18,8 @@ export const useCoverImage = (
 ) => {
   const { showToast } = useToast();
   const { openModal } = useModal();
-  const { isMobile } = useDeviceStore();
 
-  const { mutate: updateBackgroundImage } = useMutation({
-    mutationFn: (imageName: string) => putBackgroundImage(imageName),
-  });
-
-  const handleAddCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // 모바일 Figma에는 커버 수정 모달이 없어 바로 업로드한다
-    if (!isMobile) {
-      const imageUrl = URL.createObjectURL(file);
-      openModal(
-        (close) =>
-          createElement(Background, {
-            imageSrc: imageUrl,
-            file,
-            onUploadSuccess: refetchUserData,
-            onClose: () => {
-              URL.revokeObjectURL(imageUrl);
-              close();
-            },
-          }),
-        undefined,
-        { bare: true },
-      );
-      return;
-    }
-
-    try {
-      const webpFile = await convertToWebP(file);
-
-      const { width, height } = await getImageDimensions(webpFile);
-
-      const data = await postPresignedUrl({
-        type: "background",
-        ext: "webp",
-        width,
-        height,
-      });
-
-      updateBackgroundImage(data.imageName);
-
-      const uploadResponse = await fetch(data.uploadUrl, {
-        method: "PUT",
-        body: webpFile,
-        headers: {
-          "Content-Type": "image/webp",
-        },
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error(`Upload failed: ${uploadResponse.status}`);
-      }
-
-      showToast("프로필을 수정했어요", "success");
-      setCoverImage(data.imageName);
-      refetchUserData();
-    } catch (error) {
-      console.error("File change error:", error);
-      showToast("커버 이미지 업로드에 실패했습니다.", "error");
-    }
-  };
-
-  const { mutate: deleteBackgroundImage } = useMutation({
+  const { mutateAsync: deleteBackgroundImage } = useMutation({
     mutationFn: deleteMyBackgroundImage,
     onSuccess: () => {
       showToast("커버 이미지가 삭제되었습니다.", "success");
@@ -104,8 +35,31 @@ export const useCoverImage = (
   });
 
   const handleDeleteImage = () => {
-    deleteBackgroundImage();
+    deleteBackgroundImage().catch(() => undefined);
   };
 
-  return { handleAddCover, handleDeleteImage };
+  /** 커버 수정 모달을 연다. 파일을 이미 골랐다면 넘기고, 아니면 모달 안에서 고른다 */
+  const openCoverEditor = (file?: File) => {
+    openModal(
+      (close) =>
+        createElement(Background, {
+          file,
+          currentImageSrc: userData?.backgroundImage ?? undefined,
+          onDelete: userData?.backgroundImage ? () => deleteBackgroundImage() : undefined,
+          onUploadSuccess: refetchUserData,
+          onClose: close,
+        }),
+      undefined,
+      { bare: true },
+    );
+  };
+
+  /** 파일 입력의 change 이벤트로 커버 수정 모달을 연다 */
+  const handleAddCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    openCoverEditor(file);
+  };
+
+  return { handleAddCover, handleDeleteImage, openCoverEditor };
 };

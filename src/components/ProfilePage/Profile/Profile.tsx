@@ -15,7 +15,7 @@ export default function ProfileInfo({
   id,
   userData,
   profileImage,
-  onChangeProfileImage,
+  onEditProfileImage,
   refetchUserData,
 }: ProfileProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -35,7 +35,7 @@ export default function ProfileInfo({
       profileImage={profileImage}
       isMyProfile={isMyProfile}
       isMobile={isMobile}
-      handleFileChange={onChangeProfileImage}
+      onEdit={onEditProfileImage}
     />
   );
 
