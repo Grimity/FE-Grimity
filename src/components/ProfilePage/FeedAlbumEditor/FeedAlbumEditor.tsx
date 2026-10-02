@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 
-import { ModalState, ModalType, useModalStore } from "@/states/modalStore";
 import { useAlbumUpdateOne } from "@/api/generated/albums/albums";
 
 import { useDeviceStore } from "@/states/deviceStore";
@@ -9,8 +8,13 @@ import { useToast } from "@/hooks/useToast";
 
 import Album from "@/components/common/Card/Album/Album";
 import Icon from "@/components/common/Icon/Icon";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import Empty from "@/components/common/Empty/Empty";
+import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
+import AlbumMove from "@/components/Modal/AlbumMove/AlbumMove";
+import AlbumDelete from "@/components/Modal/AlbumDelete/AlbumDelete";
 import PopUpModal from "@/components/common/PopUp/Modal/Modal";
 import Input from "@/components/common/Input/Input/Input";
 
@@ -50,7 +54,8 @@ export default function FeedAlbumEditor({
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
-  const openModal = useModalStore((state) => state.openModal);
+  const [isMoving, setIsMoving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
   const router = useRouter();
@@ -68,38 +73,12 @@ export default function FeedAlbumEditor({
 
   const handleMoveAlbum = () => {
     if (selectedCards.length === 0) return;
-
-    const modalData: Omit<ModalState, "isOpen"> = {
-      type: "ALBUM-MOVE" as ModalType,
-      data: {
-        title: "앨범 이동",
-        selectedFeedIds: selectedCards,
-        currentAlbumId: activeAlbum,
-        onComplete: () => {
-          setSelectedCards([]);
-        },
-        ...(albums.length === 0 && { hideCloseButton: true }),
-      },
-    };
-
-    if (isMobile) modalData.isFill = albums.length > 0;
-
-    openModal(modalData);
+    setIsMoving(true);
   };
 
   const handleDeleteSelected = () => {
     if (selectedCards.length === 0) return;
-    openModal({
-      type: "ALBUM-DELETE",
-      data: {
-        hideCloseButton: true,
-        selectedFeedIds: selectedCards,
-        count: selectedCards.length,
-        onComplete: () => {
-          setSelectedCards([]);
-        },
-      },
-    });
+    setIsDeleting(true);
   };
 
   const handleGoBack = () => {
@@ -138,8 +117,41 @@ export default function FeedAlbumEditor({
     }
   };
 
+  const renameDisabled = isRenamePending || renameValue.trim().length === 0;
+  const renameInput = (
+    <Input
+      inputType="textfield"
+      textFieldProps={{
+        value: renameValue,
+        maxLength: 15,
+        placeholder: "예시 : ‘크로키’ 또는 ‘일러스트’",
+        onChange: (e) => setRenameValue(e.target.value),
+        onKeyDown: (e) => {
+          if (e.nativeEvent.isComposing) return;
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleRename();
+          }
+        },
+      }}
+    />
+  );
+
   return (
     <div className={styles.container}>
+      {isMobile && (
+        <header className={styles.mobileHeader}>
+          <button
+            type="button"
+            className={styles.backButton}
+            onClick={handleGoBack}
+            aria-label="돌아가기"
+          >
+            <Icon name="chevron-left" size={24} />
+          </button>
+          <h2 className={styles.mobileTitle}>그림 정리</h2>
+        </header>
+      )}
       <div className={styles.center}>
         <div className={styles.albumInfo}>
           <div className={styles.albumNameRow}>
@@ -148,7 +160,7 @@ export default function FeedAlbumEditor({
               <TextButton
                 variant="assistive"
                 size="regular"
-                iconLeft={<Icon name="pen" size={16} />}
+                iconRight={<Icon name="pen" size={16} />}
                 onClick={handleOpenRename}
               >
                 앨범명 변경
@@ -184,40 +196,77 @@ export default function FeedAlbumEditor({
         )}
       </div>
 
-      <div className={styles.footer}>
-        <div className={styles.inner}>
-          <TextButton
-            variant="assistive"
-            size="regular"
-            iconLeft={<Icon name="chevron-left" size={20} />}
-            onClick={handleGoBack}
+      {isMobile ? (
+        <div className={styles.floatingActions}>
+          <SolidButton
+            size="large"
+            iconLeft={<Icon name="trash-bin-trash" size={20} />}
+            onClick={handleDeleteSelected}
+            disabled={selectedCards.length === 0}
           >
-            돌아가기
-          </TextButton>
-          <div className={styles.rightSection}>
+            선택 삭제
+          </SolidButton>
+          <SolidButton
+            size="large"
+            iconLeft={<Icon name="forward-2" size={20} />}
+            onClick={handleMoveAlbum}
+            disabled={selectedCards.length === 0}
+          >
+            앨범 이동
+          </SolidButton>
+        </div>
+      ) : (
+        <div className={styles.footer}>
+          <div className={styles.inner}>
             <TextButton
               variant="assistive"
               size="regular"
-              iconLeft={<Icon name="trash-bin-trash" size={20} />}
-              onClick={handleDeleteSelected}
-              disabled={selectedCards.length === 0}
+              iconLeft={<Icon name="chevron-left" size={20} />}
+              onClick={handleGoBack}
             >
-              {isMobile ? "삭제" : "선택 삭제"}
+              돌아가기
             </TextButton>
-            <TextButton
-              variant="assistive"
-              size="regular"
-              iconLeft={<Icon name="forward-2" size={20} />}
-              onClick={handleMoveAlbum}
-              disabled={selectedCards.length === 0}
-            >
-              {isMobile ? "이동" : "앨범 이동"}
-            </TextButton>
+            <div className={styles.rightSection}>
+              <TextButton
+                variant="assistive"
+                size="regular"
+                iconRight={<Icon name="trash-bin-trash" size={20} />}
+                onClick={handleDeleteSelected}
+                disabled={selectedCards.length === 0}
+              >
+                선택 삭제
+              </TextButton>
+              <TextButton
+                variant="assistive"
+                size="regular"
+                iconRight={<Icon name="forward-2" size={20} />}
+                onClick={handleMoveAlbum}
+                disabled={selectedCards.length === 0}
+              >
+                앨범 이동
+              </TextButton>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {isRenaming && (
+      {isMoving && (
+        <AlbumMove
+          selectedFeedIds={selectedCards}
+          currentAlbumId={activeAlbum}
+          onClose={() => setIsMoving(false)}
+          onComplete={() => setSelectedCards([])}
+        />
+      )}
+      {isDeleting && (
+        <AlbumDelete
+          selectedFeedIds={selectedCards}
+          onClose={() => setIsDeleting(false)}
+          onComplete={() => setSelectedCards([])}
+        />
+      )}
+
+      {isRenaming && !isMobile && (
         <PopUpModal
           title="앨범명 변경"
           onClose={() => setIsRenaming(false)}
@@ -226,25 +275,28 @@ export default function FeedAlbumEditor({
           onSecondary={() => setIsRenaming(false)}
           primaryLabel="변경하기"
           onPrimary={handleRename}
-          primaryDisabled={isRenamePending || renameValue.trim().length === 0}
+          primaryDisabled={renameDisabled}
         >
-          <Input
-            inputType="textfield"
-            maxCount={15}
-            textFieldProps={{
-              value: renameValue,
-              maxLength: 15,
-              onChange: (e) => setRenameValue(e.target.value),
-              onKeyDown: (e) => {
-                if (e.nativeEvent.isComposing) return;
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleRename();
-                }
-              },
-            }}
-          />
+          {renameInput}
         </PopUpModal>
+      )}
+      {isMobile && (
+        <BottomSheet
+          isOpen={isRenaming}
+          title="앨범명 변경"
+          showCloseIcon
+          onClose={() => setIsRenaming(false)}
+        >
+          {renameInput}
+          <div className={styles.renameButtons}>
+            <OutlinedButton size="large" onClick={() => setIsRenaming(false)}>
+              닫기
+            </OutlinedButton>
+            <SolidButton size="large" onClick={handleRename} disabled={renameDisabled}>
+              변경하기
+            </SolidButton>
+          </div>
+        </BottomSheet>
       )}
     </div>
   );
