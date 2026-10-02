@@ -61,15 +61,49 @@
   gap: spacing.$spacing-8;
 }
 
-.albumNameInput {
+.albumNameButton {
   flex: 1;
   min-width: 0;
+  align-self: stretch;
+  padding: 0;
   border: none;
-  outline: none;
   background: transparent;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: colors.$text-gray-bold;
 
   @include typo.label-2;
+}
+
+.mobileBar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-12;
+  height: 56px;
+  padding: 0 spacing.$spacing-16;
+  background-color: colors.$surface-base;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: colors.$icon-gray-bold;
+}
+
+.mobileTitle {
+  flex: 1;
+  @include typo.subtitle-1;
+  color: colors.$text-gray-bold;
 }
 
 .empty {
