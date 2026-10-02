@@ -77,25 +77,14 @@ export default function ProfileActions({
     );
   }
 
-  if (isBlocked) {
+  // 차단당함·차단함 모두 팔로우 버튼 없이 더보기 메뉴만 노출한다
+  if (isBlocked || isBlocking) {
     return (
       <div className={styles.actions}>
         <ResponsiveMenu
           trigger={moreTrigger}
           mobileTitle="더보기"
-          items={[shareMenuItem, reportMenuItem]}
-        />
-      </div>
-    );
-  }
-
-  if (isBlocking) {
-    return (
-      <div className={styles.actions}>
-        <ResponsiveMenu
-          trigger={moreTrigger}
-          mobileTitle="더보기"
-          items={[shareMenuItem, blockMenuItem, reportMenuItem]}
+          items={[shareMenuItem, reportMenuItem, blockMenuItem]}
         />
       </div>
     );
@@ -115,7 +104,7 @@ export default function ProfileActions({
       <ResponsiveMenu
         trigger={moreTrigger}
         mobileTitle="더보기"
-        items={[shareMenuItem, messageMenuItem, blockMenuItem, reportMenuItem]}
+        items={[shareMenuItem, messageMenuItem, reportMenuItem, blockMenuItem]}
       />
     </div>
   );
