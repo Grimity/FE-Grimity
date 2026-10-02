@@ -1,5 +1,7 @@
 @use "@/styles/globals.scss" as *;
 @use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/breakpoint" as bp;
 
 .overlay {
   position: fixed;
@@ -153,10 +155,10 @@
 }
 
 .fillProfileEdit {
-  @include Size("mobile") {
+  @include bp.breakpoint-down("xs") {
     width: 100%;
     height: $full-height;
-    background: $gray0;
+    background: colors.$surface-base;
     position: fixed;
     top: 0;
     left: 0;
