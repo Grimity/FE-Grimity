@@ -5,6 +5,7 @@ type ButtonConfig =
       buttonType: "primary";
       primaryLabel: string;
       onPrimary: () => void;
+      primaryDisabled?: boolean;
     }
   | {
       buttonType: "secondary";
@@ -16,6 +17,7 @@ type ButtonConfig =
       buttonType: "double";
       primaryLabel: string;
       onPrimary: () => void;
+      primaryDisabled?: boolean;
       secondaryLabel: string;
       onSecondary: () => void;
     }

@@ -93,6 +93,13 @@ export const TwoButtons: Story = {
   },
 };
 
+export const TwoButtonsPrimaryDisabled: Story = {
+  args: {
+    ...TwoButtons.args,
+    primaryDisabled: true,
+  } as Story["args"],
+};
+
 export const MinimalChildren: Story = {
   args: {
     isOpen: true,
