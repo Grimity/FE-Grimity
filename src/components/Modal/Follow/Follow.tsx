@@ -257,6 +257,7 @@ export default function Follow({ initialTab, title }: FollowProps) {
         <div className={styles.tabContent}>
           {data.length === 0 ? (
             <Empty
+              className={styles.empty}
               size="md"
               iconName="illust-user"
               title={
