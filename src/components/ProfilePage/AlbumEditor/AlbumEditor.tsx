@@ -12,6 +12,7 @@ import {
 } from "@/api/generated/albums/albums";
 import type { AlbumBaseResponse } from "@/api/generated/model";
 
+import { useDeviceStore } from "@/states/deviceStore";
 import { useToast } from "@/hooks/useToast";
 
 import Loader from "@/components/Layout/Loader/Loader";
@@ -35,6 +36,7 @@ interface AlbumEditorProps {
 
 export default function AlbumEditor({ onExit }: AlbumEditorProps) {
   const router = useRouter();
+  const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
   const { data, isLoading, refetch } = useMeGetMyAlbums();
 
@@ -61,6 +63,8 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
   const orderChanged = !!data && data.map((a) => a.id).join(",") !== albums.map((a) => a.id).join(",");
   const nameChanged = albums.some((a) => (names[a.id] ?? a.name).trim() !== a.name);
   const hasChanges = orderChanged || nameChanged;
+  const isAlbumFull = albums.length >= MAX_ALBUMS;
+  const isCreateDisabled = isAlbumFull || isEditingOrder;
 
   const handleCreateAlbum = async () => {
     const trimmed = newName.trim();
@@ -168,12 +172,13 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
               helperStatus={createError ? "error" : "default"}
               className={styles.createInput}
               textFieldProps={{
-                placeholder: "예시 : '크로키' 또는 '일러스트'",
+                placeholder: "예시 : ‘크로키’ 또는 ‘일러스트’",
                 value: newName,
+                disabled: isCreateDisabled,
                 onChange: (e) => {
                   const value = e.target.value;
                   if (value.length > MAX_NAME_LENGTH) {
-                    setCreateError(`앨범명은 최대 ${MAX_NAME_LENGTH}자까지만 가능해요.`);
+                    setCreateError(`앨범명 최대 ${MAX_NAME_LENGTH}자까지만 가능해요`);
                     setNewName(value.slice(0, MAX_NAME_LENGTH));
                     return;
                   }
@@ -189,8 +194,12 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
                 },
               }}
             />
-            <SolidButton size="large" onClick={handleCreateAlbum} disabled={isCreating}>
-              추가
+            <SolidButton
+              size="large"
+              onClick={handleCreateAlbum}
+              disabled={isCreating || isCreateDisabled || !newName.trim()}
+            >
+              {isMobile ? "추가" : "앨범 추가"}
             </SolidButton>
           </div>
         </div>
