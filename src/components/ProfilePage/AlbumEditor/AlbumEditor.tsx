@@ -199,6 +199,35 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
 
   if (isLoading) return <Loader />;
 
+  const renameField = (
+    <Input
+      inputType="textfield"
+      helperMessage={renameError || undefined}
+      helperStatus={renameError ? "error" : "default"}
+      textFieldProps={{
+        value: renameValue,
+        autoFocus: true,
+        onChange: (e) => handleRenameChange(e.target.value),
+        onKeyDown: (e) => {
+          if (e.nativeEvent.isComposing) return;
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleConfirmRename();
+          }
+        },
+      }}
+    />
+  );
+
+  const renameActions = {
+    buttonType: "double",
+    secondaryLabel: "닫기",
+    onSecondary: closeRename,
+    primaryLabel: "변경하기",
+    onPrimary: handleConfirmRename,
+    primaryDisabled: !renameValue.trim(),
+  } as const;
+
   return (
     <div className={styles.container}>
       {isMobile && (
@@ -322,12 +351,12 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
                   title={names[album.id] ?? album.name}
                   state="editDelete"
                   onDelete={() => setDeletingAlbum(album)}
-                  onClick={(e) => {
-                    if ((e.target as HTMLElement).closest("[aria-label='삭제']")) return;
-                    openRename(album);
-                  }}
                 >
-                  <button type="button" className={styles.albumNameButton}>
+                  <button
+                    type="button"
+                    className={styles.albumNameButton}
+                    onClick={() => openRename(album)}
+                  >
                     {names[album.id] ?? album.name}
                   </button>
                 </GroupSettings>
@@ -375,55 +404,21 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
       )}
 
       {renamingAlbum &&
-        (() => {
-          const renameField = (
-            <Input
-              inputType="textfield"
-              helperMessage={renameError || undefined}
-              helperStatus={renameError ? "error" : "default"}
-              textFieldProps={{
-                value: renameValue,
-                autoFocus: true,
-                onChange: (e) => handleRenameChange(e.target.value),
-                onKeyDown: (e) => {
-                  if (e.nativeEvent.isComposing) return;
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleConfirmRename();
-                  }
-                },
-              }}
-            />
-          );
-          return isMobile ? (
-            <BottomSheet
-              isOpen
-              title="앨범명 변경"
-              showCloseIcon
-              onClose={closeRename}
-              buttonType="double"
-              secondaryLabel="닫기"
-              onSecondary={closeRename}
-              primaryLabel="변경하기"
-              onPrimary={handleConfirmRename}
-            >
-              {renameField}
-            </BottomSheet>
-          ) : (
-            <Modal
-              title="앨범명 변경"
-              onClose={closeRename}
-              buttonType="double"
-              secondaryLabel="닫기"
-              onSecondary={closeRename}
-              primaryLabel="변경하기"
-              onPrimary={handleConfirmRename}
-              primaryDisabled={!renameValue.trim()}
-            >
-              {renameField}
-            </Modal>
-          );
-        })()}
+        (isMobile ? (
+          <BottomSheet
+            isOpen
+            title="앨범명 변경"
+            showCloseIcon
+            onClose={closeRename}
+            {...renameActions}
+          >
+            {renameField}
+          </BottomSheet>
+        ) : (
+          <Modal title="앨범명 변경" onClose={closeRename} {...renameActions}>
+            {renameField}
+          </Modal>
+        ))}
     </div>
   );
 }
