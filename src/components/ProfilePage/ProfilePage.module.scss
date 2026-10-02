@@ -87,10 +87,6 @@
       justify-content: space-between;
       gap: spacing.$spacing-12;
       min-height: 32px;
-
-      @include bp.breakpoint-down("xs") {
-        flex-wrap: wrap;
-      }
     }
 
     .resultsLabel {
@@ -111,12 +107,6 @@
       align-items: center;
       gap: spacing.$spacing-8;
       flex-shrink: 0;
-
-      @include bp.breakpoint-down("xs") {
-        width: 100%;
-        justify-content: flex-end;
-        margin-top: spacing.$spacing-8;
-      }
     }
   }
 
