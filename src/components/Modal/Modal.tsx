@@ -4,6 +4,7 @@ import styles from "./Modal.module.scss";
 import { useModalStore } from "@/states/modalStore";
 import { usePreventScroll } from "@/hooks/usePreventScroll";
 import IconComponent from "../Asset/Icon";
+import Icon from "../common/Icon/Icon";
 import Button from "../Button/Button";
 import Login from "./Login/Login";
 import ProfileId from "./ProfileId/ProfileId";
@@ -116,14 +117,25 @@ export default function Modal() {
     }
   };
 
+  const isFollowModal = type === "FOLLOWER" || type === "FOLLOWING";
+
   if (!isOpen) return null;
 
   return (
     <>
       {isOpen && isFill && type !== "PROFILE-EDIT" && (
-        <div className={styles.mobileHeader}>
-          <button onClick={handleCloseModal}>
-            <IconComponent name="x" size={24} isBtn />
+        <div
+          className={`${styles.mobileHeader} ${isFollowModal ? styles.mobileHeaderBack : ""}`}
+        >
+          <button
+            onClick={handleCloseModal}
+            aria-label={isFollowModal ? "뒤로가기" : undefined}
+          >
+            {isFollowModal ? (
+              <Icon name="chevron-left" size={24} />
+            ) : (
+              <IconComponent name="x" size={24} isBtn />
+            )}
           </button>
           <h2>{data?.title}</h2>
         </div>
