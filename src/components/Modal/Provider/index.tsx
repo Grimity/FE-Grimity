@@ -62,7 +62,7 @@ function ModalProvider({ children }: PropsWithChildren) {
     <>
       {children}
       <ModalPortal>
-        {modals.map(({ id, content, props, isFill, title, bare }) => {
+        {modals.map(({ id, content, props, isFill, title, bare, mobileHeader }) => {
           const handleClose = () => {
             if (
               isFill &&
@@ -85,16 +85,15 @@ function ModalProvider({ children }: PropsWithChildren) {
           }
 
           if (isFill) {
-            // 차단 목록 모달만 Figma의 뒤로가기 헤더를 사용 (title로 구분)
-            const isBlocklist = title === "차단";
+            const isBack = mobileHeader === "back";
             return (
               <React.Fragment key={id}>
                 {/* 모바일 헤더 */}
                 <div
-                  className={`${styles.mobileHeader} ${isBlocklist ? styles.mobileHeaderBack : ""}`}
+                  className={`${styles.mobileHeader} ${isBack ? styles.mobileHeaderBack : ""}`}
                 >
-                  <button onClick={handleClose} aria-label={isBlocklist ? "뒤로가기" : undefined}>
-                    {isBlocklist ? (
+                  <button onClick={handleClose} aria-label={isBack ? "뒤로가기" : undefined}>
+                    {isBack ? (
                       <Icon name="chevron-left" size={24} />
                     ) : (
                       <IconComponent name="x" size={24} isBtn />

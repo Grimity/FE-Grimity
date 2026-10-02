@@ -12,10 +12,11 @@ export function useModal() {
       isFill?: boolean;
       title?: string;
       bare?: boolean;
+      mobileHeader?: "close" | "back";
     },
   ) {
     const id = uuidv4();
-    open(id, content, props, options?.isFill, options?.title, options?.bare);
+    open(id, content, props, options?.isFill, options?.title, options?.bare, options?.mobileHeader);
     return () => close(id);
   }
 

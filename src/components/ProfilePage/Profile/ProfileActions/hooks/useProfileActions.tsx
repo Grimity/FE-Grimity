@@ -102,7 +102,7 @@ export function useProfileActions({
     openOverlayModal(
       (close) => <Blocklist close={close} />,
       { className: styles.blacklist },
-      { isFill: isMobile, title: "차단" },
+      { isFill: isMobile, title: "차단", mobileHeader: "back" },
     );
   });
 
