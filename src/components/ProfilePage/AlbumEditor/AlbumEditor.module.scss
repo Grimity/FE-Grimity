@@ -6,11 +6,15 @@
 
 .container {
   width: 100%;
-  min-height: 100%;
+  // 콘텐츠가 짧아도 하단 바가 화면 하단에 붙도록 뷰포트 높이를 채운다
+  min-height: calc(100dvh - #{$header-height});
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .center {
+  flex: 1;
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
