@@ -18,7 +18,6 @@ import Input from "@/components/common/Input/Input/Input";
 import TextField from "@/components/common/Input/TextField/TextField";
 import Title from "@/components/common/Input/Title/Title";
 import Icon from "@/components/common/Icon/Icon";
-import Menu from "@/components/common/Navigation/Menu/Menu";
 import GroupSettings from "@/components/common/GroupSettings/GroupSettings";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
@@ -36,6 +35,7 @@ import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 
 import { isValidProfileIdFormat, isForbiddenProfileId } from "@/utils/isValidProfileId";
 
+import PlatformMenu from "./PlatformMenu";
 import styles from "./ProfileEdit.module.scss";
 
 interface LinkItem {
@@ -227,21 +227,6 @@ export default function ProfileEdit() {
 
   if (isLoading) return <Loader />;
 
-  const renderPlatformTrigger = (link: LinkItem, onClick?: () => void) => (
-    <button
-      type="button"
-      className={styles.platformSelect}
-      disabled={isEditingOrder}
-      aria-label="플랫폼 선택"
-      onClick={onClick}
-    >
-      <span className={clsx(styles.platformSelectLabel, !link.linkName && styles.placeholder)}>
-        {link.linkName || "선택"}
-      </span>
-      <Icon name="chevron-down" size={20} className={styles.platformSelectIcon} />
-    </button>
-  );
-
   const hasCover = Boolean(myData?.backgroundImage);
 
   return (
@@ -328,10 +313,11 @@ export default function ProfileEdit() {
           <Input
             label="닉네임"
             inputType="textfield"
-            maxCount={12}
             helperMessage={nameError}
             helperStatus={nameError ? "error" : "default"}
             textFieldProps={{
+              variant: "count",
+              maxCount: 12,
               placeholder: "프로필에 노출될 닉네임을 입력해주세요.",
               value: name,
               disabled: isEditingOrder,
@@ -355,10 +341,10 @@ export default function ProfileEdit() {
           <Input
             label="그리미티 URL"
             inputType="textfield"
-            maxCount={20}
             helperMessage={profileIdError}
             helperStatus={profileIdError ? "error" : "default"}
             textFieldProps={{
+              maxLength: 20,
               placeholder: "url을 입력해주세요.",
               value: profileId,
               disabled: isEditingOrder,
@@ -416,21 +402,17 @@ export default function ProfileEdit() {
                                 }}
                               />
                             ) : (
-                              isMobile ? (
-                                renderPlatformTrigger(link, () => setPlatformSheetIndex(index))
-                              ) : (
-                                <Menu
-                                  wrapperClassName={styles.platformTrigger}
-                                  align="left"
+                              <div className={styles.platformTrigger}>
+                                <PlatformMenu
+                                  value={link.linkName}
+                                  options={PLATFORM_OPTIONS}
                                   disabled={isEditingOrder}
-                                  trigger={renderPlatformTrigger(link)}
-                                  items={PLATFORM_OPTIONS.map((platform) => ({
-                                    label: platform,
-                                    selected: link.linkName === platform,
-                                    onClick: () => handlePlatformChange(index, platform),
-                                  }))}
+                                  onSelect={(platform) => handlePlatformChange(index, platform)}
+                                  onTriggerClick={
+                                    isMobile ? () => setPlatformSheetIndex(index) : undefined
+                                  }
                                 />
-                              )
+                              </div>
                             )}
                             <GroupSettings
                               className={styles.linkGroupSettings}

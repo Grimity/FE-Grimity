@@ -170,62 +170,10 @@ $cover-overlap: 32px;
   .platformTrigger {
     flex: 0 0 140px;
     min-width: 0;
-    height: 52px;
-    border: 1px solid colors.$border-gray-subtle;
-    border-radius: radius.$radius-sm;
-    background-color: colors.$surface-base;
 
     @include bp.breakpoint-down("xs") {
       flex-basis: 120px;
     }
-  }
-
-  .platformSelect {
-    width: 100%;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: spacing.$spacing-12;
-    padding: 0 spacing.$spacing-16;
-    border: 1px solid colors.$border-gray-subtle;
-    border-radius: radius.$radius-sm;
-    background-color: colors.$surface-base;
-    color: colors.$text-gray-bold;
-    cursor: pointer;
-
-    @include typo.label-2;
-
-    // 웹: 바깥 래퍼(.platformTrigger)가 테두리를 그린다
-    .platformTrigger & {
-      height: 100%;
-      border: none;
-    }
-
-    &:disabled {
-      cursor: default;
-    }
-
-    @include bp.breakpoint-down("xs") {
-      flex: 0 0 120px;
-      width: 120px;
-    }
-  }
-
-  .platformSelectLabel {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: left;
-
-    &.placeholder {
-      color: colors.$text-gray-subtle;
-    }
-  }
-
-  .platformSelectIcon {
-    flex-shrink: 0;
-    color: colors.$icon-gray-bold;
   }
 
   .linkNameField {

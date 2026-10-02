@@ -1,0 +1,47 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+
+.trigger {
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
+  padding: 0 spacing.$spacing-16;
+  border: 1px solid colors.$border-gray-subtle;
+  border-radius: radius.$radius-sm;
+  background-color: colors.$surface-base;
+  color: colors.$text-gray-bold;
+  cursor: pointer;
+
+  @include typo.label-2;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.placeholder {
+  color: colors.$text-gray-subtle;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: colors.$icon-gray-bold;
+}
+
+// 모달 오버레이(z-index 1700)보다 위에 뜬다
+.menuLayer {
+  position: fixed;
+  z-index: 1800;
+}
