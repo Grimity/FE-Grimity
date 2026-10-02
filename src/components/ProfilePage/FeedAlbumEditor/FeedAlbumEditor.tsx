@@ -148,7 +148,7 @@ export default function FeedAlbumEditor({
               <TextButton
                 variant="assistive"
                 size="regular"
-                iconLeft={<Icon name="pen" size={16} />}
+                iconRight={<Icon name="pen" size={16} />}
                 onClick={handleOpenRename}
               >
                 앨범명 변경

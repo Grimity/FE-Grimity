@@ -67,6 +67,7 @@
   .albumNameRow {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: spacing.$spacing-8;
     margin-bottom: spacing.$spacing-8;
   }
