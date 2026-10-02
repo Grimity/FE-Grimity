@@ -351,6 +351,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
                   title={names[album.id] ?? album.name}
                   state="editDelete"
                   onDelete={() => setDeletingAlbum(album)}
+                  onEdit={() => openRename(album)}
                 >
                   <button
                     type="button"
