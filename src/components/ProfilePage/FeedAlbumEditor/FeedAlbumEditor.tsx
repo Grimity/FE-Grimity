@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 
-import { ModalState, ModalType, useModalStore } from "@/states/modalStore";
 import { useAlbumUpdateOne } from "@/api/generated/albums/albums";
 
 import { useDeviceStore } from "@/states/deviceStore";
@@ -14,6 +13,8 @@ import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedBu
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import Empty from "@/components/common/Empty/Empty";
 import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
+import AlbumMove from "@/components/Modal/AlbumMove/AlbumMove";
+import AlbumDelete from "@/components/Modal/AlbumDelete/AlbumDelete";
 import PopUpModal from "@/components/common/PopUp/Modal/Modal";
 import Input from "@/components/common/Input/Input/Input";
 
@@ -53,7 +54,8 @@ export default function FeedAlbumEditor({
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
-  const openModal = useModalStore((state) => state.openModal);
+  const [isMoving, setIsMoving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
   const router = useRouter();
@@ -71,38 +73,12 @@ export default function FeedAlbumEditor({
 
   const handleMoveAlbum = () => {
     if (selectedCards.length === 0) return;
-
-    const modalData: Omit<ModalState, "isOpen"> = {
-      type: "ALBUM-MOVE" as ModalType,
-      data: {
-        title: "앨범 이동",
-        selectedFeedIds: selectedCards,
-        currentAlbumId: activeAlbum,
-        onComplete: () => {
-          setSelectedCards([]);
-        },
-        ...(albums.length === 0 && { hideCloseButton: true }),
-      },
-    };
-
-    if (isMobile) modalData.isFill = albums.length > 0;
-
-    openModal(modalData);
+    setIsMoving(true);
   };
 
   const handleDeleteSelected = () => {
     if (selectedCards.length === 0) return;
-    openModal({
-      type: "ALBUM-DELETE",
-      data: {
-        hideCloseButton: true,
-        selectedFeedIds: selectedCards,
-        count: selectedCards.length,
-        onComplete: () => {
-          setSelectedCards([]);
-        },
-      },
-    });
+    setIsDeleting(true);
   };
 
   const handleGoBack = () => {
@@ -272,6 +248,22 @@ export default function FeedAlbumEditor({
             </div>
           </div>
         </div>
+      )}
+
+      {isMoving && (
+        <AlbumMove
+          selectedFeedIds={selectedCards}
+          currentAlbumId={activeAlbum}
+          onClose={() => setIsMoving(false)}
+          onComplete={() => setSelectedCards([])}
+        />
+      )}
+      {isDeleting && (
+        <AlbumDelete
+          selectedFeedIds={selectedCards}
+          onClose={() => setIsDeleting(false)}
+          onComplete={() => setSelectedCards([])}
+        />
       )}
 
       {isRenaming && !isMobile && (
