@@ -12,6 +12,7 @@ import {
 } from "@/api/generated/albums/albums";
 import type { AlbumBaseResponse } from "@/api/generated/model";
 
+import { useDeviceStore } from "@/states/deviceStore";
 import { useToast } from "@/hooks/useToast";
 
 import Loader from "@/components/Layout/Loader/Loader";
@@ -23,6 +24,8 @@ import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import GroupSettings from "@/components/common/GroupSettings/GroupSettings";
 import Backdrop from "@/components/common/PopUp/Backdrop/Backdrop";
 import Alert from "@/components/common/PopUp/Alert/Alert";
+import Modal from "@/components/common/PopUp/Modal/Modal";
+import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
 
 import styles from "./AlbumEditor.module.scss";
 
@@ -35,6 +38,7 @@ interface AlbumEditorProps {
 
 export default function AlbumEditor({ onExit }: AlbumEditorProps) {
   const router = useRouter();
+  const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
   const { data, isLoading, refetch } = useMeGetMyAlbums();
 
@@ -44,6 +48,9 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
   const [createError, setCreateError] = useState("");
   const [isEditingOrder, setIsEditingOrder] = useState(false);
   const [deletingAlbum, setDeletingAlbum] = useState<AlbumBaseResponse | null>(null);
+  const [renamingAlbum, setRenamingAlbum] = useState<AlbumBaseResponse | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const [renameError, setRenameError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -58,9 +65,12 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
   const { mutateAsync: updateOrder } = useAlbumUpdateOrder();
   const { mutateAsync: deleteAlbum } = useAlbumDeleteOne();
 
-  const orderChanged = !!data && data.map((a) => a.id).join(",") !== albums.map((a) => a.id).join(",");
+  const orderChanged =
+    !!data && data.map((a) => a.id).join(",") !== albums.map((a) => a.id).join(",");
   const nameChanged = albums.some((a) => (names[a.id] ?? a.name).trim() !== a.name);
   const hasChanges = orderChanged || nameChanged;
+  const isAlbumFull = albums.length >= MAX_ALBUMS;
+  const isCreateDisabled = isAlbumFull || isEditingOrder;
 
   const handleCreateAlbum = async () => {
     const trimmed = newName.trim();
@@ -89,6 +99,41 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
         showToast("앨범 추가에 실패했습니다.", "error");
       }
     }
+  };
+
+  const openRename = (album: AlbumBaseResponse) => {
+    setRenamingAlbum(album);
+    setRenameValue(names[album.id] ?? album.name);
+    setRenameError("");
+  };
+
+  const closeRename = () => {
+    setRenamingAlbum(null);
+    setRenameError("");
+  };
+
+  const handleRenameChange = (value: string) => {
+    if (value.length > MAX_NAME_LENGTH) {
+      setRenameError(`앨범명 최대 ${MAX_NAME_LENGTH}자까지만 가능해요`);
+      setRenameValue(value.slice(0, MAX_NAME_LENGTH));
+      return;
+    }
+    setRenameError("");
+    setRenameValue(value);
+  };
+
+  const handleConfirmRename = () => {
+    if (!renamingAlbum) return;
+    const trimmed = renameValue.trim();
+    if (!trimmed) return;
+    if (
+      albums.some((a) => a.id !== renamingAlbum.id && (names[a.id] ?? a.name).trim() === trimmed)
+    ) {
+      setRenameError("중복된 이름은 사용할 수 없습니다.");
+      return;
+    }
+    setNames((prev) => ({ ...prev, [renamingAlbum.id]: trimmed }));
+    closeRename();
   };
 
   const handleDragEnd = (result: DropResult) => {
@@ -156,8 +201,29 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
 
   return (
     <div className={styles.container}>
+      {isMobile && (
+        <header className={styles.mobileBar}>
+          <button
+            type="button"
+            className={styles.backButton}
+            onClick={onExit}
+            aria-label="돌아가기"
+          >
+            <Icon name="chevron-left" size={24} />
+          </button>
+          <h1 className={styles.mobileTitle}>앨범 편집</h1>
+          <TextButton
+            variant="primary"
+            size="regular"
+            onClick={handleSave}
+            disabled={!hasChanges || isSaving}
+          >
+            저장
+          </TextButton>
+        </header>
+      )}
       <div className={styles.center}>
-        <h1 className={styles.pageTitle}>앨범 편집</h1>
+        {!isMobile && <h1 className={styles.pageTitle}>앨범 편집</h1>}
 
         <div className={styles.section}>
           <Title text="새 앨범 추가" />
@@ -168,12 +234,13 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
               helperStatus={createError ? "error" : "default"}
               className={styles.createInput}
               textFieldProps={{
-                placeholder: "예시 : '크로키' 또는 '일러스트'",
+                placeholder: "예시 : ‘크로키’ 또는 ‘일러스트’",
                 value: newName,
+                disabled: isCreateDisabled,
                 onChange: (e) => {
                   const value = e.target.value;
                   if (value.length > MAX_NAME_LENGTH) {
-                    setCreateError(`앨범명은 최대 ${MAX_NAME_LENGTH}자까지만 가능해요.`);
+                    setCreateError(`앨범명 최대 ${MAX_NAME_LENGTH}자까지만 가능해요`);
                     setNewName(value.slice(0, MAX_NAME_LENGTH));
                     return;
                   }
@@ -189,8 +256,12 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
                 },
               }}
             />
-            <SolidButton size="large" onClick={handleCreateAlbum} disabled={isCreating}>
-              추가
+            <SolidButton
+              size="large"
+              onClick={handleCreateAlbum}
+              disabled={isCreating || isCreateDisabled || !newName.trim()}
+            >
+              {isMobile ? "추가" : "앨범 추가"}
             </SolidButton>
           </div>
         </div>
@@ -202,6 +273,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
               <TextButton
                 variant={isEditingOrder ? "primary" : "assistive"}
                 size="regular"
+                iconRight={isEditingOrder ? undefined : <Icon name="sort-horizontal" size={16} />}
                 onClick={() => setIsEditingOrder((prev) => !prev)}
               >
                 {isEditingOrder ? "완료" : "순서 편집"}
@@ -210,7 +282,10 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
           </div>
 
           {albums.length === 0 ? (
-            <p className={styles.emptyText}>생성된 앨범이 없어요.</p>
+            <div className={styles.empty}>
+              <p className={styles.emptyTitle}>아직 생성된 앨범이 없어요</p>
+              <p className={styles.emptyText}>앨범을 추가하면 그림을 분류할 수 있어요</p>
+            </div>
           ) : isEditingOrder ? (
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="albumList">
@@ -247,15 +322,14 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
                   title={names[album.id] ?? album.name}
                   state="editDelete"
                   onDelete={() => setDeletingAlbum(album)}
+                  onClick={(e) => {
+                    if ((e.target as HTMLElement).closest("[aria-label='삭제']")) return;
+                    openRename(album);
+                  }}
                 >
-                  <input
-                    className={styles.albumNameInput}
-                    value={names[album.id] ?? ""}
-                    maxLength={MAX_NAME_LENGTH}
-                    onChange={(e) =>
-                      setNames((prev) => ({ ...prev, [album.id]: e.target.value }))
-                    }
-                  />
+                  <button type="button" className={styles.albumNameButton}>
+                    {names[album.id] ?? album.name}
+                  </button>
                 </GroupSettings>
               ))}
             </div>
@@ -263,26 +337,28 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
         </div>
       </div>
 
-      <div className={styles.footer}>
-        <div className={styles.footerInner}>
-          <TextButton
-            variant="assistive"
-            size="regular"
-            iconLeft={<Icon name="chevron-left" size={20} />}
-            onClick={onExit}
-          >
-            돌아가기
-          </TextButton>
-          <TextButton
-            variant="primary"
-            size="regular"
-            onClick={handleSave}
-            disabled={!hasChanges || isSaving || isEditingOrder}
-          >
-            저장하기
-          </TextButton>
+      {!isMobile && (
+        <div className={styles.footer}>
+          <div className={styles.footerInner}>
+            <TextButton
+              variant="assistive"
+              size="regular"
+              iconLeft={<Icon name="chevron-left" size={20} />}
+              onClick={onExit}
+            >
+              돌아가기
+            </TextButton>
+            <TextButton
+              variant="primary"
+              size="regular"
+              onClick={handleSave}
+              disabled={!hasChanges || isSaving}
+            >
+              저장하기
+            </TextButton>
+          </div>
         </div>
-      </div>
+      )}
 
       {deletingAlbum && (
         <Backdrop onClick={() => setDeletingAlbum(null)}>
@@ -297,6 +373,57 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
           />
         </Backdrop>
       )}
+
+      {renamingAlbum &&
+        (() => {
+          const renameField = (
+            <Input
+              inputType="textfield"
+              helperMessage={renameError || undefined}
+              helperStatus={renameError ? "error" : "default"}
+              textFieldProps={{
+                value: renameValue,
+                autoFocus: true,
+                onChange: (e) => handleRenameChange(e.target.value),
+                onKeyDown: (e) => {
+                  if (e.nativeEvent.isComposing) return;
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleConfirmRename();
+                  }
+                },
+              }}
+            />
+          );
+          return isMobile ? (
+            <BottomSheet
+              isOpen
+              title="앨범명 변경"
+              showCloseIcon
+              onClose={closeRename}
+              buttonType="double"
+              secondaryLabel="닫기"
+              onSecondary={closeRename}
+              primaryLabel="변경하기"
+              onPrimary={handleConfirmRename}
+            >
+              {renameField}
+            </BottomSheet>
+          ) : (
+            <Modal
+              title="앨범명 변경"
+              onClose={closeRename}
+              buttonType="double"
+              secondaryLabel="닫기"
+              onSecondary={closeRename}
+              primaryLabel="변경하기"
+              onPrimary={handleConfirmRename}
+              primaryDisabled={!renameValue.trim()}
+            >
+              {renameField}
+            </Modal>
+          );
+        })()}
     </div>
   );
 }
