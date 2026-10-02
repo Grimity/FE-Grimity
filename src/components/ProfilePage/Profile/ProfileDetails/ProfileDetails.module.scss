@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: spacing.$spacing-8;
+  gap: spacing.$spacing-12;
 }
 
 .headerRow {
@@ -30,7 +30,7 @@
   color: colors.$text-gray-bold;
 
   @include bp.breakpoint-down("xs") {
-    @include typo.title-3;
+    @include typo.title-2;
   }
 }
 
@@ -40,7 +40,7 @@
 
 .description {
   @include typo.label-6;
-  color: colors.$text-gray-subtler;
+  color: colors.$text-gray-bold;
   white-space: pre-line;
 }
 
@@ -52,19 +52,13 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: spacing.$spacing-12;
-
-  @include bp.breakpoint-down("xs") {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: spacing.$spacing-6;
-  }
+  gap: spacing.$spacing-8;
 }
 
 .linkWrapper {
   display: flex;
   align-items: center;
-  gap: spacing.$spacing-4;
+  gap: spacing.$spacing-8;
 }
 
 .moreLinksText {
