@@ -9,7 +9,7 @@
   width: 100%;
   height: 100%;
   position: relative;
-  padding: 0 spacing.$spacing-32;
+  padding: 0 spacing.$spacing-20;
 
   @include bp.breakpoint-down("xs") {
     padding: 0 spacing.$spacing-16;
