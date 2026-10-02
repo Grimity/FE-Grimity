@@ -86,6 +86,8 @@ export default function ImageCropModal({
             aspect={aspect}
             keepSelection
           >
+            {/* ReactCrop은 원본 img 요소가 필요해 next/image를 쓸 수 없다 */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               ref={imgRef}
               src={imageSrc}
