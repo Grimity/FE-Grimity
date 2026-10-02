@@ -397,6 +397,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
         <Backdrop onClick={() => setDeletingAlbum(null)}>
           <Alert
             variant="content"
+            size={isMobile ? "md" : "xl"}
             title="앨범을 삭제할까요?"
             contentText={"앨범을 삭제하면\n그림은 전체 항목으로 이동돼요"}
             secondaryLabel="아니요"
