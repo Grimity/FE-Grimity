@@ -190,14 +190,14 @@
   padding: 0 spacing.$spacing-10 0 spacing.$spacing-12;
   border: none;
   background-color: colors.$surface-base;
-  color: colors.$text-gray-normal;
+  color: colors.$text-gray-bold;
   cursor: pointer;
 
   @include typo.label-3;
 
   &:disabled {
     cursor: not-allowed;
-    color: colors.$border-gray-subtle;
+    color: colors.$text-gray-subtler;
   }
 }
 

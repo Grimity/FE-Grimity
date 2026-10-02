@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
 import { useDragScroll } from "@/hooks/useDragScroll";
+import { useDeviceStore } from "@/states/deviceStore";
 
 import Icon from "@/components/common/Icon/Icon";
 import Category from "@/components/common/SegmentedControl/Category/Category";
@@ -10,9 +11,10 @@ import Album from "@/components/common/Card/Album/Album";
 import Empty from "@/components/common/Empty/Empty";
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
+import Filter from "@/components/common/Filter/Filter";
 
 import ResponsiveMenu from "../shared/ResponsiveMenu/ResponsiveMenu";
-import { sortOptions } from "./constants";
+import { sortOptions, type SortOption } from "./constants";
 import { useProfileFeeds } from "./hooks/useProfileFeeds";
 import { useFeedLikeToggle } from "./hooks/useFeedLikeToggle";
 import type { FeedsSectionProps } from "./FeedsSection.types";
@@ -33,6 +35,7 @@ export default function FeedsSection({
   onEditAlbums,
 }: FeedsSectionProps) {
   const router = useRouter();
+  const { isMobile } = useDeviceStore();
   const categoryBarRef = useRef<HTMLDivElement>(null);
 
   useDragScroll(categoryBarRef as React.RefObject<HTMLElement>, { scrollSpeed: 2 });
@@ -124,23 +127,34 @@ export default function FeedsSection({
                 그림 정리
               </TextButton>
             )}
-            <ResponsiveMenu
-              mobileTitle="정렬"
-              disabled={isEmpty}
-              trigger={
-                <button type="button" className={styles.sortTrigger} disabled={isEmpty}>
-                  <span>
-                    {sortOptions.find((option) => option.value === sortBy)?.label ?? "최신순"}
-                  </span>
-                  <Icon name="chevron-down" size={16} />
-                </button>
-              }
-              items={sortOptions.map((option) => ({
-                label: option.label,
-                selected: sortBy === option.value,
-                onClick: () => changeSort(option.value),
-              }))}
-            />
+            {/* 모바일은 정렬 옵션을 바텀시트로 띄워야 해서 ResponsiveMenu를 쓴다 */}
+            {isMobile ? (
+              <ResponsiveMenu
+                mobileTitle="정렬"
+                disabled={isEmpty}
+                trigger={
+                  <button type="button" className={styles.sortTrigger} disabled={isEmpty}>
+                    <span>
+                      {sortOptions.find((option) => option.value === sortBy)?.label ?? "최신순"}
+                    </span>
+                    <Icon name="chevron-down" size={16} />
+                  </button>
+                }
+                items={sortOptions.map((option) => ({
+                  label: option.label,
+                  selected: sortBy === option.value,
+                  onClick: () => changeSort(option.value),
+                }))}
+              />
+            ) : (
+              <Filter
+                variant="text"
+                options={sortOptions}
+                value={sortBy}
+                onChange={(value) => changeSort(value as SortOption)}
+                disabled={isEmpty}
+              />
+            )}
           </div>
         </div>
 
