@@ -141,15 +141,20 @@ export default function FeedAlbumEditor({
     <div className={styles.container}>
       {isMobile && (
         <header className={styles.mobileHeader}>
-          <button
-            type="button"
-            className={styles.backButton}
-            onClick={handleGoBack}
-            aria-label="돌아가기"
-          >
-            <Icon name="chevron-left" size={24} />
-          </button>
-          <h2 className={styles.mobileTitle}>그림 정리</h2>
+          <div className={styles.mobileLeft}>
+            <button
+              type="button"
+              className={styles.backButton}
+              onClick={handleGoBack}
+              aria-label="돌아가기"
+            >
+              <Icon name="chevron-left" size={24} />
+            </button>
+            <h2 className={styles.mobileTitle}>그림 정리</h2>
+          </div>
+          <TextButton variant="assistive" size="regular" disabled>
+            저장
+          </TextButton>
         </header>
       )}
       <div className={styles.center}>

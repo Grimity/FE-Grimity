@@ -59,6 +59,7 @@
 .mobileHeader {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: spacing.$spacing-8;
   height: 56px;
 
@@ -70,6 +71,12 @@
     border: none;
     color: colors.$icon-gray-bold;
     cursor: pointer;
+  }
+
+  .mobileLeft {
+    display: flex;
+    align-items: center;
+    gap: spacing.$spacing-8;
   }
 
   .mobileTitle {
