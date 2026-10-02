@@ -64,6 +64,7 @@ type NewModalType<T = Record<string, unknown>> = {
   isFill?: boolean;
   title?: string;
   bare?: boolean;
+  mobileHeader?: "close" | "back";
 };
 
 interface NewModalState<T = Record<string, unknown>> {
@@ -75,13 +76,16 @@ interface NewModalState<T = Record<string, unknown>> {
     isFill?: boolean,
     title?: string,
     bare?: boolean,
+    mobileHeader?: "close" | "back",
   ) => void;
   closeModal: (id: string) => void;
 }
 
 export const useNewModalStore = create<NewModalState>((set) => ({
   modals: [],
-  openModal: (id, content, props, isFill, title, bare) =>
-    set((state) => ({ modals: [...state.modals, { id, content, props, isFill, title, bare }] })),
+  openModal: (id, content, props, isFill, title, bare, mobileHeader) =>
+    set((state) => ({
+      modals: [...state.modals, { id, content, props, isFill, title, bare, mobileHeader }],
+    })),
   closeModal: (id) => set((state) => ({ modals: state.modals.filter((m) => m.id !== id) })),
 }));

@@ -6,6 +6,7 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 
 import ModalPortal from "@/components/Modal/Portal";
 import IconComponent from "@/components/Asset/Icon";
+import Icon from "@/components/common/Icon/Icon";
 
 import styles from "@/components/Modal/Modal.module.scss";
 
@@ -61,7 +62,7 @@ function ModalProvider({ children }: PropsWithChildren) {
     <>
       {children}
       <ModalPortal>
-        {modals.map(({ id, content, props, isFill, title, bare }) => {
+        {modals.map(({ id, content, props, isFill, title, bare, mobileHeader }) => {
           const handleClose = () => {
             if (
               isFill &&
@@ -84,12 +85,19 @@ function ModalProvider({ children }: PropsWithChildren) {
           }
 
           if (isFill) {
+            const isBack = mobileHeader === "back";
             return (
               <React.Fragment key={id}>
                 {/* 모바일 헤더 */}
-                <div className={styles.mobileHeader}>
-                  <button onClick={handleClose}>
-                    <IconComponent name="x" size={24} isBtn />
+                <div
+                  className={`${styles.mobileHeader} ${isBack ? styles.mobileHeaderBack : ""}`}
+                >
+                  <button onClick={handleClose} aria-label={isBack ? "뒤로가기" : undefined}>
+                    {isBack ? (
+                      <Icon name="chevron-left" size={24} />
+                    ) : (
+                      <IconComponent name="x" size={24} isBtn />
+                    )}
                   </button>
                   <h2>{title}</h2>
                 </div>
