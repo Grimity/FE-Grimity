@@ -120,7 +120,7 @@ export default function Modal() {
 
   return (
     <>
-      {isOpen && isFill && (
+      {isOpen && isFill && type !== "PROFILE-EDIT" && (
         <div className={styles.mobileHeader}>
           <button onClick={handleCloseModal}>
             <IconComponent name="x" size={24} isBtn />
@@ -130,7 +130,10 @@ export default function Modal() {
       )}
 
       {isFill ? (
-        <div className={styles.fill} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={type === "PROFILE-EDIT" ? styles.fillProfileEdit : styles.fill}
+          onClick={(e) => e.stopPropagation()}
+        >
           {renderModalContent()}
         </div>
       ) : (
@@ -170,7 +173,7 @@ export default function Modal() {
               onClick={(e) => e.stopPropagation()}
             >
               {renderModalContent()}
-              {!data?.hideCloseButton && (
+              {!data?.hideCloseButton && type !== "PROFILE-EDIT" && (
                 <button className={styles.closeButton} onClick={handleCloseModal}>
                   <IconComponent name="x" size={24} isBtn />
                 </button>

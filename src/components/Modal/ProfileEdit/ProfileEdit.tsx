@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import router from "next/router";
+
+import clsx from "clsx";
 
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import type { AxiosError } from "axios";
@@ -7,6 +9,7 @@ import type { AxiosError } from "axios";
 import { useMyData } from "@/api/users/getMe";
 import { useMeUpdateProfile } from "@/api/generated/me/me";
 import type { UpdateProfileConflictResponse } from "@/api/generated/model";
+import type { UserProfileResponse } from "@grimity/dto";
 
 import { useModalStore } from "@/states/modalStore";
 
@@ -20,6 +23,12 @@ import GroupSettings from "@/components/common/GroupSettings/GroupSettings";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import TextButton from "@/components/common/Button/TextButton/TextButton";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import Avatar from "@/components/common/Avatar/Avatar";
+import Thumbnail from "@/components/common/Thumbnail/Thumbnail";
+import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
+import ListItem from "@/components/common/Cell/ListItem/ListItem";
+import { useProfileImages } from "@/components/ProfilePage/Profile/hooks/useProfileImages";
 
 import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
@@ -73,11 +82,18 @@ export default function ProfileEdit() {
   const [nameError, setNameError] = useState("");
   const [profileIdError, setProfileIdError] = useState("");
   const [isEditingOrder, setIsEditingOrder] = useState(false);
+  const [platformSheetIndex, setPlatformSheetIndex] = useState<number | null>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const profileInputRef = useRef<HTMLInputElement>(null);
 
   const closeModal = useModalStore((s) => s.closeModal);
   const { restoreScrollPosition } = useScrollRestoration("profileEdit-scroll");
   const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
+  const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } = useProfileImages(
+    myData as UserProfileResponse | undefined,
+    refetch,
+  );
 
   useEffect(() => {
     if (myData) {
@@ -203,17 +219,112 @@ export default function ProfileEdit() {
     setLinks(newLinks);
   };
 
+  // 모바일은 전체화면 진입 시 쌓은 history를 되돌려 닫는다(Modal의 닫기 흐름과 동일)
+  const handleClose = () => (isMobile ? window.history.back() : closeModal());
+
+  const isSaveDisabled =
+    name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder;
+
   if (isLoading) return <Loader />;
+
+  const renderPlatformTrigger = (link: LinkItem, onClick?: () => void) => (
+    <button
+      type="button"
+      className={styles.platformSelect}
+      disabled={isEditingOrder}
+      aria-label="플랫폼 선택"
+      onClick={onClick}
+    >
+      <span className={clsx(styles.platformSelectLabel, !link.linkName && styles.placeholder)}>
+        {link.linkName || "선택"}
+      </span>
+      <Icon name="chevron-down" size={20} className={styles.platformSelectIcon} />
+    </button>
+  );
+
+  const hasCover = Boolean(myData?.backgroundImage);
 
   return (
     <div className={styles.container}>
-      {!isMobile && (
+      {isMobile ? (
+        <div className={styles.mobileHeader}>
+          <IconButton
+            icon={<Icon name="chevron-left" size={24} />}
+            onClick={handleClose}
+            aria-label="뒤로가기"
+          />
+          <h2 className={styles.mobileTitle}>프로필 수정</h2>
+          <TextButton variant="primary" size="regular" onClick={handleSave} disabled={isSaveDisabled}>
+            저장
+          </TextButton>
+        </div>
+      ) : (
         <div className={styles.titleContainer}>
           <h2 className={styles.title}>프로필 수정</h2>
+          <IconButton
+            icon={<Icon name="x" size={24} />}
+            onClick={handleClose}
+            aria-label="닫기"
+          />
         </div>
       )}
-      <div className={styles.textBtnContainer}>
+      <div className={styles.scrollArea}>
+        <div className={styles.cover}>
+          {hasCover ? (
+            <Thumbnail src={coverImage} alt="커버 이미지" ratio="4/1" className={styles.coverImage} />
+          ) : (
+            <div className={styles.coverEmpty} />
+          )}
+          <div className={styles.coverButtons}>
+            <IconButton
+              variant="solid"
+              icon={<Icon name="camera" size={16} color="white" />}
+              onClick={() => coverInputRef.current?.click()}
+              aria-label="커버 이미지 변경"
+              className={styles.overlayBtn}
+            />
+            <IconButton
+              variant="solid"
+              icon={<Icon name="x" size={16} color="white" />}
+              onClick={deleteCover}
+              disabled={!hasCover}
+              aria-label="커버 이미지 삭제"
+              className={styles.overlayBtn}
+            />
+          </div>
+          <input
+            ref={coverInputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={addCover}
+            onClick={(e) => (e.currentTarget.value = "")}
+          />
+        </div>
         <div className={styles.textContainer}>
+          <div className={styles.profileImage}>
+            <Avatar
+              src={myData?.image ? profileImage : undefined}
+              size={64}
+              alt="프로필 이미지"
+              className={styles.avatar}
+            />
+            <IconButton
+              variant="solid"
+              icon={<Icon name="camera" size={16} color="white" />}
+              onClick={() => profileInputRef.current?.click()}
+              aria-label="프로필 이미지 변경"
+              className={clsx(styles.overlayBtn, styles.profileCameraBtn)}
+            />
+            <input
+              ref={profileInputRef}
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={changeProfileImage}
+              onClick={(e) => (e.currentTarget.value = "")}
+            />
+          </div>
           <Input
             label="닉네임"
             inputType="textfield"
@@ -264,6 +375,7 @@ export default function ProfileEdit() {
               <TextButton
                 variant={isEditingOrder ? "primary" : "assistive"}
                 size="regular"
+                iconRight={isEditingOrder ? undefined : <Icon name="sort-horizontal" size={16} />}
                 onClick={() => setIsEditingOrder((prev) => !prev)}
               >
                 {isEditingOrder ? "완료" : "순서 편집"}
@@ -294,7 +406,7 @@ export default function ProfileEdit() {
                             {link.linkName === "직접 입력" ? (
                               <TextField
                                 className={styles.linkNameField}
-                                placeholder="링크 이름"
+                                placeholder="직접 입력"
                                 value={link.customName || ""}
                                 disabled={isEditingOrder}
                                 onChange={(e) => {
@@ -304,33 +416,21 @@ export default function ProfileEdit() {
                                 }}
                               />
                             ) : (
-                              <Menu
-                                wrapperClassName={styles.platformTrigger}
-                                align="left"
-                                disabled={isEditingOrder}
-                                trigger={
-                                  <button
-                                    type="button"
-                                    className={styles.platformSelect}
-                                    disabled={isEditingOrder}
-                                    aria-label="플랫폼 선택"
-                                  >
-                                    <span className={styles.platformSelectLabel}>
-                                      {link.linkName || "선택"}
-                                    </span>
-                                    <Icon
-                                      name="chevron-down"
-                                      size={16}
-                                      className={styles.platformSelectIcon}
-                                    />
-                                  </button>
-                                }
-                                items={PLATFORM_OPTIONS.map((platform) => ({
-                                  label: platform,
-                                  selected: link.linkName === platform,
-                                  onClick: () => handlePlatformChange(index, platform),
-                                }))}
-                              />
+                              isMobile ? (
+                                renderPlatformTrigger(link, () => setPlatformSheetIndex(index))
+                              ) : (
+                                <Menu
+                                  wrapperClassName={styles.platformTrigger}
+                                  align="left"
+                                  disabled={isEditingOrder}
+                                  trigger={renderPlatformTrigger(link)}
+                                  items={PLATFORM_OPTIONS.map((platform) => ({
+                                    label: platform,
+                                    selected: link.linkName === platform,
+                                    onClick: () => handlePlatformChange(index, platform),
+                                  }))}
+                                />
+                              )
                             )}
                             <GroupSettings
                               className={styles.linkGroupSettings}
@@ -342,11 +442,7 @@ export default function ProfileEdit() {
                             >
                               <input
                                 className={styles.linkUrlInput}
-                                placeholder={
-                                  link.linkName === "직접 입력"
-                                    ? "전체 URL을 입력해주세요."
-                                    : PLATFORM_URLS[link.linkName] || "링크를 입력해주세요."
-                                }
+                                placeholder={PLATFORM_URLS[link.linkName] || "링크 주소"}
                                 value={link.link}
                                 disabled={isEditingOrder}
                                 onChange={(e) => {
@@ -369,7 +465,8 @@ export default function ProfileEdit() {
 
             <OutlinedButton
               size="regular"
-              iconLeft={<Icon name="plus" size={16} />}
+              iconLeft={<Icon name="plus" size={20} />}
+              className={styles.addLinkButton}
               disabled={isEditingOrder}
               onClick={() => setLinks([...links, { linkName: "", link: "" }])}
             >
@@ -377,14 +474,35 @@ export default function ProfileEdit() {
             </OutlinedButton>
           </div>
         </div>
-        <SolidButton
-          size="large"
-          onClick={handleSave}
-          disabled={name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder}
-        >
-          저장
-        </SolidButton>
       </div>
+      {!isMobile && (
+        <div className={styles.footer}>
+          <SolidButton size="large" className={styles.saveButton} onClick={handleSave} disabled={isSaveDisabled}>
+            저장
+          </SolidButton>
+        </div>
+      )}
+      <BottomSheet
+        isOpen={platformSheetIndex !== null}
+        onClose={() => setPlatformSheetIndex(null)}
+        title="외부 링크 선택"
+        showCloseIcon
+      >
+        <div className={styles.platformSheetList}>
+          {PLATFORM_OPTIONS.map((platform) => (
+            <ListItem
+              key={platform}
+              type="optionCard"
+              text={platform}
+              active={platformSheetIndex !== null && links[platformSheetIndex]?.linkName === platform}
+              onClick={() => {
+                if (platformSheetIndex !== null) handlePlatformChange(platformSheetIndex, platform);
+                setPlatformSheetIndex(null);
+              }}
+            />
+          ))}
+        </div>
+      </BottomSheet>
     </div>
   );
 }

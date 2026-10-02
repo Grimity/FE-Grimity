@@ -5,155 +5,263 @@
 @use "@/styles/tokens/radius" as radius;
 @use "@/styles/breakpoint" as bp;
 
+$cover-overlap: 32px;
+
 .container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: spacing.$spacing-32;
+  width: 100%;
+  max-height: 760px;
+  background-color: colors.$surface-base;
 
   @include bp.breakpoint-down("xs") {
-    overflow-y: auto;
+    height: 100%;
+    max-height: none;
+  }
+}
+
+// 제목 바 (웹/태블릿) — 스크롤 영역 밖에 고정
+.titleContainer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: spacing.$spacing-56;
+  padding: 0 spacing.$spacing-20;
+
+  .title {
+    @include typo.title-3;
+    color: colors.$text-gray-bold;
+  }
+}
+
+// 제목 바 (모바일)
+.mobileHeader {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: spacing.$spacing-56;
+  padding: 0 spacing.$spacing-16;
+  gap: spacing.$spacing-8;
+
+  .mobileTitle {
+    flex: 1;
+    @include typo.label-1;
+    color: colors.$text-gray-bold;
+  }
+}
+
+// 제목과 하단 버튼을 뺀 영역만 스크롤된다
+.scrollArea {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.cover {
+  position: relative;
+  width: 100%;
+}
+
+.coverImage {
+  border-radius: 0;
+}
+
+.coverEmpty {
+  width: 100%;
+  aspect-ratio: 4 / 1;
+  background-color: colors.$surface-gray-subtle;
+}
+
+.coverButtons {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: spacing.$spacing-8;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.overlayBtn {
+  width: 32px;
+  height: 32px;
+  background-color: colors.$bg-overlay-black;
+  backdrop-filter: blur(5px);
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-20;
+  margin-top: -$cover-overlap;
+  padding: 0 spacing.$spacing-20 spacing.$spacing-20;
+
+  @include bp.breakpoint-down("xs") {
+    padding: 0 spacing.$spacing-16 spacing.$spacing-20;
+  }
+}
+
+.profileImage {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  border: 2px solid colors.$border-inverse;
+  box-sizing: content-box;
+  margin: -2px;
+}
+
+.profileCameraBtn {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 8px);
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: 0 spacing.$spacing-20 spacing.$spacing-20;
+}
+
+.saveButton {
+  width: 100%;
+}
+
+.linkContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-8;
+
+  .editBar {
+    align-self: stretch;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .titleContainer {
-    .title {
-      @include typo.title-3;
-      color: colors.$text-gray-normal;
-    }
+  .linkList {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: spacing.$spacing-8;
   }
 
-  .textBtnContainer {
+  .linkRow {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: spacing.$spacing-40;
-    overflow-y: auto;
-    max-height: 552px;
+    align-items: center;
+    gap: spacing.$spacing-8;
+  }
+
+  .platformTrigger {
+    flex: 0 0 140px;
+    min-width: 0;
+    height: 52px;
+    border: 1px solid colors.$border-gray-subtle;
+    border-radius: radius.$radius-sm;
+    background-color: colors.$surface-base;
 
     @include bp.breakpoint-down("xs") {
-      height: 100%;
-      gap: 0;
+      flex-basis: 120px;
     }
   }
 
-  .textContainer {
+  .platformSelect {
+    width: 100%;
+    height: 52px;
     display: flex;
-    flex-direction: column;
-    gap: spacing.$spacing-20;
-
-    @include bp.breakpoint-down("xs") {
-      max-height: 100%;
-    }
-  }
-
-  .linkContainer {
-    display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     gap: spacing.$spacing-12;
+    padding: 0 spacing.$spacing-16;
+    border: 1px solid colors.$border-gray-subtle;
+    border-radius: radius.$radius-sm;
+    background-color: colors.$surface-base;
+    color: colors.$text-gray-bold;
+    cursor: pointer;
 
-    .editBar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    @include typo.label-2;
 
-    .linkList {
-      display: flex;
-      flex-direction: column;
-      gap: spacing.$spacing-8;
-    }
-
-    .linkRow {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: spacing.$spacing-8;
-    }
-
-    .platformTrigger {
-      flex: 0 0 140px;
-      min-width: 0;
-      height: 52px;
-      border: 1px solid colors.$border-gray-subtle;
-      border-radius: radius.$radius-sm;
-      background-color: colors.$surface-base;
-
-      @include bp.breakpoint-down("xs") {
-        flex-basis: 124px;
-      }
-    }
-
-    .platformSelect {
-      width: 100%;
+    // 웹: 바깥 래퍼(.platformTrigger)가 테두리를 그린다
+    .platformTrigger & {
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: spacing.$spacing-4;
-      padding: 0 spacing.$spacing-16;
       border: none;
-      border-radius: radius.$radius-sm;
-      background-color: transparent;
-      color: colors.$text-gray-bold;
-      cursor: pointer;
-
-      @include typo.label-2;
-
-      &:disabled {
-        color: colors.$text-gray-subtler;
-        cursor: not-allowed;
-      }
-
-      @include bp.breakpoint-down("xs") {
-        padding: 0 spacing.$spacing-12;
-      }
     }
 
-    .platformSelectLabel {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-align: left;
+    &:disabled {
+      cursor: default;
     }
 
-    .platformSelectIcon {
-      flex-shrink: 0;
-      color: colors.$icon-gray-normal;
-    }
-
-    .linkNameField {
-      flex: 0 0 140px;
-      min-width: 0;
-
-      @include bp.breakpoint-down("xs") {
-        flex-basis: 124px;
-      }
-    }
-
-    .linkGroupSettings {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .linkUrlInput {
-      flex: 1;
-      min-width: 0;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: colors.$text-gray-bold;
-
-      @include typo.label-2;
-
-      &::placeholder {
-        color: colors.$text-gray-subtle;
-      }
-
-      &:disabled {
-        color: colors.$text-gray-subtler;
-        cursor: not-allowed;
-      }
+    @include bp.breakpoint-down("xs") {
+      flex: 0 0 120px;
+      width: 120px;
     }
   }
+
+  .platformSelectLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+
+    &.placeholder {
+      color: colors.$text-gray-subtle;
+    }
+  }
+
+  .platformSelectIcon {
+    flex-shrink: 0;
+    color: colors.$icon-gray-bold;
+  }
+
+  .linkNameField {
+    flex: 0 0 140px;
+    min-width: 0;
+
+    @include bp.breakpoint-down("xs") {
+      flex-basis: 120px;
+    }
+  }
+
+  .linkGroupSettings {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .linkUrlInput {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: colors.$text-gray-bold;
+
+    @include typo.label-2;
+
+    &::placeholder {
+      color: colors.$text-gray-subtle;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  .addLinkButton {
+    padding: 0 spacing.$spacing-16 0 spacing.$spacing-12;
+  }
+}
+
+.platformSheetList {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
 }
