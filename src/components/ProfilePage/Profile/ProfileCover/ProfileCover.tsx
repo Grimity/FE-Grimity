@@ -65,18 +65,19 @@ export default function ProfileCover({
             </div>
           )}
         </>
-      ) : (
+      ) : isMyProfile ? (
         <div className={styles.emptyCover}>
-          {isMyProfile && (
-            <SolidButton
-              size="regular"
-              iconLeft={<Icon name="plus" size={16} />}
-              onClick={handleUploadCover}
-            >
-              커버 추가하기
-            </SolidButton>
-          )}
+          <SolidButton
+            size="regular"
+            iconLeft={<Icon name="plus" size={16} />}
+            onClick={handleUploadCover}
+          >
+            커버 추가하기
+          </SolidButton>
         </div>
+      ) : (
+        // 커버가 없는 타 유저는 Thumbnail 기본 상태(로고 플레이스홀더)를 보여준다
+        <Thumbnail alt="" ratio="4/1" className={styles.thumbnail} />
       )}
       <input
         ref={inputRef}

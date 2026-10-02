@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
+import ProfileLinkModal from "@/components/Modal/ProfileLink/ProfileLinkModal";
 import UserInfo from "@/components/common/Cell/UserInfo/UserInfo";
 import UserItem from "@/components/common/Cell/UserItem/UserItem";
 import Icon from "@/components/common/Icon/Icon";
@@ -18,7 +19,6 @@ const MAX_VISIBLE_LINKS = 3;
 interface ProfileDetailsProps extends React.PropsWithChildren {
   userData: UserData;
   isMyProfile: boolean;
-  isMobile: boolean;
   handleOpenFollowerModal: () => void;
   handleOpenFollowingModal: () => void;
 }
@@ -26,13 +26,12 @@ interface ProfileDetailsProps extends React.PropsWithChildren {
 export default function ProfileDetails({
   userData,
   isMyProfile,
-  isMobile,
   children,
   handleOpenFollowerModal,
   handleOpenFollowingModal,
 }: ProfileDetailsProps) {
   const { copyToClipboard } = useClipboard();
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal } = useModal();
 
   const displayName = (linkName: string, link: string) => {
     if (EMAIL_PATTERN.test(link)) return link;
@@ -51,8 +50,8 @@ export default function ProfileDetails({
           <UserInfo
             type="follow"
             followerCount={formatCurrency(userData.followerCount)}
-            showFollowing={isMyProfile}
-            followingCount={isMyProfile ? formatCurrency(userData.followingCount) : undefined}
+            showFollowing
+            followingCount={formatCurrency(userData.followingCount)}
             onFollowerClick={isMyProfile ? handleOpenFollowerModal : undefined}
             onFollowingClick={isMyProfile ? handleOpenFollowingModal : undefined}
           />
@@ -87,11 +86,11 @@ export default function ProfileDetails({
               <span
                 className={styles.moreLinksText}
                 onClick={() =>
-                  openModal({
-                    type: "PROFILE-LINK",
-                    data: { title: "프로필 링크" },
-                    isFill: isMobile,
-                  })
+                  openModal(
+                    (close) => <ProfileLinkModal links={userData.links} onClose={close} />,
+                    undefined,
+                    { bare: true },
+                  )
                 }
               >
                 외 링크 {userData.links.length - MAX_VISIBLE_LINKS}개

@@ -4,6 +4,7 @@ import { useUserPosts } from "@/api/users/getIdPosts";
 
 import AllCard from "@/components/Board/BoardAll/AllCard/AllCard";
 import Empty from "@/components/common/Empty/Empty";
+import Filter from "@/components/common/Filter/Filter";
 import Navigation from "@/components/common/Pagination/Navigation/Navigation";
 
 import type { PostsSectionProps } from "./PostsSection.types";
@@ -12,7 +13,10 @@ import styles from "../ProfilePage.module.scss";
 
 const POSTS_PER_PAGE = 10;
 
-export default function PostsSection({ userId, postCount }: PostsSectionProps) {
+// 글 목록 API는 정렬 파라미터가 없어 최신순만 제공한다
+const postSortOptions = [{ value: "latest", label: "최신순" }];
+
+export default function PostsSection({ userId, isMyProfile, postCount }: PostsSectionProps) {
   const router = useRouter();
   const { query } = router;
   const currentPage = Number(query.page) || 1;
@@ -25,6 +29,8 @@ export default function PostsSection({ userId, postCount }: PostsSectionProps) {
     page: currentPage,
   });
 
+  const isEmpty = !posts || posts.length === 0;
+
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       router.push({ query: { ...query, page } }, undefined, { shallow: true });
@@ -33,20 +39,38 @@ export default function PostsSection({ userId, postCount }: PostsSectionProps) {
 
   return (
     <div className={styles.profileContent}>
-      <section>
-        {!posts || posts.length === 0 ? (
+      <section className={styles.postsContainer}>
+        <div className={styles.resultsBar}>
+          <div className={styles.resultsLabel}>
+            <span>게시물</span>
+            <span>
+              <span className={styles.resultsCount}>{postCount}</span>건
+            </span>
+          </div>
+          <div className={styles.rightBar}>
+            <Filter
+              variant="text"
+              options={postSortOptions}
+              value="latest"
+              onChange={() => {}}
+              disabled={isEmpty}
+            />
+          </div>
+        </div>
+        {isEmpty ? (
           <div className={styles.emptyWrap}>
             <Empty
               size="xl"
-              title="첫 글을 업로드해보세요"
-              buttonLabel="글 업로드"
-              onButtonClick={() => router.push("/board")}
+              iconName={isMyProfile ? "illust-replay" : "illust-result-null"}
+              title={isMyProfile ? "첫 글을 업로드해보세요" : "업로드한 글이 없어요"}
+              buttonLabel={isMyProfile ? "글 업로드" : undefined}
+              onButtonClick={isMyProfile ? () => router.push("/board") : undefined}
             />
           </div>
         ) : (
           <>
             <div className={styles.postContainer}>
-              {posts.map((post) => (
+              {posts?.map((post) => (
                 <AllCard key={post.id} post={post} case="my-posts" />
               ))}
             </div>

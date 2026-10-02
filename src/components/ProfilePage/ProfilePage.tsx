@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 
 import { useUserDataByUrl } from "@/api/users/getId";
 import { useDeviceStore } from "@/states/deviceStore";
-import useUserBlock from "@/hooks/useUserBlock";
 
 import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
 import Tab from "@/components/common/SegmentedControl/Tab/Tab";
@@ -15,6 +14,7 @@ import { useProfileImages } from "./Profile/hooks/useProfileImages";
 import FeedsSection from "./FeedsSection/FeedsSection";
 import PostsSection from "./PostsSection/PostsSection";
 import { useProfileTab } from "./hooks/useProfileTab";
+import { useBlockedProfileToast } from "./hooks/useBlockedProfileToast";
 import type { ProfilePageProps } from "./ProfilePage.types";
 
 import styles from "./ProfilePage.module.scss";
@@ -29,13 +29,13 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   const { data: userData, refetch: refetchUserData } = useUserDataByUrl(url);
   const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } =
     useProfileImages(userData, refetchUserData);
-  useUserBlock({ identifier: userData?.id, isBlocked: userData?.isBlocked });
+  useBlockedProfileToast(userData?.id, userData?.isBlocked, userData?.isBlocking);
 
   useEffect(() => {
     refetchUserData();
   }, [pathname, refetchUserData]);
 
-  const { activeTab, changeTab } = useProfileTab(isMyProfile);
+  const { activeTab, changeTab } = useProfileTab();
 
   // 두 편집 모드 모두 프로필 헤더를 가리고 화면 전체를 차지한다
   const [isEditingFeeds, setIsEditingFeeds] = useState(false);
@@ -83,15 +83,13 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                     number={userData?.feedCount}
                     onClick={() => changeTab("feeds")}
                   />
-                  {isMyProfile && (
-                    <Tab
-                      size={isTablet ? "md" : "lg"}
-                      active={activeTab === "posts"}
-                      title="글"
-                      number={userData?.postCount}
-                      onClick={() => changeTab("posts")}
-                    />
-                  )}
+                  <Tab
+                    size={isTablet ? "md" : "lg"}
+                    active={activeTab === "posts"}
+                    title="글"
+                    number={userData?.postCount}
+                    onClick={() => changeTab("posts")}
+                  />
                 </div>
               </section>
             )}
@@ -111,7 +109,11 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
                 onEditAlbums={() => setIsEditingAlbums(true)}
               />
             ) : (
-              isMyProfile && <PostsSection userId={id} postCount={userData?.postCount ?? 0} />
+              <PostsSection
+                userId={id}
+                isMyProfile={isMyProfile}
+                postCount={userData?.postCount ?? 0}
+              />
             )}
           </div>
         </>

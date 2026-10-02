@@ -24,7 +24,7 @@ export default function ShareModal({
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      showToast("클립보드에 복사되었습니다.", "success");
+      showToast("링크를 복사했어요", "success");
       onClose();
     } catch {
       showToast("클립보드 복사에 실패했습니다.", "error");

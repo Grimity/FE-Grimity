@@ -2,7 +2,6 @@ import { useRef } from "react";
 import clsx from "clsx";
 
 import Avatar from "@/components/common/Avatar/Avatar";
-import IconButton from "@/components/common/Button/IconButton/IconButton";
 import Icon from "@/components/common/Icon/Icon";
 
 import styles from "@/components/ProfilePage/Profile/ProfileImage/ProfileImage.module.scss";
@@ -42,30 +41,22 @@ export default function ProfileImage({
     return <div className={styles.profileImageContainer}>{avatar}</div>;
   }
 
-  // 모바일 Figma에는 편집 뱃지가 없어 아바타 자체를 눌러 이미지를 바꾼다
+  // 아바타와 뱃지 어디를 눌러도 이미지 수정 모달로 이어진다(모바일 Figma에는 뱃지가 없다)
   return (
     <div className={clsx(styles.profileImageContainer, !isMobile && styles.withBadge)}>
-      {isMobile ? (
-        <button
-          type="button"
-          className={styles.avatarButton}
-          onClick={handleUploadImage}
-          aria-label="프로필 이미지 변경"
-        >
-          {avatar}
-        </button>
-      ) : (
-        <>
-          {avatar}
-          <IconButton
-            variant="solid"
-            icon={<Icon name="pen-1" size={16} color="white" />}
-            onClick={handleUploadImage}
-            aria-label="프로필 이미지 변경"
-            className={styles.editBtn}
-          />
-        </>
-      )}
+      <button
+        type="button"
+        className={styles.avatarButton}
+        onClick={handleUploadImage}
+        aria-label="프로필 이미지 변경"
+      >
+        {avatar}
+        {!isMobile && (
+          <span className={styles.editBadge} aria-hidden>
+            <Icon name="pen-1" size={16} color="white" />
+          </span>
+        )}
+      </button>
       <input
         ref={inputRef}
         id="upload-image"

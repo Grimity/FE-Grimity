@@ -13,6 +13,7 @@ export default function ResponsiveMenu({
   trigger,
   items,
   mobileTitle,
+  mobileItemType = "text",
   align = "right",
   disabled = false,
 }: ResponsiveMenuProps) {
@@ -37,11 +38,11 @@ export default function ResponsiveMenu({
           title={mobileTitle}
           showCloseIcon
         >
-          <div className={styles.list}>
+          <div className={mobileItemType === "option" ? styles.optionList : styles.list}>
             {items.map((item) => (
               <ListItem
                 key={item.label}
-                type="textLg"
+                type={mobileItemType === "option" ? "optionCard" : "textLg"}
                 text={item.label}
                 active={item.selected}
                 onClick={() => {

@@ -72,6 +72,7 @@ export default function FeedsSection({
   }
 
   const isEmpty = feeds.length === 0;
+  const categorySize = isMobile ? "md" : "lg";
 
   return (
     <div className={styles.profileContent}>
@@ -79,6 +80,7 @@ export default function FeedsSection({
         <div className={styles.categoryContainer}>
           <div className={styles.categoryBar} ref={categoryBarRef}>
             <Category
+              size={categorySize}
               active={activeAlbum === null}
               title="전체"
               showNumber={false}
@@ -87,6 +89,7 @@ export default function FeedsSection({
             {albums.map((album) => (
               <Category
                 key={album.id}
+                size={categorySize}
                 active={activeAlbum === album.id}
                 title={album.name}
                 showNumber
@@ -131,6 +134,7 @@ export default function FeedsSection({
             {isMobile ? (
               <ResponsiveMenu
                 mobileTitle="정렬"
+                mobileItemType="option"
                 disabled={isEmpty}
                 trigger={
                   <button type="button" className={styles.sortTrigger} disabled={isEmpty}>
@@ -164,7 +168,7 @@ export default function FeedsSection({
               size="xl"
               iconName={isMyProfile ? "illust-upload-success" : "illust-result-null"}
               title={isMyProfile ? "첫 그림을 업로드해보세요" : "업로드한 그림이 없어요"}
-              buttonLabel={isMyProfile ? "그림 올리기" : undefined}
+              buttonLabel={isMyProfile ? "그림 업로드" : undefined}
               onButtonClick={isMyProfile ? () => router.push("/write") : undefined}
             />
           </div>
