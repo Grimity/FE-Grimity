@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 
 import { useUserDataByUrl } from "@/api/users/getId";
 import { useDeviceStore } from "@/states/deviceStore";
-import useUserBlock from "@/hooks/useUserBlock";
 
 import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
 import Tab from "@/components/common/SegmentedControl/Tab/Tab";
@@ -15,6 +14,7 @@ import { useProfileImages } from "./Profile/hooks/useProfileImages";
 import FeedsSection from "./FeedsSection/FeedsSection";
 import PostsSection from "./PostsSection/PostsSection";
 import { useProfileTab } from "./hooks/useProfileTab";
+import { useBlockedProfileToast } from "./hooks/useBlockedProfileToast";
 import type { ProfilePageProps } from "./ProfilePage.types";
 
 import styles from "./ProfilePage.module.scss";
@@ -29,7 +29,7 @@ export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) 
   const { data: userData, refetch: refetchUserData } = useUserDataByUrl(url);
   const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } =
     useProfileImages(userData, refetchUserData);
-  useUserBlock({ identifier: userData?.id, isBlocked: userData?.isBlocked });
+  useBlockedProfileToast(userData?.id, userData?.isBlocked, userData?.isBlocking);
 
   useEffect(() => {
     refetchUserData();
