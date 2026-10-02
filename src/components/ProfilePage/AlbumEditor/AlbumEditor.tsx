@@ -304,9 +304,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
                 variant={isEditingOrder && isMobile ? "primary" : "assistive"}
                 size="regular"
                 iconRight={
-                  isEditingOrder && isMobile ? undefined : (
-                    <Icon name="sort-horizontal" size={16} />
-                  )
+                  isEditingOrder && isMobile ? undefined : <Icon name="sort-horizontal" size={16} />
                 }
                 onClick={() => setIsEditingOrder((prev) => !prev)}
               >
