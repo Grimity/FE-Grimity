@@ -188,18 +188,16 @@
   gap: spacing.$spacing-8;
   height: 32px;
   padding: 0 spacing.$spacing-10 0 spacing.$spacing-12;
-  border: 1px solid colors.$border-gray-subtle;
-  border-radius: 100000px;
+  border: none;
   background-color: colors.$surface-base;
   color: colors.$text-gray-normal;
   cursor: pointer;
 
-  @include typo.label-5;
+  @include typo.label-3;
 
   &:disabled {
     cursor: not-allowed;
-    color: colors.$text-gray-subtler;
-    border-color: colors.$border-gray-subtler;
+    color: colors.$border-gray-subtle;
   }
 }
 
