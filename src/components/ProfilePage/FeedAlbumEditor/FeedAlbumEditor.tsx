@@ -152,7 +152,7 @@ export default function FeedAlbumEditor({
             </button>
             <h2 className={styles.mobileTitle}>그림 정리</h2>
           </div>
-          <TextButton variant="assistive" size="regular" disabled>
+          <TextButton variant="assistive" size="regular" onClick={handleGoBack}>
             저장
           </TextButton>
         </header>
