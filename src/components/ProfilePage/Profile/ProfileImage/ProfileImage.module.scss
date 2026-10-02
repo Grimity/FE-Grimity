@@ -1,4 +1,5 @@
 @use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
 @use "@/styles/tokens/spacing" as spacing;
 
 .profileImageContainer {
@@ -8,6 +9,7 @@
 }
 
 .avatarButton {
+  position: relative;
   display: flex;
   padding: 0;
   border: none;
@@ -21,11 +23,17 @@
   margin-right: spacing.$spacing-8;
 }
 
-.profileImageContainer .editBtn {
+.editBadge {
   position: absolute;
   bottom: 0;
   right: -(spacing.$spacing-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 28px;
   height: 28px;
+  box-sizing: border-box;
   border: 2px solid colors.$border-inverse;
+  border-radius: radius.$radius-full;
+  background-color: colors.$surface-inverse;
 }
