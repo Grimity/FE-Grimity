@@ -104,7 +104,7 @@ export default function BottomSheet(props: BottomSheetProps) {
                   </OutlinedButton>
                 </div>
                 <div className={styles.buttonWrap}>
-                  <SolidButton size="large" onClick={props.onPrimary}>
+                  <SolidButton size="large" onClick={props.onPrimary} disabled={props.primaryDisabled}>
                     {props.primaryLabel}
                   </SolidButton>
                 </div>
@@ -112,7 +112,7 @@ export default function BottomSheet(props: BottomSheetProps) {
             )}
             {props.buttonType === "primary" && (
               <div className={styles.buttonWrap}>
-                <SolidButton size="large" onClick={props.onPrimary}>
+                <SolidButton size="large" onClick={props.onPrimary} disabled={props.primaryDisabled}>
                   {props.primaryLabel}
                 </SolidButton>
               </div>
