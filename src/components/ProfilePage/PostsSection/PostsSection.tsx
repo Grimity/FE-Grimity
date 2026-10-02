@@ -16,7 +16,7 @@ const POSTS_PER_PAGE = 10;
 // 글 목록 API는 정렬 파라미터가 없어 최신순만 제공한다
 const postSortOptions = [{ value: "latest", label: "최신순" }];
 
-export default function PostsSection({ userId, postCount }: PostsSectionProps) {
+export default function PostsSection({ userId, isMyProfile, postCount }: PostsSectionProps) {
   const router = useRouter();
   const { query } = router;
   const currentPage = Number(query.page) || 1;
@@ -61,9 +61,10 @@ export default function PostsSection({ userId, postCount }: PostsSectionProps) {
           <div className={styles.emptyWrap}>
             <Empty
               size="xl"
-              title="첫 글을 업로드해보세요"
-              buttonLabel="글 업로드"
-              onButtonClick={() => router.push("/board")}
+              iconName={isMyProfile ? "illust-replay" : "illust-result-null"}
+              title={isMyProfile ? "첫 글을 업로드해보세요" : "업로드한 글이 없어요"}
+              buttonLabel={isMyProfile ? "글 업로드" : undefined}
+              onButtonClick={isMyProfile ? () => router.push("/board") : undefined}
             />
           </div>
         ) : (
