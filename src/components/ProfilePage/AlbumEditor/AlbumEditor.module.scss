@@ -82,14 +82,17 @@
   @include typo.label-2;
 }
 
+// 레이아웃의 전역 헤더(fixed) 위를 덮어 모바일에서 헤더를 하나만 보이게 한다
 .mobileBar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 3;
+  left: 0;
+  right: 0;
+  z-index: 101;
   display: flex;
   align-items: center;
   gap: spacing.$spacing-12;
-  height: 56px;
+  height: $header-height-mobile;
   padding: 0 spacing.$spacing-16;
   background-color: colors.$surface-base;
 }
