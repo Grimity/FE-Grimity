@@ -43,14 +43,6 @@
 .tabs {
   display: flex;
   align-items: center;
-
-  @include bp.breakpoint-down("xs") {
-    width: 100%;
-
-    > * {
-      flex: 1;
-    }
-  }
 }
 
 .tabContent {
