@@ -22,18 +22,11 @@ export default function ProfileCover({
   onEditCover,
   handleDeleteImage,
 }: ProfileCoverProps) {
-  if (!userData) return null;
-
   return (
     <div className={styles.cover}>
       {userData.backgroundImage ? (
         <>
-          <Thumbnail
-            src={coverImage}
-            alt="커버 이미지"
-            ratio="4/1"
-            className={styles.thumbnail}
-          />
+          <Thumbnail src={coverImage} alt="커버 이미지" ratio="4/1" className={styles.thumbnail} />
           {isMyProfile && (
             <div className={styles.editButtons}>
               <IconButton

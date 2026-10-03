@@ -1,5 +1,4 @@
 import { useState } from "react";
-import clsx from "clsx";
 
 import Menu from "@/components/common/Navigation/Menu/Menu";
 import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
@@ -62,7 +61,7 @@ export default function ResponsiveMenu({
       trigger={trigger}
       items={items.map(({ label, onClick, selected }) => ({ label, onClick, selected }))}
       align={align}
-      className={clsx(styles.desktopMenu)}
+      className={styles.desktopMenu}
       disabled={disabled}
     />
   );
