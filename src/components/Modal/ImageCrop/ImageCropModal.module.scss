@@ -11,8 +11,20 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: spacing.$spacing-20;
-  padding-top: spacing.$spacing-8;
+  gap: spacing.$spacing-28;
+  padding-top: spacing.$spacing-2;
+  padding-bottom: spacing.$spacing-12;
+
+  // 프로필은 이미지 영역이 커서 Figma(557) 높이에 맞게 여백을 줄인다
+  &.profileBody {
+    gap: spacing.$spacing-16;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+.cropFrame {
+  position: relative;
 }
 
 .cropArea {
@@ -96,7 +108,11 @@
   }
 }
 
+// Figma 구성에는 별도 행이 없어 이미지 영역 위 오른쪽 아래에 겹쳐 둔다
 .actions {
+  position: absolute;
+  right: spacing.$spacing-12;
+  bottom: spacing.$spacing-12;
   display: flex;
   align-items: center;
   gap: spacing.$spacing-8;

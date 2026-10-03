@@ -89,7 +89,6 @@
 .prefix {
   @include typo.label-2;
   flex-shrink: 0;
-  margin-right: spacing.$spacing-2;
   color: colors.$text-gray-subtle;
   white-space: nowrap;
 }

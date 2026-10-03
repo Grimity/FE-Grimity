@@ -6,7 +6,6 @@ import "react-image-crop/dist/ReactCrop.css";
 
 import Modal from "@/components/common/PopUp/Modal/Modal";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
-import TextButton from "@/components/common/Button/TextButton/TextButton";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
 import IconComponent from "@/components/Asset/Icon";
 import { useToast } from "@/hooks/useToast";
@@ -122,33 +121,52 @@ export default function ImageCropModal({
       onPrimary={handleSave}
       primaryDisabled={!file || !completedCrop || isSaving}
     >
-      <div className={styles.body}>
-        <div className={clsx(styles.cropArea, styles[variant])}>
-          {imageSrc ? (
-            <ReactCrop
-              crop={crop}
-              onChange={(_, percentCrop) => setCrop(percentCrop)}
-              onComplete={(_, percentCrop) => setCompletedCrop(percentCrop)}
-              aspect={aspect}
-              keepSelection
-            >
-              {/* ReactCrop은 원본 img 요소가 필요해 next/image를 쓸 수 없다 */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                ref={imgRef}
-                src={imageSrc}
-                alt="수정할 이미지"
-                className={styles.image}
-                style={{ transform: `scale(${scale})` }}
-                onLoad={(e) => handleImageLoad(e.currentTarget)}
-                draggable={false}
-              />
-            </ReactCrop>
-          ) : (
-            currentImageSrc && (
-              <ResponsiveImage src={currentImageSrc} alt="현재 이미지" className={styles.image} />
-            )
-          )}
+      <div className={clsx(styles.body, variant === "profile" && styles.profileBody)}>
+        <div className={styles.cropFrame}>
+          <div className={clsx(styles.cropArea, styles[variant])}>
+            {imageSrc ? (
+              <ReactCrop
+                crop={crop}
+                onChange={(_, percentCrop) => setCrop(percentCrop)}
+                onComplete={(_, percentCrop) => setCompletedCrop(percentCrop)}
+                aspect={aspect}
+                keepSelection
+              >
+                {/* ReactCrop은 원본 img 요소가 필요해 next/image를 쓸 수 없다 */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  ref={imgRef}
+                  src={imageSrc}
+                  alt="수정할 이미지"
+                  className={styles.image}
+                  style={{ transform: `scale(${scale})` }}
+                  onLoad={(e) => handleImageLoad(e.currentTarget)}
+                  draggable={false}
+                />
+              </ReactCrop>
+            ) : (
+              currentImageSrc && (
+                <ResponsiveImage src={currentImageSrc} alt="현재 이미지" className={styles.image} />
+              )
+            )}
+          </div>
+          <div className={styles.actions}>
+            <OutlinedButton size="regular" onClick={() => inputRef.current?.click()}>
+              {file ? "다른 이미지 선택" : "이미지 선택"}
+            </OutlinedButton>
+            {onDelete && currentImageSrc && (
+              <OutlinedButton size="regular" onClick={handleDelete} disabled={isSaving}>
+                삭제
+              </OutlinedButton>
+            )}
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handlePickFile}
+            />
+          </div>
         </div>
         <div className={styles.zoom}>
           <IconComponent name="zoomOut" size={24} />
@@ -164,23 +182,6 @@ export default function ImageCropModal({
             aria-label="확대·축소"
           />
           <IconComponent name="zoomIn" size={24} />
-        </div>
-        <div className={styles.actions}>
-          <OutlinedButton size="regular" onClick={() => inputRef.current?.click()}>
-            {file ? "다른 이미지 선택" : "이미지 선택"}
-          </OutlinedButton>
-          {onDelete && currentImageSrc && (
-            <TextButton variant="assistive" size="regular" onClick={handleDelete} disabled={isSaving}>
-              삭제
-            </TextButton>
-          )}
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handlePickFile}
-          />
         </div>
       </div>
     </Modal>

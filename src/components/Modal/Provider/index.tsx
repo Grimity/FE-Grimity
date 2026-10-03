@@ -92,7 +92,7 @@ function ModalProvider({ children }: PropsWithChildren) {
                 <div
                   className={`${styles.mobileHeader} ${isBack ? styles.mobileHeaderBack : ""}`}
                 >
-                  <button onClick={handleClose} aria-label={isBack ? "뒤로가기" : undefined}>
+                  <button onClick={handleClose} aria-label={isBack ? "뒤로가기" : "닫기"}>
                     {isBack ? (
                       <Icon name="chevron-left" size={24} />
                     ) : (

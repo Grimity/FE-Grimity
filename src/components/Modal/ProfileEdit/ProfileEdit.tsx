@@ -61,9 +61,15 @@ const PLATFORM_URLS: Record<string, string> = {
 
 const PLATFORM_OPTIONS = Object.keys(PLATFORM_URLS);
 
+// 저장 값("이메일")은 유지하고 화면 문구만 Figma에 맞춘다
+const PLATFORM_LABELS: Record<string, string> = { 이메일: "Email" };
+const getPlatformLabel = (platform: string) => PLATFORM_LABELS[platform] ?? platform;
+
 // 스킴 없이 도메인만 입력해도(placeholder가 암시하는 형태) 허용하고 내부적으로 보완한다.
+const SCHEME_PATTERN = /^https?:\/\//i;
+
 function normalizeUrl(url: string) {
-  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+  return SCHEME_PATTERN.test(url) ? url : `https://${url}`;
 }
 
 // 저장된 값은 스킴+도메인이 포함된 완전한 URL이므로, 입력 시 보여줬던 것과 동일하게
@@ -72,10 +78,19 @@ function stripPlatformDomain(linkName: string, link: string) {
   const domain = PLATFORM_URLS[linkName];
   if (!domain) return link;
 
-  const withoutScheme = link.replace(/^https?:\/\//i, "");
+  const withoutScheme = link.replace(SCHEME_PATTERN, "");
   return withoutScheme.toLowerCase().startsWith(domain.toLowerCase())
     ? withoutScheme.slice(domain.length)
     : link;
+}
+
+function serializeForm(name: string, description: string, profileId: string, links: LinkItem[]) {
+  return JSON.stringify([
+    name,
+    description,
+    profileId,
+    links.map(({ linkName, link, customName }) => [linkName, link, customName ?? ""]),
+  ]);
 }
 
 export default function ProfileEdit() {
@@ -84,14 +99,15 @@ export default function ProfileEdit() {
   const [description, setDescription] = useState("");
   const [profileId, setProfileId] = useState("");
   const [links, setLinks] = useState<LinkItem[]>([]);
+  // 저장된 값 기준 스냅샷. 변경 여부(저장 버튼 활성) 판단에 쓴다
+  const [initialSnapshot, setInitialSnapshot] = useState<string | null>(null);
   const [nameError, setNameError] = useState("");
   const [profileIdError, setProfileIdError] = useState("");
   const [isEditingOrder, setIsEditingOrder] = useState(false);
   const [platformSheetIndex, setPlatformSheetIndex] = useState<number | null>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const profileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
+  const isFormInitializedRef = useRef(false);
   const closeModal = useModalStore((s) => s.closeModal);
   const { restoreScrollPosition } = useScrollRestoration("profileEdit-scroll");
   const { showToast } = useToast();
@@ -101,13 +117,15 @@ export default function ProfileEdit() {
     refetch();
     queryClient.invalidateQueries({ queryKey: ["userData"] });
   };
-  const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } = useProfileImages(
+  const { profileImage, coverImage, openCoverEditor, openProfileImageEditor, deleteCover } = useProfileImages(
     myData as UserProfileResponse | undefined,
     refetchProfileData,
   );
 
   useEffect(() => {
-    if (myData) {
+    // 이미지 변경으로 myData가 다시 와도 입력 중인 값을 덮어쓰지 않는다
+    if (myData && !isFormInitializedRef.current) {
+      isFormInitializedRef.current = true;
       setName(myData.name?.trim() || "");
       setDescription(myData.description || "");
       setProfileId(myData.url || "");
@@ -121,6 +139,14 @@ export default function ProfileEdit() {
         }) || [];
 
       setLinks(processed);
+      setInitialSnapshot(
+        serializeForm(
+          myData.name?.trim() || "",
+          myData.description || "",
+          myData.url || "",
+          processed,
+        ),
+      );
     }
 
     const scrollPos = sessionStorage.getItem("profileEdit-scroll");
@@ -186,7 +212,7 @@ export default function ProfileEdit() {
         const domain = PLATFORM_URLS[l.linkName];
         if (
           domain &&
-          !/^https?:\/\//i.test(url) &&
+          !SCHEME_PATTERN.test(url) &&
           !url.toLowerCase().startsWith(domain.toLowerCase())
         ) {
           url = `${domain}${url}`;
@@ -236,8 +262,9 @@ export default function ProfileEdit() {
   // 모바일은 전체화면 진입 시 쌓은 history를 되돌려 닫는다(Modal의 닫기 흐름과 동일)
   const handleClose = () => (isMobile ? window.history.back() : closeModal());
 
+  const isDirty = serializeForm(name, description, profileId, links) !== initialSnapshot;
   const isSaveDisabled =
-    name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder;
+    !isDirty || name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder;
 
   if (isLoading) return <Loader />;
 
@@ -278,7 +305,7 @@ export default function ProfileEdit() {
             <IconButton
               variant="solid"
               icon={<Icon name="camera" size={16} color="white" />}
-              onClick={() => coverInputRef.current?.click()}
+              onClick={() => openCoverEditor()}
               aria-label="커버 이미지 변경"
               className={styles.overlayBtn}
             />
@@ -291,14 +318,6 @@ export default function ProfileEdit() {
               className={styles.overlayBtn}
             />
           </div>
-          <input
-            ref={coverInputRef}
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={addCover}
-            onClick={(e) => (e.currentTarget.value = "")}
-          />
         </div>
         <div className={styles.textContainer}>
           <div className={styles.profileImage}>
@@ -311,17 +330,9 @@ export default function ProfileEdit() {
             <IconButton
               variant="solid"
               icon={<Icon name="camera" size={16} color="white" />}
-              onClick={() => profileInputRef.current?.click()}
+              onClick={() => openProfileImageEditor()}
               aria-label="프로필 이미지 변경"
               className={clsx(styles.overlayBtn, styles.profileCameraBtn)}
-            />
-            <input
-              ref={profileInputRef}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={changeProfileImage}
-              onClick={(e) => (e.currentTarget.value = "")}
             />
           </div>
           <Input
@@ -407,6 +418,9 @@ export default function ProfileEdit() {
                               <TextField
                                 className={styles.linkNameField}
                                 placeholder="직접 입력"
+                                aria-label="링크 이름"
+                                autoComplete="off"
+                                spellCheck={false}
                                 value={link.customName || ""}
                                 disabled={isEditingOrder}
                                 onChange={(e) => updateLink(index, { customName: e.target.value })}
@@ -417,6 +431,7 @@ export default function ProfileEdit() {
                                   value={link.linkName}
                                   options={PLATFORM_OPTIONS}
                                   disabled={isEditingOrder}
+                                  getLabel={getPlatformLabel}
                                   onSelect={(platform) => handlePlatformChange(index, platform)}
                                   onTriggerClick={
                                     isMobile ? () => setPlatformSheetIndex(index) : undefined
@@ -435,6 +450,10 @@ export default function ProfileEdit() {
                               <input
                                 className={styles.linkUrlInput}
                                 placeholder={PLATFORM_URLS[link.linkName] || "링크 주소"}
+                                aria-label="링크 주소"
+                                autoComplete="off"
+                                spellCheck={false}
+                                inputMode={link.linkName === "이메일" ? "email" : "url"}
                                 value={link.link}
                                 disabled={isEditingOrder}
                                 onChange={(e) => updateLink(index, { link: e.target.value.trim() })}
@@ -480,7 +499,7 @@ export default function ProfileEdit() {
             <ListItem
               key={platform}
               type="optionCard"
-              text={platform}
+              text={getPlatformLabel(platform)}
               active={platformSheetIndex !== null && links[platformSheetIndex]?.linkName === platform}
               onClick={() => {
                 if (platformSheetIndex !== null) handlePlatformChange(platformSheetIndex, platform);

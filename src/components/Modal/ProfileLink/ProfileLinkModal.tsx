@@ -16,7 +16,8 @@ import styles from "./ProfileLinkModal.module.scss";
 const MODAL_TITLE = "프로필 링크";
 
 // 프로토콜은 표시하지 않고 도메인부터 보여준다
-const toDisplayUrl = (link: string) => link.replace(/^https?:\/\//, "");
+const SCHEME_PATTERN = /^https?:\/\//;
+const toDisplayUrl = (link: string) => link.replace(SCHEME_PATTERN, "");
 
 export default function ProfileLinkModal({ links, onClose }: ProfileLinkModalProps) {
   const { copyToClipboard } = useClipboard();

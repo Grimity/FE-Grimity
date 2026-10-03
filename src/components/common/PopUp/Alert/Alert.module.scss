@@ -2,6 +2,7 @@
 @use "@/styles/tokens/radius" as radius;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/breakpoint" as bp;
 
 .alert {
   box-sizing: border-box;
@@ -77,6 +78,20 @@
     width: 100%;
     flex: 1;
     min-width: 0;
+  }
+}
+
+// 모바일 Alert는 Figma 기준 폭 336(좌우 여백 12), 높이 204.
+// Backdrop 안쪽 여백(24)보다 12px씩 넓게 쓰도록 음수 마진으로 보정한다.
+@include bp.breakpoint-only("xs") {
+  .alert:not(.xl) {
+    width: calc(100vw - #{spacing.$spacing-24});
+    max-width: 336px;
+    margin-inline: -#{spacing.$spacing-12};
+
+    .description {
+      margin-bottom: spacing.$spacing-20 + 6px;
+    }
   }
 }
 

@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import styles from "./Modal.module.scss";
@@ -6,14 +7,15 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 import IconComponent from "../Asset/Icon";
 import Icon from "../common/Icon/Icon";
 import Button from "../Button/Button";
-import Login from "./Login/Login";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
-import ProfileEdit from "./ProfileEdit/ProfileEdit";
 import Follow from "./Follow/Follow";
 import UploadModal from "./Upload/Upload";
 import Like from "./Like/Like";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
+
+// 드래그 앤 드롭 라이브러리를 포함하므로 프로필 수정을 열 때 불러온다
+const ProfileEdit = dynamic(() => import("./ProfileEdit/ProfileEdit"));
 
 export default function Modal() {
   const router = useRouter();
@@ -111,7 +113,7 @@ export default function Modal() {
         >
           <button
             onClick={handleCloseModal}
-            aria-label={isFollowModal ? "뒤로가기" : undefined}
+            aria-label={isFollowModal ? "뒤로가기" : "닫기"}
           >
             {isFollowModal ? (
               <Icon name="chevron-left" size={24} />
@@ -164,7 +166,7 @@ export default function Modal() {
             >
               {renderModalContent()}
               {!data?.hideCloseButton && type !== "PROFILE-EDIT" && (
-                <button className={styles.closeButton} onClick={handleCloseModal}>
+                <button className={styles.closeButton} onClick={handleCloseModal} aria-label="닫기">
                   <IconComponent name="x" size={24} isBtn />
                 </button>
               )}
