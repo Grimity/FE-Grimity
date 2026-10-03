@@ -119,6 +119,7 @@ function ProfilePageContent({ isMyProfile, id, url }: ProfilePageProps) {
               <PostsSection
                 userId={id}
                 isMyProfile={isMyProfile}
+                authorName={userData?.name ?? ""}
                 postCount={userData?.postCount ?? 0}
               />
             )}
