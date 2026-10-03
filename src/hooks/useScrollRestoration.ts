@@ -1,20 +1,20 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 export const useScrollRestoration = (key: string) => {
   const router = useRouter();
 
-  const saveScrollPosition = () => {
+  const saveScrollPosition = useCallback(() => {
     const scrollPosition = window.scrollY;
     sessionStorage.setItem(key, String(scrollPosition));
-  };
+  }, [key]);
 
-  const restoreScrollPosition = () => {
+  const restoreScrollPosition = useCallback(() => {
     const savedPosition = sessionStorage.getItem(key);
     if (savedPosition) {
       window.scrollTo(0, parseInt(savedPosition, 10));
     }
-  };
+  }, [key]);
 
   useEffect(() => {
     restoreScrollPosition();
@@ -25,7 +25,7 @@ export const useScrollRestoration = (key: string) => {
     return () => {
       router.events.off("routeChangeStart", handleRouteChangeStart);
     };
-  }, [router]);
+  }, [router, restoreScrollPosition, saveScrollPosition]);
 
   return { saveScrollPosition, restoreScrollPosition };
 };

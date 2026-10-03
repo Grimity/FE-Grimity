@@ -154,7 +154,7 @@ export default function ProfileEdit() {
       restoreScrollPosition();
       sessionStorage.removeItem("profileEdit-scroll");
     }
-  }, [myData]);
+  }, [myData, restoreScrollPosition]);
 
   const { mutateAsync: updateMyInfo, isPending } = useMeUpdateProfile({
     mutation: {
