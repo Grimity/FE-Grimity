@@ -73,12 +73,6 @@
   }
 }
 
-.albumDeleteModal {
-  @extend .modal;
-  min-height: 234px;
-  max-height: 234px;
-}
-
 .closeButton {
   position: absolute;
   top: 25px;

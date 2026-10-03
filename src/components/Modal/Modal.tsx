@@ -15,8 +15,6 @@ import Follow from "./Follow/Follow";
 import UploadModal from "./Upload/Upload";
 import Like from "./Like/Like";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
-import AlbumMove from "./AlbumMove/AlbumMove";
-import AlbumDelete from "./AlbumDelete/AlbumDelete";
 import ProfileLink from "./ProfileLink/ProfileLink";
 
 export default function Modal() {
@@ -108,10 +106,6 @@ export default function Modal() {
         return <Like />;
       case "ALBUM-SELECT":
         return <AlbumSelect {...data} />;
-      case "ALBUM-MOVE":
-        return <AlbumMove {...data} />;
-      case "ALBUM-DELETE":
-        return <AlbumDelete {...data} />;
       default:
         return null;
     }
@@ -176,10 +170,8 @@ export default function Modal() {
                   ? styles.followListModal
                   : type === "LIKE"
                   ? styles.followModal
-                  : type == "ALBUM-SELECT" || type == "ALBUM-MOVE"
+                  : type == "ALBUM-SELECT"
                   ? styles.albumSelectModal
-                  : type == "ALBUM-DELETE"
-                  ? styles.albumDeleteModal
                   : styles.modal
               }
               onClick={(e) => e.stopPropagation()}
