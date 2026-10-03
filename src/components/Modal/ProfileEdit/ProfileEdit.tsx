@@ -66,8 +66,10 @@ const PLATFORM_LABELS: Record<string, string> = { 이메일: "Email" };
 const getPlatformLabel = (platform: string) => PLATFORM_LABELS[platform] ?? platform;
 
 // 스킴 없이 도메인만 입력해도(placeholder가 암시하는 형태) 허용하고 내부적으로 보완한다.
+const SCHEME_PATTERN = /^https?:\/\//i;
+
 function normalizeUrl(url: string) {
-  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+  return SCHEME_PATTERN.test(url) ? url : `https://${url}`;
 }
 
 // 저장된 값은 스킴+도메인이 포함된 완전한 URL이므로, 입력 시 보여줬던 것과 동일하게
@@ -76,7 +78,7 @@ function stripPlatformDomain(linkName: string, link: string) {
   const domain = PLATFORM_URLS[linkName];
   if (!domain) return link;
 
-  const withoutScheme = link.replace(/^https?:\/\//i, "");
+  const withoutScheme = link.replace(SCHEME_PATTERN, "");
   return withoutScheme.toLowerCase().startsWith(domain.toLowerCase())
     ? withoutScheme.slice(domain.length)
     : link;
@@ -210,7 +212,7 @@ export default function ProfileEdit() {
         const domain = PLATFORM_URLS[l.linkName];
         if (
           domain &&
-          !/^https?:\/\//i.test(url) &&
+          !SCHEME_PATTERN.test(url) &&
           !url.toLowerCase().startsWith(domain.toLowerCase())
         ) {
           url = `${domain}${url}`;
