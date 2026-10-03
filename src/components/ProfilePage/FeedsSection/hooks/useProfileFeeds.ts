@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   useUserGetFeedsInfinite,
@@ -38,13 +38,16 @@ export function useProfileFeeds(userId: string) {
     onLoadMore: fetchNextPage,
   });
 
-  const feeds =
-    data?.pages.flatMap((page) =>
-      page.feeds.map((feed) => ({
-        ...feed,
-        albumId: activeAlbum || undefined,
-      })),
-    ) || [];
+  const feeds = useMemo(
+    () =>
+      data?.pages.flatMap((page) =>
+        page.feeds.map((feed) => ({
+          ...feed,
+          albumId: activeAlbum || undefined,
+        })),
+      ) ?? [],
+    [data, activeAlbum],
+  );
 
   return {
     feeds,

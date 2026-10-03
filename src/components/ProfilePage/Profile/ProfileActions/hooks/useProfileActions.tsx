@@ -17,7 +17,6 @@ import { usePostChat } from "@/api/chats/postChat";
 
 import Blocklist from "@/components/Modal/Blocklist/Blocklist";
 
-
 interface UseProfileActionsParams {
   userId: string;
   userData: UserProfileResponse;

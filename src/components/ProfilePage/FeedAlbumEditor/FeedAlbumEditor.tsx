@@ -32,7 +32,7 @@ interface Feed {
   albumId?: string;
 }
 
-interface Album {
+interface AlbumItem {
   id: string;
   name: string;
   feedCount: number;
@@ -40,7 +40,7 @@ interface Album {
 
 interface FeedAlbumEditorProps {
   feeds: Feed[];
-  albums: Album[];
+  albums: AlbumItem[];
   activeAlbum: string | null;
   onExitEditMode?: () => void;
 }
