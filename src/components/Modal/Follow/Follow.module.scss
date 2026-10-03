@@ -40,9 +40,16 @@
   }
 }
 
+// 탭 바와 divider는 간격 없이 붙고, 리스트와의 간격(12)은 .container의 gap이 맡는다
+.tabBar {
+  display: flex;
+  flex-direction: column;
+}
+
 .tabs {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .tabContent {
