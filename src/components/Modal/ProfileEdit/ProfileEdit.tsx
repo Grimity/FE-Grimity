@@ -88,8 +88,6 @@ export default function ProfileEdit() {
   const [profileIdError, setProfileIdError] = useState("");
   const [isEditingOrder, setIsEditingOrder] = useState(false);
   const [platformSheetIndex, setPlatformSheetIndex] = useState<number | null>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const profileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
   const closeModal = useModalStore((s) => s.closeModal);
@@ -101,7 +99,7 @@ export default function ProfileEdit() {
     refetch();
     queryClient.invalidateQueries({ queryKey: ["userData"] });
   };
-  const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } = useProfileImages(
+  const { profileImage, coverImage, openCoverEditor, openProfileImageEditor, deleteCover } = useProfileImages(
     myData as UserProfileResponse | undefined,
     refetchProfileData,
   );
@@ -278,7 +276,7 @@ export default function ProfileEdit() {
             <IconButton
               variant="solid"
               icon={<Icon name="camera" size={16} color="white" />}
-              onClick={() => coverInputRef.current?.click()}
+              onClick={() => openCoverEditor()}
               aria-label="커버 이미지 변경"
               className={styles.overlayBtn}
             />
@@ -291,14 +289,6 @@ export default function ProfileEdit() {
               className={styles.overlayBtn}
             />
           </div>
-          <input
-            ref={coverInputRef}
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={addCover}
-            onClick={(e) => (e.currentTarget.value = "")}
-          />
         </div>
         <div className={styles.textContainer}>
           <div className={styles.profileImage}>
@@ -311,17 +301,9 @@ export default function ProfileEdit() {
             <IconButton
               variant="solid"
               icon={<Icon name="camera" size={16} color="white" />}
-              onClick={() => profileInputRef.current?.click()}
+              onClick={() => openProfileImageEditor()}
               aria-label="프로필 이미지 변경"
               className={clsx(styles.overlayBtn, styles.profileCameraBtn)}
-            />
-            <input
-              ref={profileInputRef}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={changeProfileImage}
-              onClick={(e) => (e.currentTarget.value = "")}
             />
           </div>
           <Input
