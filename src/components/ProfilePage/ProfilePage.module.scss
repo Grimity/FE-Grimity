@@ -5,6 +5,16 @@
 @use "@/styles/layout/variables" as layout;
 
 .container {
+  // local 토스트가 Figma 위치(상단에서 5px)에 오도록 기준점을 11px 위로 올린다
+  .toastAnchor {
+    position: absolute;
+    top: -11px;
+    left: 0;
+    right: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
   width: 100%;
   display: flex;
   flex-direction: column;

@@ -48,7 +48,9 @@ function ProfilePageContent({ isMyProfile, id, url }: ProfilePageProps) {
 
   return (
     <div className={styles.container}>
-      <ToastContainer target="local" />
+      <div className={styles.toastAnchor}>
+        <ToastContainer target="local" />
+      </div>
       {isEditingAlbums ? (
         <AlbumEditor
           onExit={() => {
