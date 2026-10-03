@@ -35,6 +35,7 @@ import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 
+import { EMAIL_PATTERN } from "@/utils/profileLinkIcon";
 import { isValidProfileIdFormat, isForbiddenProfileId } from "@/utils/isValidProfileId";
 
 import PlatformMenu from "./PlatformMenu";
@@ -175,8 +176,7 @@ export default function ProfileEdit() {
       let url = l.link.trim();
 
       if (l.linkName === "이메일") {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(url)) {
+        if (!EMAIL_PATTERN.test(url)) {
           return showToast("올바른 이메일 형식이 아닙니다.", "error");
         }
         formattedLinks.push({ linkName, link: url });
