@@ -4,11 +4,23 @@
 
 .row {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: spacing.$spacing-8;
   padding-bottom: spacing.$spacing-16;
   border-bottom: 1px solid colors.$border-gray-subtler;
   list-style: none;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+}
+
+.menu {
+  flex-shrink: 0;
 }
 
 .link {

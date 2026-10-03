@@ -76,7 +76,12 @@ export default function PostsSection({
           <>
             <ul className={styles.postContainer}>
               {posts.map((post) => (
-                <ProfilePostRow key={post.id} post={post} authorName={authorName} />
+                <ProfilePostRow
+                  key={post.id}
+                  post={post}
+                  authorName={authorName}
+                  isMyProfile={isMyProfile}
+                />
               ))}
             </ul>
             {totalPages > 1 && (
