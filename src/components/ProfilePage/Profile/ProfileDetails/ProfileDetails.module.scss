@@ -64,5 +64,8 @@
 .moreLinksText {
   @include typo.label-5;
   color: colors.$text-primary-normal;
+  padding: 0;
+  border: 0;
+  background: none;
   cursor: pointer;
 }

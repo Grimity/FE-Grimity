@@ -83,7 +83,8 @@ export default function ProfileDetails({
               />
             </Link>
             {index === MAX_VISIBLE_LINKS - 1 && userData.links.length > MAX_VISIBLE_LINKS && (
-              <span
+              <button
+                type="button"
                 className={styles.moreLinksText}
                 onClick={() =>
                   openModal(
@@ -94,7 +95,7 @@ export default function ProfileDetails({
                 }
               >
                 외 링크 {userData.links.length - MAX_VISIBLE_LINKS}개
-              </span>
+              </button>
             )}
           </div>
         ))}
