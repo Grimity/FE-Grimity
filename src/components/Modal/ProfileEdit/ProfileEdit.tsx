@@ -61,6 +61,10 @@ const PLATFORM_URLS: Record<string, string> = {
 
 const PLATFORM_OPTIONS = Object.keys(PLATFORM_URLS);
 
+// 저장 값("이메일")은 유지하고 화면 문구만 Figma에 맞춘다
+const PLATFORM_LABELS: Record<string, string> = { 이메일: "Email" };
+const getPlatformLabel = (platform: string) => PLATFORM_LABELS[platform] ?? platform;
+
 // 스킴 없이 도메인만 입력해도(placeholder가 암시하는 형태) 허용하고 내부적으로 보완한다.
 function normalizeUrl(url: string) {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;
@@ -422,6 +426,7 @@ export default function ProfileEdit() {
                                   value={link.linkName}
                                   options={PLATFORM_OPTIONS}
                                   disabled={isEditingOrder}
+                                  getLabel={getPlatformLabel}
                                   onSelect={(platform) => handlePlatformChange(index, platform)}
                                   onTriggerClick={
                                     isMobile ? () => setPlatformSheetIndex(index) : undefined
@@ -485,7 +490,7 @@ export default function ProfileEdit() {
             <ListItem
               key={platform}
               type="optionCard"
-              text={platform}
+              text={getPlatformLabel(platform)}
               active={platformSheetIndex !== null && links[platformSheetIndex]?.linkName === platform}
               onClick={() => {
                 if (platformSheetIndex !== null) handlePlatformChange(platformSheetIndex, platform);

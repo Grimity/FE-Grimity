@@ -13,6 +13,8 @@ interface PlatformMenuProps {
   options: string[];
   disabled?: boolean;
   onSelect: (platform: string) => void;
+  /** 값과 다른 표시 문구가 필요할 때 쓴다 */
+  getLabel?: (platform: string) => string;
   /** 주어지면 메뉴 대신 이 핸들러를 호출한다(모바일 BottomSheet용) */
   onTriggerClick?: () => void;
 }
@@ -29,6 +31,7 @@ export default function PlatformMenu({
   options,
   disabled,
   onSelect,
+  getLabel = (platform) => platform,
   onTriggerClick,
 }: PlatformMenuProps) {
   const [open, setOpen] = useState(false);
@@ -86,7 +89,7 @@ export default function PlatformMenu({
         aria-expanded={open}
         onClick={() => (onTriggerClick ? onTriggerClick() : setOpen((prev) => !prev))}
       >
-        <span className={clsx(styles.label, !value && styles.placeholder)}>{value || "선택"}</span>
+        <span className={clsx(styles.label, !value && styles.placeholder)}>{value ? getLabel(value) : "선택"}</span>
         <Icon name="chevron-down" size={20} className={styles.icon} />
       </button>
       {open &&
@@ -102,7 +105,7 @@ export default function PlatformMenu({
           >
             <Menu
               items={options.map((platform) => ({
-                label: platform,
+                label: getLabel(platform),
                 selected: value === platform,
                 onClick: () => {
                   onSelect(platform);
