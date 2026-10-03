@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import router from "next/router";
+import { useQueryClient } from "@tanstack/react-query";
+import { v4 as uuidv4 } from "uuid";
 
 import clsx from "clsx";
 
@@ -39,6 +41,8 @@ import PlatformMenu from "./PlatformMenu";
 import styles from "./ProfileEdit.module.scss";
 
 interface LinkItem {
+  /** 목록 key·드래그 식별용. 순서·삭제가 바뀌어도 입력 state가 엉키지 않게 한다 */
+  id: string;
   linkName: string;
   link: string;
   customName?: string;
@@ -86,13 +90,19 @@ export default function ProfileEdit() {
   const coverInputRef = useRef<HTMLInputElement>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
 
+  const queryClient = useQueryClient();
   const closeModal = useModalStore((s) => s.closeModal);
   const { restoreScrollPosition } = useScrollRestoration("profileEdit-scroll");
   const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
+  // 이미지는 저장과 무관하게 즉시 반영되므로, 뒤의 프로필 페이지 데이터도 함께 갱신한다
+  const refetchProfileData = () => {
+    refetch();
+    queryClient.invalidateQueries({ queryKey: ["userData"] });
+  };
   const { profileImage, coverImage, changeProfileImage, addCover, deleteCover } = useProfileImages(
     myData as UserProfileResponse | undefined,
-    refetch,
+    refetchProfileData,
   );
 
   useEffect(() => {
@@ -105,8 +115,8 @@ export default function ProfileEdit() {
         myData.links?.map((link) => {
           const known = Object.keys(PLATFORM_URLS);
           return !known.includes(link.linkName)
-            ? { ...link, customName: link.linkName, linkName: "직접 입력" }
-            : { ...link, link: stripPlatformDomain(link.linkName, link.link) };
+            ? { ...link, id: uuidv4(), customName: link.linkName, linkName: "직접 입력" }
+            : { ...link, id: uuidv4(), link: stripPlatformDomain(link.linkName, link.link) };
         }) || [];
 
       setLinks(processed);
@@ -203,20 +213,24 @@ export default function ProfileEdit() {
 
   const handleLinkDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    const newLinks = [...links];
-    const [moved] = newLinks.splice(result.source.index, 1);
-    newLinks.splice(result.destination.index, 0, moved);
-    setLinks(newLinks);
+    const { source, destination } = result;
+    setLinks((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(source.index, 1);
+      next.splice(destination.index, 0, moved);
+      return next;
+    });
+  };
+
+  const updateLink = (index: number, patch: Partial<LinkItem>) => {
+    setLinks((prev) => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)));
   };
 
   const handlePlatformChange = (index: number, platform: string) => {
-    const newLinks = [...links];
-    newLinks[index] = {
-      ...newLinks[index],
+    updateLink(index, {
       linkName: platform,
       customName: platform === "직접 입력" ? "" : undefined,
-    };
-    setLinks(newLinks);
+    });
   };
 
   // 모바일은 전체화면 진입 시 쌓은 history를 되돌려 닫는다(Modal의 닫기 흐름과 동일)
@@ -378,8 +392,8 @@ export default function ProfileEdit() {
                   >
                     {links.map((link, index) => (
                       <Draggable
-                        key={index}
-                        draggableId={`link-${index}`}
+                        key={link.id}
+                        draggableId={link.id}
                         index={index}
                         isDragDisabled={!isEditingOrder}
                       >
@@ -395,11 +409,7 @@ export default function ProfileEdit() {
                                 placeholder="직접 입력"
                                 value={link.customName || ""}
                                 disabled={isEditingOrder}
-                                onChange={(e) => {
-                                  const newLinks = [...links];
-                                  newLinks[index].customName = e.target.value;
-                                  setLinks(newLinks);
-                                }}
+                                onChange={(e) => updateLink(index, { customName: e.target.value })}
                               />
                             ) : (
                               <div className={styles.platformTrigger}>
@@ -420,19 +430,14 @@ export default function ProfileEdit() {
                               state={isEditingOrder ? "enabled" : "delete"}
                               isDragging={snapshot.isDragging}
                               dragHandleProps={provided.dragHandleProps}
-                              onDelete={() => setLinks(links.filter((_, i) => i !== index))}
+                              onDelete={() => setLinks((prev) => prev.filter((_, i) => i !== index))}
                             >
                               <input
                                 className={styles.linkUrlInput}
                                 placeholder={PLATFORM_URLS[link.linkName] || "링크 주소"}
                                 value={link.link}
                                 disabled={isEditingOrder}
-                                onChange={(e) => {
-                                  const value = e.target.value.trim();
-                                  const newLinks = [...links];
-                                  newLinks[index].link = value;
-                                  setLinks(newLinks);
-                                }}
+                                onChange={(e) => updateLink(index, { link: e.target.value.trim() })}
                               />
                             </GroupSettings>
                           </div>
@@ -450,7 +455,7 @@ export default function ProfileEdit() {
               iconLeft={<Icon name="plus" size={20} />}
               className={styles.addLinkButton}
               disabled={isEditingOrder}
-              onClick={() => setLinks([...links, { linkName: "", link: "" }])}
+              onClick={() => setLinks((prev) => [...prev, { id: uuidv4(), linkName: "", link: "" }])}
             >
               링크 추가
             </OutlinedButton>
