@@ -78,18 +78,30 @@ function stripPlatformDomain(linkName: string, link: string) {
     : link;
 }
 
+function serializeForm(name: string, description: string, profileId: string, links: LinkItem[]) {
+  return JSON.stringify([
+    name,
+    description,
+    profileId,
+    links.map(({ linkName, link, customName }) => [linkName, link, customName ?? ""]),
+  ]);
+}
+
 export default function ProfileEdit() {
   const { data: myData, isLoading, refetch } = useMyData();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [profileId, setProfileId] = useState("");
   const [links, setLinks] = useState<LinkItem[]>([]);
+  // 저장된 값 기준 스냅샷. 변경 여부(저장 버튼 활성) 판단에 쓴다
+  const [initialSnapshot, setInitialSnapshot] = useState<string | null>(null);
   const [nameError, setNameError] = useState("");
   const [profileIdError, setProfileIdError] = useState("");
   const [isEditingOrder, setIsEditingOrder] = useState(false);
   const [platformSheetIndex, setPlatformSheetIndex] = useState<number | null>(null);
 
   const queryClient = useQueryClient();
+  const isFormInitializedRef = useRef(false);
   const closeModal = useModalStore((s) => s.closeModal);
   const { restoreScrollPosition } = useScrollRestoration("profileEdit-scroll");
   const { showToast } = useToast();
@@ -105,7 +117,9 @@ export default function ProfileEdit() {
   );
 
   useEffect(() => {
-    if (myData) {
+    // 이미지 변경으로 myData가 다시 와도 입력 중인 값을 덮어쓰지 않는다
+    if (myData && !isFormInitializedRef.current) {
+      isFormInitializedRef.current = true;
       setName(myData.name?.trim() || "");
       setDescription(myData.description || "");
       setProfileId(myData.url || "");
@@ -119,6 +133,14 @@ export default function ProfileEdit() {
         }) || [];
 
       setLinks(processed);
+      setInitialSnapshot(
+        serializeForm(
+          myData.name?.trim() || "",
+          myData.description || "",
+          myData.url || "",
+          processed,
+        ),
+      );
     }
 
     const scrollPos = sessionStorage.getItem("profileEdit-scroll");
@@ -234,8 +256,9 @@ export default function ProfileEdit() {
   // 모바일은 전체화면 진입 시 쌓은 history를 되돌려 닫는다(Modal의 닫기 흐름과 동일)
   const handleClose = () => (isMobile ? window.history.back() : closeModal());
 
+  const isDirty = serializeForm(name, description, profileId, links) !== initialSnapshot;
   const isSaveDisabled =
-    name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder;
+    !isDirty || name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder;
 
   if (isLoading) return <Loader />;
 
