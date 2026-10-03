@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 
@@ -100,21 +100,21 @@ export default function Follow({ initialTab, title }: FollowProps) {
   const { mutate: followUser } = useUserFollow();
   const { mutate: unfollowUser } = useUserUnfollow();
 
-  const handleFetchMoreFollowers = async () => {
+  const handleFetchMoreFollowers = useCallback(async () => {
     if (hasNextFollowers && !isFetchingFollowers && !isFetchingData) {
       setIsFetchingData(true);
       await fetchMoreFollowers();
       setIsFetchingData(false);
     }
-  };
+  }, [hasNextFollowers, isFetchingFollowers, isFetchingData, fetchMoreFollowers]);
 
-  const handleFetchMoreFollowings = async () => {
+  const handleFetchMoreFollowings = useCallback(async () => {
     if (hasNextFollowings && !isFetchingFollowings && !isFetchingData) {
       setIsFetchingData(true);
       await fetchMoreFollowings();
       setIsFetchingData(false);
     }
-  };
+  }, [hasNextFollowings, isFetchingFollowings, isFetchingData, fetchMoreFollowings]);
 
   const handleTabChange = (tab: "follower" | "following") => {
     setActiveTab(tab);
@@ -167,7 +167,14 @@ export default function Follow({ initialTab, title }: FollowProps) {
         observer.unobserve(currentObserverRef);
       }
     };
-  }, [activeTab, hasNextPage, isFetching, isFetchingData]);
+  }, [
+    activeTab,
+    hasNextPage,
+    isFetching,
+    isFetchingData,
+    handleFetchMoreFollowers,
+    handleFetchMoreFollowings,
+  ]);
 
   const handleClickUser = (url: string) => {
     route.push(`/${url}`);
