@@ -73,8 +73,18 @@
   }
 }
 
+// Figma 빈 상태 모달 높이 476: 박스 높이를 줄이고 아이콘은 14px, 문구는 9px 위로 올린다
+// (아이콘~문구 간격 +5px). 아이콘은 Empty의 첫 자식이다.
 .empty {
-  min-height: 324px;
+  min-height: 312px;
+
+  @include bp.breakpoint-up("sm") {
+    padding-top: calc(#{spacing.$spacing-72} - 14px);
+
+    > :first-child {
+      margin-bottom: calc(#{spacing.$spacing-16} + 5px);
+    }
+  }
 
   @include bp.breakpoint-down("xs") {
     min-height: 0;
