@@ -15,6 +15,7 @@ import { EMAIL_PATTERN, getLinkIconName } from "@/utils/profileLinkIcon";
 import styles from "./ProfileDetails.module.scss";
 
 const MAX_VISIBLE_LINKS = 3;
+const X_HANDLE_PATTERN = /^https?:\/\/(?:www\.)?x\.com\/([a-zA-Z0-9_]+)/i;
 
 interface ProfileDetailsProps extends React.PropsWithChildren {
   userData: UserData;
@@ -36,7 +37,7 @@ export default function ProfileDetails({
   const displayName = (linkName: string, link: string) => {
     if (EMAIL_PATTERN.test(link)) return link;
     if (linkName === "X") {
-      const handleMatch = link.match(/^https?:\/\/(?:www\.)?x\.com\/([a-zA-Z0-9_]+)/i);
+      const handleMatch = link.match(X_HANDLE_PATTERN);
       return handleMatch ? `@${handleMatch[1]}` : linkName;
     }
     return linkName;
@@ -63,7 +64,7 @@ export default function ProfileDetails({
 
       <div className={styles.linkContainer}>
         {userData.links.slice(0, MAX_VISIBLE_LINKS).map(({ linkName, link }, index) => (
-          <div key={index} className={styles.linkWrapper}>
+          <div key={`${link}-${index}`} className={styles.linkWrapper}>
             <Link
               title={link}
               href={link}
