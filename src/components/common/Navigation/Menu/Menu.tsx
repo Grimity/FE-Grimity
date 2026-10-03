@@ -60,7 +60,11 @@ export default function Menu({
           <li
             role="menuitem"
             tabIndex={0}
-            className={clsx(styles.item, item.selected && styles.itemSelected)}
+            className={clsx(
+              styles.item,
+              item.selected && styles.itemSelected,
+              item.danger && styles.itemDanger,
+            )}
             onClick={() => {
               item.onClick?.();
               closeMenu();

@@ -15,6 +15,8 @@ export default function Img({
   onRepresentativeClick,
   onDeleteClick,
   className,
+  unoptimized = false,
+  objectFit = "cover",
 }: ImgProps) {
   const isControlledRepresentative = isRepresentativeProp !== undefined;
   const [internalRepresentative, setInternalRepresentative] = useState(false);
@@ -36,13 +38,19 @@ export default function Img({
           isRepresentative && styles.representative,
         )}
       >
-        <ResponsiveImage
-          src={imageUrl ?? THUMBNAIL_PATH}
-          alt=""
-          className={styles.image}
-          mobileSize={400}
-          desktopSize={800}
-        />
+        {unoptimized ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl ?? THUMBNAIL_PATH} alt="" className={styles.image} style={{ objectFit }} />
+        ) : (
+          <ResponsiveImage
+            src={imageUrl ?? THUMBNAIL_PATH}
+            alt=""
+            className={styles.image}
+            style={{ objectFit }}
+            mobileSize={400}
+            desktopSize={800}
+          />
+        )}
 
         <button
           type="button"

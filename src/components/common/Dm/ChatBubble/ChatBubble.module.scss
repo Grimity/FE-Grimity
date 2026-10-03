@@ -8,14 +8,17 @@
   display: flex;
   flex-direction: column;
   gap: spacing.$spacing-6;
+  max-width: calc(100% - 72px);
 }
 
 .containerMine {
   align-items: flex-end;
+  align-self: flex-end;
 }
 
 .containerOthers {
   align-items: flex-start;
+  align-self: flex-start;
 }
 
 // ─── Standard bubble wrapper ─────────────────────────
@@ -25,8 +28,20 @@
   align-items: center;
   gap: spacing.$spacing-6;
 
+  > .actions {
+    left: 100%;
+    margin-left: spacing.$spacing-6;
+  }
+
   &.wrapperMine {
     flex-direction: row-reverse;
+
+    > .actions {
+      left: auto;
+      right: 100%;
+      margin-left: 0;
+      margin-right: spacing.$spacing-6;
+    }
   }
 
   &.wrapperHeart {
@@ -38,16 +53,90 @@
   }
 }
 
-// ─── Images stack (multiple attachments) ─────────────
-.imagesStack {
-  display: flex;
-  flex-direction: column;
-  gap: spacing.$spacing-4;
-  align-items: flex-start;
+.wrapperImage {
+  width: min(308px, 100%);
+
+  > .actions {
+    top: auto;
+    bottom: 0;
+    transform: none;
+  }
 }
 
-.imagesStackMine {
-  align-items: flex-end;
+.wrapperImageHeart {
+  margin-bottom: spacing.$spacing-10;
+}
+
+// ─── Image grid (개수별 레이아웃, 최대 308px) ──────────
+.imageGrid {
+  display: grid;
+  gap: spacing.$spacing-4;
+  width: 100%; 
+  border-radius: radius.$radius-sm;
+  overflow: hidden;
+}
+
+.imageCell {
+  overflow: hidden;
+}
+
+// 1개: 가로폭 고정(308) · 세로폭 가변(원본 비율)
+.grid1 {
+  grid-template-columns: 1fr;
+
+  .image {
+    height: auto;
+  }
+}
+
+// 2개: 1×2 정사각
+.grid2 {
+  grid-template-columns: 1fr 1fr;
+
+  .imageCell {
+    aspect-ratio: 1;
+  }
+}
+
+// 3개: 좌 1(세로 전체) + 우 2 스택
+.grid3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 1;
+
+  .imageCell:first-child {
+    grid-row: 1 / 3;
+  }
+}
+
+// 4개: 2×2
+.grid4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 1;
+}
+
+// 5개: 상 3 + 하 2
+.grid5 {
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 308 / 204;
+
+  .imageCell:nth-child(1) {
+    grid-column: 1 / 3;
+  }
+  .imageCell:nth-child(2) {
+    grid-column: 3 / 5;
+  }
+  .imageCell:nth-child(3) {
+    grid-column: 5 / 7;
+  }
+  .imageCell:nth-child(4) {
+    grid-column: 1 / 4;
+  }
+  .imageCell:nth-child(5) {
+    grid-column: 4 / 7;
+  }
 }
 
 // ─── Bubble ──────────────────────────────────────────
@@ -92,6 +181,9 @@
 
 // ─── Hover actions ───────────────────────────────────
 .actions {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: spacing.$spacing-4;
@@ -195,6 +287,10 @@
   gap: spacing.$spacing-4;
 }
 
+.answerRowClickable {
+  cursor: pointer;
+}
+
 .answerReplyIcon {
   color: colors.$icon-gray-subtle;
   flex-shrink: 0;
@@ -203,7 +299,7 @@
 .answerPill {
   display: flex;
   align-items: center;
-  width: 200px;
+  max-width: 200px;
   padding: spacing.$spacing-4 spacing.$spacing-10;
   border-radius: radius.$radius-full;
 }
@@ -226,7 +322,6 @@
 
 .answerPillText {
   @include typo.label-4;
-  flex: 1;
   min-width: 0;
   margin: 0;
   overflow: hidden;
@@ -234,37 +329,14 @@
   white-space: nowrap;
 }
 
-// ─── Images state ────────────────────────────────────
-.imagesWrapper {
-  width: 300px;
-  min-height: 140px;
-  border-radius: radius.$radius-sm;
-  overflow: hidden;
-}
-
-.imagePlaceholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 300px;
-  height: 140px;
-  background-color: #ffe6e6;
-  color: #ff0000;
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 1.4;
-  letter-spacing: -0.3px;
-  gap: 0;
-
-  p {
-    margin: 0;
-  }
-
-}
-
+// ─── Image ───────────────────────────────────────────
 .image {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   display: block;
+}
+
+.imageClickable {
+  cursor: pointer;
 }

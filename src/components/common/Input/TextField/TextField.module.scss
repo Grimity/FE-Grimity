@@ -5,12 +5,12 @@
 @use "@/styles/tokens/radius" as radius;
 
 .search {
-  height: 48px;
   padding: 0 spacing.$spacing-16;
   background-color: colors.$surface-gray-subtlest;
   border-color: colors.$border-gray-subtle;
   border-radius: radius.$radius-sm;
   gap: 8px;
+  box-sizing: content-box;
 
   &:focus-within {
     border-color: colors.$status-info;
@@ -39,12 +39,18 @@
   }
 }
 
+.searchMd {
+  height: 48px;
+}
+
 .titleVariant {
   height: auto;
+  align-items: flex-end;
+  gap: spacing.$spacing-8;
   border: none;
   border-bottom: 1px solid colors.$border-gray-subtle;
   border-radius: 0;
-  padding: 0 0 spacing.$spacing-8 0;
+  padding: 0 spacing.$spacing-12 spacing.$spacing-12;
   background-color: transparent;
 
   &:focus-within {
@@ -57,7 +63,7 @@
   color: colors.$text-gray-bold;
 
   &::placeholder {
-    color: colors.$text-gray-subtler;
+    color: colors.$text-gray-subtle;
   }
 }
 
@@ -87,8 +93,16 @@
 }
 
 .prefix {
-  @include typo.label-2;
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
+  margin-right: spacing.$spacing-8;
+}
+
+// 문자열 prefix(예: "www.grimity.com/")는 입력값과 이어 읽히도록 간격 없이 텍스트 스타일을 적용한다.
+.prefixText {
+  @include typo.label-2;
+  margin-right: 0;
   color: colors.$text-gray-subtle;
   white-space: nowrap;
 }

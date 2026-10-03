@@ -73,6 +73,7 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
               router.reload();
             } catch (err) {
               showToast("삭제 중 오류가 발생했습니다.", "error");
+              throw err;
             }
           },
         },

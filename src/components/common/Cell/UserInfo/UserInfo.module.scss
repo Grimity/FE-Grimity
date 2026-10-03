@@ -71,6 +71,11 @@
 .commentNickname {
   @include typo.label-5;
   color: colors.$text-gray-bold;
+
+  // 닉네임에 <Link>가 들어와도 gray-bold를 상속(앵커 기본색 방지)
+  a {
+    color: inherit;
+  }
 }
 
 .chip {

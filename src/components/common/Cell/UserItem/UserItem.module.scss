@@ -2,6 +2,7 @@
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 // ============================================
 // Avatar
@@ -86,9 +87,20 @@
 .defaultLeft {
   display: flex;
   align-items: center;
-  gap: spacing.$spacing-8;
   flex: 1;
   min-width: 0;
+}
+
+.defaultProfile {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.defaultProfileClickable {
+  cursor: pointer;
 }
 
 .defaultNickname {
@@ -124,6 +136,18 @@
   gap: spacing.$spacing-8;
   flex: 1;
   min-width: 0;
+}
+
+.idProfile {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-8;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.idProfileClickable {
+  cursor: pointer;
 }
 
 .idInfo {
@@ -462,7 +486,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
   min-width: 0;
 }
 
@@ -500,9 +523,13 @@
   flex-direction: column;
   align-items: flex-start;
   gap: spacing.$spacing-8;
-  padding: spacing.$spacing-12 0;
+  padding: spacing.$spacing-20 0;
   width: 100%;
   position: relative;
+
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-12 0;
+  }
 }
 
 .titleHeader {
@@ -634,6 +661,10 @@
   min-width: 0;
 }
 
+.headerLeftClickable {
+  cursor: pointer;
+}
+
 .commentContent {
   @include typo.body-2-r;
   color: colors.$text-gray-bold;
@@ -684,6 +715,14 @@
     outline: 2px solid colors.$border-gray-subtle;
     outline-offset: 2px;
     border-radius: radius.$radius-xs;
+  }
+}
+
+.commentActionBtnActive {
+  color: colors.$status-negative;
+
+  &:hover {
+    color: colors.$status-negative;
   }
 }
 

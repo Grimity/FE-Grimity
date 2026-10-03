@@ -8,6 +8,7 @@
   box-sizing: border-box;
   min-width: 0;
   width: 335px;
+  max-width: calc(100vw - #{spacing.$spacing-40});
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -97,7 +98,7 @@
 
 .alert.xl {
   width: 400px;
-  max-width: 400px;
+  max-width: calc(100vw - #{spacing.$spacing-40});
 
   .iconWrap {
     margin-bottom: spacing.$spacing-20;

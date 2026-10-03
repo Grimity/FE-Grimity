@@ -1,95 +1,79 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: spacing.$spacing-20;
   margin-top: 60px;
 
-  @include Size("mobile") {
-    margin-top: 24px;
+  @include bp.breakpoint-down("xs") {
+    margin-top: spacing.$spacing-24;
   }
 
-  .spaceBetween {
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-
-    .seeMore {
-      @include Sub4;
-      color: $gray60;
-      cursor: pointer;
-      @include Drag;
-    }
-  }
-
-  .profileContainer {
+  .actions {
     display: flex;
     align-items: center;
+    gap: spacing.$spacing-8;
+    flex-shrink: 0;
+  }
 
-    @include Size("mobile") {
-      width: 100%;
-      justify-content: space-between;
-    }
+  .slide {
+    width: 100%;
+    min-width: 0;
+  }
 
-    .profileLeft {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
+  .slideItem {
+    width: 180px;
+    height: auto;
 
-      .authorImage {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 1px solid $gray30;
-        @include Drag;
-      }
-
-      .authorInfo {
-        display: flex;
-        flex-direction: column;
-        margin-left: 16px;
-        margin-right: 24px;
-
-        .authorName {
-          @include Sub2;
-          color: $gray80;
-
-          @include Size("mobile") {
-            @include Sub4;
-          }
-        }
-
-        .follower {
-          @include Sub4;
-          color: $gray60;
-          display: flex;
-          gap: 8px;
-          @include Drag;
-
-          .followerColor {
-            color: $gray70;
-          }
-
-          @include Size("mobile") {
-            @include Label1;
-          }
-        }
-      }
+    @include bp.breakpoint-down("xs") {
+      width: 140px;
     }
   }
 
-  .cardList {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-column-gap: 16px;
-    grid-row-gap: 20px;
+  .moreSlide {
+    width: 56px;
 
-    @include Size("mobile") {
-      grid-template-columns: repeat(2, 1fr);
+    @include bp.breakpoint-down("xs") {
+      width: 48px;
     }
+  }
+
+  .moreButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: spacing.$spacing-8;
+    width: 100%;
+    height: 180px;
+
+    @include bp.breakpoint-down("xs") {
+      height: 140px;
+    }
+  }
+
+  .moreCircle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: radius.$radius-full;
+    background-color: colors.$surface-primary-subtlest;
+    flex-shrink: 0;
+  }
+
+  .moreLabel {
+    @include typo.label-6;
+    color: colors.$text-primary-normal;
+    white-space: nowrap;
+    text-align: center;
   }
 }

@@ -2,8 +2,7 @@ import clsx from "clsx";
 import styles from "./Avatar.module.scss";
 import { AvatarProps } from "./Avatar.types";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
-
-const SPRITE_PATH = "/sprites/icons.svg";
+import Icon from "@/components/common/Icon/Icon";
 
 export default function Avatar({
   src,
@@ -21,7 +20,7 @@ export default function Avatar({
         styles.avatar,
         isNamedSize && styles[`size-${size}`],
         styles[`type-${resolvedType}`],
-        className
+        className,
       )}
       style={!isNamedSize ? { width: size, height: size } : undefined}
       role="img"
@@ -37,14 +36,7 @@ export default function Avatar({
           mobileSize={300}
         />
       ) : (
-        <svg
-          className={styles.logo}
-          viewBox="0 0 32 32"
-          fill="none"
-          aria-hidden="true"
-        >
-          <use href={`${SPRITE_PATH}#logo-g`} />
-        </svg>
+        <Icon name="logo-g" size={32} className={styles.logo} />
       )}
     </div>
   );

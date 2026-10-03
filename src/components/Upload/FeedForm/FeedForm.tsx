@@ -1,39 +1,53 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import router from "next/router";
+import clsx from "clsx";
 
 import { postPresignedUrls, PresignedUrlRequest } from "@/api/images/postPresigned";
 
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 
-import IconComponent from "@/components/Asset/Icon";
-import Button from "@/components/Button/Button";
+import Icon from "@/components/common/Icon/Icon";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import TextButton from "@/components/common/Button/TextButton/TextButton";
+import TextField from "@/components/common/Input/TextField/TextField";
+import type { TextFieldHandle } from "@/components/common/Input/TextField/TextField.types";
+import TextArea from "@/components/common/Input/TextArea/TextArea";
+import TagSelect from "@/components/common/Tag/TagSelect/TagSelect";
+import ImgUpload from "@/components/common/Card/ImgUpload/ImgUpload";
+import Alert from "@/components/common/PopUp/Alert/Alert";
 import DraggableImage from "@/components/Upload/DraggableImage/DraggableImage";
-import Chip from "@/components/Chip/Chip";
+import AlbumSelectModal from "@/components/Modal/AlbumSelect/AlbumSelectModal";
 
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
+import { useDeviceStore } from "@/states/deviceStore";
+import { useUploadHeaderStore } from "@/states/uploadHeaderStore";
 
 import { CreateFeedRequest } from "@/api/feeds/postFeeds";
 
 import { FeedFormProps } from "@/components/Upload/FeedForm/FeedForm.types";
 
 import { useToast } from "@/hooks/useToast";
-import { useDeviceStore } from "@/states/deviceStore";
 
 import { removeUrlPrefix } from "@/utils/removeUrlPrefix";
 import { getImageDimensions } from "@/utils/getImageDimensions";
+import { convertToWebP } from "@/utils/convertToWebP";
 
 import styles from "@/components/Upload/FeedForm/FeedForm.module.scss";
+
+const MAX_IMAGES = 10;
+const MAX_TAGS = 10;
+const UPLOAD_DESCRIPTION = ["JPG/PNG", "1장 당 10MB 이내", "최대 10장까지 업로드"];
 
 export default function FeedForm({
   isEditMode,
   initialValues,
   onSubmit,
+  isSubmitting = false,
   onStateUpdate,
 }: FeedFormProps) {
   const [images, setImages] = useState<{ name: string; originalName: string; url: string }[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [tag, setTag] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [thumbnailName, setThumbnailName] = useState("");
@@ -41,14 +55,29 @@ export default function FeedForm({
   const [selectedAlbumId, setSelectedAlbumId] = useState<string | null>(null);
   const [selectedAlbumName, setSelectedAlbumName] = useState("");
 
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal: openDsModal } = useModal();
   const { showToast } = useToast();
+  const { isMobile } = useDeviceStore();
+
+  const cardSize = isMobile ? "md" : "lg";
 
   const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<TextFieldHandle>(null);
+  const imagesRef = useRef(images);
 
-  const { isMobile, isTablet } = useDeviceStore();
+  useEffect(() => {
+    imagesRef.current = images;
+  }, [images]);
+
+  useEffect(() => {
+    return () => {
+      imagesRef.current.forEach((img) => {
+        if (img.url.startsWith("blob:")) URL.revokeObjectURL(img.url);
+      });
+    };
+  }, []);
 
   const resetUnsavedChanges = () => {
     hasUnsavedChangesRef.current = false;
@@ -60,24 +89,26 @@ export default function FeedForm({
   }, [onStateUpdate]);
 
   const handleOpenAlbumSelect = () => {
-    const data = {
-      hideCloseButton: true,
-      selectedAlbumId: selectedAlbumId,
-      onSelect: (id: string, name: string) => {
-        setSelectedAlbumId(id);
-        setSelectedAlbumName(id ? name : "");
-      },
-    };
-
-    openModal({
-      type: "ALBUM-SELECT",
-      data: {
-        ...data,
-        ...(isMobile ? { title: "앨범 선택" } : {}),
-      },
-      ...(isMobile && { isFill: true }),
-    });
+    openDsModal(
+      (close) => (
+        <AlbumSelectModal
+          close={close}
+          selectedAlbumId={selectedAlbumId}
+          onSelect={(id, name) => {
+            setSelectedAlbumId(id);
+            setSelectedAlbumName(id ? name : "전체 앨범");
+          }}
+        />
+      ),
+      undefined,
+      { bare: true },
+    );
   };
+
+  // 업로드(신규 작성) 진입 시 제목 input에 자동 포커스
+  useEffect(() => {
+    if (!isEditMode) titleInputRef.current?.focus();
+  }, [isEditMode]);
 
   useEffect(() => {
     if (initialValues) {
@@ -92,38 +123,43 @@ export default function FeedForm({
     }
   }, [initialValues]);
 
-  // 첫 번째 사진을 썸네일 기본값으로
   useEffect(() => {
-    if (images.length > 0 && !thumbnailUrl) {
+    if (images.length === 0) {
+      if (thumbnailUrl) {
+        setThumbnailUrl("");
+        setThumbnailName("");
+      }
+      return;
+    }
+    // url이 전체 경로/카드명으로 섞여 들어올 수 있어 정규화 후 비교한다.
+    // (수정 모드에서 저장했던 썸네일이 첫 이미지로 덮어써지는 것 방지)
+    const stillExists = images.some(
+      (img) => removeUrlPrefix(img.url) === removeUrlPrefix(thumbnailUrl),
+    );
+    if (!stillExists) {
       setThumbnailUrl(images[0].url);
       setThumbnailName(images[0].name);
-    } else if (images.length === 0) {
-      setThumbnailUrl("");
-      setThumbnailName("");
     }
   }, [images, thumbnailUrl]);
 
   // 변경 사항 감지
   useEffect(() => {
-    const checkUnsavedChanges = () => {
-      if (isEditMode && initialValues) {
-        const hasChanges =
-          title !== (initialValues.title || "") ||
+    if (isEditMode && initialValues) {
+      setHasUnsavedChanges(
+        title !== (initialValues.title || "") ||
           content !== (initialValues.content || "") ||
           thumbnailName !== (initialValues.thumbnailName || "") ||
           JSON.stringify(tags) !== JSON.stringify(initialValues.tags || []) ||
           JSON.stringify(images.map((img) => removeUrlPrefix(img.name))) !==
             JSON.stringify((initialValues.images || []).map((img) => removeUrlPrefix(img.name))) ||
-          selectedAlbumId !== (initialValues.albumId || null);
-        setHasUnsavedChanges(hasChanges);
-      } else {
-        const hasChanges =
-          images.length > 0 || title.trim() !== "" || content.trim() !== "" || tags.length > 0;
-        setHasUnsavedChanges(hasChanges);
-      }
-    };
-    checkUnsavedChanges();
-  }, [images, title, content, tags, thumbnailUrl, selectedAlbumId, initialValues, isEditMode]);
+          selectedAlbumId !== (initialValues.albumId || null),
+      );
+    } else {
+      setHasUnsavedChanges(
+        images.length > 0 || title.trim() !== "" || content.trim() !== "" || tags.length > 0,
+      );
+    }
+  }, [images, title, content, tags, thumbnailName, selectedAlbumId, initialValues, isEditMode]);
 
   // 브라우저 이벤트 핸들러
   useEffect(() => {
@@ -139,7 +175,6 @@ export default function FeedForm({
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [hasUnsavedChanges]);
 
-  // // 라우터 이벤트 핸들러
   useEffect(() => {
     hasUnsavedChangesRef.current = hasUnsavedChanges;
   }, [hasUnsavedChanges]);
@@ -150,20 +185,23 @@ export default function FeedForm({
 
       router.events.emit("routeChangeError");
 
-      openModal({
-        type: null,
-        data: {
-          title: `업로드를 취소하고 나가시겠어요?`,
-          subtitle: "작성한 내용들은 모두 초기화돼요",
-          confirmBtn: "나가기",
-          onClick: () => {
+      openDsModal((close) => (
+        <Alert
+          variant="content"
+          title="업로드를 취소하고 나가시겠어요?"
+          size="xl"
+          contentText="작성한 내용들은 모두 초기화돼요"
+          secondaryLabel="아니요"
+          onSecondary={close}
+          primaryLabel="나가기"
+          onPrimary={() => {
             hasUnsavedChangesRef.current = false;
             setHasUnsavedChanges(false);
+            close();
             router.push(url);
-          },
-        },
-        isComfirm: true,
-      });
+          }}
+        />
+      ));
 
       throw "routeChange aborted.";
     };
@@ -172,55 +210,7 @@ export default function FeedForm({
     return () => {
       router.events.off("routeChangeStart", handleRouteChangeStart);
     };
-  }, [router, openModal]);
-
-  const convertToWebP = (file: File): Promise<File> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new window.Image();
-        img.src = event.target?.result as string;
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-
-          if (!ctx) {
-            console.error("Canvas context가 존재하지 않음");
-            reject(new Error("Canvas context not found"));
-            return;
-          }
-
-          ctx.drawImage(img, 0, 0);
-          canvas.toBlob(
-            (blob) => {
-              if (!blob) {
-                console.error("WebP 변환 실패");
-                reject(new Error("WebP 변환 실패"));
-                return;
-              }
-              const webpFile = new File([blob], file.name.replace(/\.\w+$/, ".webp"), {
-                type: "image/webp",
-              });
-              resolve(webpFile);
-            },
-            "image/webp",
-            0.9,
-          );
-        };
-        img.onerror = (error) => {
-          console.error("이미지 로드 실패", error);
-          reject(error);
-        };
-      };
-      reader.onerror = (error) => {
-        console.error("FileReader 실패", error);
-        reject(error);
-      };
-    });
-  };
+  }, [openDsModal]);
 
   const getFileExtension = (fileName: string) => {
     const ext = fileName.split(".").pop()?.toLowerCase();
@@ -247,7 +237,7 @@ export default function FeedForm({
 
   const uploadImagesToServer = async (files: FileList) => {
     try {
-      const remainingSlots = 10 - images.length;
+      const remainingSlots = MAX_IMAGES - images.length;
       if (remainingSlots <= 0) {
         showToast("최대 10장의 그림만 업로드할 수 있습니다.", "error");
         return;
@@ -295,8 +285,8 @@ export default function FeedForm({
         url: URL.createObjectURL(file),
       }));
 
-      setImages([...images, ...newImages]);
-    } catch (error) {
+      setImages((prev) => [...prev, ...newImages]);
+    } catch {
       showToast("이미지 업로드를 실패했어요.", "error");
     }
   };
@@ -308,16 +298,6 @@ export default function FeedForm({
       setThumbnailName(selectedImage.name);
     }
   };
-
-  const moveImage = useCallback((dragIndex: number, hoverIndex: number) => {
-    setImages((prevImages) => {
-      const newImages = [...prevImages];
-      const draggedImage = newImages[dragIndex];
-      newImages.splice(dragIndex, 1);
-      newImages.splice(hoverIndex, 0, draggedImage);
-      return newImages;
-    });
-  }, []);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -345,23 +325,12 @@ export default function FeedForm({
   };
 
   const removeImage = (index: number) => {
-    setImages((prevImages) => {
-      const updatedImages = prevImages.filter((_, i) => i !== index);
-      const isThumbnailRemoved = thumbnailUrl === prevImages[index].url;
-
-      if (isThumbnailRemoved && updatedImages.length > 0) {
-        setThumbnailUrl(updatedImages[0].url);
-        setThumbnailName(updatedImages[0].name);
-      } else if (updatedImages.length === 0) {
-        setThumbnailUrl("");
-        setThumbnailName("");
-      }
-
-      return updatedImages;
-    });
+    const removed = images[index];
+    if (removed?.url.startsWith("blob:")) URL.revokeObjectURL(removed.url);
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (!title.trim()) {
       showToast("제목을 입력해주세요.", "error");
       return;
@@ -392,34 +361,27 @@ export default function FeedForm({
     };
 
     onSubmit(data);
-  };
+  }, [title, content, images, tags, thumbnailName, selectedAlbumId, onSubmit, showToast]);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.nativeEvent.isComposing) return;
+  const handleAddTag = (rawTag: string) => {
+    const newTag = rawTag.replace(/#/g, "").trim();
 
-    if (event.key === "Enter" && tag.trim() !== "") {
-      event.preventDefault();
-
-      if (tag.trim().length < 2) {
-        showToast("태그는 두 글자 이상이어야 합니다.", "error");
-        return;
-      }
-
-      if (tags.length >= 10) {
-        showToast("태그는 최대 10개까지 추가할 수 있어요", "error");
-        return;
-      }
-
-      const newTag = tag.replace(/#/g, "").trim();
-
-      if (!tags.includes(newTag)) {
-        setTags((prevTags) => [...prevTags, newTag]);
-      } else {
-        showToast("이미 추가된 태그입니다.", "error");
-      }
-
-      setTag("");
+    if (newTag.length < 2) {
+      showToast("태그는 두 글자 이상이어야 합니다.", "error");
+      return;
     }
+
+    if (tags.length >= MAX_TAGS) {
+      showToast("태그는 최대 10개까지 추가할 수 있어요", "error");
+      return;
+    }
+
+    if (tags.includes(newTag)) {
+      showToast("이미 추가된 태그입니다.", "error");
+      return;
+    }
+
+    setTags((prevTags) => [...prevTags, newTag]);
   };
 
   const removeTag = (index: number) => {
@@ -439,22 +401,30 @@ export default function FeedForm({
   }, []);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    containerRef.current.addEventListener("wheel", handleWheel, { passive: false });
+    container.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.removeEventListener("wheel", handleWheel);
-      }
+      container.removeEventListener("wheel", handleWheel);
     };
   }, [handleWheel]);
 
   const isDisabled = title.trim() === "" || content.trim() === "" || images.length === 0;
 
-  const buttonText = () => {
-    return isEditMode ? "수정" : "업로드";
-  };
+  const buttonText = isEditMode ? "수정" : "업로드";
+
+  useEffect(() => {
+    if (!isMobile) {
+      useUploadHeaderStore.getState().clear();
+      return;
+    }
+    useUploadHeaderStore
+      .getState()
+      .setHeader({ label: buttonText, disabled: isDisabled || isSubmitting, submit: handleSubmit });
+    return () => useUploadHeaderStore.getState().clear();
+  }, [isMobile, isDisabled, isSubmitting, buttonText, handleSubmit]);
 
   const handleImageUpload = () => {
     fileInputRef.current?.click();
@@ -476,189 +446,110 @@ export default function FeedForm({
         onChange={(e) => e.target.files && uploadImagesToServer(e.target.files)}
       />
       <div className={styles.container}>
-        <div className={styles.sectionContainer}>
-          <section className={styles.imageSection} onDrop={handleDrop} onDragOver={handleDragOver}>
-            <div className={`${styles.addBtnContainer} ${!images.length ? styles.empty : ""}`}>
-              <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="images" direction="horizontal">
-                  {(provided) => (
-                    <div
-                      className={styles.imageContainer}
-                      ref={(el) => {
-                        provided.innerRef(el);
-                        containerRef.current = el;
-                      }}
-                      {...provided.droppableProps}
-                    >
-                      {images.map((image, index) => (
-                        <DraggableImage
-                          key={image.name}
-                          image={image}
-                          index={index}
-                          name={image.originalName}
-                          moveImage={moveImage}
-                          removeImage={() => removeImage(index)}
-                          isThumbnail={thumbnailUrl === image.url}
-                          onThumbnailSelect={() => selectThumbnail(image.url)}
-                        />
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
+        {!isMobile && (
+          <h1 className={styles.pageTitle}>{isEditMode ? "그림 수정" : "그림 업로드"}</h1>
+        )}
 
-              {((!isMobile && !isTablet) || images.length === 0) && images.length < 10 && (
-                <div role="button" onClick={handleImageUpload} className={styles.uploadBtn}>
-                  <div tabIndex={0}>
-                    <img
-                      src="/image/upload.svg"
-                      width={240}
-                      height={240}
-                      alt="그림 추가"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {(isMobile || isTablet) && images.length > 0 && images.length < 10 && (
-            <div role="button" onClick={handleImageUpload} style={{ width: "100%" }}>
-              <div className={styles.imageAddBtn}>
-                <IconComponent name="mobileAddImage" size={16} />
-                이미지 추가
-              </div>
-            </div>
-          )}
-          <section className={styles.writeSection}>
-            <div className={styles.textField}>
-              <div className={styles.inputContainer}>
-                <input
-                  className={styles.input}
-                  type="text"
-                  placeholder="제목을 입력해주세요"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  maxLength={32}
-                />
-                {title && (
-                  <div className={styles.countTotal}>
-                    <p className={styles.count}>{title.length}</p>/{32}
+        <section className={styles.imageSection} onDrop={handleDrop} onDragOver={handleDragOver}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div
+              className={clsx(styles.imageRow, images.length === 0 && styles.imageRowEmpty)}
+              ref={containerRef}
+            >
+              <Droppable droppableId="images" direction="horizontal">
+                {(provided) => (
+                  <div
+                    className={styles.imageTrack}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {images.map((image, index) => (
+                      <DraggableImage
+                        key={image.name}
+                        image={image}
+                        index={index}
+                        name={image.originalName}
+                        size={cardSize}
+                        removeImage={() => removeImage(index)}
+                        isThumbnail={thumbnailUrl === image.url}
+                        onThumbnailSelect={() => selectThumbnail(image.url)}
+                      />
+                    ))}
+                    {provided.placeholder}
                   </div>
                 )}
-              </div>
-              <div className={styles.bar} />
-              <div className={styles.contentContainer}>
-                <div className={styles.textareaContainer}>
-                  <textarea
-                    className={styles.textarea}
-                    placeholder="내용을 입력해주세요."
-                    value={content}
-                    maxLength={500}
-                    onChange={(e) => setContent(e.target.value)}
-                  />
-                  {content && (
-                    <div className={styles.contentCount}>
-                      <div className={styles.countTotal}>
-                        <p className={styles.count}>{content.length}</p>/{500}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className={styles.bar} />
-              </div>
-              <div className={styles.tagContainer}>
-                <div className={styles.tagInputContainer}>
-                  <label className={styles.label}>태그</label>
-                  <div className={styles.inputContainer}>
-                    <input
-                      className={styles.input}
-                      type="text"
-                      placeholder="엔터를 통해 10개까지 입력할 수 있어요"
-                      maxLength={10}
-                      value={tag}
-                      onChange={(e) => setTag(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      enterKeyHint="done"
-                      autoComplete="off"
-                    />
-                    {tag && (
-                      <div className={styles.countTotal}>
-                        <p className={styles.count}>{tag.length}</p>/{10}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.tagList}>
-                  {tags.map((tag, index) => (
-                    <Chip
-                      size="m"
-                      type="filled-assistive"
-                      key={index}
-                      rightIcon={
-                        <div
-                          onClick={() => removeTag(index)}
-                          role="button"
-                          tabIndex={0}
-                          className={styles.deleteTag}
-                        >
-                          <IconComponent name="deleteTag" size={16} isBtn />
-                        </div>
-                      }
-                    >
-                      {tag}
-                    </Chip>
-                  ))}
-                </div>
-              </div>
-              <div className={styles.tagContainer}>
-                <div className={styles.tagInputContainer}>
-                  <label className={styles.label}>앨범</label>
-                  <div className={styles.inputContainer}>
-                    <div
-                      className={`${
-                        selectedAlbumName?.trim() ? styles.textSelected : styles.text
-                      } ${styles.albumClick}`}
-                      onClick={handleOpenAlbumSelect}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      {selectedAlbumName?.trim() || "앨범 선택"}
-                    </div>
-                    <div
-                      className={styles.albumClick}
-                      onClick={handleOpenAlbumSelect}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      <IconComponent name="openAlbumSelect" size={14} isBtn />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+              </Droppable>
 
-          {isMobile ? (
-            <Button size="l" type="filled-primary" disabled={isDisabled} onClick={handleSubmit}>
-              {buttonText()}
-            </Button>
-          ) : (
-            <div className={styles.uploadBtn}>
-              <Button
-                size="l"
-                type="filled-primary"
-                disabled={isDisabled}
-                onClick={handleSubmit}
-                width="200px"
-              >
-                {buttonText()}
-              </Button>
+              {images.length < MAX_IMAGES && (
+                <ImgUpload
+                  size={cardSize}
+                  className={styles.uploadCard}
+                  description={UPLOAD_DESCRIPTION}
+                  onClick={handleImageUpload}
+                />
+              )}
             </div>
-          )}
-        </div>
+          </DragDropContext>
+        </section>
+
+        <section className={styles.writeSection}>
+          <TextField
+            ref={titleInputRef}
+            variant="title"
+            size={isMobile ? "sm" : "md"}
+            maxCount={32}
+            placeholder="제목을 입력해주세요"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+
+          <TextArea
+            variant="underline"
+            maxCount={500}
+            placeholder="내용을 입력해주세요."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className={styles.contentArea}
+          />
+
+          <div className={styles.field}>
+            <label className={styles.label}>태그</label>
+            <TagSelect
+              className={styles.tagSelect}
+              tags={tags}
+              onAddTag={handleAddTag}
+              onRemoveTag={removeTag}
+              maxTags={MAX_TAGS}
+              placeholder="태그 추가"
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>앨범</label>
+            <TextButton
+              variant="assistive"
+              className={styles.albumButton}
+              iconRight={<Icon name="chevron-right" size={16} color="gray-normal" />}
+              onClick={handleOpenAlbumSelect}
+            >
+              {selectedAlbumName?.trim() || "전체 앨범"}
+            </TextButton>
+          </div>
+        </section>
+
+        {!isMobile && (
+          <div className={styles.submitRow}>
+            <SolidButton
+              size="large"
+              className={styles.submitButton}
+              disabled={isDisabled || isSubmitting}
+              loading={isSubmitting}
+              onClick={handleSubmit}
+            >
+              {buttonText}
+            </SolidButton>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -22,6 +22,8 @@ export interface GNBProps {
   onClose?: () => void;
   onDownload?: () => void;
   onUpload?: () => void;
+  /** pc-main 업로드 버튼 텍스트 (기본 "그림 올리기", 자유게시판에선 "글쓰기") */
+  uploadLabel?: string;
   onLogin?: () => void;
   onMenu?: () => void;
   /** editor: 제목 옆 드롭다운 클릭 */
@@ -44,6 +46,8 @@ export interface GNBProps {
   /** text-button / editor 변형의 우측 텍스트 레이블 */
   rightLabel?: string;
   onRightLabelClick?: () => void;
+  /** text-button / editor 변형의 우측 텍스트 레이블 비활성화 여부 */
+  rightLabelDisabled?: boolean;
   /** DM 변형에서 표시되는 상대방 이름 */
   dmName?: string;
   /** DM 변형에서 표시되는 상대방 아이디 */

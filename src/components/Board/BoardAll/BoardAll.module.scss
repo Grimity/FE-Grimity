@@ -1,27 +1,48 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   width: 100%;
   display: flex;
   flex-direction: column;
 
-  .header {
-    height: 60px;
+  .pageHeader {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 32px;
-    @include Drag;
     align-items: center;
+    justify-content: space-between;
 
-    @include Size("mobile") {
-      height: auto;
-      margin-top: 8px;
-      margin-bottom: 16px;
+    @include bp.breakpoint-down("sm") {
+      margin-bottom: spacing.$spacing-24;
     }
 
-    @include Size("tablet") {
-      height: auto;
+    @include bp.breakpoint-down("xs") {
+      margin-bottom: spacing.$spacing-12;
+    }
+  }
+
+  .pageTitle {
+    margin: 0;
+    @include typo.title-1;
+    color: colors.$text-gray-bold;
+
+    @include bp.breakpoint-down("xs") {
+      @include typo.title-2;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: spacing.$spacing-16;
+    border-bottom: 1px solid colors.$border-gray-subtle;
+    @include Drag;
+
+    @include bp.breakpoint-down("xs") {
+      margin-top: spacing.$spacing-20;
     }
   }
 
@@ -29,34 +50,25 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
   }
 }
 
-.noResults {
-  height: 100px;
+.empty {
+  width: 100%;
+  height: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  @include Sub2;
-  color: $gray50;
-  margin-top: 60px;
-  margin-bottom: 200px;
+  align-items: center;
 }
 
 .paginationWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 60px;
-  position: relative;
+  margin-top: spacing.$spacing-24;
 
-  @include Size("mobile") {
-    margin-top: 40px;
+  @include bp.breakpoint-down("xs") {
+    margin-top: spacing.$spacing-20;
+    margin-bottom: spacing.$spacing-40;
   }
-}
-
-.uploadBtn {
-  position: absolute;
-  right: 0;
 }

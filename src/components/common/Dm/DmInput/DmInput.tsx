@@ -3,6 +3,8 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 import Icon from "@/components/common/Icon/Icon";
 
+import { formatReplyLabel } from "@/utils/formatReplyLabel";
+
 import styles from "./DmInput.module.scss";
 import type { DmInputProps } from "./DmInput.types";
 
@@ -20,7 +22,6 @@ export default function DmInput({
   images,
   onRemoveImage,
   replyTo,
-  onCancelReply,
   disabled = false,
   isSending = false,
   placeholder = "메시지 입력",
@@ -69,20 +70,10 @@ export default function DmInput({
       {isAnswer && (
         <div className={styles.replyContainer}>
           <div className={styles.replyHeader}>
-            <Icon name="reply-2" size={16} className={styles.replyIcon} />
-            <span className={styles.replyTarget}>{`${replyTo.target}님에게 답장`}</span>
+            <Icon name="forward-2" size={16} className={styles.replyIcon} />
+            <span className={styles.replyTarget}>{formatReplyLabel(replyTo.target)}</span>
           </div>
           <p className={styles.replyPreviewText}>{replyTo.text}</p>
-          {onCancelReply && (
-            <button
-              type="button"
-              className={styles.cancelReply}
-              onClick={onCancelReply}
-              aria-label="답장 취소"
-            >
-              <Icon name="close-circle-fill" size={16} />
-            </button>
-          )}
         </div>
       )}
 
@@ -99,7 +90,7 @@ export default function DmInput({
                   onClick={() => onRemoveImage(index)}
                   aria-label={`이미지 ${index + 1} 삭제`}
                 >
-                  <Icon name="close-circle-fill" size={12} />
+                  <Icon name="x" size={12} color="white" />
                 </button>
               )}
             </div>

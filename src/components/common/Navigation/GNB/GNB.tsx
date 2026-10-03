@@ -86,6 +86,7 @@ export default function GNB({
   onClose,
   onDownload,
   onUpload,
+  uploadLabel = "그림 올리기",
   onLogin,
   onMenu,
   onTitleMenuClick,
@@ -99,6 +100,7 @@ export default function GNB({
   rightActions = [],
   rightLabel,
   onRightLabelClick,
+  rightLabelDisabled = false,
   dmName,
   dmUsername,
   dmProfileImageUrl,
@@ -115,9 +117,11 @@ export default function GNB({
         <nav className={clsx(styles.gnb, styles.gnbPc, className)}>
           <LogoArea onClick={handleLogoClick} />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap24)}>
-            <SolidButton onClick={onUpload} size="regular">
-              그림 올리기
-            </SolidButton>
+            {onUpload && (
+              <SolidButton onClick={onUpload} size="regular">
+                {uploadLabel}
+              </SolidButton>
+            )}
             <div className={clsx(styles.flexRow, styles.gap8)}>
               <SearchButton variant="normal" onClick={onSearch} />
               <BellButton variant="normal" hasNotification={hasNotification} onClick={onBell} />
@@ -280,6 +284,7 @@ export default function GNB({
           <TextButton
             variant="primary"
             size="regular"
+            disabled={rightLabelDisabled}
             onClick={onRightLabelClick}
             className={styles.trailingText}
           >
@@ -352,12 +357,14 @@ export default function GNB({
             aria-label="닫기"
           />
           <div className={clsx(styles.flexRow, styles.flexPushEnd, styles.gap8)}>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="down" size={24} color="gray-bold" />}
-              onClick={onDownload}
-              aria-label="다운로드"
-            />
+            {onDownload && (
+              <IconButton
+                variant="sm"
+                icon={<Icon name="down" size={24} color="gray-bold" />}
+                onClick={onDownload}
+                aria-label="다운로드"
+              />
+            )}
           </div>
         </nav>
       );

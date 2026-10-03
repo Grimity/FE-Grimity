@@ -7,7 +7,6 @@ export type ModalType =
   | "PROFILE-EDIT"
   | "FOLLOWER"
   | "FOLLOWING"
-  | "UPLOAD"
   | "LIKE"
   | "ALBUM-SELECT";
 

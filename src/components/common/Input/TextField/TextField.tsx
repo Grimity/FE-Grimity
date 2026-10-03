@@ -14,8 +14,8 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
       size = "md",
       status = "default",
       maxCount,
-      onClear,
       prefix,
+      onClear,
       className,
       disabled,
       onChange,
@@ -33,7 +33,9 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
     );
 
     // controlled(value 전달)일 때는 value 길이를, 아니면 내부 state를 글자수로 쓴다.
-    const displayCount = rest.value !== undefined ? String(rest.value).length : charCount;
+    const controlledLength = rest.value !== undefined ? String(rest.value).length : null;
+    const currentCount = controlledLength ?? charCount;
+    const currentIsEmpty = controlledLength !== null ? controlledLength === 0 : isEmpty;
 
     const isDisabled = disabled || status === "disabled";
     const isSearch = variant === "search";
@@ -80,8 +82,9 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
 
     const wrapperClass = clsx(
       baseStyles.wrapper,
-      !isSearch && !isTitle && baseStyles[size],
+      !isTitle && baseStyles[size],
       isSearch && styles.search,
+      isSearch && size === "md" && styles.searchMd,
       isTitle && styles.titleVariant,
       status === "error" && baseStyles.error,
       status === "success" && baseStyles.success,
@@ -103,7 +106,11 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
             <Icon name="magnifer" size={20} color="gray-normal"/>
           </span>
         )}
-        {prefix && <span className={styles.prefix}>{prefix}</span>}
+        {prefix != null && (
+          <span className={clsx(styles.prefix, typeof prefix === "string" && styles.prefixText)}>
+            {prefix}
+          </span>
+        )}
         <input
           ref={inputRef}
           type="text"
@@ -114,7 +121,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
           onChange={handleChange}
           {...rest}
         />
-        {isSearch && onClear && !isEmpty && (
+        {isSearch && !currentIsEmpty && (
           <button
             type="button"
             onClick={clearContent}
@@ -127,7 +134,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
         )}
         {hasCount && (
           <div className={styles.count}>
-            <span className={styles.currentCount}>{displayCount}</span>
+            <span className={styles.currentCount}>{currentCount}</span>
             <span className={styles.maxCount}>/{maxCount}</span>
           </div>
         )}

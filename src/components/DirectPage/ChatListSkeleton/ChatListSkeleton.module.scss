@@ -1,4 +1,7 @@
-@use "@/styles/globals.scss" as *;
+@use "@/styles/breakpoint" as bp;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
 
 .container {
   display: flex;
@@ -9,35 +12,25 @@
 .skeletonItem {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 20px 24px;
-  border-bottom: 1px solid $gray20;
+  gap: spacing.$spacing-16;
+  padding: spacing.$spacing-20 spacing.$spacing-24;
+  border-bottom: 1px solid colors.$border-gray-subtler;
 
-  @include Size("mobile") {
-    padding: 16px 20px;
-    gap: 12px;
-  }
-
-  @include Size("tablet") {
-    padding: 16px 20px;
-    gap: 12px;
+  @include bp.breakpoint-down("md") {
+    padding: spacing.$spacing-16 spacing.$spacing-20;
+    gap: spacing.$spacing-12;
   }
 }
 
 .avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background: $gray30;
+  border-radius: radius.$radius-full;
+  background: colors.$surface-gray-subtler;
   flex-shrink: 0;
   animation: pulse 1.5s ease-in-out infinite;
 
-  @include Size("mobile") {
-    width: 36px;
-    height: 36px;
-  }
-
-  @include Size("tablet") {
+  @include bp.breakpoint-down("md") {
     width: 36px;
     height: 36px;
   }
@@ -47,7 +40,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: spacing.$spacing-8;
   overflow: hidden;
 }
 
@@ -55,22 +48,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: spacing.$spacing-12;
 }
 
 .username {
   height: 16px;
   width: 80px;
-  background: $gray30;
-  border-radius: 4px;
+  background: colors.$surface-gray-subtler;
+  border-radius: radius.$radius-xs;
   animation: pulse 1.5s ease-in-out infinite;
 
-  @include Size("mobile") {
-    height: 14px;
-    width: 70px;
-  }
-
-  @include Size("tablet") {
+  @include bp.breakpoint-down("md") {
     height: 14px;
     width: 70px;
   }
@@ -79,16 +67,11 @@
 .timestamp {
   height: 12px;
   width: 50px;
-  background: $gray30;
-  border-radius: 4px;
+  background: colors.$surface-gray-subtler;
+  border-radius: radius.$radius-xs;
   animation: pulse 1.5s ease-in-out infinite;
 
-  @include Size("mobile") {
-    height: 11px;
-    width: 45px;
-  }
-
-  @include Size("tablet") {
+  @include bp.breakpoint-down("md") {
     height: 11px;
     width: 45px;
   }
@@ -102,16 +85,11 @@
 .lastMessage {
   height: 14px;
   width: 180px;
-  background: $gray30;
-  border-radius: 4px;
+  background: colors.$surface-gray-subtler;
+  border-radius: radius.$radius-xs;
   animation: pulse 1.5s ease-in-out infinite;
 
-  @include Size("mobile") {
-    height: 13px;
-    width: 160px;
-  }
-
-  @include Size("tablet") {
+  @include bp.breakpoint-down("md") {
     height: 13px;
     width: 160px;
   }

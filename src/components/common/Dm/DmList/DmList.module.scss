@@ -2,14 +2,19 @@
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
 @use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 .item {
   display: flex;
   align-items: center;
   gap: spacing.$spacing-12;
-  padding: spacing.$spacing-12;
+  padding: spacing.$spacing-12 spacing.$spacing-20;
   cursor: pointer;
   transition: background-color 0.1s ease;
+
+  @include bp.breakpoint-down("xs") {
+    padding: spacing.$spacing-12 spacing.$spacing-16;
+  }
 
   &:hover {
     background-color: colors.$surface-gray-subtlest;
@@ -70,7 +75,7 @@
   width: 2px;
   height: 2px;
   border-radius: radius.$radius-full;
-  background-color: colors.$text-gray-normal;
+  background-color: colors.$text-gray-subtle;
   flex-shrink: 0;
 }
 

@@ -1,27 +1,15 @@
 import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
-import AvatarComponent from "@/components/common/Avatar/Avatar";
 import RadioButton from "@/components/common/Control/RadioButton/RadioButton";
 import Bookmark from "@/components/common/Control/Bookmark/Bookmark";
 import IconButton from "@/components/common/Button/IconButton/IconButton";
 import NumberBadge from "@/components/common/PushBadge/NumberBadge/NumberBadge";
 import Divider from "@/components/common/Divider/Divider";
+import ActionMenu from "@/components/common/Navigation/ActionMenu/ActionMenu";
 import UserInfo from "../UserInfo/UserInfo";
 import styles from "./UserItem.module.scss";
 import { UserItemProps } from "./UserItem.types";
-
-// ============================================
-// Avatar sub-component
-// ============================================
-
-interface AvatarProps {
-  size?: "md" | "xs";
-  image?: string;
-}
-
-function Avatar({ size = "md", image }: AvatarProps) {
-  return <AvatarComponent src={image} size={size} alt="" />;
-}
+import Avatar from "@/components/common/Avatar/Avatar";
 
 // ============================================
 // UserItem component
@@ -60,22 +48,69 @@ export default function UserItem({
   commentText,
   mentionName,
   likeCount,
+  isLiked = false,
   isAuthor,
   onLikeClick,
   onReplyClick,
+  onProfileClick,
   onMenuClick,
+  menuItems,
+  menuOpen = false,
+  onMenuOpenChange,
+  menuDisplayMode,
   onClick,
+  profileRef,
+  onProfileMouseEnter,
+  onProfileMouseLeave,
   showTrailingDivider = true,
 }: UserItemProps) {
+  const hasAnchoredMenu = !!menuItems?.length;
+
+  // 메뉴를 더보기 버튼에 직접 감싸서, 드롭다운이 셀 전체가 아닌 버튼 아래에 붙도록 한다.
+  const renderMenuButton = () => {
+    const button = (
+      <IconButton
+        variant="sm"
+        icon={<Icon name="dotmenu" size={16} />}
+        onClick={hasAnchoredMenu ? () => onMenuOpenChange?.(!menuOpen) : onMenuClick}
+        aria-label="메뉴"
+        aria-haspopup={hasAnchoredMenu ? "menu" : undefined}
+        aria-expanded={hasAnchoredMenu ? menuOpen : undefined}
+      />
+    );
+
+    if (!hasAnchoredMenu) return button;
+
+    return (
+      <ActionMenu
+        items={menuItems!}
+        open={menuOpen}
+        onOpenChange={(next) => onMenuOpenChange?.(next)}
+        displayMode={menuDisplayMode}
+      >
+        {button}
+      </ActionMenu>
+    );
+  };
+
   // ------------------------------------------
   // default
   // ------------------------------------------
   if (type === "default") {
     return (
-      <div className={clsx(styles.default, className)} onClick={onClick}>
+      <div className={clsx(styles.default, className)}>
         <div className={styles.defaultLeft}>
-          <Avatar size="md" image={profileImage} />
-          <span className={styles.defaultNickname}>{nickname}</span>
+          {/* 클릭/커서/호버 영역을 프로필 이미지+닉네임으로 한정(빈 공간 오작동 방지) */}
+          <div
+            ref={profileRef}
+            className={clsx(styles.defaultProfile, onClick && styles.defaultProfileClickable)}
+            onClick={onClick}
+            onMouseEnter={onProfileMouseEnter}
+            onMouseLeave={onProfileMouseLeave}
+          >
+            <Avatar size="md" src={profileImage} alt="profile" />
+            <span className={styles.defaultNickname}>{nickname}</span>
+          </div>
         </div>
         {children && <div className={styles.defaultRight}>{children}</div>}
       </div>
@@ -87,12 +122,29 @@ export default function UserItem({
   // ------------------------------------------
   if (type === "id") {
     return (
-      <div className={clsx(styles.id, className)} onClick={onClick}>
+      <div className={clsx(styles.id, className)} onClick={onProfileClick ? undefined : onClick}>
         <div className={styles.idLeft}>
-          <Avatar size="md" image={profileImage} />
-          <div className={styles.idInfo}>
-            <span className={styles.idNickname}>{nickname}</span>
-            {userId && <span className={styles.idUserId}>@{userId}</span>}
+          <div
+            className={clsx(styles.idProfile, onProfileClick && styles.idProfileClickable)}
+            onClick={onProfileClick}
+            onKeyDown={
+              onProfileClick
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onProfileClick();
+                    }
+                  }
+                : undefined
+            }
+            role={onProfileClick ? "button" : undefined}
+            tabIndex={onProfileClick ? 0 : undefined}
+          >
+            <Avatar size="md" src={profileImage} alt="profile" />
+            <div className={styles.idInfo}>
+              <span className={styles.idNickname}>{nickname}</span>
+              {userId && <span className={styles.idUserId}>@{userId}</span>}
+            </div>
           </div>
         </div>
         {children && <div className={styles.idRight}>{children}</div>}
@@ -107,7 +159,7 @@ export default function UserItem({
     return (
       <div className={clsx(styles.id, className)} onClick={onClick}>
         <div className={styles.idLeft}>
-          <Avatar size="md" image={profileImage} />
+          <Avatar size="md" src={profileImage} alt="profile" />
           <div className={styles.idInfo}>
             <span className={styles.idNickname}>{nickname}</span>
             {userId && <span className={styles.idUserId}>@{userId}</span>}
@@ -125,7 +177,7 @@ export default function UserItem({
     return (
       <div className={clsx(styles.radio, className)} onClick={onClick}>
         <div className={styles.radioLeft}>
-          <Avatar size="md" image={profileImage} />
+          <Avatar size="md" src={profileImage} alt="profile" />
           <div className={styles.idInfo}>
             <span className={styles.idNickname}>{nickname}</span>
             {userId && <span className={styles.idUserId}>@{userId}</span>}
@@ -143,7 +195,7 @@ export default function UserItem({
     return (
       <div className={clsx(styles.follow, className)} onClick={onClick}>
         <div className={styles.followLeft}>
-          <Avatar size="md" image={profileImage} />
+          <Avatar size="md" src={profileImage} alt="profile" />
           <div className={styles.followInfo}>
             <span className={styles.followNickname}>{nickname}</span>
             <UserInfo
@@ -207,13 +259,9 @@ export default function UserItem({
     return (
       <div className={clsx(styles.link, className)} onClick={onClick}>
         <div className={styles.linkLeft}>
-          {brandIcon && (
-            <div className={styles.linkBrandIcon}>{brandIcon}</div>
-          )}
+          {brandIcon && <div className={styles.linkBrandIcon}>{brandIcon}</div>}
           <div className={styles.linkInfo}>
-            {siteName && (
-              <span className={styles.linkSiteName}>{siteName}</span>
-            )}
+            {siteName && <span className={styles.linkSiteName}>{siteName}</span>}
             {url && <span className={styles.linkUrl}>{url}</span>}
           </div>
         </div>
@@ -227,12 +275,8 @@ export default function UserItem({
   if (type === "linkMain") {
     return (
       <div className={clsx(styles.linkMain, className)} onClick={onClick}>
-        {brandIcon && (
-          <div className={styles.linkMainBrandIcon}>{brandIcon}</div>
-        )}
-        {siteName && (
-          <span className={styles.linkMainSiteName}>{siteName}</span>
-        )}
+        {brandIcon && <div className={styles.linkMainBrandIcon}>{brandIcon}</div>}
+        {siteName && <span className={styles.linkMainSiteName}>{siteName}</span>}
       </div>
     );
   }
@@ -246,9 +290,7 @@ export default function UserItem({
         <div className={styles.bookMarkLeft}>
           <div className={styles.bookMarkPost}>
             <div className={styles.bookMarkHeader}>
-              {showTag && tag && (
-                <span className={styles.tagAssistive}>{tag}</span>
-              )}
+              {showTag && tag && <span className={styles.tagAssistive}>{tag}</span>}
               <span className={styles.bookMarkGalleryIcon}>
                 <Icon name="gallery" size={16} color="gray-subtle" />
               </span>
@@ -290,15 +332,10 @@ export default function UserItem({
   // ------------------------------------------
   if (type === "communityTitle") {
     return (
-      <div
-        className={clsx(styles.communityTitle, className)}
-        onClick={onClick}
-      >
+      <div className={clsx(styles.communityTitle, className)} onClick={onClick}>
         <div className={styles.communityTitlePost}>
           <div className={styles.communityTitleHeader}>
-            {showTag && tag && (
-              <span className={styles.tagAssistive}>{tag}</span>
-            )}
+            {showTag && tag && <span className={styles.tagAssistive}>{tag}</span>}
             <span className={styles.communityTitleText}>{postTitle}</span>
             {commentCount !== undefined && commentCount > 0 && (
               <NumberBadge count={commentCount} variant="outline" />
@@ -331,9 +368,7 @@ export default function UserItem({
     return (
       <div className={clsx(styles.title, className)} onClick={onClick}>
         <div className={styles.titleHeader}>
-          {showTag && tag && (
-            <span className={styles.tagPrimary}>{tag}</span>
-          )}
+          {showTag && tag && <span className={styles.tagPrimary}>{tag}</span>}
           <span className={styles.titleText}>{postTitle}</span>
         </div>
         <UserInfo
@@ -363,13 +398,7 @@ export default function UserItem({
   if (type === "image") {
     return (
       <div className={clsx(styles.image, className)} onClick={onClick}>
-        {thumbnailUrl && (
-          <img
-            src={thumbnailUrl}
-            alt=""
-            className={styles.imageThumbnail}
-          />
-        )}
+        {thumbnailUrl && <img src={thumbnailUrl} alt="" className={styles.imageThumbnail} />}
         <div className={styles.imageRight}>
           <span className={styles.imageTitle}>{postTitle}</span>
           <UserInfo
@@ -402,8 +431,11 @@ export default function UserItem({
       <div className={clsx(styles.comment, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentHeader}>
-            <div className={styles.commentHeaderLeft}>
-              <Avatar size="md" image={profileImage} />
+            <div
+              className={clsx(styles.commentHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
+              <Avatar size="md" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
                 nickname={nickname}
@@ -412,33 +444,26 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {renderMenuButton()}
           </div>
           {commentText && (
-            <p className={clsx(styles.commentContent, styles.commentContentMd)}>
-              {commentText}
-            </p>
+            <p className={clsx(styles.commentContent, styles.commentContentMd)}>{commentText}</p>
           )}
         </div>
         <div className={clsx(styles.commentActions, styles.commentActionsMd)}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(styles.commentActionBtn, isLiked && styles.commentActionBtnActive)}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={isLiked ? "heart-fill" : "heart"}
+              size={16}
+              color={isLiked ? undefined : "gray-subtle"}
+            />
             {likeCount}
           </button>
-          <button
-            type="button"
-            className={styles.commentActionBtn}
-            onClick={onReplyClick}
-          >
+          <button type="button" className={styles.commentActionBtn} onClick={onReplyClick}>
             <Icon name="chat-round" size={16} color="gray-subtle" />
             답글달기
           </button>
@@ -455,8 +480,11 @@ export default function UserItem({
       <div className={clsx(styles.comment, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentHeader}>
-            <div className={styles.commentHeaderLeft}>
-              <Avatar size="xs" image={profileImage} />
+            <div
+              className={clsx(styles.commentHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
+              <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
                 nickname={nickname}
@@ -465,33 +493,26 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {renderMenuButton()}
           </div>
           {commentText && (
-            <p className={clsx(styles.commentContent, styles.commentContentXs)}>
-              {commentText}
-            </p>
+            <p className={clsx(styles.commentContent, styles.commentContentXs)}>{commentText}</p>
           )}
         </div>
         <div className={clsx(styles.commentActions, styles.commentActionsXs)}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(styles.commentActionBtn, isLiked && styles.commentActionBtnActive)}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={isLiked ? "heart-fill" : "heart"}
+              size={16}
+              color={isLiked ? undefined : "gray-subtle"}
+            />
             {likeCount}
           </button>
-          <button
-            type="button"
-            className={styles.commentActionBtn}
-            onClick={onReplyClick}
-          >
+          <button type="button" className={styles.commentActionBtn} onClick={onReplyClick}>
             <Icon name="chat-round" size={16} color="gray-subtle" />
             답글달기
           </button>
@@ -505,18 +526,15 @@ export default function UserItem({
   // ------------------------------------------
   if (type === "commentPlus") {
     return (
-      <div
-        className={clsx(
-          styles.commentPlus,
-          styles.commentPlusMd,
-          className
-        )}
-      >
+      <div className={clsx(styles.commentPlus, styles.commentPlusMd, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
-            <div className={styles.commentPlusHeaderLeft}>
+            <div
+              className={clsx(styles.commentPlusHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Icon name="reply-branch" size={12} color="gray-subtler" />
-              <Avatar size="xs" image={profileImage} />
+              <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
                 nickname={nickname}
@@ -525,36 +543,27 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {renderMenuButton()}
           </div>
           <p className={styles.commentPlusContent}>
-            {mentionName && (
-              <span className={styles.commentPlusMention}>
-                @{mentionName}{" "}
-              </span>
-            )}
+            {mentionName && <span className={styles.commentPlusMention}>@{mentionName} </span>}
             {commentText}
           </p>
         </div>
         <div className={styles.commentPlusActions}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(styles.commentActionBtn, isLiked && styles.commentActionBtnActive)}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={isLiked ? "heart-fill" : "heart"}
+              size={16}
+              color={isLiked ? undefined : "gray-subtle"}
+            />
             {likeCount}
           </button>
-          <button
-            type="button"
-            className={styles.commentActionBtn}
-            onClick={onReplyClick}
-          >
+          <button type="button" className={styles.commentActionBtn} onClick={onReplyClick}>
             <Icon name="chat-round" size={16} color="gray-subtle" />
             답글달기
           </button>
@@ -568,18 +577,15 @@ export default function UserItem({
   // ------------------------------------------
   if (type === "commentPlusxs") {
     return (
-      <div
-        className={clsx(
-          styles.commentPlus,
-          styles.commentPlusXs,
-          className
-        )}
-      >
+      <div className={clsx(styles.commentPlus, styles.commentPlusXs, className)}>
         <div className={styles.commentContainer}>
           <div className={styles.commentPlusHeader}>
-            <div className={styles.commentPlusHeaderLeft}>
+            <div
+              className={clsx(styles.commentPlusHeaderLeft, onProfileClick && styles.headerLeftClickable)}
+              onClick={onProfileClick}
+            >
               <Icon name="reply-branch" size={12} color="gray-subtler" />
-              <Avatar size="xs" image={profileImage} />
+              <Avatar size="xs" src={profileImage} alt="profile" />
               <UserInfo
                 type="comment"
                 nickname={nickname}
@@ -588,36 +594,27 @@ export default function UserItem({
                 timeCount={timeCount}
               />
             </div>
-            <IconButton
-              variant="sm"
-              icon={<Icon name="dotmenu" size={16} />}
-              onClick={onMenuClick}
-              aria-label="메뉴"
-            />
+            {renderMenuButton()}
           </div>
           <p className={styles.commentPlusContent}>
-            {mentionName && (
-              <span className={styles.commentPlusMention}>
-                @{mentionName}{" "}
-              </span>
-            )}
+            {mentionName && <span className={styles.commentPlusMention}>@{mentionName} </span>}
             {commentText}
           </p>
         </div>
         <div className={styles.commentPlusActions}>
           <button
             type="button"
-            className={styles.commentActionBtn}
+            className={clsx(styles.commentActionBtn, isLiked && styles.commentActionBtnActive)}
             onClick={onLikeClick}
           >
-            <Icon name="heart" size={16} color="gray-subtle" />
+            <Icon
+              name={isLiked ? "heart-fill" : "heart"}
+              size={16}
+              color={isLiked ? undefined : "gray-subtle"}
+            />
             {likeCount}
           </button>
-          <button
-            type="button"
-            className={styles.commentActionBtn}
-            onClick={onReplyClick}
-          >
+          <button type="button" className={styles.commentActionBtn} onClick={onReplyClick}>
             <Icon name="chat-round" size={16} color="gray-subtle" />
             답글달기
           </button>
@@ -632,9 +629,7 @@ export default function UserItem({
   if (type === "commentDeleted") {
     return (
       <div className={clsx(styles.commentDeleted, className)}>
-        <span className={styles.commentDeletedText}>
-          삭제된 댓글입니다.
-        </span>
+        <span className={styles.commentDeletedText}>삭제된 댓글입니다.</span>
       </div>
     );
   }

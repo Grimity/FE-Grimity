@@ -20,6 +20,7 @@ type ButtonConfig =
       primaryDisabled?: boolean;
       secondaryLabel: string;
       onSecondary: () => void;
+      secondaryDisabled?: boolean;
     }
   | { buttonType?: never };
 

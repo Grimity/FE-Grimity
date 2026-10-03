@@ -7,6 +7,7 @@ import { useMyData } from "@/api/users/getMe";
 import { useAuthStore } from "@/states/authStore";
 import { useChatStore } from "@/states/chatStore";
 import { useDeviceStore } from "@/states/deviceStore";
+import { useUploadHeaderStore } from "@/states/uploadHeaderStore";
 
 import { useSocket } from "@/hooks/useSocket";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
@@ -14,6 +15,7 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 import useGoBack from "@/hooks/useGoBack";
 import { useMobileSearchHeader } from "@/hooks/useMobileSearchHeader";
 import { useLogout } from "@/hooks/useLogout";
+import { useToast } from "@/hooks/useToast";
 
 import IconButton from "@/components/common/Button/IconButton/IconButton";
 import Icon from "@/components/common/Icon/Icon";
@@ -40,6 +42,7 @@ const MAIN_ROUTES = [
   "/ranking",
   "/board",
   "/following",
+  "/direct",
   "/login",
   "/signup/nickname",
   "/signup/profile-url",
@@ -57,12 +60,16 @@ const BOARD_WRITE_ROUTES = [
   "/posts/[id]",
   "/posts/[id]/edit",
 ];
+// 모바일에서 뒤로가기 + 검색·알림·프로필 헤더(depth-2)를 쓰는 라우트
+const DEPTH2_ROUTES = ["/mypage", "/feeds/[id]"];
 const SUB_SEARCH_HIDDEN_ROUTES = [
   "/search",
   "/feeds/[id]",
   "/posts/[id]",
   "/direct",
 ];
+// 모바일에서 페이지가 자체 에디터 GNB(뒤로가기·업로드)를 렌더링하는 라우트
+const EDITOR_GNB_ROUTES = ["/board/write", "/posts/[id]/edit"];
 const SETTINGS_GNB_TITLES: Record<string, string> = {
   "/settings": "설정",
   ...Object.fromEntries(SETTINGS_NAV_ITEMS.map((i) => [i.path, i.label])),
@@ -82,6 +89,7 @@ export default function Layout({ children }: LayoutProps) {
   const { currentChatId, setHasUnreadMessages } = useChatStore();
   const { socket, isConnected } = useSocket();
   const logout = useLogout();
+  const { showToast } = useToast();
 
   // ─── 로컬 상태 ─────────────────────────────────────────────────────────
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -105,10 +113,11 @@ export default function Layout({ children }: LayoutProps) {
     router.push("/search");
   }, [router]);
 
+  const isBoardWriteRoute = BOARD_WRITE_ROUTES.includes(router.pathname);
+
   const goToUpload = useCallback(() => {
-    const isBoardPage = BOARD_WRITE_ROUTES.includes(router.pathname);
-    router.push(isBoardPage ? "/board/write" : "/write");
-  }, [router]);
+    router.push(isBoardWriteRoute ? "/board/write" : "/write");
+  }, [router, isBoardWriteRoute]);
 
   const toggleMobileSidebar = useCallback(() => {
     if (!isMobile) return;
@@ -123,11 +132,20 @@ export default function Layout({ children }: LayoutProps) {
     else setIsProfileDropdownOpen((prev) => !prev);
   }, [isMobile, toggleMobileSidebar]);
 
+  // 스토어 전체 구독 시 업로드 폼 입력마다 Layout이 리렌더되므로 필요한 값만 좁게 구독한다.
+  // submit(핸들러 참조)은 입력마다 바뀌므로 구독하지 않고 클릭 시점에 getState로 읽는다.
+  const editorSubmitLabel = useUploadHeaderStore((s) => s.label);
+  const uploadDisabled = useUploadHeaderStore((s) => s.disabled);
+
   const isSubRoute = isMobile && !MAIN_ROUTES.includes(router.pathname);
+  const isUploadRoute =
+    router.pathname === "/write" || router.pathname === "/feeds/[id]/edit";
   const showUploadBtn = !UPLOAD_HIDDEN_ROUTES.includes(router.pathname);
   const showSubSearch = !SUB_SEARCH_HIDDEN_ROUTES.includes(router.pathname);
   const shouldHideHeader =
-    (router.pathname === "/direct/[chatId]" && isMobile) || router.pathname === "/login";
+    (router.pathname === "/direct/[chatId]" && isMobile) ||
+    router.pathname === "/login" ||
+    (EDITOR_GNB_ROUTES.includes(router.pathname) && isMobile);
   const isMobileSearchPage = isMobile && router.pathname === "/search";
 
   const {
@@ -152,7 +170,8 @@ export default function Layout({ children }: LayoutProps) {
   const gnbVariant: GNBVariant = useMemo(() => {
     if (isMobileSearchPage) return "search";
     if (isSubRoute) {
-      if (router.pathname === "/mypage") return "depth-2";
+      if (DEPTH2_ROUTES.includes(router.pathname)) return "depth-2";
+      if (isUploadRoute) return "text-button";
       return "three-button";
     }
     if (isMobile) {
@@ -162,7 +181,7 @@ export default function Layout({ children }: LayoutProps) {
       return "main";
     }
     return isLoggedIn ? "pc-main" : "pc-guest";
-  }, [isMobileSearchPage, isSubRoute, isMobile, isAuthReady, isLoggedIn, isMobileSidebarOpen, router.pathname]);
+  }, [isMobileSearchPage, isSubRoute, isUploadRoute, isMobile, isAuthReady, isLoggedIn, isMobileSidebarOpen, router.pathname]);
 
   const isMyProfilePage =
     router.pathname === "/[url]" && !!myData?.url && router.query.url === myData.url;
@@ -232,7 +251,6 @@ export default function Layout({ children }: LayoutProps) {
         borderBottom: true,
       },
       { label: "좋아요한 그림", onClick: () => navigate("/mypage?tab=liked-feeds") },
-      { label: "저장한 그림", onClick: () => navigate("/mypage?tab=saved-feeds") },
       {
         label: "저장한 글",
         onClick: () => navigate("/mypage?tab=saved-posts"),
@@ -290,6 +308,11 @@ export default function Layout({ children }: LayoutProps) {
     const handleNewChatMessage = (newMessage: NewChatMessageEventResponse) => {
       if (newMessage.chatId !== currentChatId) {
         setHasUnreadMessages(true);
+
+        // 접속 중 다른 방에서 상대방 메시지가 오면 토스트로 알린다.
+        if (newMessage.senderId !== user_id) {
+          showToast("새로운 메세지가 도착했어요", "information");
+        }
       }
 
       let shouldRefetch = false;
@@ -316,7 +339,7 @@ export default function Layout({ children }: LayoutProps) {
     return () => {
       socket.off("newChatMessage", handleNewChatMessage);
     };
-  }, [isConnected, currentChatId, setHasUnreadMessages, queryClient, user_id]);
+  }, [isConnected, currentChatId, setHasUnreadMessages, queryClient, user_id, showToast]);
 
   // 로그인 상태 변경 시 프로필 드롭다운·모바일 사이드바 닫기
   useEffect(() => {
@@ -356,7 +379,13 @@ export default function Layout({ children }: LayoutProps) {
         <>
           <GNB
             variant={gnbVariant}
-            title={SETTINGS_GNB_TITLES[router.pathname]}
+            title={
+              isUploadRoute
+                ? router.pathname === "/write"
+                  ? "그림 올리기"
+                  : "그림 수정"
+                : SETTINGS_GNB_TITLES[router.pathname]
+            }
             hasNotification={Boolean(myData?.hasNotification)}
             profileImageUrl={myData?.image ?? undefined}
             onSearch={goToSearch}
@@ -366,10 +395,16 @@ export default function Layout({ children }: LayoutProps) {
             }}
             onProfile={onProfileClick}
             onUpload={showUploadBtn ? goToUpload : undefined}
+            uploadLabel={isBoardWriteRoute ? "글쓰기" : "그림 올리기"}
             onLogin={goToLogin}
             onMenu={toggleMobileSidebar}
             onClose={toggleMobileSidebar}
             onBack={isMobileSearchPage || isSubRoute ? goBack : undefined}
+            rightLabel={isUploadRoute ? editorSubmitLabel : undefined}
+            onRightLabelClick={
+              isUploadRoute ? () => useUploadHeaderStore.getState().submit() : undefined
+            }
+            rightLabelDisabled={isUploadRoute ? uploadDisabled : undefined}
             rightActions={subRightActions}
             searchValue={isMobileSearchPage ? mobileSearchValue : undefined}
             searchPlaceholder="그림, 작가, 글을 검색해보세요."
