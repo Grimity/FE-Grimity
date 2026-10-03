@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import clsx from "clsx";
 
 import Title from "@/components/common/Input/Title/Title";
@@ -53,14 +53,14 @@ export default function Input({
     return 0;
   });
 
-  // 비동기로 채워지는 controlled value(예: API 응답 반영)에도 카운트가 맞도록 동기화한다.
-  useEffect(() => {
-    if (inputType === "textfield" && typeof textFieldProps?.value === "string") {
-      setCharCount(textFieldProps.value.length);
-    } else if (inputType === "textarea" && typeof textAreaProps?.value === "string") {
-      setCharCount(textAreaProps.value.length);
-    }
-  }, [inputType, textFieldProps?.value, textAreaProps?.value]);
+  // controlled value는 렌더 중에 바로 글자수를 계산하고, uncontrolled일 때만 내부 state를 사용한다.
+  const controlledValue =
+    inputType === "textfield"
+      ? textFieldProps?.value
+      : inputType === "textarea"
+        ? textAreaProps?.value
+        : undefined;
+  const count = typeof controlledValue === "string" ? controlledValue.length : charCount;
 
   return (
     <div className={clsx(styles.input, layout === "horizontal" && styles.horizontal, className)}>
@@ -118,7 +118,7 @@ export default function Input({
           id={helperId}
           message={helperMessage}
           status={helperStatus}
-          currentCount={maxCount !== undefined ? charCount : undefined}
+          currentCount={maxCount !== undefined ? count : undefined}
           maxCount={maxCount}
         />
       )}
