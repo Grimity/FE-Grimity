@@ -16,6 +16,7 @@
   gap: spacing.$spacing-8;
 }
 
-.desktopMenu {
-  min-width: 160px;
+// Figma 더보기 메뉴 폭(148~149)에 맞춘다. 공통 Menu의 min-width(150)보다 우선하도록 요소 선택자를 함께 쓴다
+ul.desktopMenu {
+  min-width: 148px;
 }
