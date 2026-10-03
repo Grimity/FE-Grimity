@@ -416,6 +416,9 @@ export default function ProfileEdit() {
                               <TextField
                                 className={styles.linkNameField}
                                 placeholder="직접 입력"
+                                aria-label="링크 이름"
+                                autoComplete="off"
+                                spellCheck={false}
                                 value={link.customName || ""}
                                 disabled={isEditingOrder}
                                 onChange={(e) => updateLink(index, { customName: e.target.value })}
@@ -445,6 +448,10 @@ export default function ProfileEdit() {
                               <input
                                 className={styles.linkUrlInput}
                                 placeholder={PLATFORM_URLS[link.linkName] || "링크 주소"}
+                                aria-label="링크 주소"
+                                autoComplete="off"
+                                spellCheck={false}
+                                inputMode="url"
                                 value={link.link}
                                 disabled={isEditingOrder}
                                 onChange={(e) => updateLink(index, { link: e.target.value.trim() })}

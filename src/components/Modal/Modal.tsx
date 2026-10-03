@@ -111,7 +111,7 @@ export default function Modal() {
         >
           <button
             onClick={handleCloseModal}
-            aria-label={isFollowModal ? "뒤로가기" : undefined}
+            aria-label={isFollowModal ? "뒤로가기" : "닫기"}
           >
             {isFollowModal ? (
               <Icon name="chevron-left" size={24} />
@@ -164,7 +164,7 @@ export default function Modal() {
             >
               {renderModalContent()}
               {!data?.hideCloseButton && type !== "PROFILE-EDIT" && (
-                <button className={styles.closeButton} onClick={handleCloseModal}>
+                <button className={styles.closeButton} onClick={handleCloseModal} aria-label="닫기">
                   <IconComponent name="x" size={24} isBtn />
                 </button>
               )}
