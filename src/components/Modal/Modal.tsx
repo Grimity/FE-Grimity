@@ -7,7 +7,6 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 import IconComponent from "../Asset/Icon";
 import Icon from "../common/Icon/Icon";
 import Button from "../Button/Button";
-import Login from "./Login/Login";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
 import Follow from "./Follow/Follow";
