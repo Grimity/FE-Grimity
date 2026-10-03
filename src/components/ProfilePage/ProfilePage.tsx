@@ -22,7 +22,12 @@ import styles from "./ProfilePage.module.scss";
 // 앨범 편집 모드에서만 필요한 컴포넌트라 초기 번들에서 분리한다
 const AlbumEditor = dynamic(() => import("./AlbumEditor/AlbumEditor"));
 
-export default function ProfilePage({ isMyProfile, id, url }: ProfilePageProps) {
+// 같은 페이지 컴포넌트로 다른 프로필에 이동해도 앨범 필터·정렬·편집 모드가 남지 않도록 userId로 재마운트한다
+export default function ProfilePage(props: ProfilePageProps) {
+  return <ProfilePageContent key={props.id} {...props} />;
+}
+
+function ProfilePageContent({ isMyProfile, id, url }: ProfilePageProps) {
   const { isTablet } = useDeviceStore();
   const { pathname } = useRouter();
 
