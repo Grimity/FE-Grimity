@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import styles from "./Modal.module.scss";
@@ -9,11 +10,13 @@ import Button from "../Button/Button";
 import Login from "./Login/Login";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
-import ProfileEdit from "./ProfileEdit/ProfileEdit";
 import Follow from "./Follow/Follow";
 import UploadModal from "./Upload/Upload";
 import Like from "./Like/Like";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
+
+// 드래그 앤 드롭 라이브러리를 포함하므로 프로필 수정을 열 때 불러온다
+const ProfileEdit = dynamic(() => import("./ProfileEdit/ProfileEdit"));
 
 export default function Modal() {
   const router = useRouter();
