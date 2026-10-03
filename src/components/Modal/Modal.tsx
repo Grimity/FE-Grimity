@@ -10,12 +10,10 @@ import Login from "./Login/Login";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
 import ProfileEdit from "./ProfileEdit/ProfileEdit";
-import Background from "./Background/Background";
 import Follow from "./Follow/Follow";
 import UploadModal from "./Upload/Upload";
 import Like from "./Like/Like";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
-import ProfileLink from "./ProfileLink/ProfileLink";
 
 export default function Modal() {
   const router = useRouter();
@@ -86,16 +84,6 @@ export default function Modal() {
         return <Join />;
       case "PROFILE-EDIT":
         return <ProfileEdit />;
-      case "PROFILE-LINK":
-        return <ProfileLink />;
-      case "BACKGROUND":
-        return (
-          <Background
-            imageSrc={data?.imageSrc}
-            file={data?.file}
-            onUploadSuccess={data?.onUploadSuccess}
-          />
-        );
       case "FOLLOWER":
         return <Follow initialTab="follower" title={data?.title} />;
       case "FOLLOWING":
@@ -164,8 +152,6 @@ export default function Modal() {
               className={
                 type === "PROFILE-EDIT"
                   ? styles.profileEditModal
-                  : type === "PROFILE-LINK"
-                  ? styles.profileLinkModal
                   : type === "FOLLOWER" || type === "FOLLOWING"
                   ? styles.followListModal
                   : type === "LIKE"

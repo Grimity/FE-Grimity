@@ -4,7 +4,6 @@ import { postPresignedUrl } from "@/api/images/postPresigned";
 import { putBackgroundImage } from "@/api/users/putMeImage";
 import { useMyData } from "@/api/users/getMe";
 
-import { useModalStore } from "@/states/modalStore";
 import { useToast } from "@/hooks/useToast";
 import { getImageDimensions } from "@/utils/getImageDimensions";
 
@@ -15,16 +14,13 @@ const COVER_ASPECT = 4;
 const COVER_OUTPUT = { width: 1600, height: 400 };
 
 interface BackgroundProps {
-  /** 이전 모달 시스템이 넘기던 값. 더는 쓰지 않는다 */
-  imageSrc?: string;
   /** 모달을 열 때 이미 고른 파일 */
   file?: File;
   /** 지금 적용된 커버 이미지 */
   currentImageSrc?: string;
   onDelete?: () => Promise<void> | void;
   onUploadSuccess?: () => void;
-  /** 새 모달 시스템에서 열 때 넘긴다. 없으면 기존 모달 스토어를 닫는다 */
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 export default function Background({
@@ -35,10 +31,7 @@ export default function Background({
   onClose,
 }: BackgroundProps) {
   const { refetch } = useMyData();
-  const closeLegacyModal = useModalStore((state) => state.closeModal);
   const { showToast } = useToast();
-
-  const close = onClose ?? closeLegacyModal;
 
   const { mutateAsync: updateBackgroundImage } = useMutation({
     mutationFn: (imageName: string) => putBackgroundImage(imageName),
@@ -65,7 +58,7 @@ export default function Background({
       await updateBackgroundImage(data.imageName);
 
       showToast("프로필을 수정했어요", "success");
-      close();
+      onClose();
       refetch();
       onUploadSuccess?.();
     } catch (error) {
@@ -85,7 +78,7 @@ export default function Background({
       output={COVER_OUTPUT}
       variant="cover"
       onSave={handleSave}
-      onClose={close}
+      onClose={onClose}
     />
   );
 }
