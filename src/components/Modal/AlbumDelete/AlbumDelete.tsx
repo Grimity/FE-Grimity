@@ -1,7 +1,9 @@
-import { useRouter } from "next/router";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useToast } from "@/hooks/useToast";
 import { useFeedDeleteMany } from "@/api/generated/feeds/feeds";
+import { getMeGetMyAlbumsQueryKey } from "@/api/generated/me/me";
+import { isUserFeedsQueryKey } from "@/components/Modal/isUserFeedsQueryKey";
 
 import Alert from "@/components/common/PopUp/Alert/Alert";
 import Backdrop from "@/components/common/PopUp/Backdrop/Backdrop";
@@ -14,7 +16,7 @@ interface AlbumDeleteProps {
 
 export default function AlbumDelete({ selectedFeedIds, onClose, onComplete }: AlbumDeleteProps) {
   const { showToast } = useToast();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { mutate: deleteBatchFeeds, isPending } = useFeedDeleteMany();
 
@@ -25,6 +27,10 @@ export default function AlbumDelete({ selectedFeedIds, onClose, onComplete }: Al
       { data: { ids: selectedFeedIds } },
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({
+            predicate: ({ queryKey }) => isUserFeedsQueryKey(queryKey),
+          });
+          queryClient.invalidateQueries({ queryKey: getMeGetMyAlbumsQueryKey() });
           showToast("선택한 그림을 삭제했어요", "success");
           onComplete?.();
         },
@@ -33,7 +39,6 @@ export default function AlbumDelete({ selectedFeedIds, onClose, onComplete }: Al
         },
         onSettled: () => {
           onClose();
-          router.reload();
         },
       },
     );
