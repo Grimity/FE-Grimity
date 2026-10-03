@@ -54,10 +54,16 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (data) {
-      setAlbums(data);
-      setNames(Object.fromEntries(data.map((a) => [a.id, a.name])));
-    }
+    if (!data) return;
+
+    // 추가/삭제 후 refetch가 와도 저장 전 순서·이름 편집은 유지하고 서버 변경분만 반영한다
+    setAlbums((prev) => {
+      const byId = new Map(data.map((a) => [a.id, a]));
+      const kept = prev.filter((a) => byId.has(a.id)).map((a) => byId.get(a.id)!);
+      const keptIds = new Set(kept.map((a) => a.id));
+      return [...kept, ...data.filter((a) => !keptIds.has(a.id))];
+    });
+    setNames((prev) => Object.fromEntries(data.map((a) => [a.id, prev[a.id] ?? a.name])));
   }, [data]);
 
   const { mutateAsync: createAlbum, isPending: isCreating } = useAlbumCreate();
@@ -83,7 +89,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
       return;
     }
     if (albums.length >= MAX_ALBUMS) {
-      setCreateError("최대 8개의 앨범을 만들 수 있어요.");
+      setCreateError(`최대 ${MAX_ALBUMS}개의 앨범을 만들 수 있어요.`);
       return;
     }
 
@@ -259,7 +265,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
           <div className={styles.createRow}>
             <Input
               inputType="textfield"
-              helperMessage={createError || "앨범은 최대 8개까지 추가 가능합니다."}
+              helperMessage={createError || `앨범은 최대 ${MAX_ALBUMS}개까지 추가 가능합니다.`}
               helperStatus={createError ? "error" : "default"}
               className={styles.createInput}
               textFieldProps={{
@@ -332,7 +338,7 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
                         {(provided, snapshot) => (
                           <div ref={provided.innerRef} {...provided.draggableProps}>
                             <GroupSettings
-                              title={album.name}
+                              title={names[album.id] ?? album.name}
                               state="enabled"
                               isDragging={snapshot.isDragging}
                               dragHandleProps={provided.dragHandleProps}

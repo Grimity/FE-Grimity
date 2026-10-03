@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import type { ParsedUrlQuery } from "querystring";
 
@@ -14,19 +13,9 @@ export function useProfileTab() {
   const router = useRouter();
   const { query } = router;
 
-  const [activeTab, setActiveTab] = useState<ProfileTab>(
-    isProfileTab(query.tab) ? query.tab : "feeds",
-  );
-
-  useEffect(() => {
-    if (!isProfileTab(query.tab)) return;
-
-    setActiveTab(query.tab);
-  }, [query.tab]);
+  const activeTab: ProfileTab = isProfileTab(query.tab) ? query.tab : "feeds";
 
   const changeTab = (tab: ProfileTab) => {
-    setActiveTab(tab);
-
     // 탭을 옮기면 이전 탭의 페이지 번호는 버린다
     const nextQuery: ParsedUrlQuery = { ...query, tab };
     delete nextQuery.page;
