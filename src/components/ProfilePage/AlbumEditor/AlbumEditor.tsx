@@ -54,10 +54,16 @@ export default function AlbumEditor({ onExit }: AlbumEditorProps) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (data) {
-      setAlbums(data);
-      setNames(Object.fromEntries(data.map((a) => [a.id, a.name])));
-    }
+    if (!data) return;
+
+    // 추가/삭제 후 refetch가 와도 저장 전 순서·이름 편집은 유지하고 서버 변경분만 반영한다
+    setAlbums((prev) => {
+      const byId = new Map(data.map((a) => [a.id, a]));
+      const kept = prev.filter((a) => byId.has(a.id)).map((a) => byId.get(a.id)!);
+      const keptIds = new Set(kept.map((a) => a.id));
+      return [...kept, ...data.filter((a) => !keptIds.has(a.id))];
+    });
+    setNames((prev) => Object.fromEntries(data.map((a) => [a.id, prev[a.id] ?? a.name])));
   }, [data]);
 
   const { mutateAsync: createAlbum, isPending: isCreating } = useAlbumCreate();
