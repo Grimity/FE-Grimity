@@ -1,12 +1,15 @@
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useToast } from "@/hooks/useToast";
+import { useDeviceStore } from "@/states/deviceStore";
 import { useFeedDeleteMany } from "@/api/generated/feeds/feeds";
 import { getMeGetMyAlbumsQueryKey } from "@/api/generated/me/me";
 import { isUserFeedsQueryKey } from "@/components/Modal/isUserFeedsQueryKey";
 
 import Alert from "@/components/common/PopUp/Alert/Alert";
 import Backdrop from "@/components/common/PopUp/Backdrop/Backdrop";
+
+import styles from "./AlbumDelete.module.scss";
 
 interface AlbumDeleteProps {
   selectedFeedIds: string[];
@@ -15,6 +18,7 @@ interface AlbumDeleteProps {
 }
 
 export default function AlbumDelete({ selectedFeedIds, onClose, onComplete }: AlbumDeleteProps) {
+  const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
@@ -48,6 +52,8 @@ export default function AlbumDelete({ selectedFeedIds, onClose, onComplete }: Al
     <Backdrop>
       <Alert
         variant="content"
+        size={isMobile ? "md" : "xl"}
+        className={styles.alert}
         title="선택한 그림을 삭제할까요?"
         contentText="삭제 이후 되돌릴 수 없어요"
         secondaryLabel="아니요"
