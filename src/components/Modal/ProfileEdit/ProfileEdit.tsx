@@ -451,7 +451,7 @@ export default function ProfileEdit() {
                                 aria-label="링크 주소"
                                 autoComplete="off"
                                 spellCheck={false}
-                                inputMode="url"
+                                inputMode={link.linkName === "이메일" ? "email" : "url"}
                                 value={link.link}
                                 disabled={isEditingOrder}
                                 onChange={(e) => updateLink(index, { link: e.target.value.trim() })}
