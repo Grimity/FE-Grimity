@@ -1,0 +1,10 @@
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
+
+// 모바일 그림 삭제 Alert는 Figma 높이(≈162)에 맞춰 본문과 버튼 사이 간격을 줄인다.
+// 공통 Alert의 모바일 규칙(.alert:not(.xl) .description)보다 우선하도록 클래스를 겹쳐 쓴다.
+@include bp.breakpoint-only("xs") {
+  .alert.alert.alert > p {
+    margin-bottom: spacing.$spacing-6;
+  }
+}

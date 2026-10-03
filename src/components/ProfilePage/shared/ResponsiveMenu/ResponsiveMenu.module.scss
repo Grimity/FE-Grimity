@@ -20,3 +20,13 @@
 ul.desktopMenu {
   min-width: 148px;
 }
+
+.triggerAnchor {
+  display: inline-flex;
+}
+
+// 공통 Menu의 메뉴 컨테이너(트리거 다음 div)를 트리거 위쪽에 붙인다
+.opensUpward > div + div {
+  top: auto;
+  bottom: calc(100% + #{spacing.$spacing-8});
+}
