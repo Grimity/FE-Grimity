@@ -9,6 +9,7 @@ import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedBu
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
 import IconComponent from "@/components/Asset/Icon";
+import { useToast } from "@/hooks/useToast";
 
 import type { ImageCropModalProps } from "./ImageCropModal.types";
 import { getCroppedBlob } from "./getCroppedBlob";
@@ -39,6 +40,7 @@ export default function ImageCropModal({
   onClose,
 }: ImageCropModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { showToast } = useToast();
   const [file, setFile] = useState<File | undefined>(initialFile);
   const [imageSrc, setImageSrc] = useState<string>();
   const imgRef = useRef<HTMLImageElement>(null);
@@ -102,6 +104,9 @@ export default function ImageCropModal({
     try {
       const blob = await getCroppedBlob(imgRef.current, completedCrop, scale, output);
       await onSave(blob, file);
+    } catch (error) {
+      console.error("Image crop error:", error);
+      showToast("이미지를 자르지 못했어요", "error");
     } finally {
       setIsSaving(false);
     }

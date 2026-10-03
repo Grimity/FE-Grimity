@@ -5,15 +5,11 @@ export type ModalType =
   | "JOIN"
   | "PROFILE-ID"
   | "PROFILE-EDIT"
-  | "PROFILE-LINK"
-  | "BACKGROUND"
   | "FOLLOWER"
   | "FOLLOWING"
   | "UPLOAD"
   | "LIKE"
-  | "ALBUM-SELECT"
-  | "ALBUM-MOVE"
-  | "ALBUM-DELETE";
+  | "ALBUM-SELECT";
 
 export interface ModalState {
   isOpen: boolean;

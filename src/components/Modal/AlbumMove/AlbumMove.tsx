@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 
-import { useMeGetMyAlbums } from "@/api/generated/me/me";
+import { getMeGetMyAlbumsQueryKey, useMeGetMyAlbums } from "@/api/generated/me/me";
 import { useAlbumInsertFeeds, useAlbumRemoveFeeds } from "@/api/generated/albums/albums";
 
+import { isUserFeedsQueryKey } from "@/components/Modal/isUserFeedsQueryKey";
 import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
 
@@ -28,11 +28,10 @@ export default function AlbumMove({
   onClose,
   onComplete,
 }: AlbumMoveProps) {
-  const { data, refetch } = useMeGetMyAlbums();
+  const { data } = useMeGetMyAlbums();
   const albums = data ?? [];
   const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(currentAlbumId);
 
@@ -45,8 +44,8 @@ export default function AlbumMove({
         ? insertFeeds({ id: albumId, data: { ids: selectedFeedIds } })
         : removeFeeds({ data: { ids: selectedFeedIds } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feeds"] });
-      queryClient.invalidateQueries({ queryKey: ["albums"] });
+      queryClient.invalidateQueries({ predicate: ({ queryKey }) => isUserFeedsQueryKey(queryKey) });
+      queryClient.invalidateQueries({ queryKey: getMeGetMyAlbumsQueryKey() });
       showToast("선택한 그림을 이동했어요", "success");
       onComplete?.();
     },
@@ -54,9 +53,7 @@ export default function AlbumMove({
       showToast("앨범 이동에 실패했어요", "error");
     },
     onSettled: () => {
-      refetch();
       onClose();
-      router.reload();
     },
   });
 
