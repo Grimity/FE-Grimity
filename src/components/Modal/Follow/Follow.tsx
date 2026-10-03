@@ -238,23 +238,25 @@ export default function Follow({ initialTab, title }: FollowProps) {
         </div>
       )}
       <div className={styles.container}>
-        <div className={styles.tabs} role="tablist">
-          <Tab
-            size="lg"
-            active={activeTab === "following"}
-            title="팔로잉"
-            showNumber={false}
-            onClick={() => handleTabChange("following")}
-          />
-          <Tab
-            size="lg"
-            active={activeTab === "follower"}
-            title="팔로워"
-            showNumber={false}
-            onClick={() => handleTabChange("follower")}
-          />
+        <div className={styles.tabBar}>
+          <div className={styles.tabs} role="tablist">
+            <Tab
+              size="lg"
+              active={activeTab === "following"}
+              title="팔로잉"
+              showNumber={false}
+              onClick={() => handleTabChange("following")}
+            />
+            <Tab
+              size="lg"
+              active={activeTab === "follower"}
+              title="팔로워"
+              showNumber={false}
+              onClick={() => handleTabChange("follower")}
+            />
+          </div>
+          <Divider />
         </div>
-        <Divider />
         <div className={styles.tabContent}>
           {data.length === 0 ? (
             <Empty
