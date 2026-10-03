@@ -30,7 +30,8 @@
 .pageTitle {
   @include typo.title-1;
   color: colors.$text-gray-bold;
-  margin: spacing.$spacing-48 0 spacing.$spacing-24;
+  // Figma 간격에 맞춰 입력 영역이 3px 위로 오도록 21px을 쓴다
+  margin: spacing.$spacing-48 0 21px;
 }
 
 .section {
@@ -39,7 +40,8 @@
   gap: spacing.$spacing-8;
 
   & + & {
-    margin-top: spacing.$spacing-40;
+    // 입력 3px 보정을 포함해 "앨범 목록"이 Figma보다 8px 아래로 밀리지 않도록 35px을 쓴다
+    margin-top: 35px;
   }
 }
 

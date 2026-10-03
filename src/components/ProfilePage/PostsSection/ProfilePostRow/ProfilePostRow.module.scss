@@ -1,0 +1,77 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-8;
+  padding-bottom: spacing.$spacing-16;
+  border-bottom: 1px solid colors.$border-gray-subtler;
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-4;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.titleLine {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-6;
+  min-width: 0;
+}
+
+.typeTag,
+.commentTag {
+  flex-shrink: 0;
+}
+
+.commentTag {
+  background-color: colors.$surface-white;
+  color: colors.$status-negative;
+  box-shadow: inset 0 0 0 1px colors.$border-gray-subtler;
+}
+
+.imageIcon {
+  flex-shrink: 0;
+  color: colors.$text-gray-subtle;
+}
+
+.title {
+  @include typo.body-1-sb;
+  color: colors.$text-gray-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.content {
+  @include typo.body-2-r;
+  color: colors.$text-gray-normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.meta {
+  @include typo.caption-1;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-4;
+  margin: 0;
+  color: colors.$text-gray-subtle;
+}
+
+.views {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-2;
+}

@@ -2,11 +2,11 @@ import { useRouter } from "next/router";
 
 import { useUserPosts } from "@/api/users/getIdPosts";
 
-import AllCard from "@/components/Board/BoardAll/AllCard/AllCard";
 import Empty from "@/components/common/Empty/Empty";
 import Filter from "@/components/common/Filter/Filter";
 import Navigation from "@/components/common/Pagination/Navigation/Navigation";
 
+import ProfilePostRow from "./ProfilePostRow/ProfilePostRow";
 import type { PostsSectionProps } from "./PostsSection.types";
 
 import styles from "../ProfilePage.module.scss";
@@ -16,7 +16,12 @@ const POSTS_PER_PAGE = 10;
 // 글 목록 API는 정렬 파라미터가 없어 최신순만 제공한다
 const postSortOptions = [{ value: "latest", label: "최신순" }];
 
-export default function PostsSection({ userId, isMyProfile, postCount }: PostsSectionProps) {
+export default function PostsSection({
+  userId,
+  isMyProfile,
+  authorName,
+  postCount,
+}: PostsSectionProps) {
   const router = useRouter();
   const { query } = router;
   const currentPage = Number(query.page) || 1;
@@ -69,11 +74,11 @@ export default function PostsSection({ userId, isMyProfile, postCount }: PostsSe
           </div>
         ) : (
           <>
-            <div className={styles.postContainer}>
-              {posts?.map((post) => (
-                <AllCard key={post.id} post={post} case="my-posts" />
+            <ul className={styles.postContainer}>
+              {posts.map((post) => (
+                <ProfilePostRow key={post.id} post={post} authorName={authorName} />
               ))}
-            </div>
+            </ul>
             {totalPages > 1 && (
               <section className={styles.pagination}>
                 <Navigation
