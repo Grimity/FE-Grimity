@@ -63,8 +63,8 @@ export default function ProfileDetails({
       {userData.description && <p className={styles.description}>{userData.description}</p>}
 
       <div className={styles.linkContainer}>
-        {userData.links.slice(0, MAX_VISIBLE_LINKS).map(({ linkName, link }, index) => (
-          <div key={`${link}-${index}`} className={styles.linkWrapper}>
+        {userData.links.slice(0, MAX_VISIBLE_LINKS).map(({ linkName, link }) => (
+          <div key={link} className={styles.linkWrapper}>
             <Link
               title={link}
               href={link}

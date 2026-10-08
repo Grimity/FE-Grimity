@@ -1,15 +1,18 @@
 import { createElement } from "react";
+import dynamic from "next/dynamic";
 import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 
 import { deleteMyBackgroundImage } from "@/api/users/deleteMeImage";
 
-import Background from "@/components/Modal/Background/Background";
 import { useModal } from "@/hooks/useModal";
 
 import type { UserProfileResponse as UserData } from "@grimity/dto";
 
 import { useToast } from "@/hooks/useToast";
+
+// 크롭 모달(react-image-crop 및 CSS 포함)은 열 때만 불러온다
+const Background = dynamic(() => import("@/components/Modal/Background/Background"));
 
 export const useCoverImage = (
   refetchUserData: () => void,

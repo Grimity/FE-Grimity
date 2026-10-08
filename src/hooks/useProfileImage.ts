@@ -1,15 +1,18 @@
 import { createElement } from "react";
+import dynamic from "next/dynamic";
 import { useMutation } from "@tanstack/react-query";
 
 import { postPresignedUrl } from "@/api/images/postPresigned";
 import { putProfileImage } from "@/api/users/putMeImage";
 import { deleteMyProfileImage } from "@/api/users/deleteMeImage";
 
-import ProfileImageModal from "@/components/Modal/ProfileImage/ProfileImageModal";
 import { useModal } from "@/hooks/useModal";
 import { useToast } from "@/hooks/useToast";
 
 import { getImageDimensions } from "@/utils/getImageDimensions";
+
+// 크롭 모달(react-image-crop 및 CSS 포함)은 열 때만 불러온다
+const ProfileImageModal = dynamic(() => import("@/components/Modal/ProfileImage/ProfileImageModal"));
 
 const DEFAULT_PROFILE_IMAGE = "/image/default.svg";
 

@@ -25,8 +25,8 @@ export default function ProfileLinkModal({ links, onClose }: ProfileLinkModalPro
 
   const content = (
     <ul className={styles.list}>
-      {links.map(({ linkName, link }, index) => (
-        <li key={index}>
+      {links.map(({ linkName, link }) => (
+        <li key={link}>
           <Link
             title={link}
             href={link}
