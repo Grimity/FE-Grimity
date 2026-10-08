@@ -13,18 +13,18 @@
 
 // Type
 .type-photo {
-  border: 1px solid colors.$border-gray-subtler;
+  box-shadow: 0 0 0 1px colors.$border-gray-subtler;
 }
 
 .type-default {
   background-color: colors.$surface-gray-subtlest;
-  border: 1px solid colors.$border-gray-subtler;
+  box-shadow: 0 0 0 1px colors.$border-gray-subtler;
   color: colors.$graphic-subtler;
 }
 
 .type-dark {
   background-color: colors.$surface-inverse;
-  border: 1px solid colors.$surface-gray-bold;
+  box-shadow: 0 0 0 1px colors.$surface-gray-bold;
   color: colors.$graphic-subtle;
 }
 

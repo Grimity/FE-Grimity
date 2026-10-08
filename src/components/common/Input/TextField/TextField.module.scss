@@ -99,6 +99,14 @@
   margin-right: spacing.$spacing-8;
 }
 
+// 문자열 prefix(예: "www.grimity.com/")는 입력값과 이어 읽히도록 간격 없이 텍스트 스타일을 적용한다.
+.prefixText {
+  @include typo.label-2;
+  margin-right: 0;
+  color: colors.$text-gray-subtle;
+  white-space: nowrap;
+}
+
 .count {
   @include typo.caption-1;
   flex-shrink: 0;

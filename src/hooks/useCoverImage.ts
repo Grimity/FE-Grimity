@@ -1,18 +1,18 @@
+import { createElement } from "react";
+import dynamic from "next/dynamic";
 import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 
-import { postPresignedUrl } from "@/api/images/postPresigned";
-import { putBackgroundImage } from "@/api/users/putMeImage";
 import { deleteMyBackgroundImage } from "@/api/users/deleteMeImage";
 
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
 
 import type { UserProfileResponse as UserData } from "@grimity/dto";
 
 import { useToast } from "@/hooks/useToast";
-import { useDeviceStore } from "@/states/deviceStore";
-import { convertToWebP } from "@/utils/convertToWebP";
-import { getImageDimensions } from "@/utils/getImageDimensions";
+
+// 크롭 모달(react-image-crop 및 CSS 포함)은 열 때만 불러온다
+const Background = dynamic(() => import("@/components/Modal/Background/Background"));
 
 export const useCoverImage = (
   refetchUserData: () => void,
@@ -20,62 +20,9 @@ export const useCoverImage = (
   userData: UserData | undefined,
 ) => {
   const { showToast } = useToast();
-  const openModal = useModalStore((state) => state.openModal);
-  const { isMobile, isTablet } = useDeviceStore();
+  const { openModal } = useModal();
 
-  const { mutate: updateBackgroundImage } = useMutation({
-    mutationFn: (imageName: string) => putBackgroundImage(imageName),
-  });
-
-  const handleAddCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!isMobile && !isTablet) {
-      const imageUrl = URL.createObjectURL(file);
-      openModal({
-        type: "BACKGROUND",
-        data: { imageSrc: imageUrl, file, onUploadSuccess: refetchUserData },
-      });
-      return;
-    }
-
-    try {
-      const webpFile = await convertToWebP(file);
-
-      const { width, height } = await getImageDimensions(webpFile);
-
-      const data = await postPresignedUrl({
-        type: "background",
-        ext: "webp",
-        width,
-        height,
-      });
-
-      updateBackgroundImage(data.imageName);
-
-      const uploadResponse = await fetch(data.uploadUrl, {
-        method: "PUT",
-        body: webpFile,
-        headers: {
-          "Content-Type": "image/webp",
-        },
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error(`Upload failed: ${uploadResponse.status}`);
-      }
-
-      showToast("커버 이미지가 변경되었습니다!", "success");
-      setCoverImage(data.imageName);
-      refetchUserData();
-    } catch (error) {
-      console.error("File change error:", error);
-      showToast("커버 이미지 업로드에 실패했습니다.", "error");
-    }
-  };
-
-  const { mutate: deleteBackgroundImage } = useMutation({
+  const { mutateAsync: deleteBackgroundImage } = useMutation({
     mutationFn: deleteMyBackgroundImage,
     onSuccess: () => {
       showToast("커버 이미지가 삭제되었습니다.", "success");
@@ -91,8 +38,31 @@ export const useCoverImage = (
   });
 
   const handleDeleteImage = () => {
-    deleteBackgroundImage();
+    deleteBackgroundImage().catch(() => undefined);
   };
 
-  return { handleAddCover, handleDeleteImage };
+  /** 커버 수정 모달을 연다. 파일을 이미 골랐다면 넘기고, 아니면 모달 안에서 고른다 */
+  const openCoverEditor = (file?: File) => {
+    openModal(
+      (close) =>
+        createElement(Background, {
+          file,
+          currentImageSrc: userData?.backgroundImage ?? undefined,
+          onDelete: userData?.backgroundImage ? () => deleteBackgroundImage() : undefined,
+          onUploadSuccess: refetchUserData,
+          onClose: close,
+        }),
+      undefined,
+      { bare: true },
+    );
+  };
+
+  /** 파일 입력의 change 이벤트로 커버 수정 모달을 연다 */
+  const handleAddCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    openCoverEditor(file);
+  };
+
+  return { handleAddCover, handleDeleteImage, openCoverEditor };
 };

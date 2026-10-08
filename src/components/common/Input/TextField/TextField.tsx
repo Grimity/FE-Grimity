@@ -32,6 +32,7 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
       typeof defaultValue === "string" ? defaultValue.length === 0 : true,
     );
 
+    // controlled(value 전달)일 때는 value 길이를, 아니면 내부 state를 글자수로 쓴다.
     const controlledLength = rest.value !== undefined ? String(rest.value).length : null;
     const currentCount = controlledLength ?? charCount;
     const currentIsEmpty = controlledLength !== null ? controlledLength === 0 : isEmpty;
@@ -105,7 +106,11 @@ const TextField = forwardRef<TextFieldHandle, TextFieldProps>(
             <Icon name="magnifer" size={20} color="gray-normal"/>
           </span>
         )}
-        {prefix != null && <span className={styles.prefix}>{prefix}</span>}
+        {prefix != null && (
+          <span className={clsx(styles.prefix, typeof prefix === "string" && styles.prefixText)}>
+            {prefix}
+          </span>
+        )}
         <input
           ref={inputRef}
           type="text"

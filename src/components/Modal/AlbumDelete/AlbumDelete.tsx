@@ -1,58 +1,66 @@
-import Button from "@/components/Button/Button";
-import { useModalStore } from "@/states/modalStore";
+import { useQueryClient } from "@tanstack/react-query";
+
 import { useToast } from "@/hooks/useToast";
-import { useDeleteBatchFeeds } from "@/api/feeds/deleteFeedsId";
+import { useDeviceStore } from "@/states/deviceStore";
+import { useFeedDeleteMany } from "@/api/generated/feeds/feeds";
+import { getMeGetMyAlbumsQueryKey } from "@/api/generated/me/me";
+import { isUserFeedsQueryKey } from "@/components/Modal/isUserFeedsQueryKey";
+
+import Alert from "@/components/common/PopUp/Alert/Alert";
+import Backdrop from "@/components/common/PopUp/Backdrop/Backdrop";
+
 import styles from "./AlbumDelete.module.scss";
-import { useRouter } from "next/router";
 
-export default function AlbumDelete() {
-  const modalData = useModalStore((state) => state.data);
-  const closeModal = useModalStore((state) => state.closeModal);
+interface AlbumDeleteProps {
+  selectedFeedIds: string[];
+  onClose: () => void;
+  onComplete?: () => void;
+}
+
+export default function AlbumDelete({ selectedFeedIds, onClose, onComplete }: AlbumDeleteProps) {
+  const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const selectedFeedIds = modalData?.selectedFeedIds ?? [];
-  const selectedCount = selectedFeedIds.length;
+  const { mutate: deleteBatchFeeds, isPending } = useFeedDeleteMany();
 
-  const { mutate: deleteBatchFeeds, isPending } = useDeleteBatchFeeds();
   const handleDelete = () => {
-    if (!selectedFeedIds.length) return;
+    if (!selectedFeedIds.length || isPending) return;
 
     deleteBatchFeeds(
-      { ids: selectedFeedIds },
+      { data: { ids: selectedFeedIds } },
       {
         onSuccess: () => {
-          modalData?.onComplete?.();
+          queryClient.invalidateQueries({
+            predicate: ({ queryKey }) => isUserFeedsQueryKey(queryKey),
+          });
+          queryClient.invalidateQueries({ queryKey: getMeGetMyAlbumsQueryKey() });
+          showToast("선택한 그림을 삭제했어요", "success");
+          onComplete?.();
         },
         onError: () => {
-          showToast("삭제에 실패했습니다", "error");
+          showToast("삭제에 실패했어요", "error");
         },
         onSettled: () => {
-          closeModal();
-          router.reload();
+          onClose();
         },
       },
     );
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.emptyContainer}>
-        <h2 className={styles.title}>{selectedCount}개의 그림을 삭제할까요?</h2>
-        <p className={styles.subtitle}>삭제 이후 되돌릴 수 없어요</p>
-        <div className={styles.btns}>
-          <div className={styles.cancleBtn}>
-            <Button size="l" type="outlined-assistive" onClick={closeModal}>
-              취소
-            </Button>
-          </div>
-          <div className={styles.submitBtn}>
-            <Button size="l" type="filled-primary" onClick={handleDelete} disabled={isPending}>
-              {isPending ? "삭제 중..." : "삭제"}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Backdrop>
+      <Alert
+        variant="content"
+        size={isMobile ? "md" : "xl"}
+        className={styles.alert}
+        title="선택한 그림을 삭제할까요?"
+        contentText="삭제 이후 되돌릴 수 없어요"
+        secondaryLabel="아니요"
+        onSecondary={onClose}
+        primaryLabel={isPending ? "삭제 중..." : "삭제하기"}
+        onPrimary={handleDelete}
+      />
+    </Backdrop>
   );
 }

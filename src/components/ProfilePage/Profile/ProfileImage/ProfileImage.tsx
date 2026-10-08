@@ -1,68 +1,55 @@
-import { usePreventRightClick } from "@/hooks/usePreventRightClick";
+import clsx from "clsx";
+
+import Avatar from "@/components/common/Avatar/Avatar";
+import Icon from "@/components/common/Icon/Icon";
 
 import styles from "@/components/ProfilePage/Profile/ProfileImage/ProfileImage.module.scss";
-import Icon from "@/components/Asset/IconTemp";
-import { useRef } from "react";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+
+const AVATAR_SIZE = 80;
+const MOBILE_AVATAR_SIZE = 48;
+const DEFAULT_IMAGE = "/image/default.svg";
 
 interface ProfileImageProps {
   profileImage: string;
-  isMobile: boolean;
   isMyProfile: boolean;
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeleteProfileImage: () => void;
+  isMobile: boolean;
+  onEdit: () => void;
 }
 
 export default function ProfileImage({
   profileImage,
-  isMobile,
   isMyProfile,
-  handleFileChange,
-  handleDeleteProfileImage,
+  isMobile,
+  onEdit,
 }: ProfileImageProps) {
-  const imgRef = usePreventRightClick<HTMLImageElement>();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const avatar = (
+    <Avatar
+      src={profileImage === DEFAULT_IMAGE ? undefined : profileImage}
+      size={isMobile ? MOBILE_AVATAR_SIZE : AVATAR_SIZE}
+      alt="프로필 이미지"
+    />
+  );
 
-  const handleUploadImage = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  };
+  if (!isMyProfile) {
+    return <div className={styles.profileImageContainer}>{avatar}</div>;
+  }
 
+  // 아바타와 뱃지 어디를 눌러도 이미지 수정 모달로 이어진다(모바일 Figma에는 뱃지가 없다)
   return (
-    <div className={styles.profileImageContainer}>
-      <ResponsiveImage
-        src={profileImage}
-        width={isMobile ? 80 : 140}
-        height={isMobile ? 80 : 140}
-        alt="프로필 이미지"
-        className={styles.profileImage}
-        ref={imgRef}
-      />
-      {isMyProfile && (
-        <>
-          <button type="button" className={styles.addProfileImage} onClick={handleUploadImage}>
-            <Icon icon="write" size="xl" />
-          </button>
-          <input
-            ref={inputRef}
-            id="upload-image"
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleFileChange}
-          />
-          {profileImage !== "/image/default.svg" && (
-            <button
-              type="button"
-              className={styles.deleteImageBtn}
-              onClick={handleDeleteProfileImage}
-            >
-              <Icon icon="close" size="xl" />
-            </button>
-          )}
-        </>
-      )}
+    <div className={clsx(styles.profileImageContainer, !isMobile && styles.withBadge)}>
+      <button
+        type="button"
+        className={styles.avatarButton}
+        onClick={onEdit}
+        aria-label="프로필 이미지 변경"
+      >
+        {avatar}
+        {!isMobile && (
+          <span className={styles.editBadge} aria-hidden>
+            <Icon name="pen-1" size={16} color="white" />
+          </span>
+        )}
+      </button>
     </div>
   );
 }

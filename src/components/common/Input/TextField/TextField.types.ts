@@ -17,6 +17,7 @@ export interface TextFieldProps extends Omit<
   size?: TextFieldSize;
   status?: TextFieldStatus;
   maxCount?: number;
+  /** 입력값 앞에 고정으로 붙는 내용. 문자열(예: "www.grimity.com/")이면 텍스트 스타일이 적용된다 */
   prefix?: React.ReactNode;
   onClear?: () => void;
 }

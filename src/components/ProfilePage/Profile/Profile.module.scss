@@ -1,74 +1,28 @@
-@use "@/styles/globals.scss" as *;
-@use "sass:color";
-
-.container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: $gray0;
-}
-
-.infoContainer {
-  width: 100%;
-  z-index: 3;
-  padding-left: 32px;
-  padding-right: 32px;
-  position: relative;
-
-  margin-top: 40px;
-
-  @include Size("mobile") {
-    padding-left: 16px;
-    padding-right: 16px;
-    bottom: 40px;
-    margin-top: 0;
-  }
-
-  @include Size("tablet") {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-}
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .infoWrapper {
-  max-width: $max-width-container;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-16;
+
+  @include bp.breakpoint-down("xs") {
+    flex-direction: column;
+    gap: spacing.$spacing-12;
+  }
 }
 
-.imageLeft {
-  display: flex;
+.mobileTopRow {
   width: 100%;
-  align-items: flex-start;
-  gap: 30px;
-
-  @include Size("mobile") {
-    flex-direction: column;
-    gap: 12px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-12;
 }
 
 .detailsContainer {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.followEdit {
-  display: flex;
-  height: fit-content;
-  gap: 12px;
-
-  @include Size("mobile") {
-    gap: 8px;
-  }
-}
-
-.blacklist {
-  max-width: 604px;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
 }

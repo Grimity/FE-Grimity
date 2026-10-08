@@ -1,64 +1,39 @@
-@use "@/styles/globals.scss" as *;
-
-.button {
-  position: absolute;
-  cursor: pointer;
-  padding: 9px;
-  border: 1px solid $gray30;
-  background-color: $gray0;
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: $gray70;
-}
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/spacing" as spacing;
 
 .profileImageContainer {
-  width: 140px;
-  height: 140px;
   position: relative;
-  @include Drag;
+  display: flex;
+  flex-shrink: 0;
+}
 
-  @include Size("mobile") {
-    width: 80px;
-    height: 80px;
-  }
+.avatarButton {
+  position: relative;
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
 
-  .profileImage {
-    object-fit: cover;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid $gray30;
-    background-color: $gray0;
+// Figma: 28px 원형 뱃지(2px 테두리 포함)가 아바타 우측으로 8px 튀어나와 있고,
+// 그만큼 프로필 정보와의 간격도 밀려난다
+.withBadge {
+  margin-right: spacing.$spacing-8;
+}
 
-    @include Size("mobile") {
-      border: 4px solid $gray0;
-    }
-  }
-
-  .deleteImageBtn {
-    @extend .button;
-    visibility: hidden;
-    top: 0;
-    right: 0;
-
-    @include Size("mobile") {
-      top: -16px;
-      right: -16px;
-    }
-  }
-
-  &:hover .deleteImageBtn {
-    visibility: visible;
-  }
-
-  .addProfileImage {
-    @extend .button;
-    bottom: 0;
-    right: 0;
-
-    @include Size("mobile") {
-      right: -16px;
-    }
-  }
+.editBadge {
+  position: absolute;
+  bottom: 0;
+  right: -(spacing.$spacing-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  box-sizing: border-box;
+  border: 2px solid colors.$border-inverse;
+  border-radius: radius.$radius-full;
+  background-color: colors.$surface-inverse;
 }

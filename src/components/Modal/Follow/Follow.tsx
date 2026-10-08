@@ -1,84 +1,144 @@
-import { useState, useRef, useEffect } from "react";
-import styles from "./Follow.module.scss";
-import { useMyFollower, useMyFollowing } from "@/api/users/getMeFollow";
-import Button from "@/components/Button/Button";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
-import { useModalStore } from "@/states/modalStore";
-import { deleteMyFollowers } from "@/api/users/deleteMeFollowers";
-import { useDeleteFollow } from "@/api/users/deleteIdFollow";
-import { useToast } from "@/hooks/useToast";
-import { FollowProps } from "./Follow.types";
-import { useDeviceStore } from "@/states/deviceStore";
-import ResponsiveImage from "@/components/ResponsiveImage/ResponsiveImage";
+import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 
-export default function Follow({ initialTab }: FollowProps) {
+import {
+  useMeGetMyFollowersInfinite,
+  useMeGetMyFollowingsInfinite,
+  getMeGetMyFollowersInfiniteQueryKey,
+  getMeGetMyFollowingsInfiniteQueryKey,
+} from "@/api/generated/me/me";
+import { useUserFollow, useUserUnfollow } from "@/api/generated/users/users";
+import type { MyFollowersResponse, MyFollowingsResponse } from "@/api/generated/model";
+import { useModalStore } from "@/states/modalStore";
+import { useAuthStore } from "@/states/authStore";
+import { useDeviceStore } from "@/states/deviceStore";
+import { useToast } from "@/hooks/useToast";
+import { useUserCardFollow } from "@/hooks/useCardInteraction";
+import { PATH_ROUTES } from "@/constants/routes";
+
+import Tab from "@/components/common/SegmentedControl/Tab/Tab";
+import UserItem from "@/components/common/Cell/UserItem/UserItem";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import Icon from "@/components/common/Icon/Icon";
+import Empty from "@/components/common/Empty/Empty";
+import Divider from "@/components/common/Divider/Divider";
+
+import { FollowProps } from "./Follow.types";
+import styles from "./Follow.module.scss";
+
+const PAGE_SIZE = 10;
+
+interface FollowRow {
+  id: string;
+  name: string;
+  image: string | null;
+  url: string;
+  isFollowing: boolean;
+}
+
+function FollowToggleButton({
+  isFollowing,
+  onToggle,
+}: {
+  isFollowing: boolean;
+  onToggle: () => void;
+}) {
+  const { isFollowing: following, handleFollowClick } = useUserCardFollow(isFollowing, onToggle);
+
+  return following ? (
+    <OutlinedButton size="small" onClick={handleFollowClick}>
+      팔로잉 중
+    </OutlinedButton>
+  ) : (
+    <SolidButton size="small" onClick={handleFollowClick}>
+      팔로잉
+    </SolidButton>
+  );
+}
+
+export default function Follow({ initialTab, title }: FollowProps) {
   const [activeTab, setActiveTab] = useState<"follower" | "following">(initialTab);
-  const [indicatorPosition, setIndicatorPosition] = useState(0);
-  const tabsRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<HTMLDivElement | null>(null);
   const closeModal = useModalStore((state) => state.closeModal);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const route = useRouter();
+  const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { isMobile } = useDeviceStore();
+
+  const followersParams = { size: PAGE_SIZE };
+  const followingsParams = { size: PAGE_SIZE };
 
   const {
     data: followerData,
     fetchNextPage: fetchMoreFollowers,
     hasNextPage: hasNextFollowers,
     isFetching: isFetchingFollowers,
-    refetch: refetchFollower,
-  } = useMyFollower({ size: 10 });
+  } = useMeGetMyFollowersInfinite(followersParams, {
+    query: {
+      initialPageParam: undefined,
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    },
+  });
 
   const {
     data: followingData,
     fetchNextPage: fetchMoreFollowings,
     hasNextPage: hasNextFollowings,
     isFetching: isFetchingFollowings,
-    refetch: refetchFollowing,
-  } = useMyFollowing({ size: 10 });
+  } = useMeGetMyFollowingsInfinite(followingsParams, {
+    query: {
+      initialPageParam: undefined,
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    },
+  });
 
-  const { mutateAsync: deleteFollow } = useDeleteFollow();
+  const { mutate: followUser } = useUserFollow();
+  const { mutate: unfollowUser } = useUserUnfollow();
 
-  const handleFetchMoreFollowers = async () => {
+  const handleFetchMoreFollowers = useCallback(async () => {
     if (hasNextFollowers && !isFetchingFollowers && !isFetchingData) {
       setIsFetchingData(true);
       await fetchMoreFollowers();
       setIsFetchingData(false);
     }
-  };
+  }, [hasNextFollowers, isFetchingFollowers, isFetchingData, fetchMoreFollowers]);
 
-  const handleFetchMoreFollowings = async () => {
+  const handleFetchMoreFollowings = useCallback(async () => {
     if (hasNextFollowings && !isFetchingFollowings && !isFetchingData) {
       setIsFetchingData(true);
       await fetchMoreFollowings();
       setIsFetchingData(false);
     }
-  };
+  }, [hasNextFollowings, isFetchingFollowings, isFetchingData, fetchMoreFollowings]);
 
   const handleTabChange = (tab: "follower" | "following") => {
     setActiveTab(tab);
   };
 
-  const data =
+  const data: FollowRow[] =
     activeTab === "follower"
-      ? followerData?.pages.flatMap((page) => page.followers) || []
-      : followingData?.pages.flatMap((page) => page.followings) || [];
+      ? (followerData?.pages.flatMap((page) => page.followers) ?? []).map((follower) => ({
+          id: follower.id,
+          name: follower.name,
+          image: follower.image,
+          url: follower.url,
+          isFollowing: follower.isFollowing,
+        }))
+      : (followingData?.pages.flatMap((page) => page.followings) ?? []).map((following) => ({
+          id: following.id,
+          name: following.name,
+          image: following.image,
+          url: following.url,
+          isFollowing: true,
+        }));
 
   const hasNextPage = activeTab === "follower" ? hasNextFollowers : hasNextFollowings;
   const isFetching = activeTab === "follower" ? isFetchingFollowers : isFetchingFollowings;
-
-  useEffect(() => {
-    if (!tabsRef.current) return;
-
-    const tabs = tabsRef.current.getElementsByClassName(styles.tab);
-    const activeTabElement = tabs[activeTab === "follower" ? 0 : 1];
-
-    if (activeTabElement) {
-      const tabOffsetLeft = (activeTabElement as HTMLElement).offsetLeft;
-      setIndicatorPosition(tabOffsetLeft);
-    }
-  }, [activeTab]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -107,111 +167,143 @@ export default function Follow({ initialTab }: FollowProps) {
         observer.unobserve(currentObserverRef);
       }
     };
-  }, [activeTab, hasNextPage, isFetching, isFetchingData]);
+  }, [
+    activeTab,
+    hasNextPage,
+    isFetching,
+    isFetchingData,
+    handleFetchMoreFollowers,
+    handleFetchMoreFollowings,
+  ]);
 
   const handleClickUser = (url: string) => {
-    route.push(`${url}`);
+    route.push(`/${url}`);
     closeModal();
   };
 
-  const handleDeleteFollow = async (id: string) => {
-    try {
-      if (activeTab === "follower") {
-        await deleteMyFollowers(id);
-        showToast("해당 팔로워를 삭제했습니다.", "success");
-        refetchFollower();
-      } else {
-        await deleteFollow({ id });
-        showToast("언팔로우 되었습니다.", "success");
-        refetchFollowing();
-      }
-    } catch (error) {
-      console.error("삭제 실패:", error);
-      showToast("삭제에 실패했습니다.", "error");
+  const handleToggleFollow = (userId: string, isFollowing: boolean) => {
+    if (!isLoggedIn) {
+      showToast("로그인 후 팔로우할 수 있어요.", "error");
+      return;
+    }
+
+    const followersQueryKey = getMeGetMyFollowersInfiniteQueryKey(followersParams);
+    const followingsQueryKey = getMeGetMyFollowingsInfiniteQueryKey(followingsParams);
+
+    if (activeTab === "follower") {
+      // 팔로워 탭: 맞팔로우 여부만 바뀌므로 목록엔 그대로 남기고 버튼 상태만 토글
+      queryClient.setQueryData<InfiniteData<MyFollowersResponse>>(followersQueryKey, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            followers: page.followers.map((follower) =>
+              follower.id === userId ? { ...follower, isFollowing: !isFollowing } : follower,
+            ),
+          })),
+        };
+      });
+    } else {
+      // 팔로잉 탭: 언팔로우하면 더 이상 "내가 팔로우 중"이 아니므로 목록에서 제거
+      queryClient.setQueryData<InfiniteData<MyFollowingsResponse>>(followingsQueryKey, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            followings: page.followings.filter((following) => following.id !== userId),
+          })),
+        };
+      });
+    }
+
+    const invalidateBoth = () => {
+      queryClient.invalidateQueries({ queryKey: followersQueryKey });
+      queryClient.invalidateQueries({ queryKey: followingsQueryKey });
+    };
+
+    if (isFollowing) {
+      unfollowUser({ id: userId }, { onError: invalidateBoth, onSuccess: invalidateBoth });
+    } else {
+      followUser({ id: userId }, { onError: invalidateBoth, onSuccess: invalidateBoth });
     }
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.tabs} ref={tabsRef}>
-        <div
-          className={`${styles.tab} ${activeTab === "follower" ? styles.active : ""}`}
-          onClick={() => handleTabChange("follower")}
-        >
-          팔로워
+    <>
+      {!isMobile && title && (
+        <div className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+          <IconButton
+            variant="sm"
+            className={styles.closeButton}
+            icon={<Icon name="x" size={24} />}
+            onClick={closeModal}
+            aria-label="닫기"
+          />
         </div>
-        <div
-          className={`${styles.tab} ${activeTab === "following" ? styles.active : ""}`}
-          onClick={() => handleTabChange("following")}
-        >
-          팔로잉
+      )}
+      <div className={styles.container}>
+        <div className={styles.tabBar}>
+          <div className={styles.tabs} role="tablist">
+            <Tab
+              size="lg"
+              active={activeTab === "following"}
+              title="팔로잉"
+              showNumber={false}
+              onClick={() => handleTabChange("following")}
+            />
+            <Tab
+              size="lg"
+              active={activeTab === "follower"}
+              title="팔로워"
+              showNumber={false}
+              onClick={() => handleTabChange("follower")}
+            />
+          </div>
+          <Divider />
         </div>
-        <div
-          className={styles.indicator}
-          style={{
-            transform: `translateX(${indicatorPosition}px)`,
-          }}
-        />
-      </div>
-      <div className={styles.tabContent}>
-        <ul>
+        <div className={styles.tabContent}>
           {data.length === 0 ? (
-            <p className={styles.noData}>
-              {activeTab === "follower" ? "아직 팔로워가 없어요" : "아직 팔로잉하는 유저가 없어요"}
-            </p>
+            <Empty
+              className={styles.empty}
+              size="md"
+              iconName="illust-user"
+              title={
+                activeTab === "follower"
+                  ? "빛나는 나를 알아본 사람이 아직 없어요"
+                  : "팔로우한 작가가 없어요"
+              }
+              buttonLabel={activeTab === "follower" ? "그림 올리기" : "인기 그림 둘러보기"}
+              onButtonClick={() => {
+                route.push(activeTab === "follower" ? "/write" : PATH_ROUTES.RANKING);
+                closeModal();
+              }}
+            />
           ) : (
-            data.map((follow, index) => (
-              <li key={index} className={styles.item}>
-                <ResponsiveImage
-                  src={follow.image ?? "/image/default.svg"}
-                  width={isMobile ? 40 : 50}
-                  height={isMobile ? 40 : 50}
-                  onClick={() => handleClickUser(follow.url)}
-                  className={styles.image}
-                  alt={`${activeTab === "follower" ? "팔로워" : "팔로잉"} 프로필 이미지`}
-                  desktopSize={300}
-                  mobileSize={300}
-                />
-                {follow.description !== "" ? (
-                  <div
-                    className={styles.nameDescription}
-                    onClick={() => handleClickUser(follow.url)}
+            <ul className={styles.list}>
+              {data.map((user, index) => (
+                <li key={`${user.id}-${index}`}>
+                  <UserItem
+                    type="id"
+                    profileImage={user.image ?? undefined}
+                    nickname={user.name}
+                    userId={user.url}
+                    onClick={() => handleClickUser(user.url)}
                   >
-                    <p className={styles.name}>{follow.name}</p>
-                    <p className={styles.description}>{follow.description}</p>
-                  </div>
-                ) : (
-                  <div className={styles.nameContainer} onClick={() => handleClickUser(follow.url)}>
-                    <p className={styles.name}>{follow.name}</p>
-                  </div>
-                )}
-                {activeTab === "follower" ? (
-                  <div className={follow.description !== "" ? styles.btn : styles.btnCenter}>
-                    <Button
-                      type="outlined-assistive"
-                      size="s"
-                      onClick={() => handleDeleteFollow(follow.id)}
-                    >
-                      삭제
-                    </Button>
-                  </div>
-                ) : (
-                  <div className={follow.description !== "" ? styles.btn : styles.btnCenter}>
-                    <Button
-                      type="outlined-assistive"
-                      size="s"
-                      onClick={() => handleDeleteFollow(follow.id)}
-                    >
-                      언팔로우
-                    </Button>
-                  </div>
-                )}
-              </li>
-            ))
+                    <FollowToggleButton
+                      isFollowing={user.isFollowing}
+                      onToggle={() => handleToggleFollow(user.id, user.isFollowing)}
+                    />
+                  </UserItem>
+                </li>
+              ))}
+              {hasNextPage && <div ref={observerRef} style={{ height: "20px" }} />}
+            </ul>
           )}
-          {hasNextPage && <div ref={observerRef} style={{ height: "20px" }} />}
-        </ul>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

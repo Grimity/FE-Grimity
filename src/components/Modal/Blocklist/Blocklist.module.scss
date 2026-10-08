@@ -1,4 +1,9 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   display: flex;
@@ -6,98 +11,74 @@
   align-items: flex-start;
   justify-content: space-between;
   max-height: 760px;
-  padding: 40px 32px;
-  gap: 30px;
-  background-color: $gray0;
-  border-radius: 12px;
-  width: 100%;
+  background-color: colors.$surface-base;
+  border-radius: radius.$radius-xl;
+  border: 1px solid colors.$border-gray-subtler;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 400px;
 
-  @include Size("mobile") {
-    padding: 0;
+  @include bp.breakpoint-down("xs") {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .titleContainer {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
+    height: 56px;
+    padding: 0 spacing.$spacing-20;
+    box-sizing: border-box;
+    flex-shrink: 0;
+
     .title {
-      @include Title3;
-      color: $gray70;
+      @include typo.title-3;
+      color: colors.$text-gray-bold;
     }
-  }
 
-  .closeButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $gray70;
-    width: 24px;
-    height: 24px;
-
-    &:hover {
-      color: $gray80;
+    .closeButton {
+      width: 40px;
+      height: 40px;
+      margin-right: calc(-1 * #{spacing.$spacing-8});
     }
   }
 
   .blocklistContainer {
     width: 100%;
-    max-height: 280px;
+    max-height: 476px;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    padding: spacing.$spacing-8 spacing.$spacing-20 spacing.$spacing-20;
+    box-sizing: border-box;
 
-    @include Size("mobile") {
-      overflow-y: auto;
-      max-height: fit-content;
+    @include bp.breakpoint-down("xs") {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: none;
+      padding: spacing.$spacing-8 spacing.$spacing-16 spacing.$spacing-16;
     }
   }
 
-  .blockItem {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .empty {
+    min-height: 252px;
+
+    @include bp.breakpoint-down("xs") {
+      flex: 1;
+      min-height: 0;
+      justify-content: center;
+    }
   }
 
-  .profile {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .profileImage {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  .userInfo {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .userName {
-    @include Sub4;
-    color: $gray80;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .emptyState {
-    @include Body2;
-    color: $gray60;
-    text-align: center;
-    padding: 40px 0;
-    width: 100%;
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 }

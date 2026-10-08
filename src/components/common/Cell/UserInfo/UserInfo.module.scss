@@ -97,6 +97,15 @@
   display: inline-flex;
   align-items: center;
   gap: spacing.$spacing-2;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: default;
+
+  &:is(button) {
+    cursor: pointer;
+  }
 }
 
 .followLabel {

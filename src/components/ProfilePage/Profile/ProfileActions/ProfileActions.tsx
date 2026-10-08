@@ -1,142 +1,109 @@
-import Button from "@/components/Button/Button";
-import Dropdown from "@/components/Dropdown/Dropdown";
-import Icon from "@/components/Asset/IconTemp";
+import type { UserProfileResponse } from "@grimity/dto";
+
+import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import Icon from "@/components/common/Icon/Icon";
+import ResponsiveMenu from "@/components/ProfilePage/shared/ResponsiveMenu/ResponsiveMenu";
+
+import { useDeviceStore } from "@/states/deviceStore";
+
+import { useProfileActions } from "./hooks/useProfileActions";
 
 import styles from "@/components/ProfilePage/Profile/ProfileActions/ProfileActions.module.scss";
 
 interface ProfileActionsProps {
+  /** 팔로우 API에 사용하는 유저 id */
+  userId: string;
+  userData: UserProfileResponse;
   isMyProfile: boolean;
-  isFollowing: boolean;
-  isBlocked: boolean;
-  isBlocking: boolean;
-  handleOpenEditModal: () => void;
-  handleUnfollowClick: () => void;
-  handleFollowClick: () => void;
-  handleShareProfile: () => void;
-  handleWithdrawal: () => void;
-  handleOpenReportModal: () => void;
-  handleBlockClick: () => void;
-  handleUnblockClick: () => void;
-  handleOpenBlocklistModal: () => void;
-  handleSendMessage: () => void;
+  refetchUserData: () => void;
 }
 
 export default function ProfileActions({
+  userId,
+  userData,
   isMyProfile,
-  isFollowing,
-  isBlocked,
-  isBlocking,
-  handleOpenEditModal,
-  handleUnfollowClick,
-  handleFollowClick,
-  handleShareProfile,
-  handleWithdrawal,
-  handleOpenReportModal,
-  handleBlockClick,
-  handleUnblockClick,
-  handleOpenBlocklistModal,
-  handleSendMessage,
+  refetchUserData,
 }: ProfileActionsProps) {
-  const commonDropdownProps = {
-    trigger: (
-      <Button size="m" type="outlined-assistive" className={styles.menuBtn}>
-        <Icon icon="menu" size="xl" />
-      </Button>
-    ),
-  };
+  const { isFollowing, isBlocked, isBlocking } = userData;
+  const { isMobile } = useDeviceStore();
+  const buttonSize = isMobile ? "small" : "regular";
 
-  const shareMenuItem = {
-    label: "프로필 공유",
-    onClick: handleShareProfile,
-  };
+  const {
+    follow,
+    unfollow,
+    openEditModal,
+    openAccountSettings,
+    shareProfileLink,
+    openReport,
+    block,
+    unblock,
+    openBlocklist,
+    sendMessage,
+  } = useProfileActions({ userId, userData, refetchUserData });
 
-  const withdrawalMenuItem = {
-    label: "회원 탈퇴",
-    onClick: handleWithdrawal,
-    isDelete: true,
-  };
+  const moreTrigger = (
+    <OutlinedButton
+      size={buttonSize}
+      iconOnly={<Icon name="dotmenu" size={isMobile ? 16 : 20} />}
+      aria-label="더보기"
+    />
+  );
 
-  const reportMenuItem = {
-    label: "신고하기",
-    onClick: handleOpenReportModal,
-    isDelete: true,
-  };
-
-  const blocklistMenuItem = {
-    label: "차단 목록",
-    onClick: handleOpenBlocklistModal,
-  };
-
+  const shareMenuItem = { label: "프로필 링크 공유", onClick: shareProfileLink };
+  const messageMenuItem = { label: "메시지 보내기", onClick: sendMessage };
+  const reportMenuItem = { label: "신고하기", onClick: openReport };
   const blockMenuItem = {
-    label: isBlocking ? "차단 해제" : "차단하기",
-    onClick: isBlocking ? handleUnblockClick : handleBlockClick,
-  };
-
-  const messageMenuItem = {
-    label: "메시지 보내기",
-    onClick: handleSendMessage,
+    label: isBlocking ? "차단해제" : "차단하기",
+    onClick: isBlocking ? unblock : block,
   };
 
   if (isMyProfile) {
     return (
-      <>
-        <Button type="outlined-assistive" className={styles.editBtn} onClick={handleOpenEditModal}>
+      <div className={styles.actions}>
+        <OutlinedButton size={buttonSize} onClick={openEditModal}>
           프로필 편집
-        </Button>
-
-        <div className={styles.dropdown}>
-          <Dropdown
-            {...commonDropdownProps}
-            menuItems={[shareMenuItem, blocklistMenuItem, withdrawalMenuItem]}
-          />
-        </div>
-      </>
-    );
-  }
-
-  if (isBlocked) {
-    return (
-      <div className={styles.dropdown}>
-        <Dropdown
-          {...commonDropdownProps}
-          menuItems={[shareMenuItem, blockMenuItem, reportMenuItem]}
+        </OutlinedButton>
+        <ResponsiveMenu
+          trigger={moreTrigger}
+          items={[
+            shareMenuItem,
+            // 모바일은 상단 설정 아이콘으로 계정 설정에 진입한다
+            ...(isMobile ? [] : [{ label: "내 계정 설정", onClick: openAccountSettings }]),
+            { label: "차단 목록", onClick: openBlocklist },
+          ]}
         />
       </div>
     );
   }
 
-  if (isFollowing) {
+  // 차단당함·차단함 모두 팔로우 버튼 없이 더보기 메뉴만 노출한다
+  if (isBlocked || isBlocking) {
     return (
-      <>
-        <Button
-          className={styles.followBtn}
-          type="outlined-assistive"
-          onClick={handleUnfollowClick}
-        >
-          팔로잉
-        </Button>
-
-        <div className={styles.dropdown}>
-          <Dropdown
-            {...commonDropdownProps}
-            menuItems={[shareMenuItem, messageMenuItem, blockMenuItem, reportMenuItem]}
-          />
-        </div>
-      </>
+      <div className={styles.actions}>
+        <ResponsiveMenu
+          trigger={moreTrigger}
+          items={[shareMenuItem, reportMenuItem, blockMenuItem]}
+        />
+      </div>
     );
   }
 
   return (
-    <>
-      <Button className={styles.followBtn} type="filled-primary" onClick={handleFollowClick}>
-        팔로우
-      </Button>
-      <div className={styles.dropdown}>
-        <Dropdown
-          {...commonDropdownProps}
-          menuItems={[shareMenuItem, messageMenuItem, blockMenuItem, reportMenuItem]}
-        />
-      </div>
-    </>
+    <div className={styles.actions}>
+      {isFollowing ? (
+        <OutlinedButton size={buttonSize} onClick={unfollow}>
+          팔로잉 중
+        </OutlinedButton>
+      ) : (
+        <SolidButton size={buttonSize} onClick={follow}>
+          팔로우
+        </SolidButton>
+      )}
+      <ResponsiveMenu
+        trigger={moreTrigger}
+        items={[shareMenuItem, messageMenuItem, reportMenuItem, blockMenuItem]}
+      />
+    </div>
   );
 }

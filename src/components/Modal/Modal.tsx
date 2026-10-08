@@ -1,22 +1,21 @@
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Modal.module.scss";
 import { useModalStore } from "@/states/modalStore";
 import { usePreventScroll } from "@/hooks/usePreventScroll";
 import IconComponent from "../Asset/Icon";
+import Icon from "../common/Icon/Icon";
 import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
 import OutlinedButton from "@/components/common/Button/OutlinedButton/OutlinedButton";
 import ProfileId from "./ProfileId/ProfileId";
 import Join from "./Join/Join";
-import ProfileEdit from "./ProfileEdit/ProfileEdit";
-import Background from "./Background/Background";
 import Follow from "./Follow/Follow";
 import Like from "./Like/Like";
-import AlbumEdit from "./AlbumEdit/AlbumEdit";
 import AlbumSelect from "./AlbumSelect/AlbumSelect";
-import AlbumMove from "./AlbumMove/AlbumMove";
-import AlbumDelete from "./AlbumDelete/AlbumDelete";
-import ProfileLink from "./ProfileLink/ProfileLink";
+
+// 드래그 앤 드롭 라이브러리를 포함하므로 프로필 수정을 열 때 불러온다
+const ProfileEdit = dynamic(() => import("./ProfileEdit/ProfileEdit"));
 
 export default function Modal() {
   const router = useRouter();
@@ -64,10 +63,6 @@ export default function Modal() {
       window.history.back();
     } else {
       closeModal();
-
-      if (type === "ALBUM-EDIT") {
-        router.reload();
-      }
     }
   };
 
@@ -107,50 +102,48 @@ export default function Modal() {
         return <Join />;
       case "PROFILE-EDIT":
         return <ProfileEdit />;
-      case "PROFILE-LINK":
-        return <ProfileLink />;
-      case "BACKGROUND":
-        return (
-          <Background
-            imageSrc={data?.imageSrc}
-            file={data?.file}
-            onUploadSuccess={data?.onUploadSuccess}
-          />
-        );
       case "FOLLOWER":
-        return <Follow initialTab="follower" />;
+        return <Follow initialTab="follower" title={data?.title} />;
       case "FOLLOWING":
-        return <Follow initialTab="following" />;
+        return <Follow initialTab="following" title={data?.title} />;
       case "LIKE":
         return <Like />;
-      case "ALBUM-EDIT":
-        return <AlbumEdit {...data} />;
       case "ALBUM-SELECT":
         return <AlbumSelect {...data} />;
-      case "ALBUM-MOVE":
-        return <AlbumMove {...data} />;
-      case "ALBUM-DELETE":
-        return <AlbumDelete {...data} />;
       default:
         return null;
     }
   };
 
+  const isFollowModal = type === "FOLLOWER" || type === "FOLLOWING";
+
   if (!isOpen) return null;
 
   return (
     <>
-      {isOpen && isFill && (
-        <div className={styles.mobileHeader}>
-          <button onClick={handleCloseModal}>
-            <IconComponent name="x" size={24} isBtn />
+      {isOpen && isFill && type !== "PROFILE-EDIT" && (
+        <div
+          className={`${styles.mobileHeader} ${isFollowModal ? styles.mobileHeaderBack : ""}`}
+        >
+          <button
+            onClick={handleCloseModal}
+            aria-label={isFollowModal ? "뒤로가기" : "닫기"}
+          >
+            {isFollowModal ? (
+              <Icon name="chevron-left" size={24} />
+            ) : (
+              <IconComponent name="x" size={24} isBtn />
+            )}
           </button>
           <h2>{data?.title}</h2>
         </div>
       )}
 
       {isFill ? (
-        <div className={styles.fill} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={type === "PROFILE-EDIT" ? styles.fillProfileEdit : styles.fill}
+          onClick={(e) => e.stopPropagation()}
+        >
           {renderModalContent()}
         </div>
       ) : (
@@ -179,23 +172,19 @@ export default function Modal() {
               className={
                 type === "PROFILE-EDIT"
                   ? styles.profileEditModal
-                  : type === "PROFILE-LINK"
-                  ? styles.profileLinkModal
-                  : type === "FOLLOWER" || type === "FOLLOWING" || type === "LIKE"
+                  : type === "FOLLOWER" || type === "FOLLOWING"
+                  ? styles.followListModal
+                  : type === "LIKE"
                   ? styles.followModal
-                  : type == "ALBUM-EDIT"
-                  ? styles.albumEditModal
-                  : type == "ALBUM-SELECT" || type == "ALBUM-MOVE"
+                  : type == "ALBUM-SELECT"
                   ? styles.albumSelectModal
-                  : type == "ALBUM-DELETE"
-                  ? styles.albumDeleteModal
                   : styles.modal
               }
               onClick={(e) => e.stopPropagation()}
             >
               {renderModalContent()}
-              {!data?.hideCloseButton && (
-                <button className={styles.closeButton} onClick={handleCloseModal}>
+              {!data?.hideCloseButton && type !== "PROFILE-EDIT" && (
+                <button className={styles.closeButton} onClick={handleCloseModal} aria-label="닫기">
                   <IconComponent name="x" size={24} isBtn />
                 </button>
               )}

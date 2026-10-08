@@ -9,7 +9,9 @@ export default function GroupSettings({
   isDragging,
   dragHandleProps,
   onDelete,
+  onEdit,
   className,
+  children,
   ...rest
 }: GroupSettingsProps) {
   const isDisabled = state === "disabled";
@@ -26,14 +28,24 @@ export default function GroupSettings({
           isDisabled && styles.disabled,
         )}
       >
-        {hasEdit && (
-          <Icon
-            name="pen"
-            size={16}
-            className={clsx(styles.penIcon, isDisabled ? styles.iconDisabled : styles.iconDefault)}
-          />
+        {hasEdit &&
+          (onEdit && !isDisabled ? (
+            <button type="button" className={styles.editButton} onClick={onEdit} aria-label="편집">
+              <Icon name="pen" size={16} className={styles.iconDefault} />
+            </button>
+          ) : (
+            <Icon
+              name="pen"
+              size={16}
+              className={clsx(
+                styles.penIcon,
+                isDisabled ? styles.iconDisabled : styles.iconDefault,
+              )}
+            />
+          ))}
+        {children ?? (
+          <span className={clsx(styles.title, isDisabled && styles.titleDisabled)}>{title}</span>
         )}
-        <span className={clsx(styles.title, isDisabled && styles.titleDisabled)}>{title}</span>
       </div>
       {hasDelete && (
         <button

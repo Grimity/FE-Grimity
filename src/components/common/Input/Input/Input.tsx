@@ -53,6 +53,15 @@ export default function Input({
     return 0;
   });
 
+  // controlled value는 렌더 중에 바로 글자수를 계산하고, uncontrolled일 때만 내부 state를 사용한다.
+  const controlledValue =
+    inputType === "textfield"
+      ? textFieldProps?.value
+      : inputType === "textarea"
+        ? textAreaProps?.value
+        : undefined;
+  const count = typeof controlledValue === "string" ? controlledValue.length : charCount;
+
   return (
     <div className={clsx(styles.input, layout === "horizontal" && styles.horizontal, className)}>
       {label && <Title text={label} showEssential={showEssential} htmlFor={inputId} />}
@@ -109,7 +118,7 @@ export default function Input({
           id={helperId}
           message={helperMessage}
           status={helperStatus}
-          currentCount={maxCount !== undefined ? charCount : undefined}
+          currentCount={maxCount !== undefined ? count : undefined}
           maxCount={maxCount}
         />
       )}

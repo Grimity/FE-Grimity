@@ -1,92 +1,65 @@
-import { usePreventRightClick } from "@/hooks/usePreventRightClick";
+import Thumbnail from "@/components/common/Thumbnail/Thumbnail";
+import IconButton from "@/components/common/Button/IconButton/IconButton";
+import SolidButton from "@/components/common/Button/SolidButton/SolidButton";
+import Icon from "@/components/common/Icon/Icon";
 
 import type { UserProfileResponse as UserData } from "@grimity/dto";
 
 import styles from "@/components/ProfilePage/Profile/ProfileCover/ProfileCover.module.scss";
-import Icon from "@/components/Asset/IconTemp";
-import { useRef } from "react";
 
 interface ProfileCoverProps {
   userData: UserData;
   coverImage: string;
-  userId: string;
-  handleAddCover: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  isMyProfile: boolean;
+  onEditCover: () => void;
   handleDeleteImage: () => void;
 }
 
 export default function ProfileCover({
   userData,
   coverImage,
-  userId,
-  handleAddCover,
+  isMyProfile,
+  onEditCover,
   handleDeleteImage,
 }: ProfileCoverProps) {
-  const imgRef = usePreventRightClick<HTMLImageElement>();
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleUploadCover = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  };
-
-  const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    e.currentTarget.value = "";
-  };
-
-  if (!userData) return null;
-
   return (
-    <>
+    <div className={styles.cover}>
       {userData.backgroundImage ? (
-        <div className={styles.backgroundImage}>
-          <img
-            src={coverImage}
-            alt="backgroundImage"
-            loading="lazy"
-            style={{
-              objectFit: "cover",
-              width: "100%",
-              height: "100%",
-            }}
-            ref={imgRef}
-          />
-          {userData.id === userId && (
-            <div className={styles.coverBtns}>
-              <button type="button" className={styles.coverEditBtn} onClick={handleUploadCover}>
-                <Icon icon="pencel" size="xl" />
-              </button>
-              <button type="button" className={styles.coverEditBtn} onClick={handleDeleteImage}>
-                <Icon icon="trash" size="xl" />
-              </button>
+        <>
+          <Thumbnail src={coverImage} alt="커버 이미지" ratio="4/1" className={styles.thumbnail} />
+          {isMyProfile && (
+            <div className={styles.editButtons}>
+              <IconButton
+                variant="solid"
+                icon={<Icon name="camera" size={16} color="white" />}
+                onClick={onEditCover}
+                aria-label="커버 이미지 변경"
+                className={styles.overlayBtn}
+              />
+              <IconButton
+                variant="solid"
+                icon={<Icon name="x" size={16} color="white" />}
+                onClick={handleDeleteImage}
+                aria-label="커버 이미지 삭제"
+                className={styles.overlayBtn}
+              />
             </div>
           )}
-          <div className={styles.gradientOverlay} />
+        </>
+      ) : isMyProfile ? (
+        <div className={styles.emptyCover}>
+          <SolidButton
+            size="regular"
+            iconLeft={<Icon name="plus" size={16} />}
+            onClick={onEditCover}
+          >
+            커버 추가하기
+          </SolidButton>
         </div>
       ) : (
-        <div className={styles.backgroundDefaultImageContainer}>
-          {userData.id === userId && (
-            <>
-              <button
-                type="button"
-                className={styles.backgroundAddMessage}
-                onClick={handleUploadCover}
-              >
-                <Icon icon="plus" size="xl" />
-                커버 추가하기
-              </button>
-            </>
-          )}
-        </div>
+        // 커버가 없는 타 유저는 Thumbnail 기본 상태(로고 플레이스홀더)를 보여준다
+        <Thumbnail alt="" ratio="4/1" className={styles.thumbnail} />
       )}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        hidden
-        onChange={handleAddCover}
-        onClick={handleInputClick}
-      />
-    </>
+    </div>
   );
 }

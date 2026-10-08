@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import TextField from "./TextField";
 import type { TextFieldHandle, TextFieldProps } from "./TextField.types";
@@ -80,6 +80,23 @@ export const WithCount: Story = {
     placeholder: "Type something",
     maxCount: 20,
   },
+};
+
+function ControlledCountRenderer() {
+  const [value, setValue] = useState("체리마루");
+
+  return (
+    <TextField
+      variant="count"
+      maxCount={12}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+    />
+  );
+}
+
+export const WithCountControlled: Story = {
+  render: () => <ControlledCountRenderer />,
 };
 
 function SearchRenderer() {

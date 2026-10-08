@@ -1,4 +1,7 @@
 @use "@/styles/globals.scss" as *;
+@use "@/styles/tokens/radius" as radius;
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/breakpoint" as bp;
 
 .overlay {
   position: fixed;
@@ -34,22 +37,25 @@
   @extend .modal;
   width: 500px;
   max-height: 760px;
-  min-height: 760px;
-}
-
-.albumEditModal {
-  @extend .modal;
-  width: 500px;
-}
-
-.profileLinkModal {
-  @extend .modal;
-  width: 500px;
+  min-height: 0;
+  padding: 0;
+  border-radius: radius.$radius-xl;
+  overflow: hidden;
 }
 
 .followModal {
   @extend .modal;
   width: 540px;
+}
+
+.followListModal {
+  @extend .modal;
+  width: 400px;
+  min-height: 0;
+  max-height: 560px;
+  padding: 0;
+  border-radius: radius.$radius-xl;
+  overflow: hidden;
 }
 
 .albumSelectModal {
@@ -60,12 +66,6 @@
   @include Size("mobile") {
     min-height: 234px;
   }
-}
-
-.albumDeleteModal {
-  @extend .modal;
-  min-height: 234px;
-  max-height: 234px;
 }
 
 .closeButton {
@@ -157,6 +157,18 @@
   }
 }
 
+.fillProfileEdit {
+  @include bp.breakpoint-down("xs") {
+    width: 100%;
+    height: $full-height;
+    background: colors.$surface-base;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1501;
+  }
+}
+
 .mobileHeader {
   position: fixed;
   top: 0;
@@ -191,4 +203,8 @@
   @include Size("mobile") {
     visibility: visible;
   }
+}
+
+.mobileHeaderBack {
+  border-bottom: none;
 }
