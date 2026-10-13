@@ -1,8 +1,11 @@
 import { useRouter } from "next/router";
 import type { MyPostResponse } from "@grimity/dto";
 
+import { createElement } from "react";
+
 import { deletePostsFeeds } from "@/api/posts/deletePostsId";
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
+import ConfirmDialog from "@/components/common/PopUp/ConfirmDialog/ConfirmDialog";
 import { useShareModal } from "@/hooks/useShareModal";
 import { useToast } from "@/hooks/useToast";
 
@@ -11,7 +14,7 @@ import { useToast } from "@/hooks/useToast";
  */
 export function useMyPostActions(post: MyPostResponse) {
   const router = useRouter();
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal } = useModal();
   const { sharePost } = useShareModal();
   const { showToast } = useToast();
 
@@ -20,22 +23,24 @@ export function useMyPostActions(post: MyPostResponse) {
   };
 
   const remove = () => {
-    openModal({
-      type: null,
-      data: {
-        title: "글을 정말 삭제하시겠어요?",
-        confirmBtn: "삭제하기",
-        onClick: async () => {
-          try {
-            await deletePostsFeeds(post.id);
-            router.reload();
-          } catch {
-            showToast("삭제 중 오류가 발생했습니다.", "error");
-          }
-        },
-      },
-      isComfirm: true,
-    });
+    openModal(
+      (close) =>
+        createElement(ConfirmDialog, {
+          title: "글을 정말 삭제하시겠어요?",
+          confirmLabel: "삭제하기",
+          onConfirm: async () => {
+            try {
+              await deletePostsFeeds(post.id);
+              router.reload();
+            } catch {
+              showToast("삭제 중 오류가 발생했습니다.", "error");
+            }
+          },
+          onClose: close,
+        }),
+      undefined,
+      { bare: true },
+    );
   };
 
   return { share, remove };

@@ -13,8 +13,6 @@ import { useMeUpdateProfile } from "@/api/generated/me/me";
 import type { UpdateProfileConflictResponse } from "@/api/generated/model";
 import type { UserProfileResponse } from "@grimity/dto";
 
-import { useModalStore } from "@/states/modalStore";
-
 import Loader from "@/components/Layout/Loader/Loader";
 import Input from "@/components/common/Input/Input/Input";
 import TextField from "@/components/common/Input/TextField/TextField";
@@ -93,7 +91,7 @@ function serializeForm(name: string, description: string, profileId: string, lin
   ]);
 }
 
-export default function ProfileEdit() {
+export default function ProfileEdit({ onClose }: { onClose: () => void }) {
   const { data: myData, isLoading, refetch } = useMyData();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -108,7 +106,6 @@ export default function ProfileEdit() {
 
   const queryClient = useQueryClient();
   const isFormInitializedRef = useRef(false);
-  const closeModal = useModalStore((s) => s.closeModal);
   const { restoreScrollPosition } = useScrollRestoration("profileEdit-scroll");
   const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
@@ -160,7 +157,7 @@ export default function ProfileEdit() {
     mutation: {
       onSuccess: () => {
         showToast("프로필 정보가 변경되었습니다!", "success");
-        closeModal();
+        onClose();
         refetch();
         router.reload();
       },
@@ -259,9 +256,6 @@ export default function ProfileEdit() {
     });
   };
 
-  // 모바일은 전체화면 진입 시 쌓은 history를 되돌려 닫는다(Modal의 닫기 흐름과 동일)
-  const handleClose = () => (isMobile ? window.history.back() : closeModal());
-
   const isDirty = serializeForm(name, description, profileId, links) !== initialSnapshot;
   const isSaveDisabled =
     !isDirty || name.trim().length < 2 || isPending || !!profileIdError || isEditingOrder;
@@ -276,7 +270,7 @@ export default function ProfileEdit() {
         <div className={styles.mobileHeader}>
           <IconButton
             icon={<Icon name="chevron-left" size={24} />}
-            onClick={handleClose}
+            onClick={onClose}
             aria-label="뒤로가기"
           />
           <h2 className={styles.mobileTitle}>프로필 수정</h2>
@@ -289,7 +283,7 @@ export default function ProfileEdit() {
           <h2 className={styles.title}>프로필 수정</h2>
           <IconButton
             icon={<Icon name="x" size={24} />}
-            onClick={handleClose}
+            onClick={onClose}
             aria-label="닫기"
           />
         </div>

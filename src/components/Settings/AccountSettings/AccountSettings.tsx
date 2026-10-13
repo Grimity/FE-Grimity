@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useMyData } from "@/api/users/getMe";
 import { deleteMe } from "@/api/users/deleteMe";
 
-import { useModalStore, useNewModalStore } from "@/states/modalStore";
+import { useNewModalStore } from "@/states/modalStore";
 import { useAuthStore } from "@/states/authStore";
 import { useChatStore } from "@/states/chatStore";
 
@@ -16,13 +16,13 @@ import ListItem from "@/components/common/Cell/ListItem/ListItem";
 import TextButton from "@/components/common/Button/TextButton/TextButton";
 import NicknameEditModal from "@/components/Settings/NicknameEditModal/NicknameEditModal";
 import ProfileUrlEditModal from "@/components/Settings/ProfileUrlEditModal/ProfileUrlEditModal";
+import ConfirmDialog from "@/components/common/PopUp/ConfirmDialog/ConfirmDialog";
 
 import styles from "./AccountSettings.module.scss";
 
 export default function AccountSettings() {
   const router = useRouter();
   const { data: myData } = useMyData();
-  const openModal = useModalStore((s) => s.openModal);
   const openNewModal = useNewModalStore((s) => s.openModal);
   const logout = useLogout();
   const { showToast } = useToast();
@@ -37,13 +37,12 @@ export default function AccountSettings() {
   const openUrlEdit = () => openBareModal((close) => <ProfileUrlEditModal onClose={close} />);
 
   const handleWithdrawal = () => {
-    openModal({
-      type: null,
-      data: {
-        title: "정말 탈퇴하시겠어요?",
-        subtitle: "계정 복구는 어려워요.",
-        confirmBtn: "탈퇴하기",
-        onClick: async () => {
+    openBareModal((close) => (
+      <ConfirmDialog
+        title="정말 탈퇴하시겠어요?"
+        description="계정 복구는 어려워요."
+        confirmLabel="탈퇴하기"
+        onConfirm={async () => {
           try {
             await deleteMe();
             localStorage.clear();
@@ -57,10 +56,10 @@ export default function AccountSettings() {
             showToast("탈퇴 중 오류가 발생했습니다.", "error");
             throw err;
           }
-        },
-      },
-      isComfirm: true,
-    });
+        }}
+        onClose={close}
+      />
+    ));
   };
 
   return (

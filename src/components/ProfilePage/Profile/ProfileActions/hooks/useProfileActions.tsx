@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 import type { UserProfileResponse } from "@grimity/dto";
 
 import { useAuthStore } from "@/states/authStore";
-import { useModalStore } from "@/states/modalStore";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useShareModal } from "@/hooks/useShareModal";
 import { useReportModal } from "@/hooks/useReportModal";
@@ -16,6 +16,10 @@ import { useDeleteUserBlock } from "@/api/users/deleteUserBlock";
 import { usePostChat } from "@/api/chats/postChat";
 
 import Blocklist from "@/components/Modal/Blocklist/Blocklist";
+
+import modalStyles from "@/components/Modal/Modal.module.scss";
+
+const ProfileEdit = dynamic(() => import("@/components/Modal/ProfileEdit/ProfileEdit"));
 
 interface UseProfileActionsParams {
   userId: string;
@@ -34,7 +38,6 @@ export function useProfileActions({
   const router = useRouter();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const openModal = useModalStore((state) => state.openModal);
   const { isMobile } = useDeviceStore();
   const { showToast } = useToast();
 
@@ -57,11 +60,11 @@ export function useProfileActions({
   };
 
   const openEditModal = () => {
-    openModal({
-      type: "PROFILE-EDIT",
-      data: isMobile ? { title: "프로필 수정" } : null,
-      isFill: isMobile,
-    });
+    openOverlayModal(
+      (close) => <ProfileEdit onClose={close} />,
+      { className: modalStyles.profileEditModal },
+      { isFill: isMobile, mobileHeader: "none" },
+    );
   };
 
   const openAccountSettings = () => {

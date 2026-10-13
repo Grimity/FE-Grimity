@@ -7,7 +7,7 @@ import { deletePostsSave, putPostsSave } from "@/api/posts/putDeletePostsIdSave"
 
 import { SearchHighlightContext } from "@/pages/search";
 
-import { useModalStore } from "@/states/modalStore";
+import { useModal } from "@/hooks/useModal";
 import { useShareModal } from "@/hooks/useShareModal";
 import { useDeviceStore } from "@/states/deviceStore";
 
@@ -15,7 +15,8 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import IconComponent from "@/components/Asset/Icon";
 import Icon from "@/components/Asset/IconTemp";
 import ProfileCardPopover from "@/components/Layout/ProfileCardPopover/ProfileCardPopover";
-import Chip from "@/components/Chip/Chip";
+import Chip from "@/components/common/Chip/Chip";
+import ConfirmDialog from "@/components/common/PopUp/ConfirmDialog/ConfirmDialog";
 
 import { AllCardProps } from "./AllCard.types";
 
@@ -43,7 +44,7 @@ export function getTypeLabel(type: string): string {
 export default function AllCard({ post, case: cardCase, hasChip = false }: AllCardProps) {
   const { highlight } = useContext(SearchHighlightContext);
   const { isMobile } = useDeviceStore();
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal } = useModal();
   const { sharePost } = useShareModal();
   const { showToast } = useToast();
 
@@ -60,14 +61,13 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
     setIsSaved(!isSaved);
   };
 
-  const handleDelete = async () => {
-    try {
-      openModal({
-        type: null,
-        data: {
-          title: "글을 정말 삭제하시겠어요?",
-          confirmBtn: "삭제하기",
-          onClick: async () => {
+  const handleDelete = () => {
+    openModal(
+      (close) => (
+        <ConfirmDialog
+          title="글을 정말 삭제하시겠어요?"
+          confirmLabel="삭제하기"
+          onConfirm={async () => {
             try {
               await deletePostsFeeds(post.id);
               router.reload();
@@ -75,13 +75,13 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
               showToast("삭제 중 오류가 발생했습니다.", "error");
               throw err;
             }
-          },
-        },
-        isComfirm: true,
-      });
-    } catch (error) {
-      showToast("삭제 중 오류가 발생했습니다.", "error");
-    }
+          }}
+          onClose={close}
+        />
+      ),
+      undefined,
+      { bare: true },
+    );
   };
 
   const handleOpenShareModal = () => {
@@ -94,11 +94,11 @@ export default function AllCard({ post, case: cardCase, hasChip = false }: AllCa
     <div className={styles.container}>
       <div className={styles.chipContainer}>
         {post.type === "NOTICE" ? (
-          <Chip size="s" type="filled-secondary">
+          <Chip size="md" variant="primary">
             {getTypeLabel(post.type)}
           </Chip>
         ) : (
-          <Chip size="s" type="filled-assistive">
+          <Chip size="md" variant="assistive">
             {getTypeLabel(post.type)}
           </Chip>
         )}

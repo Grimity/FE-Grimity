@@ -8,7 +8,10 @@ export interface AlertProps {
   contentText: string;
   primaryLabel: string;
   onPrimary: () => void;
+  primaryLoading?: boolean;
+  primaryDisabled?: boolean;
   secondaryLabel?: string;
   onSecondary?: () => void;
+  secondaryDisabled?: boolean;
   className?: string;
 }

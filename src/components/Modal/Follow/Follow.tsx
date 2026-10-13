@@ -10,7 +10,6 @@ import {
 } from "@/api/generated/me/me";
 import { useUserFollow, useUserUnfollow } from "@/api/generated/users/users";
 import type { MyFollowersResponse, MyFollowingsResponse } from "@/api/generated/model";
-import { useModalStore } from "@/states/modalStore";
 import { useAuthStore } from "@/states/authStore";
 import { useDeviceStore } from "@/states/deviceStore";
 import { useToast } from "@/hooks/useToast";
@@ -59,10 +58,9 @@ function FollowToggleButton({
   );
 }
 
-export default function Follow({ initialTab, title }: FollowProps) {
+export default function Follow({ initialTab, title, onClose }: FollowProps) {
   const [activeTab, setActiveTab] = useState<"follower" | "following">(initialTab);
   const observerRef = useRef<HTMLDivElement | null>(null);
-  const closeModal = useModalStore((state) => state.closeModal);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const route = useRouter();
   const queryClient = useQueryClient();
@@ -178,7 +176,6 @@ export default function Follow({ initialTab, title }: FollowProps) {
 
   const handleClickUser = (url: string) => {
     route.push(`/${url}`);
-    closeModal();
   };
 
   const handleToggleFollow = (userId: string, isFollowing: boolean) => {
@@ -239,7 +236,7 @@ export default function Follow({ initialTab, title }: FollowProps) {
             variant="sm"
             className={styles.closeButton}
             icon={<Icon name="x" size={24} />}
-            onClick={closeModal}
+            onClick={onClose}
             aria-label="닫기"
           />
         </div>
@@ -278,7 +275,6 @@ export default function Follow({ initialTab, title }: FollowProps) {
               buttonLabel={activeTab === "follower" ? "그림 올리기" : "인기 그림 둘러보기"}
               onButtonClick={() => {
                 route.push(activeTab === "follower" ? "/write" : PATH_ROUTES.RANKING);
-                closeModal();
               }}
             />
           ) : (

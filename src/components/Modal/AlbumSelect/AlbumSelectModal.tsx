@@ -3,7 +3,7 @@ import BottomSheet from "@/components/common/PopUp/BottomSheet/BottomSheet";
 import Alert from "@/components/common/PopUp/Alert/Alert";
 import Backdrop from "@/components/common/PopUp/Backdrop/Backdrop";
 import ListItem from "@/components/common/Cell/ListItem/ListItem";
-import { useMyAlbums } from "@/api/me/getMyAlbums";
+import { useMeGetMyAlbums } from "@/api/generated/me/me";
 import { useDeviceStore } from "@/states/deviceStore";
 
 import styles from "./AlbumSelectModal.module.scss";
@@ -19,7 +19,7 @@ export default function AlbumSelectModal({
   selectedAlbumId,
   onSelect,
 }: AlbumSelectModalProps) {
-  const { data: albums = [] } = useMyAlbums();
+  const { data: albums = [] } = useMeGetMyAlbums();
   const { isMobile } = useDeviceStore();
   const isEmpty = albums.length === 0;
 

@@ -12,7 +12,7 @@ export function useModal() {
       isFill?: boolean;
       title?: string;
       bare?: boolean;
-      mobileHeader?: "close" | "back";
+      mobileHeader?: "close" | "back" | "none";
     },
   ) {
     const id = uuidv4();

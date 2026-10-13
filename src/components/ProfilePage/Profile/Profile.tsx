@@ -1,14 +1,16 @@
 import { useAuthStore } from "@/states/authStore";
-import { useModalStore } from "@/states/modalStore";
 import { useDeviceStore } from "@/states/deviceStore";
+import { useModal } from "@/hooks/useModal";
 
 import ProfileActions from "@/components/ProfilePage/Profile/ProfileActions/ProfileActions";
 import ProfileImage from "@/components/ProfilePage/Profile/ProfileImage/ProfileImage";
 import ProfileDetails from "@/components/ProfilePage/Profile/ProfileDetails/ProfileDetails";
+import Follow from "@/components/Modal/Follow/Follow";
 
 import type { ProfileProps } from "@/components/ProfilePage/Profile/Profile.types";
 
 import styles from "./Profile.module.scss";
+import modalStyles from "@/components/Modal/Modal.module.scss";
 
 export default function ProfileInfo({
   isMyProfile,
@@ -19,15 +21,15 @@ export default function ProfileInfo({
   refetchUserData,
 }: ProfileProps) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const openModal = useModalStore((state) => state.openModal);
+  const { openModal } = useModal();
   const { isMobile } = useDeviceStore();
 
-  const openFollowModal = (type: "FOLLOWER" | "FOLLOWING") => {
-    openModal({
-      type,
-      data: { title: userData?.name, hideCloseButton: true },
-      isFill: isMobile,
-    });
+  const openFollowModal = (initialTab: "follower" | "following") => {
+    openModal(
+      (close) => <Follow initialTab={initialTab} title={userData?.name} onClose={close} />,
+      { className: modalStyles.followListModal },
+      { isFill: isMobile, title: userData?.name, mobileHeader: "back" },
+    );
   };
 
   const image = (
@@ -63,8 +65,8 @@ export default function ProfileInfo({
         <ProfileDetails
           userData={userData}
           isMyProfile={isMyProfile}
-          handleOpenFollowerModal={() => openFollowModal("FOLLOWER")}
-          handleOpenFollowingModal={() => openFollowModal("FOLLOWING")}
+          handleOpenFollowerModal={() => openFollowModal("follower")}
+          handleOpenFollowingModal={() => openFollowModal("following")}
         >
           {!isMobile && actions}
         </ProfileDetails>

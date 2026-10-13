@@ -157,7 +157,7 @@
   }
 }
 
-.fillProfileEdit {
+.fillNoHeader {
   @include bp.breakpoint-down("xs") {
     width: 100%;
     height: $full-height;

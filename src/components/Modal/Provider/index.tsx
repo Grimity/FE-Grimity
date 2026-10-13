@@ -88,21 +88,25 @@ function ModalProvider({ children }: PropsWithChildren) {
             const isBack = mobileHeader === "back";
             return (
               <React.Fragment key={id}>
-                {/* 모바일 헤더 */}
-                <div
-                  className={`${styles.mobileHeader} ${isBack ? styles.mobileHeaderBack : ""}`}
-                >
-                  <button onClick={handleClose} aria-label={isBack ? "뒤로가기" : "닫기"}>
-                    {isBack ? (
-                      <Icon name="chevron-left" size={24} />
-                    ) : (
-                      <IconComponent name="x" size={24} isBtn />
-                    )}
-                  </button>
-                  <h2>{title}</h2>
-                </div>
+                {mobileHeader !== "none" && (
+                  <div
+                    className={`${styles.mobileHeader} ${isBack ? styles.mobileHeaderBack : ""}`}
+                  >
+                    <button onClick={handleClose} aria-label={isBack ? "뒤로가기" : "닫기"}>
+                      {isBack ? (
+                        <Icon name="chevron-left" size={24} />
+                      ) : (
+                        <IconComponent name="x" size={24} isBtn />
+                      )}
+                    </button>
+                    <h2>{title}</h2>
+                  </div>
+                )}
                 {/* 전체 화면 콘텐츠 */}
-                <div className={styles.fill} onClick={(e) => e.stopPropagation()}>
+                <div
+                  className={mobileHeader === "none" ? styles.fillNoHeader : styles.fill}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {node}
                 </div>
               </React.Fragment>

@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Layout from "@/components/Layout/Layout";
-import Modal from "@/components/Modal/Modal";
 import ToastContainer from "@/components/common/PopUp/Toast/ToastContainer";
 import GlobalLoading from "@/components/common/Loading/GlobalLoading/GlobalLoading";
 import ModalProvider from "@/components/Modal/Provider";
@@ -49,7 +48,6 @@ export default function App({ Component, pageProps }: AppProps) {
               </Layout>
             </ModalProvider>
           </div>
-          <Modal />
           <ToastContainer target="global" />
           <GlobalLoading />
           <Script

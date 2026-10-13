@@ -14,8 +14,11 @@ export default function Alert({
   contentText,
   primaryLabel,
   onPrimary,
+  primaryLoading,
+  primaryDisabled,
   secondaryLabel,
   onSecondary,
+  secondaryDisabled,
   className,
 }: AlertProps) {
   const showSecondary =
@@ -44,13 +47,13 @@ export default function Alert({
       <div className={styles.buttonContainer}>
         {showSecondary && (
           <div className={styles.buttonWrap}>
-            <OutlinedButton size="large" onClick={onSecondary}>
+            <OutlinedButton size="large" onClick={onSecondary} disabled={secondaryDisabled}>
               {secondaryLabel}
             </OutlinedButton>
           </div>
         )}
         <div className={styles.buttonWrap}>
-          <SolidButton size="large" onClick={onPrimary}>
+          <SolidButton size="large" onClick={onPrimary} loading={primaryLoading} disabled={primaryDisabled}>
             {primaryLabel}
           </SolidButton>
         </div>

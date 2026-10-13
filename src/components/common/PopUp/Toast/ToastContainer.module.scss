@@ -1,5 +1,6 @@
 @use "@/styles/globals.scss" as *;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .container {
   z-index: 9999;
@@ -16,11 +17,11 @@
   left: calc(50% + $sidebar-width / 2);
   transform: translateX(-50%);
 
-  @include Size("tablet") {
+  @media (min-width: 768px) and (max-width: 1024px) {
     left: calc(50% + $sidebar-width-tablet / 2);
   }
 
-  @include Size("mobile") {
+  @include bp.breakpoint-down("xs") {
     top: 68px;
     left: 50%;
   }

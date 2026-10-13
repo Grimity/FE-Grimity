@@ -3,15 +3,17 @@ import { useRouter } from "next/router";
 
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 import { usePostsDetails } from "@/api/posts/getPostsId";
 import { CreatePostRequest, putEditPosts } from "@/api/posts/putPostsId";
 
 import { useAuthStore } from "@/states/authStore";
-import { useModalStore } from "@/states/modalStore";
+import { useNewModalStore } from "@/states/modalStore";
 
 import Loader from "@/components/Layout/Loader/Loader";
 import PostForm from "@/components/Board/BoardWrite/PostForm/PostForm";
+import ConfirmDialog from "@/components/common/PopUp/ConfirmDialog/ConfirmDialog";
 
 import { useToast } from "@/hooks/useToast";
 
@@ -33,7 +35,7 @@ export default function EditPost({ id }: EditPostProps) {
   const [content, setContent] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("일반");
   const { showToast } = useToast();
-  const openModal = useModalStore((state) => state.openModal);
+  const openNewModal = useNewModalStore((state) => state.openModal);
   const router = useRouter();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
@@ -91,20 +93,26 @@ export default function EditPost({ id }: EditPostProps) {
       if (hasUnsavedChangesRef.current) {
         router.events.emit("routeChangeError");
 
-        openModal({
-          type: null,
-          data: {
-            title: "수정을 취소하고 나가시겠어요?",
-            subtitle: "변경사항이 저장되지 않습니다",
-            confirmBtn: "나가기",
-            onClick: () => {
-              hasUnsavedChangesRef.current = false;
-              setHasUnsavedChanges(false);
-              router.push(url);
-            },
-          },
-          isComfirm: true,
-        });
+        openNewModal(
+          uuidv4(),
+          (close) => (
+            <ConfirmDialog
+              title="수정을 취소하고 나가시겠어요?"
+              description="변경사항이 저장되지 않습니다"
+              confirmLabel="나가기"
+              onConfirm={() => {
+                hasUnsavedChangesRef.current = false;
+                setHasUnsavedChanges(false);
+                router.push(url);
+              }}
+              onClose={close}
+            />
+          ),
+          undefined,
+          false,
+          undefined,
+          true,
+        );
 
         throw "routeChange aborted.";
       }
@@ -114,7 +122,7 @@ export default function EditPost({ id }: EditPostProps) {
     return () => {
       router.events.off("routeChangeStart", handleRouteChangeStart);
     };
-  }, [router, openModal]);
+  }, [router, openNewModal]);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);

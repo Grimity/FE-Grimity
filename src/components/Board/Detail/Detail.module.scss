@@ -1,7 +1,7 @@
-@use "@/styles/globals.scss" as *;
 @use "@/styles/tokens/colors/semantic" as colors;
 @use "@/styles/tokens/typography/semantic" as typo;
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
 
 .contentBlock {
   display: flex;
@@ -9,7 +9,7 @@
   gap: spacing.$spacing-32;
   margin-bottom: spacing.$spacing-56;
 
-  @include Size("mobile") {
+  @include bp.breakpoint-down("xs") {
     margin-bottom: spacing.$spacing-32;
   }
 }
@@ -69,7 +69,7 @@
     color: colors.$text-gray-bold;
     word-break: break-word;
 
-    @include Size("mobile") {
+    @include bp.breakpoint-down("xs") {
       @include typo.title-3;
     }
   }

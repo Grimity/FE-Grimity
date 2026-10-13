@@ -1,4 +1,5 @@
 @use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/tokens/colors/semantic" as colors;
 
 .button {
   display: inline-flex;
@@ -21,7 +22,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--border-gray-normal);
+    outline: 2px solid colors.$border-gray-normal;
     outline-offset: 2px;
   }
 }
