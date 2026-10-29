@@ -74,6 +74,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   } = useMessageActions({ chatId });
 
   const isAtBottomRef = useRef(true);
+  const prevLastMessageIdRef = useRef<string | null>(null);
 
   const scrollToBottom = useCallback(() => {
     const container = messagesContainerRef.current;
@@ -91,8 +92,9 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     [onScroll],
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     isAtBottomRef.current = true;
+    prevLastMessageIdRef.current = null;
   }, [chatId]);
 
   useEffect(() => {
@@ -262,10 +264,18 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   }, [chatId, userData?.isBlocked]);
 
   useLayoutEffect(() => {
-    if (currentRoom?.messages.length > 0) {
+    const messages = currentRoom?.messages;
+    if (!messages || messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+    const isInitial = prevLastMessageIdRef.current === null;
+    const isAppended = lastMessage.id !== prevLastMessageIdRef.current;
+    prevLastMessageIdRef.current = lastMessage.id;
+
+    if (isInitial || (isAppended && (isAtBottomRef.current || lastMessage.userId === user_id))) {
       scrollToBottom();
     }
-  }, [currentRoom?.messages.length, scrollToBottom]);
+  }, [currentRoom?.messages, scrollToBottom, user_id]);
 
   return (
     <section className={styles.container}>
