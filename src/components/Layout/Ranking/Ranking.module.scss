@@ -36,10 +36,6 @@
     top: calc((100cqw - 3 * #{spacing.$spacing-16}) / 8);
   }
 
-  &[aria-hidden="true"] {
-    visibility: hidden;
-  }
-
   &.left {
     left: calc(-1 * spacing.$spacing-20);
   }

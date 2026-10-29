@@ -51,7 +51,7 @@ export default function Ranking() {
         <p className={styles.message}>아직 등록된 그림이 없어요</p>
       ) : (
         <div className={styles.rankingContainer}>
-          <div className={`${styles.navButton} ${styles.left}`} aria-hidden={isBeginning}>
+          <div className={`${styles.navButton} ${styles.left}`}>
             <IconButton
               variant="outlined"
               icon={
@@ -110,7 +110,7 @@ export default function Ranking() {
             })}
           </Swiper>
 
-          <div className={`${styles.navButton} ${styles.right}`} aria-hidden={isEnd}>
+          <div className={`${styles.navButton} ${styles.right}`}>
             <IconButton
               variant="outlined"
               icon={
