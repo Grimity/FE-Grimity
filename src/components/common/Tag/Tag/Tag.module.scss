@@ -16,13 +16,13 @@
 }
 
 .active {
-  background-color: colors.$surface-gray-subtler;
   color: colors.$text-gray-bold;
 }
 
 // Default type sizes
 .md {
-  padding: spacing.$spacing-6 spacing.$spacing-16;
+  @include typo.label-2;
+  padding: spacing.$spacing-4 spacing.$spacing-12;
 }
 
 .xs {
@@ -32,7 +32,7 @@
 // Icon type overrides
 .withIcon {
   &.md {
-    padding: spacing.$spacing-6 spacing.$spacing-12 spacing.$spacing-6 spacing.$spacing-16;
+    padding: spacing.$spacing-4 spacing.$spacing-8 spacing.$spacing-4 spacing.$spacing-12;
     gap: spacing.$spacing-4;
   }
 

@@ -30,14 +30,26 @@ export default function WeekPicker({ selectedDate, onDateChange }: WeekPickerPro
       <div className={styles.navButtons}>
         <OutlinedButton
           size="small"
-          iconOnly={<Icon name="chevron-left" size={16} color="gray-bold" />}
+          iconOnly={
+            <Icon
+              name="chevron-left"
+              size={16}
+              color={isPrevDisabled ? "gray-subtler" : "gray-bold"}
+            />
+          }
           aria-label="이전 주"
           disabled={isPrevDisabled}
           onClick={onPrevWeek}
         />
         <OutlinedButton
           size="small"
-          iconOnly={<Icon name="chevron-right" size={16} color="gray-bold" />}
+          iconOnly={
+            <Icon
+              name="chevron-right"
+              size={16}
+              color={isNextDisabled ? "gray-subtler" : "gray-bold"}
+            />
+          }
           aria-label="다음 주"
           disabled={isNextDisabled}
           onClick={onNextWeek}

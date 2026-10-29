@@ -51,10 +51,16 @@ export default function Ranking() {
         <p className={styles.message}>아직 등록된 그림이 없어요</p>
       ) : (
         <div className={styles.rankingContainer}>
-          <div className={`${styles.navButton} ${styles.left}`} aria-hidden={isBeginning}>
+          <div className={`${styles.navButton} ${styles.left}`}>
             <IconButton
               variant="outlined"
-              icon={<Icon name="chevron-left" size={16} color="gray-bold"/>}
+              icon={
+                <Icon
+                  name="chevron-left"
+                  size={16}
+                  color={isBeginning ? "gray-subtler" : "gray-bold"}
+                />
+              }
               aria-label="이전 슬라이드"
               onClick={() => swiperRef.current?.swiper.slidePrev()}
               disabled={isBeginning}
@@ -63,15 +69,15 @@ export default function Ranking() {
 
           <Swiper
             ref={swiperRef}
-            spaceBetween={16}
+            spaceBetween={8}
             slidesPerView={1.5}
             onSlideChange={(swiper) => {
               setIsBeginning(swiper.isBeginning);
               setIsEnd(swiper.isEnd);
             }}
             breakpoints={{
-              768: { slidesPerView: 3.5 },
-              1024: { slidesPerView: 4, slidesPerGroup: 4 },
+              768: { slidesPerView: 3.5, spaceBetween: 16 },
+              1024: { slidesPerView: 4, slidesPerGroup: 4, spaceBetween: 16 },
             }}
           >
             {paginatedFeeds.map((feed, idx) => {
@@ -104,10 +110,12 @@ export default function Ranking() {
             })}
           </Swiper>
 
-          <div className={`${styles.navButton} ${styles.right}`} aria-hidden={isEnd}>
+          <div className={`${styles.navButton} ${styles.right}`}>
             <IconButton
               variant="outlined"
-              icon={<Icon name="chevron-right" size={16} color="gray-bold" />}
+              icon={
+                <Icon name="chevron-right" size={16} color={isEnd ? "gray-subtler" : "gray-bold"} />
+              }
               aria-label="다음 슬라이드"
               onClick={() => swiperRef.current?.swiper.slideNext()}
               disabled={isEnd}

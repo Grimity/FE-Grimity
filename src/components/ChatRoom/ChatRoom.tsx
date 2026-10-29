@@ -27,6 +27,8 @@ import type { NewChatMessageEventResponse } from "@grimity/dto";
 
 import styles from "./ChatRoom.module.scss";
 
+const BOTTOM_THRESHOLD = 80;
+
 interface ChatRoomProps {
   chatId: string;
 }
@@ -71,12 +73,43 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
     clearReply,
   } = useMessageActions({ chatId });
 
+  const isAtBottomRef = useRef(true);
+  const prevLastMessageIdRef = useRef<string | null>(null);
+
   const scrollToBottom = useCallback(() => {
     const container = messagesContainerRef.current;
     if (container) {
       container.scrollTop = container.scrollHeight;
     }
   }, []);
+
+  const handleMessagesScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+      isAtBottomRef.current = scrollHeight - scrollTop - clientHeight <= BOTTOM_THRESHOLD;
+      onScroll(e);
+    },
+    [onScroll],
+  );
+
+  useLayoutEffect(() => {
+    isAtBottomRef.current = true;
+    prevLastMessageIdRef.current = null;
+  }, [chatId]);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const handleImageLoad = (e: Event) => {
+      if (e.target instanceof HTMLImageElement && isAtBottomRef.current) {
+        scrollToBottom();
+      }
+    };
+
+    container.addEventListener("load", handleImageLoad, true);
+    return () => container.removeEventListener("load", handleImageLoad, true);
+  }, [scrollToBottom]);
 
   const handleReplyAndFocus = useCallback(
     (messageId: string) => {
@@ -231,10 +264,18 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   }, [chatId, userData?.isBlocked]);
 
   useLayoutEffect(() => {
-    if (currentRoom?.messages.length > 0) {
+    const messages = currentRoom?.messages;
+    if (!messages || messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+    const isInitial = prevLastMessageIdRef.current === null;
+    const isAppended = lastMessage.id !== prevLastMessageIdRef.current;
+    prevLastMessageIdRef.current = lastMessage.id;
+
+    if (isInitial || (isAppended && (isAtBottomRef.current || lastMessage.userId === user_id))) {
       scrollToBottom();
     }
-  }, [currentRoom?.messages.length, scrollToBottom]);
+  }, [currentRoom?.messages, scrollToBottom, user_id]);
 
   return (
     <section className={styles.container}>
@@ -247,7 +288,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         userData={userData}
         hoveredMessageId={hoveredMessageId}
         containerRef={messagesContainerRef}
-        onScroll={onScroll}
+        onScroll={handleMessagesScroll}
         onMouseEnterMessage={handleMouseEnterMessage}
         onMouseLeaveMessage={handleMouseLeaveMessage}
         onLikeMessage={handleLikeMessage}

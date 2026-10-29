@@ -1,3 +1,8 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/tokens/spacing" as spacing;
+@use "@/styles/breakpoint" as bp;
+
 .container {
   width: 100%;
   overflow: hidden;
@@ -10,4 +15,14 @@
 
 .slide {
   width: fit-content;
+}
+
+.title {
+  margin-bottom: spacing.$spacing-24;
+  color: colors.$text-gray-bold;
+  @include typo.title-2;
+
+  @include bp.breakpoint-down("xs") {
+    margin-bottom: spacing.$spacing-16;
+  }
 }

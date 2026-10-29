@@ -70,14 +70,26 @@ export default function MonthPicker({ selectedDate, onDateChange }: MonthPickerP
       <div className={styles.navButtons}>
         <OutlinedButton
           size="small"
-          iconOnly={<Icon name="chevron-left" size={16} color="gray-bold" />}
+          iconOnly={
+            <Icon
+              name="chevron-left"
+              size={16}
+              color={isPrevDisabled ? "gray-subtler" : "gray-bold"}
+            />
+          }
           aria-label="이전 달"
           disabled={isPrevDisabled}
           onClick={onPrevMonth}
         />
         <OutlinedButton
           size="small"
-          iconOnly={<Icon name="chevron-right" size={16} color="gray-bold" />}
+          iconOnly={
+            <Icon
+              name="chevron-right"
+              size={16}
+              color={isNextDisabled ? "gray-subtler" : "gray-bold"}
+            />
+          }
           aria-label="다음 달"
           disabled={isNextDisabled}
           onClick={onNextMonth}
