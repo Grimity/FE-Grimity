@@ -31,7 +31,7 @@ export default function RecommendTagsSlider({ tags }: RecommendTagsSliderProps) 
               href={`/search?tab=feed&keyword=${encodeURIComponent(tag.tagName)}&sort=latest`}
               className={styles.chipLink}
             >
-              <Tag size="md">{tag.tagName}</Tag>
+              <Tag size="md" active={false}>{tag.tagName}</Tag>
             </Link>
           </SwiperSlide>
         ))}

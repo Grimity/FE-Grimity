@@ -256,7 +256,7 @@ export default function Detail({ id }: DetailProps) {
                 <div className={styles.tags}>
                   {details.tags.map((tag, index) => (
                     <Link href={`/search?tab=feed&keyword=${tag}`} key={index}>
-                      <Tag size="md">{tag}</Tag>
+                      <Tag size="md" active={false}>{tag}</Tag>
                     </Link>
                   ))}
                 </div>

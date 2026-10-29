@@ -40,6 +40,8 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isAtBottomRef = useRef(true);
+  const prevLastMessageIdRef = useRef<string | null>(null);
 
   const { data: userData } = useGetChatsUser({ chatId });
   const { mutate: postChatMessage } = usePostChatMessage();
@@ -77,6 +79,15 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
       container.scrollTop = container.scrollHeight;
     }
   }, []);
+
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const el = e.currentTarget;
+      isAtBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+      onScroll(e);
+    },
+    [onScroll],
+  );
 
   const handleReplyAndFocus = useCallback(
     (messageId: string) => {
@@ -231,10 +242,30 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
   }, [chatId, userData?.isBlocked]);
 
   useLayoutEffect(() => {
-    if (currentRoom?.messages.length > 0) {
+    const msgs = currentRoom?.messages;
+    if (!msgs || msgs.length === 0) return;
+
+    const lastId = msgs[msgs.length - 1].id;
+    const isInitial = prevLastMessageIdRef.current === null;
+    const isAppend = lastId !== prevLastMessageIdRef.current;
+    prevLastMessageIdRef.current = lastId;
+
+    // 초기 진입이거나 맨 아래에서 새 메시지가 올 때만 맨 아래로. 과거글(위로 prepend)은 lastId가 그대로라 제외
+    if (isInitial || (isAppend && isAtBottomRef.current)) {
       scrollToBottom();
     }
-  }, [currentRoom?.messages.length, scrollToBottom]);
+  }, [currentRoom?.messages, scrollToBottom]);
+
+  // 이미지가 늦게 로드돼 높이가 늘어나도, 맨 아래에 있던 사용자는 맨 아래를 유지한다
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    const handleContentLoad = () => {
+      if (isAtBottomRef.current) scrollToBottom();
+    };
+    container.addEventListener("load", handleContentLoad, true);
+    return () => container.removeEventListener("load", handleContentLoad, true);
+  }, [scrollToBottom]);
 
   return (
     <section className={styles.container}>
@@ -247,7 +278,7 @@ const ChatRoom = ({ chatId }: ChatRoomProps) => {
         userData={userData}
         hoveredMessageId={hoveredMessageId}
         containerRef={messagesContainerRef}
-        onScroll={onScroll}
+        onScroll={handleScroll}
         onMouseEnterMessage={handleMouseEnterMessage}
         onMouseLeaveMessage={handleMouseLeaveMessage}
         onLikeMessage={handleLikeMessage}

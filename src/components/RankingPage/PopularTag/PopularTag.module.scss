@@ -1,7 +1,22 @@
+@use "@/styles/tokens/colors/semantic" as colors;
+@use "@/styles/tokens/typography/semantic" as typo;
+@use "@/styles/breakpoint" as bp;
+@use "@/styles/tokens/spacing" as spacing;
+
 .container {
   width: 100%;
   overflow: hidden;
   position: relative;
+}
+
+.title {
+  margin-bottom: spacing.$spacing-24;
+  color: colors.$text-gray-bold;
+  @include typo.title-2;
+
+  @include bp.breakpoint-down("xs") {
+    margin-bottom: spacing.$spacing-16;
+  }
 }
 
 .swiper {

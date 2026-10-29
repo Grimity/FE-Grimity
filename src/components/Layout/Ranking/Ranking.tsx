@@ -63,15 +63,15 @@ export default function Ranking() {
 
           <Swiper
             ref={swiperRef}
-            spaceBetween={16}
+            spaceBetween={8}
             slidesPerView={1.5}
             onSlideChange={(swiper) => {
               setIsBeginning(swiper.isBeginning);
               setIsEnd(swiper.isEnd);
             }}
             breakpoints={{
-              768: { slidesPerView: 3.5 },
-              1024: { slidesPerView: 4, slidesPerGroup: 4 },
+              768: { slidesPerView: 3.5, spaceBetween: 16 },
+              1024: { slidesPerView: 4, slidesPerGroup: 4, spaceBetween: 16 },
             }}
           >
             {paginatedFeeds.map((feed, idx) => {

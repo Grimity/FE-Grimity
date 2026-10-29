@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useTagsPopular } from "@/api/tags/getTagsPopular";
 import { useGlobalLoading } from "@/hooks/useGlobalLoading";
 
-import Title from "@/components/Layout/Title/Title";
 import Tag from "./Tag/Tag";
 
 import styles from "./PopularTag.module.scss";
@@ -18,7 +17,7 @@ export default function PopularTag() {
 
   return (
     <div className={styles.container}>
-      <Title>인기 태그</Title>
+      <h2 className={styles.title}>인기 태그</h2>
       <Swiper spaceBetween={14} slidesPerView="auto" className={styles.swiper}>
         {data?.map((tag) => (
           <SwiperSlide key={tag.tagName} className={styles.slide}>

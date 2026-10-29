@@ -87,8 +87,8 @@
   }
 
   .content {
-    @include typo.label-2;
-    color: colors.$text-gray-normal;
+    @include typo.body-1-r;
+    color: colors.$text-gray-bold;
     white-space: pre-line;
     word-break: break-word;
     overflow-wrap: break-word;
