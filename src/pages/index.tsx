@@ -21,20 +21,13 @@ export default function Home() {
   const router = useRouter();
   const [OGTitle] = useState("그리미티");
   const [OGUrl, setOGUrl] = useState(serviceUrl);
-  const { restoreScrollPosition } = useScrollRestoration("home-scroll");
+  useScrollRestoration("home-scroll");
   const { isMobile } = useDeviceStore();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   useEffect(() => {
     setOGUrl(`${serviceUrl}/${router.asPath}`);
   }, [router.asPath]);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("home-scroll") !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("home-scroll");
-    }
-  }, []);
 
   return (
     <>
