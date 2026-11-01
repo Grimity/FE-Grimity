@@ -10,18 +10,11 @@ export default function Following() {
   const router = useRouter();
   const [OGTitle] = useState("팔로잉 - 그리미티");
   const [OGUrl, setOGUrl] = useState(serviceUrl);
-  const { restoreScrollPosition } = useScrollRestoration("following-scroll");
+  useScrollRestoration("following-scroll");
 
   useEffect(() => {
     setOGUrl(`${serviceUrl}/${router.asPath}`);
   }, [router.asPath]);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("following-scroll") !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("following-scroll");
-    }
-  }, []);
 
   return (
     <AuthLayout>

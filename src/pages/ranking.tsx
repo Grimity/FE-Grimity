@@ -12,18 +12,11 @@ function RankingPage() {
   const router = useRouter();
   const [OGTitle] = useState("랭킹 - 그리미티");
   const [OGUrl, setOGUrl] = useState(serviceUrl);
-  const { restoreScrollPosition } = useScrollRestoration("popular-scroll");
+  useScrollRestoration("popular-scroll");
 
   useEffect(() => {
     setOGUrl(`${serviceUrl}/${router.asPath}`);
   }, [router.asPath]);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("popular-scroll") !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("popular-scroll");
-    }
-  }, []);
 
   return (
     <>

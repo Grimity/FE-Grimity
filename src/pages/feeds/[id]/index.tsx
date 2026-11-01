@@ -6,7 +6,6 @@ import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 type Props = {
   details: FeedMetaResponse;
@@ -28,14 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function FeedDetail({ details }: Props) {
   const router = useRouter();
-  const { restoreScrollPosition } = useScrollRestoration("details-scroll");
-
-  useEffect(() => {
-    if (sessionStorage.getItem("details-scroll") !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("details-scroll");
-    }
-  }, []);
+  useScrollRestoration("details-scroll");
 
   const { id } = router.query;
 
