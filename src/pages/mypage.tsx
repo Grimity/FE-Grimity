@@ -26,7 +26,7 @@ export default function Mypage() {
 
   const [OGTitle, setOGTitle] = useState<string>(getTabData());
   const [OGUrl, setOGUrl] = useState(serviceUrl);
-  const { restoreScrollPosition } = useScrollRestoration("mypage-scroll");
+  useScrollRestoration("mypage-scroll");
 
   useEffect(() => {
     setOGUrl(`${serviceUrl}/${router.asPath}`);
@@ -35,13 +35,6 @@ export default function Mypage() {
   useEffect(() => {
     setOGTitle(`${getTabData()} - 그리미티`);
   }, [tab]);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("mypage-scroll") !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("mypage-scroll");
-    }
-  }, []);
 
   return (
     <AuthLayout>

@@ -25,7 +25,7 @@ export default function Search() {
   const router = useRouter();
   const [OGTitle] = useState("검색 결과 - 그리미티");
   const [OGUrl, setOGUrl] = useState(serviceUrl);
-  const { restoreScrollPosition } = useScrollRestoration("search-scroll");
+  useScrollRestoration("search-scroll");
 
   const keyword =
     typeof router.query.keyword === "string" ? decodeURIComponent(router.query.keyword) : "";
@@ -51,13 +51,6 @@ export default function Search() {
       });
     }
   }, [keyword]);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("search-scroll") !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("search-scroll");
-    }
-  }, [restoreScrollPosition]);
 
   return (
     <>

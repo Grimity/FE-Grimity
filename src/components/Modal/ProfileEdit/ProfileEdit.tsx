@@ -31,7 +31,6 @@ import { useProfileImages } from "@/components/ProfilePage/Profile/hooks/useProf
 
 import { useToast } from "@/hooks/useToast";
 import { useDeviceStore } from "@/states/deviceStore";
-import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 
 import { EMAIL_PATTERN } from "@/utils/profileLinkIcon";
 import { isValidProfileIdFormat, isForbiddenProfileId } from "@/utils/isValidProfileId";
@@ -106,7 +105,6 @@ export default function ProfileEdit({ onClose }: { onClose: () => void }) {
 
   const queryClient = useQueryClient();
   const isFormInitializedRef = useRef(false);
-  const { restoreScrollPosition } = useScrollRestoration("profileEdit-scroll");
   const { showToast } = useToast();
   const { isMobile } = useDeviceStore();
   // 이미지는 저장과 무관하게 즉시 반영되므로, 뒤의 프로필 페이지 데이터도 함께 갱신한다
@@ -145,13 +143,7 @@ export default function ProfileEdit({ onClose }: { onClose: () => void }) {
         ),
       );
     }
-
-    const scrollPos = sessionStorage.getItem("profileEdit-scroll");
-    if (scrollPos !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("profileEdit-scroll");
-    }
-  }, [myData, restoreScrollPosition]);
+  }, [myData]);
 
   const { mutateAsync: updateMyInfo, isPending } = useMeUpdateProfile({
     mutation: {

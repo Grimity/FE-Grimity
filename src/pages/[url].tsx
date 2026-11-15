@@ -5,7 +5,6 @@ import { serviceUrl } from "@/constants/serviceurl";
 import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
 import { DEFAULT_THUMBNAIL } from "@/constants/imageUrl";
 
 type Props = {
@@ -28,14 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Profile({ data }: Props) {
   const { data: myData } = useMyData();
-  const { restoreScrollPosition } = useScrollRestoration("profile-scroll");
-
-  useEffect(() => {
-    if (sessionStorage.getItem("profile-scroll") !== null) {
-      restoreScrollPosition();
-      sessionStorage.removeItem("profile-scroll");
-    }
-  }, []);
+  useScrollRestoration("profile-scroll");
 
   const loggedInUserUrl = myData?.url; // Be sure this is the correct field
   const isMyProfile = data.url === loggedInUserUrl;
